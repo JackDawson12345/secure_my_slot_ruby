@@ -361,9 +361,11 @@
         <%= form_with model: Booking.new,
                       url: bookings_path,
                       method: :post,
-                      local: true,
+                      data: { turbo: false },
                       class: "grid gap-8 lg:grid-cols-[1fr_380px]",
                       id: "booking-form" do |form| %>
+
+          <%= form.hidden_field :business_id, value: @business.id %>
 
 
           <div class="space-y-8">
@@ -641,13 +643,53 @@
 
               </div>
 
+              <% if @business.stripe_ready? %>
+                <div class="mt-5 flex items-start gap-3 rounded-2xl bg-blue-50 p-4">
+                  <svg
+                    class="mt-0.5 h-5 w-5 shrink-0 text-blue-600"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <rect x="3" y="5" width="18" height="14" rx="2"/>
+                    <path d="M3 10h18"/>
+                  </svg>
+
+                  <p class="text-sm leading-6 text-blue-700">
+                    You will be redirected to Stripe to securely pay for this appointment.
+                  </p>
+                </div>
+              <% else %>
+                <div class="mt-5 flex items-start gap-3 rounded-2xl bg-slate-50 p-4">
+                  <svg
+                    class="mt-0.5 h-5 w-5 shrink-0 text-slate-500"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path d="M5 12h14"/>
+                    <path d="m13 6 6 6-6 6"/>
+                  </svg>
+
+                  <p class="text-sm leading-6 text-slate-600">
+                    Payment will be arranged directly with the business.
+                  </p>
+                </div>
+              <% end %>
+
 
 
               <button
                 type="submit"
-                class="mt-7 w-full rounded-2xl bg-blue-500 px-5 py-4 font-black text-white"
+                class="mt-7 w-full rounded-2xl bg-blue-500 px-5 py-4 font-black text-white transition hover:bg-blue-600"
               >
-                Confirm booking
+                <% if @business.stripe_ready? %>
+                  Continue to secure payment
+                <% else %>
+                  Confirm booking
+                <% end %>
               </button>
 
 

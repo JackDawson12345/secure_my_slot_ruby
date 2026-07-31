@@ -60,7 +60,11 @@ Rails.application.routes.draw do
   # Example:
   # riverboat-canyon-expensive.ngrok-free.dev
   root "pages/website#home"
-  resources :bookings, only: [:create]
+  resources :bookings, only: [:create] do
+    member do
+      get :payment_success
+    end
+  end
 
   get "/booking_slots", to: "bookings#slots"
 
@@ -169,6 +173,18 @@ Rails.application.routes.draw do
     get "dashboard/payments",
         to: "payments#index",
         as: :payments
+
+    post "dashboard/payments/connect",
+         to: "payments#connect",
+         as: :payments_connect
+
+    get "dashboard/payments/return",
+        to: "payments#stripe_return",
+        as: :payments_return
+
+    get "dashboard/payments/refresh",
+        to: "payments#stripe_refresh",
+        as: :payments_refresh
 
   end
 

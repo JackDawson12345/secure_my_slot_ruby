@@ -1,0 +1,54 @@
+<section class="flex min-h-screen items-center justify-center bg-slate-50 px-5 py-16">
+  <div class="w-full max-w-xl rounded-3xl border border-slate-200 bg-white p-8 text-center shadow-xl sm:p-12">
+    <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
+      <svg
+        class="h-8 w-8"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="m5 13 4 4L19 7"
+          />
+      </svg>
+    </div>
+
+    <h1 class="mt-6 text-3xl font-black text-slate-900">
+      Payment completed
+    </h1>
+
+    <p class="mt-4 text-lg leading-8 text-slate-600">
+      Your payment has been received and your appointment has been booked.
+    </p>
+
+    <div class="mt-8 rounded-2xl bg-slate-50 p-6 text-left">
+      <div class="flex justify-between gap-4 border-b border-slate-200 pb-4">
+        <span class="text-slate-500">Service</span>
+        <span class="font-bold text-slate-900">
+          <%= @booking.service.name %>
+        </span>
+      </div>
+
+      <div class="flex justify-between gap-4 border-b border-slate-200 py-4">
+        <span class="text-slate-500">Date</span>
+        <span class="font-bold text-slate-900">
+          <%= @booking.date.strftime("%d %B %Y") %>
+        </span>
+      </div>
+
+      <div class="flex justify-between gap-4 pt-4">
+        <span class="text-slate-500">Time</span>
+        <span class="font-bold text-slate-900">
+          <%= @booking.time.strftime("%I:%M %p") %>
+        </span>
+      </div>
+    </div>
+
+    <%= link_to "Return to booking page",
+                root_path,
+                class: "mt-8 inline-flex rounded-2xl bg-blue-500 px-6 py-4 font-bold text-white transition hover:bg-blue-600" %>
+  </div>
+</section>

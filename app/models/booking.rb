@@ -5,6 +5,14 @@ class Booking < ApplicationRecord
 
   validate :time_available
 
+  enum :payment_status, {
+    not_required: "not_required",
+    awaiting_payment: "awaiting_payment",
+    paid: "paid",
+    payment_failed: "payment_failed",
+    refunded: "refunded"
+  }, prefix: true
+
 
   def time_available
 

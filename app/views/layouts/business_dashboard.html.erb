@@ -121,6 +121,17 @@
           <span>Opening Hours</span>
         <% end %>
 
+        <%= link_to business_payments_path,
+                    class: [
+                      "flex items-center gap-3 rounded-xl px-4 py-3 text-sm transition",
+                      controller_name == "payments" ?
+                        "bg-indigo-600 font-semibold text-white shadow-lg shadow-indigo-950/30" :
+                        "font-medium text-slate-300 hover:bg-white/10 hover:text-white"
+                    ] do %>
+          <i data-lucide="circle-pound-sterling" class="h-5 w-5"></i>
+          <span>Payments</span>
+        <% end %>
+
         <%= link_to business_settings_path,
                     class: [
                       "flex items-center gap-3 rounded-xl px-4 py-3 text-sm transition",

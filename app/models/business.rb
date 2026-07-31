@@ -88,6 +88,17 @@ class Business < ApplicationRecord
     ).round(2)
   end
 
+  def stripe_connected?
+    stripe_account_id.present?
+  end
+
+  def stripe_ready?
+    stripe_connected? &&
+      stripe_details_submitted? &&
+      stripe_charges_enabled? &&
+      stripe_payouts_enabled?
+  end
+
   private
 
   def current_day_of_week
