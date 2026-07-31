@@ -31,6 +31,7 @@ class BookingsController < ApplicationController
       service: service,
       date: booking_params[:date],
       time: booking_params[:time],
+      notes: booking_params[:notes],
       status: "pending",
       payment_status: business.stripe_ready? ? "awaiting_payment" : "not_required"
     )
@@ -43,6 +44,8 @@ class BookingsController < ApplicationController
           service: service
         )
       else
+        SendBookingConfirmationSmsJob.perform_later(booking.id)
+
         redirect_to(
           business_site_url(
             subdomain: business.page_address
@@ -105,9 +108,16 @@ class BookingsController < ApplicationController
       params[:session_id]
     )
 
+    sms_already_sent = @booking.payment_status == "paid"
+
     @booking.update!(
-      stripe_payment_intent_id: checkout_session.payment_intent
+      stripe_payment_intent_id: checkout_session.payment_intent,
+      payment_status: "paid"
     )
+
+    unless sms_already_sent
+      SendBookingConfirmationSmsJob.perform_later(@booking.id)
+    end
 
     render :payment_success
   rescue ActiveRecord::RecordNotFound
@@ -134,16 +144,17 @@ class BookingsController < ApplicationController
       email: booking_params[:email].to_s.downcase.strip
     )
 
-    if user.new_record?
-      user.assign_attributes(
-        first_name: booking_params[:first_name],
-        last_name: booking_params[:last_name],
-        password: SecureRandom.hex(16)
-      )
+    user.assign_attributes(
+      first_name: booking_params[:first_name],
+      last_name: booking_params[:last_name],
+      phone_number: booking_params[:phone_number]
+    )
 
-      user.save!
+    if user.new_record?
+      user.password = SecureRandom.hex(16)
     end
 
+    user.save!
     user
   end
 

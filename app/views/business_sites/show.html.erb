@@ -23,7 +23,7 @@
 
         <div>
             <span class="block text-base font-bold leading-tight text-blue-950">
-              Sharp & Co Barbers
+              <%= @business.business_name %>
             </span>
           <span class="block text-xs font-medium text-blue-500">
               Online booking
@@ -983,7 +983,7 @@
   </div>
 
   <script>
-      document.addEventListener("DOMContentLoaded", () => {
+      document.addEventListener("turbo:load", () => {
 
           const dateInput = document.getElementById("booking-date");
           const timeOptions = document.getElementById("time-options");

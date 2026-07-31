@@ -10,6 +10,8 @@ Rails.application.configure do
     port: 3000
   }
 
+  config.active_job.queue_adapter = :async
+
   # Settings specified here will take precedence over those in config/application.rb.
 
   # Make code changes take effect immediately without server restart.

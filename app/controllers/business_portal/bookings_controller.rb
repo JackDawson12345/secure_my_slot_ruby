@@ -2,7 +2,13 @@
 
 class BusinessPortal::BookingsController < BusinessPortal::BaseController
   def index
-    @bookings = Booking.where(business: current_user.business)
+    @bookings = current_user.business.bookings
+                            .where(
+                              "date > :today OR (date = :today AND time >= :current_time)",
+                              today: Date.current,
+                              current_time: Time.current
+                            )
+                            .order(date: :asc, time: :asc)
   end
 
   def add_booking
