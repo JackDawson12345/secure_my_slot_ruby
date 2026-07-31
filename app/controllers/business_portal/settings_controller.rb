@@ -59,6 +59,18 @@ class BusinessPortal::SettingsController < BusinessPortal::BaseController
 
   end
 
+  def destroy_logo
+    if @settings.logo.attached?
+      @settings.logo.purge_later
+
+      redirect_to business_settings_path,
+                  notice: "Business logo removed successfully."
+    else
+      redirect_to business_settings_path,
+                  alert: "No business logo was found."
+    end
+  end
+
 
   private
 
@@ -85,6 +97,7 @@ class BusinessPortal::SettingsController < BusinessPortal::BaseController
       :phone_number,
       :business_email,
       :business_description,
+      :logo,
 
       :address_line_1,
       :address_line_2,

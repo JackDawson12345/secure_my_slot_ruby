@@ -170,6 +170,10 @@ Rails.application.routes.draw do
           to: "settings#update_password",
           as: :password
 
+    delete "dashboard/settings/logo",
+           to: "settings#destroy_logo",
+           as: :settings_logo
+
     get "dashboard/payments",
         to: "payments#index",
         as: :payments
