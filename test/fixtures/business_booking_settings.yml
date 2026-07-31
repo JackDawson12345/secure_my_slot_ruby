@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  business: one
+  booking_interval_minutes: 1
+  minimum_notice_minutes: 1
+  advance_booking_days: 1
+  buffer_minutes: 1
+
+two:
+  business: two
+  booking_interval_minutes: 1
+  minimum_notice_minutes: 1
+  advance_booking_days: 1
+  buffer_minutes: 1

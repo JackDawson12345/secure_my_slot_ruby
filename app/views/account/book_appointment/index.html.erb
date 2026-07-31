@@ -1,0 +1,225 @@
+<main class="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
+
+  <!-- Page header / search hero -->
+  <section class="overflow-hidden rounded-3xl bg-slate-950 px-5 py-8 text-white shadow-sm sm:px-8 sm:py-10">
+    <p class="text-sm font-medium text-indigo-300">Book an appointment</p>
+    <h2 class="mt-2 text-2xl font-bold tracking-tight sm:text-3xl">
+      Find a business to book with
+    </h2>
+    <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-300 sm:text-base">
+      Search by business name, service or location, then pick a time that works for you.
+    </p>
+
+    <!-- Search bar -->
+    <form class="mt-6 flex flex-col gap-3 rounded-2xl bg-white p-2 shadow-sm sm:flex-row sm:items-center">
+      <div class="flex flex-1 items-center gap-3 rounded-xl px-3 py-2.5 sm:border-r sm:border-slate-100">
+        <i data-lucide="search" class="h-4 w-4 shrink-0 text-slate-400"></i>
+        <input
+          type="text"
+          placeholder="Business or service, e.g. &quot;Nails&quot; or &quot;Test Business&quot;"
+          class="w-full border-0 bg-transparent text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none"
+          />
+      </div>
+
+      <div class="flex flex-1 items-center gap-3 rounded-xl px-3 py-2.5">
+        <i data-lucide="map-pin" class="h-4 w-4 shrink-0 text-slate-400"></i>
+        <input
+          type="text"
+          placeholder="Location or postcode"
+          class="w-full border-0 bg-transparent text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none"
+          />
+      </div>
+
+      <button
+        type="button"
+        class="inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-indigo-500"
+      >
+        <i data-lucide="search" class="h-4 w-4"></i>
+        Search
+      </button>
+    </form>
+
+    <!-- Quick category chips -->
+    <div class="mt-5 flex flex-wrap gap-2">
+      <button type="button" class="inline-flex items-center gap-1.5 rounded-full bg-white px-3.5 py-1.5 text-xs font-semibold text-slate-900 transition hover:bg-slate-100">
+        <i data-lucide="sparkles" class="h-3.5 w-3.5 text-indigo-600"></i>
+        Beauty &amp; Nails
+      </button>
+      <button type="button" class="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3.5 py-1.5 text-xs font-semibold text-white transition hover:bg-white/20">
+        <i data-lucide="scissors" class="h-3.5 w-3.5"></i>
+        Hair
+      </button>
+      <button type="button" class="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3.5 py-1.5 text-xs font-semibold text-white transition hover:bg-white/20">
+        <i data-lucide="hand" class="h-3.5 w-3.5"></i>
+        Massage &amp; Spa
+      </button>
+      <button type="button" class="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3.5 py-1.5 text-xs font-semibold text-white transition hover:bg-white/20">
+        <i data-lucide="dumbbell" class="h-3.5 w-3.5"></i>
+        Fitness
+      </button>
+      <button type="button" class="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3.5 py-1.5 text-xs font-semibold text-white transition hover:bg-white/20">
+        <i data-lucide="stethoscope" class="h-3.5 w-3.5"></i>
+        Health
+      </button>
+    </div>
+  </section>
+
+  <div class="mt-8 grid gap-8 xl:grid-cols-[280px_minmax(0,1fr)]">
+
+    <!-- Filters sidebar -->
+    <!-- Filters sidebar -->
+    <aside class="space-y-6">
+      <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div class="flex items-center justify-between">
+          <h3 class="text-sm font-bold text-slate-900">Filters</h3>
+          <%= link_to "Clear all", account_book_appointment_path,
+                      class: "text-xs font-semibold text-indigo-600 hover:text-indigo-700" %>
+        </div>
+
+        <%= form_tag account_book_appointment_path, method: :get,
+                     data: { turbo_frame: "results-frame", controller: "filters" } do %>
+
+          <!-- Category -->
+          <div class="mt-5 border-t border-slate-100 pt-5">
+            <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">Category</p>
+            <div class="mt-3 space-y-2.5">
+              <% categories = [ "Barber", "Hairdresser", "Beauty and Nails", "Personal Trainer", "Coach", "Tutor", "Consultant", "Therapist", "Photographer", "Cleaner", "Tradesperson", "Other" ] %>
+
+              <% categories.each do |category| %>
+                <label class="flex items-center gap-2.5 text-sm text-slate-700">
+                  <input
+                    type="checkbox"
+                    name="category[]"
+                    value="<%= category %>"
+                    <%= "checked" if params[:category]&.include?(category) %>
+                    data-action="change->filters#submitOnChange"
+                    class="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                    />
+                  <%= category %>
+                </label>
+              <% end %>
+            </div>
+          </div>
+
+          <!-- Distance -->
+          <div class="mt-5 border-t border-slate-100 pt-5">
+            <div class="flex items-center justify-between">
+              <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">Distance</p>
+              <span data-filters-target="label" class="text-xs font-semibold text-slate-900"></span>
+            </div>
+            <input
+              type="range"
+              name="distance"
+              min="0"
+              max="5"
+              step="1"
+              value="<%= params[:distance].presence || 1 %>"
+              data-filters-target="slider"
+              data-action="input->filters#updateLabel change->filters#submitOnChange"
+              class="mt-3 w-full accent-indigo-600"
+              aria-label="Maximum distance"
+              />
+            <div class="mt-1.5 flex justify-between text-[10px] font-medium text-slate-400">
+              <span>5</span><span>10</span><span>25</span><span>50</span><span>100</span><span>Unlimited</span>
+            </div>
+          </div>
+
+          <!-- Availability -->
+          <div class="mt-5 border-t border-slate-100 pt-5">
+            <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">Availability</p>
+            <div class="mt-3 space-y-2.5">
+              <label class="flex items-center gap-2.5 text-sm text-slate-700">
+                <input type="checkbox" name="available_today" value="1"
+                       <%= "checked" if params[:available_today].present? %>
+                       data-action="change->filters#submitOnChange"
+                       class="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" />
+                Available today
+              </label>
+              <label class="flex items-center gap-2.5 text-sm text-slate-700">
+                <input type="checkbox" name="available_this_week" value="1"
+                       <%= "checked" if params[:available_this_week].present? %>
+                       data-action="change->filters#submitOnChange"
+                       class="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" />
+                Available this week
+              </label>
+            </div>
+          </div>
+
+          <button type="submit" class="mt-5 w-full rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800">
+            Apply filters
+          </button>
+        <% end %>
+      </section>
+    </aside>
+
+    <!-- Results column: only this frame gets swapped on filter change -->
+    <%= turbo_frame_tag "results-frame", data: { controller: "filters" } do %>
+      <div>
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <p class="text-sm text-slate-500">
+            <span class="font-semibold text-slate-900"><%= @total_count %> businesses</span> found near <%= current_user.customer_setting.address_line_1 %>, <%= current_user.customer_setting.town_or_city %>, <%= current_user.customer_setting.postcode %>
+          </p>
+
+          <div class="flex items-center gap-2">
+            <label class="text-sm text-slate-500">Sort by</label>
+            <select class="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+              <option>Best match</option>
+              <option>Distance</option>
+              <option>Highest rated</option>
+              <option>Soonest availability</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="mt-5 space-y-4">
+          <% @businesses.each do |business| %>
+            <%= render 'account/book_appointment/business_card', business: business, next_slot: @next_slots[business.id] %>
+          <% end %>
+        </div>
+
+        <!-- Pagination unchanged -->
+        <% if @total_pages > 1 %>
+          <div class="mt-6 flex items-center justify-between">
+            <% if @page > 1 %>
+              <%= link_to account_book_appointment_path(request.query_parameters.merge(page: @page - 1)),
+                          class: "inline-flex items-center gap-2 rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50" do %>
+                <i data-lucide="arrow-left" class="h-4 w-4"></i>
+                Previous
+              <% end %>
+            <% else %>
+      <span class="inline-flex items-center gap-2 rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 opacity-50 cursor-not-allowed">
+        <i data-lucide="arrow-left" class="h-4 w-4"></i>
+        Previous
+      </span>
+            <% end %>
+
+            <div class="flex items-center gap-1.5">
+              <% (1..@total_pages).each do |page_number| %>
+                <% if page_number == @page %>
+                  <span class="h-9 w-9 flex items-center justify-center rounded-lg bg-indigo-600 text-sm font-semibold text-white"><%= page_number %></span>
+                <% else %>
+                  <%= link_to page_number, account_book_appointment_path(request.query_parameters.merge(page: page_number)),
+                              class: "h-9 w-9 flex items-center justify-center rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-100" %>
+                <% end %>
+              <% end %>
+            </div>
+
+            <% if @page < @total_pages %>
+              <%= link_to account_book_appointment_path(request.query_parameters.merge(page: @page + 1)),
+                          class: "inline-flex items-center gap-2 rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50" do %>
+                Next
+                <i data-lucide="arrow-right" class="h-4 w-4"></i>
+              <% end %>
+            <% else %>
+      <span class="inline-flex items-center gap-2 rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 opacity-50 cursor-not-allowed">
+        Next
+        <i data-lucide="arrow-right" class="h-4 w-4"></i>
+      </span>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</main>
+

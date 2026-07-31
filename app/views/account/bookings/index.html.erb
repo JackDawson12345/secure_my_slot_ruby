@@ -1,0 +1,660 @@
+<!-- Bookings content -->
+<main class="p-4 sm:p-6 lg:p-8">
+  <!-- Page heading -->
+  <section
+    class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+  >
+    <div>
+      <h2 class="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+        My Bookings
+      </h2>
+
+      <p class="mt-1 text-sm text-slate-500">
+        Keep track of your upcoming and previous appointments.
+      </p>
+    </div>
+  </section>
+
+  <!-- Summary cards -->
+  <section class="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+    <!-- Upcoming -->
+    <article
+      class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
+    >
+      <div class="flex items-start justify-between">
+        <div>
+          <p class="text-sm font-medium text-slate-500">
+            Upcoming
+          </p>
+
+          <p class="mt-2 text-3xl font-bold tracking-tight text-slate-900">
+            <%= @upcoming_count.to_s %>
+          </p>
+        </div>
+
+        <div class="rounded-xl bg-indigo-50 p-3 text-indigo-600">
+          <i data-lucide="calendar-days" class="h-5 w-5"></i>
+        </div>
+      </div>
+
+      <p class="mt-4 text-sm text-slate-500">
+        <% if @next_booking %>
+          Your next booking is <%= @next_booking.date == Date.current + 1.day ? "tomorrow" : @next_booking.date.strftime("%-d %B") %>
+        <% else %>
+          No upcoming bookings
+        <% end %>
+      </p>
+    </article>
+
+    <!-- Pending -->
+    <article
+      class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
+    >
+      <div class="flex items-start justify-between">
+        <div>
+          <p class="text-sm font-medium text-slate-500">
+            Pending
+          </p>
+
+          <p class="mt-2 text-3xl font-bold tracking-tight text-slate-900">
+            <%= @pending_count.to_s %>
+          </p>
+        </div>
+
+        <div class="rounded-xl bg-amber-50 p-3 text-amber-600">
+          <i data-lucide="clock-3" class="h-5 w-5"></i>
+        </div>
+      </div>
+
+      <p class="mt-4 text-sm text-slate-500">
+        Waiting for confirmation
+      </p>
+    </article>
+
+    <!-- Completed -->
+    <article
+      class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
+    >
+      <div class="flex items-start justify-between">
+        <div>
+          <p class="text-sm font-medium text-slate-500">
+            Completed
+          </p>
+
+          <p class="mt-2 text-3xl font-bold tracking-tight text-slate-900">
+            <%= @completed_count.to_s %>
+          </p>
+        </div>
+
+        <div class="rounded-xl bg-emerald-50 p-3 text-emerald-600">
+          <i data-lucide="circle-check-big" class="h-5 w-5"></i>
+        </div>
+      </div>
+
+      <p class="mt-4 text-sm text-slate-500">
+        Across all previous bookings
+      </p>
+    </article>
+
+    <!-- Cancelled -->
+    <article
+      class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
+    >
+      <div class="flex items-start justify-between">
+        <div>
+          <p class="text-sm font-medium text-slate-500">
+            Cancelled
+          </p>
+
+          <p class="mt-2 text-3xl font-bold tracking-tight text-slate-900">
+            <%= @cancelled_count.to_s %>
+          </p>
+        </div>
+
+        <div class="rounded-xl bg-rose-50 p-3 text-rose-600">
+          <i data-lucide="calendar-x" class="h-5 w-5"></i>
+        </div>
+      </div>
+
+      <p class="mt-4 text-sm text-slate-500">
+        <%= @cancelled_count %> previous cancellation<%= "s" unless @cancelled_count == 1 %>
+      </p>
+    </article>
+  </section>
+
+  <!-- Next appointment -->
+  <% if @next_booking %>
+    <section
+      class="mt-8 overflow-hidden rounded-2xl border border-indigo-200 bg-white shadow-sm"
+    >
+      <div
+        class="flex flex-col gap-4 border-b border-indigo-100 bg-indigo-50 px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6"
+      >
+        <div class="flex items-center gap-3">
+          <div class="rounded-xl bg-white p-3 text-indigo-600 shadow-sm">
+            <i data-lucide="calendar-check-2" class="h-5 w-5"></i>
+          </div>
+
+          <div>
+            <h3 class="text-lg font-bold text-slate-900">
+              Your next appointment
+            </h3>
+
+            <p class="mt-1 text-sm text-slate-500">
+              <%= @next_booking.date.strftime("%A, %-d %B %Y") %>
+            </p>
+          </div>
+        </div>
+
+        <span
+          class="inline-flex w-fit items-center gap-1.5 rounded-full bg-emerald-100 px-3 py-1.5 text-xs font-semibold text-emerald-700"
+        >
+          <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
+          Confirmed
+        </span>
+      </div>
+
+      <div class="p-5 sm:p-6">
+        <div
+          class="flex flex-col gap-6 xl:flex-row xl:items-center xl:justify-between"
+        >
+          <div class="flex flex-col gap-5 sm:flex-row sm:items-start">
+            <div
+              class="flex h-20 w-20 shrink-0 flex-col items-center justify-center rounded-2xl bg-indigo-600 text-white"
+            >
+              <span class="text-xs font-semibold uppercase tracking-wide">
+                <%= @next_booking.date.strftime("%b") %>
+              </span>
+
+              <span class="text-3xl font-bold">
+                <%= @next_booking.date.day %>
+              </span>
+            </div>
+
+            <div>
+              <div class="flex flex-wrap items-center gap-3">
+                <h4 class="text-xl font-bold text-slate-900">
+                  <%= @next_booking.service.name %>
+                </h4>
+
+                <span
+                  class="rounded-full bg-indigo-50 px-2.5 py-1 text-xs font-semibold text-indigo-700"
+                >
+                  <%= @next_booking.business.business_name %>
+                </span>
+              </div>
+
+              <div
+                class="mt-4 grid gap-3 text-sm text-slate-600 sm:grid-cols-2"
+              >
+                <span class="inline-flex items-center gap-2">
+                  <i data-lucide="clock-3" class="h-4 w-4 text-slate-400"></i>
+                  <%= @next_booking.time.strftime("%-I:%M %p") %> to <%= (@next_booking.time + @next_booking.service.minutes_duration.minutes).strftime("%-I:%M %p") %>
+                </span>
+
+                <span class="inline-flex items-center gap-2">
+                  <i data-lucide="hourglass" class="h-4 w-4 text-slate-400"></i>
+                  <%= @next_booking.service.minutes_duration %> minutes
+                </span>
+
+                <span class="inline-flex items-center gap-2">
+                  <i
+                    data-lucide="badge-pound-sterling"
+                    class="h-4 w-4 text-slate-400"
+                  ></i>
+                  <%= number_to_currency(@next_booking.service.price, unit: "£") %>
+                </span>
+
+                <span class="inline-flex items-center gap-2">
+                  <i data-lucide="hash" class="h-4 w-4 text-slate-400"></i>
+                  Booking #<%= @next_booking.id %>
+                </span>
+              </div>
+
+              <div class="mt-4 flex items-start gap-2 text-sm text-slate-600">
+                <i
+                  data-lucide="map-pin"
+                  class="mt-0.5 h-4 w-4 shrink-0 text-slate-400"
+                ></i>
+
+                <span>
+                  <%= @next_booking.business.business_setting.address_line_1 %>, <%= @next_booking.business.business_setting.town_or_city %>, <span class="uppercase"><%= @next_booking.business.business_setting.postcode %></span>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-3 sm:flex-row">
+            <%= link_to account_booking_path(@next_booking),
+                        class: "inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-700" do %>
+              View booking
+              <i data-lucide="arrow-right" class="h-4 w-4"></i>
+            <% end %>
+
+            <button
+              type="button"
+              class="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+            >
+              <i data-lucide="calendar-cog" class="h-4 w-4"></i>
+              Reschedule
+            </button>
+
+            <button
+              type="button"
+              class="inline-flex items-center justify-center gap-2 rounded-xl border border-rose-200 px-4 py-2.5 text-sm font-semibold text-rose-600 transition hover:bg-rose-50"
+            >
+              <i data-lucide="calendar-x" class="h-4 w-4"></i>
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+  <% end %>
+
+  <!-- Bookings panel -->
+  <section
+    class="mt-8 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"
+  >
+    <!-- Tabs and filters -->
+    <div class="border-b border-slate-200 p-5 sm:p-6">
+      <%= form_with url: account_bookings_path, method: :get, local: true,
+                    class: "flex flex-col gap-5 xl:flex-row xl:items-end xl:justify-between" do |f| %>
+        <div>
+          <h3 class="text-lg font-bold text-slate-900">
+            All bookings
+          </h3>
+
+          <p class="mt-1 text-sm text-slate-500">
+            View your upcoming appointments and booking history.
+          </p>
+
+          <!-- Tabs -->
+          <div
+            class="mt-5 flex max-w-full gap-1 overflow-x-auto rounded-xl bg-slate-100 p-1"
+          >
+            <% Account::BookingsController::TAB_OPTIONS.each do |tab_option| %>
+              <%= link_to tab_option == "All" ? "All bookings" : tab_option,
+                          account_bookings_path(tab: tab_option, query: @query, status: @status, date_range: @date_range),
+                          class: (tab_option == @tab ?
+                                    "whitespace-nowrap rounded-lg bg-white px-4 py-2 text-sm font-semibold text-slate-900 shadow-sm" :
+                                    "whitespace-nowrap rounded-lg px-4 py-2 text-sm font-medium text-slate-600 transition hover:text-slate-900") %>
+            <% end %>
+          </div>
+        </div>
+
+        <div class="grid gap-3 sm:grid-cols-2 xl:flex">
+          <%= f.hidden_field :tab, value: @tab %>
+
+          <!-- Search -->
+          <div class="relative sm:col-span-2 xl:w-64">
+            <i
+              data-lucide="search"
+              class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
+            ></i>
+
+            <%= f.text_field :query,
+                             value: @query,
+                             placeholder: "Search bookings...",
+                             type: "search",
+                             class: "w-full rounded-xl border border-slate-200 py-2.5 pl-10 pr-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" %>
+          </div>
+
+          <!-- Status -->
+          <%= f.select :status,
+                       options_for_select(
+                         ["All statuses"] + Account::BookingsController::STATUS_OPTIONS,
+                         @status || "All statuses"
+                       ),
+                       {},
+                       class: "rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100",
+                       onchange: "this.form.requestSubmit()" %>
+
+          <!-- Date -->
+          <%= f.select :date_range,
+                       options_for_select(
+                         ["All dates"] + Account::BookingsController::DATE_RANGE_OPTIONS,
+                         @date_range || "All dates"
+                       ),
+                       {},
+                       class: "rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100",
+                       onchange: "this.form.requestSubmit()" %>
+        </div>
+      <% end %>
+
+      <!-- Active filters -->
+      <% if @query.present? || @status.present? || @date_range.present? %>
+        <div class="mt-5 flex flex-wrap items-center gap-2">
+          <span class="text-xs font-medium text-slate-500">
+            Active filters:
+          </span>
+
+          <% if @query.present? %>
+            <%= link_to account_bookings_path(tab: @tab, status: @status, date_range: @date_range),
+                        class: "inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-700" do %>
+              &ldquo;<%= @query %>&rdquo;
+              <i data-lucide="x" class="h-3.5 w-3.5"></i>
+            <% end %>
+          <% end %>
+
+          <% if @status.present? %>
+            <%= link_to account_bookings_path(tab: @tab, query: @query, date_range: @date_range),
+                        class: "inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-700" do %>
+              <%= @status %>
+              <i data-lucide="x" class="h-3.5 w-3.5"></i>
+            <% end %>
+          <% end %>
+
+          <% if @date_range.present? %>
+            <%= link_to account_bookings_path(tab: @tab, query: @query, status: @status),
+                        class: "inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-700" do %>
+              <%= @date_range %>
+              <i data-lucide="x" class="h-3.5 w-3.5"></i>
+            <% end %>
+          <% end %>
+
+          <%= link_to "Clear all", account_bookings_path(tab: @tab),
+                      class: "text-xs font-semibold text-indigo-600 transition hover:text-indigo-700" %>
+        </div>
+      <% end %>
+    </div>
+
+    <% if @bookings.empty? %>
+      <!-- Empty state -->
+      <div class="flex flex-col items-center gap-3 px-6 py-16 text-center">
+        <div class="rounded-full bg-slate-100 p-4 text-slate-400">
+          <i data-lucide="calendar-search" class="h-6 w-6"></i>
+        </div>
+
+        <p class="text-sm font-semibold text-slate-900">
+          No bookings match your filters
+        </p>
+
+        <p class="max-w-sm text-sm text-slate-500">
+          Try adjusting your search term, status, or date range.
+        </p>
+
+        <% if @query.present? || @status.present? || @date_range.present? %>
+          <%= link_to "Clear all filters", account_bookings_path(tab: @tab),
+                      class: "mt-2 inline-flex items-center gap-2 rounded-xl border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50" %>
+        <% end %>
+      </div>
+    <% else %>
+      <!-- Desktop table -->
+      <div class="hidden overflow-x-auto lg:block">
+        <table class="min-w-full">
+          <thead class="bg-slate-50">
+          <tr>
+            <th
+              class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500"
+            >
+              Booking
+            </th>
+
+            <th
+              class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500"
+            >
+              Date and time
+            </th>
+
+            <th
+              class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500"
+            >
+              Business
+            </th>
+
+            <th
+              class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500"
+            >
+              Price
+            </th>
+
+            <th
+              class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500"
+            >
+              Status
+            </th>
+
+            <th class="px-6 py-4">
+                <span class="sr-only">
+                  Actions
+                </span>
+            </th>
+          </tr>
+          </thead>
+
+          <tbody class="divide-y divide-slate-100">
+          <% @bookings.each do |booking| %>
+            <%
+              status_classes =
+                case booking.status
+                when "confirmed"
+                  { badge: "bg-emerald-50 text-emerald-700", dot: "bg-emerald-500" }
+                when "pending"
+                  { badge: "bg-amber-50 text-amber-700", dot: "bg-amber-500" }
+                when "cancelled"
+                  { badge: "bg-rose-50 text-rose-700", dot: "bg-rose-500" }
+                when "completed"
+                  { badge: "bg-emerald-50 text-emerald-700", dot: "bg-emerald-500" }
+                else
+                  { badge: "bg-slate-100 text-slate-700", dot: "bg-slate-500" }
+                end
+            %>
+
+            <tr class="transition hover:bg-slate-50">
+              <td class="px-6 py-5">
+                <div class="flex items-center gap-3">
+                  <div
+                    class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600"
+                  >
+                    <i data-lucide="calendar-check-2" class="h-5 w-5"></i>
+                  </div>
+
+                  <div>
+                    <p class="font-semibold text-slate-900">
+                      <%= booking.service.name %>
+                    </p>
+
+                    <p class="mt-1 text-xs text-slate-500">
+                      #<%= booking.id %> · <%= booking.service.minutes_duration %> minutes
+                    </p>
+                  </div>
+                </div>
+              </td>
+
+              <td class="whitespace-nowrap px-6 py-5">
+                <p class="text-sm font-medium text-slate-900">
+                  <%= booking.date.strftime("%-d %B %Y") %>
+                </p>
+
+                <p class="mt-1 text-xs text-slate-500">
+                  <%= booking.time.strftime("%-I:%M %p") %>
+                </p>
+              </td>
+
+              <td class="whitespace-nowrap px-6 py-5">
+                <p class="text-sm font-medium text-slate-900">
+                  <%= booking.business.business_name %>
+                </p>
+
+                <p class="mt-1 text-xs text-slate-500">
+                  <%= booking.business.business_setting.town_or_city %>
+                </p>
+              </td>
+
+              <td class="whitespace-nowrap px-6 py-5">
+                <p class="text-sm font-semibold text-slate-900">
+                  <%= number_to_currency(booking.service.price, unit: "£") %>
+                </p>
+              </td>
+
+              <td class="whitespace-nowrap px-6 py-5">
+                <span class="capitalize inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold <%= status_classes[:badge] %>">
+                  <span class="h-1.5 w-1.5 rounded-full <%= status_classes[:dot] %>"></span>
+                  <%= booking.status %>
+                </span>
+              </td>
+
+              <td class="whitespace-nowrap px-6 py-5 text-right">
+                <button
+                  type="button"
+                  aria-label="Open booking options"
+                  class="rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
+                >
+                  <i data-lucide="ellipsis" class="h-5 w-5"></i>
+                </button>
+              </td>
+            </tr>
+          <% end %>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Mobile booking cards -->
+      <div class="divide-y divide-slate-100 lg:hidden">
+        <% @bookings.each do |booking| %>
+          <%
+            status_classes =
+              case booking.status
+              when "confirmed"
+                { badge: "bg-emerald-50 text-emerald-700" }
+              when "pending"
+                { badge: "bg-amber-50 text-amber-700" }
+              when "cancelled"
+                { badge: "bg-rose-50 text-rose-700" }
+              when "completed"
+                { badge: "bg-emerald-50 text-emerald-700" }
+              else
+                { badge: "bg-slate-100 text-slate-700" }
+              end
+          %>
+
+          <article class="p-5">
+            <div class="flex items-start justify-between gap-4">
+              <div class="flex items-start gap-3">
+                <div
+                  class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600"
+                >
+                  <i data-lucide="calendar-check-2" class="h-5 w-5"></i>
+                </div>
+
+                <div>
+                  <p class="font-semibold text-slate-900">
+                    <%= booking.service.name %>
+                  </p>
+
+                  <p class="mt-1 text-sm text-slate-500">
+                    <%= booking.business.business_name %>
+                  </p>
+                </div>
+              </div>
+
+              <span class="capitalize rounded-full px-2.5 py-1 text-xs font-semibold <%= status_classes[:badge] %>">
+                <%= booking.status %>
+              </span>
+            </div>
+
+            <div class="mt-4 grid grid-cols-2 gap-3">
+              <div class="rounded-xl bg-slate-50 p-3">
+                <p class="text-xs text-slate-500">
+                  Date
+                </p>
+
+                <p class="mt-1 text-sm font-semibold text-slate-900">
+                  <%= booking.date.strftime("%-d %B %Y") %>
+                </p>
+              </div>
+
+              <div class="rounded-xl bg-slate-50 p-3">
+                <p class="text-xs text-slate-500">
+                  Time
+                </p>
+
+                <p class="mt-1 text-sm font-semibold text-slate-900">
+                  <%= booking.time.strftime("%-I:%M %p") %>
+                </p>
+              </div>
+            </div>
+
+            <div
+              class="mt-4 flex items-center justify-between border-t border-slate-100 pt-4"
+            >
+              <p class="text-sm font-semibold text-slate-900">
+                <%= number_to_currency(booking.service.price, unit: "£") %>
+              </p>
+
+              <%= link_to '/',
+                          class: "inline-flex items-center gap-1 text-sm font-semibold text-indigo-600" do %>
+                View booking
+                <i data-lucide="arrow-right" class="h-4 w-4"></i>
+              <% end %>
+            </div>
+          </article>
+        <% end %>
+      </div>
+
+      <!-- Pagination -->
+      <div
+        class="flex flex-col gap-4 border-t border-slate-200 px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6"
+      >
+        <p class="text-sm text-slate-500">
+          Showing
+          <span class="font-semibold text-slate-900">
+            <%= @total_bookings.zero? ? 0 : ((@page - 1) * @per_page) + 1 %>
+          </span>
+          to
+          <span class="font-semibold text-slate-900">
+            <%= [@page * @per_page, @total_bookings].min %>
+          </span>
+          of
+          <span class="font-semibold text-slate-900"><%= @total_bookings %></span>
+          bookings
+        </p>
+
+        <div class="flex items-center gap-2">
+          <% if @page > 1 %>
+            <%= link_to account_bookings_path(page: @page - 1, tab: @tab, query: @query, status: @status, date_range: @date_range),
+                        class: "inline-flex items-center gap-1 rounded-lg border border-slate-200 px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50" do %>
+              <i data-lucide="chevron-left" class="h-4 w-4"></i>
+              Previous
+            <% end %>
+          <% else %>
+            <button
+              type="button"
+              disabled
+              class="inline-flex items-center gap-1 rounded-lg border border-slate-200 px-3 py-2 text-sm font-medium text-slate-400 disabled:cursor-not-allowed"
+            >
+              <i data-lucide="chevron-left" class="h-4 w-4"></i>
+              Previous
+            </button>
+          <% end %>
+
+          <% @total_pages.times do |i| %>
+            <% page_number = i + 1 %>
+            <%= link_to page_number, account_bookings_path(page: page_number, tab: @tab, query: @query, status: @status, date_range: @date_range),
+                        class: (page_number == @page ?
+                                  "flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-600 text-sm font-semibold text-white" :
+                                  "flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 text-sm font-semibold text-slate-700 transition hover:bg-slate-50") %>
+          <% end %>
+
+          <% if @page < @total_pages %>
+            <%= link_to account_bookings_path(page: @page + 1, tab: @tab, query: @query, status: @status, date_range: @date_range),
+                        class: "inline-flex items-center gap-1 rounded-lg border border-slate-200 px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50" do %>
+              Next
+              <i data-lucide="chevron-right" class="h-4 w-4"></i>
+            <% end %>
+          <% else %>
+            <button
+              type="button"
+              disabled
+              class="inline-flex items-center gap-1 rounded-lg border border-slate-200 px-3 py-2 text-sm font-medium text-slate-400 disabled:cursor-not-allowed"
+            >
+              Next
+              <i data-lucide="chevron-right" class="h-4 w-4"></i>
+            </button>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </section>
+</main>

@@ -1,0 +1,535 @@
+<!-- Customers content -->
+<main class="p-4 sm:p-6 lg:p-8">
+  <!-- Page heading -->
+  <section class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div>
+      <h2 class="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+        Customers
+      </h2>
+
+      <p class="mt-1 text-sm text-slate-500">
+        Manage customer details, appointments and booking history.
+      </p>
+    </div>
+
+    <button
+      type="button"
+      class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:w-auto"
+    >
+      <i data-lucide="user-plus" class="h-4 w-4"></i>
+      Add customer
+    </button>
+  </section>
+
+  <!-- Customer statistics -->
+  <section class="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+    <!-- Total customers -->
+    <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div class="flex items-start justify-between">
+        <div>
+          <p class="text-sm font-medium text-slate-500">
+            Total Customers
+          </p>
+
+          <p class="mt-2 text-3xl font-bold tracking-tight text-slate-900">
+            <%= @total_customers %>
+          </p>
+        </div>
+
+        <div class="rounded-xl bg-indigo-50 p-3 text-indigo-600">
+          <i data-lucide="users" class="h-5 w-5"></i>
+        </div>
+      </div>
+
+      <div class="mt-4 flex items-center gap-1 text-sm">
+        <i
+          data-lucide="trending-up"
+          class="h-4 w-4 text-emerald-600"
+        ></i>
+
+        <span class="font-medium text-emerald-600">
+          <%= @new_customers_this_month %> new
+        </span>
+
+        <span class="text-slate-500">
+          this month
+        </span>
+      </div>
+    </article>
+
+    <!-- Active customers -->
+    <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div class="flex items-start justify-between">
+        <div>
+          <p class="text-sm font-medium text-slate-500">
+            Active Customers
+          </p>
+
+          <p class="mt-2 text-3xl font-bold tracking-tight text-slate-900">
+            <%= @active_customers %>
+          </p>
+        </div>
+
+        <div class="rounded-xl bg-emerald-50 p-3 text-emerald-600">
+          <i data-lucide="user-check" class="h-5 w-5"></i>
+        </div>
+      </div>
+
+      <p class="mt-4 text-sm text-slate-500">
+        Booked within 90 days
+      </p>
+    </article>
+
+    <!-- New customers -->
+    <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div class="flex items-start justify-between">
+        <div>
+          <p class="text-sm font-medium text-slate-500">
+            New This Month
+          </p>
+
+          <p class="mt-2 text-3xl font-bold tracking-tight text-slate-900">
+            <%= @new_customers_this_month %>
+          </p>
+        </div>
+
+        <div class="rounded-xl bg-blue-50 p-3 text-blue-600">
+          <i data-lucide="user-plus" class="h-5 w-5"></i>
+        </div>
+      </div>
+
+      <p class="mt-4 text-sm text-slate-500">
+        First booking this month
+      </p>
+    </article>
+
+    <!-- Repeat customers -->
+    <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div class="flex items-start justify-between">
+        <div>
+          <p class="text-sm font-medium text-slate-500">
+            Repeat Customers
+          </p>
+
+          <p class="mt-2 text-3xl font-bold tracking-tight text-slate-900">
+            <%= @repeat_customer_percentage %>%
+          </p>
+        </div>
+
+        <div class="rounded-xl bg-violet-50 p-3 text-violet-600">
+          <i data-lucide="repeat-2" class="h-5 w-5"></i>
+        </div>
+      </div>
+
+      <p class="mt-4 text-sm text-slate-500">
+        Returning booking rate
+      </p>
+    </article>
+  </section>
+
+  <!-- Customers list -->
+  <section class="mt-8 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+    <!-- Toolbar -->
+    <div class="border-b border-slate-200 p-5 sm:p-6">
+      <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+        <div>
+          <h3 class="text-lg font-bold text-slate-900">
+            All customers
+          </h3>
+
+          <p class="mt-1 text-sm text-slate-500">
+            View customer contact details and recent activity.
+          </p>
+        </div>
+
+        <div class="flex flex-col gap-3 sm:flex-row">
+          <!-- Search -->
+          <div class="relative min-w-0 sm:w-72">
+            <i
+              data-lucide="search"
+              class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
+            ></i>
+
+            <input
+              type="search"
+              placeholder="Search customers..."
+              class="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-10 pr-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+              />
+          </div>
+
+          <!-- Filter -->
+          <button
+            type="button"
+            class="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+          >
+            <i data-lucide="sliders-horizontal" class="h-4 w-4"></i>
+            Filters
+          </button>
+
+          <!-- Export -->
+          <button
+            type="button"
+            class="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+          >
+            <i data-lucide="download" class="h-4 w-4"></i>
+            Export
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Desktop table -->
+    <div class="hidden overflow-x-auto lg:block">
+      <table class="min-w-full">
+        <thead class="bg-slate-50">
+        <tr>
+          <th
+            scope="col"
+            class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500"
+          >
+            Customer
+          </th>
+
+          <th
+            scope="col"
+            class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500"
+          >
+            Contact
+          </th>
+
+          <th
+            scope="col"
+            class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500"
+          >
+            Total Bookings
+          </th>
+
+          <th
+            scope="col"
+            class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500"
+          >
+            Last Booking
+          </th>
+
+          <th
+            scope="col"
+            class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500"
+          >
+            Total Spent
+          </th>
+
+          <th
+            scope="col"
+            class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500"
+          >
+            Status
+          </th>
+
+          <th scope="col" class="px-6 py-4">
+            <span class="sr-only">Actions</span>
+          </th>
+        </tr>
+        </thead>
+
+        <tbody class="divide-y divide-slate-100 bg-white">
+        <% @customers.each do |customer| %>
+          <% user = customer[:user] %>
+          <% first_booking = customer[:first_booking] %>
+          <% last_booking = customer[:last_booking] %>
+
+          <% first_name =
+               if user.respond_to?(:first_name) && user.first_name.present?
+                 user.first_name
+               else
+                 user.email.to_s.split("@").first.to_s.titleize
+               end
+          %>
+
+          <% last_name =
+               if user.respond_to?(:last_name)
+                 user.last_name.presence
+               end
+          %>
+
+          <% full_name = [first_name, last_name].compact.join(" ") %>
+
+          <% initials = [first_name, last_name]
+            .compact
+            .filter_map { |name| name.to_s.first }
+            .join
+            .upcase
+          %>
+
+          <% phone_number =
+               if user.respond_to?(:phone_number)
+                 user.phone_number
+               end
+          %>
+
+          <tr class="transition hover:bg-slate-50">
+            <td class="whitespace-nowrap px-6 py-4">
+              <div class="flex items-center gap-3">
+                <div
+                  class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-sm font-semibold text-indigo-700"
+                >
+                  <%= initials.presence || "CU" %>
+                </div>
+
+                <div>
+                  <p class="text-sm font-semibold text-slate-900">
+                    <%= full_name %>
+                  </p>
+
+                  <% if first_booking.present? %>
+                    <p class="mt-0.5 text-xs text-slate-500">
+                      Customer since
+                      <%= first_booking.date.strftime("%B %Y") %>
+                    </p>
+                  <% end %>
+                </div>
+              </div>
+            </td>
+
+            <td class="whitespace-nowrap px-6 py-4">
+              <p class="text-sm text-slate-900">
+                <%= user.email %>
+              </p>
+
+              <% if phone_number.present? %>
+                <p class="mt-0.5 text-xs text-slate-500">
+                  <%= phone_number %>
+                </p>
+              <% else %>
+                <p class="mt-0.5 text-xs text-slate-400">
+                  No phone number
+                </p>
+              <% end %>
+            </td>
+
+            <td class="whitespace-nowrap px-6 py-4">
+              <p class="text-sm font-semibold text-slate-900">
+                <%= customer[:total_bookings] %>
+              </p>
+            </td>
+
+            <td class="whitespace-nowrap px-6 py-4">
+              <% if last_booking.present? %>
+                <p class="text-sm font-medium text-slate-900">
+                  <%= last_booking.date.strftime("%-d %B %Y") %>
+                </p>
+
+                <% if last_booking.service.present? %>
+                  <p class="mt-0.5 text-xs text-slate-500">
+                    <%= last_booking.service.name %>
+                  </p>
+                <% end %>
+              <% else %>
+                <p class="text-sm text-slate-400">
+                  No bookings
+                </p>
+              <% end %>
+            </td>
+
+            <td class="whitespace-nowrap px-6 py-4">
+              <p class="text-sm font-semibold text-slate-900">
+                <%= number_to_currency(
+                      customer[:total_spent],
+                      unit: "£",
+                      precision: 2
+                    ) %>
+              </p>
+            </td>
+
+            <td class="whitespace-nowrap px-6 py-4">
+              <% if customer[:active] %>
+                  <span
+                    class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700"
+                  >
+                    <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
+                    Active
+                  </span>
+              <% else %>
+                  <span
+                    class="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-600"
+                  >
+                    <span class="h-1.5 w-1.5 rounded-full bg-slate-400"></span>
+                    Inactive
+                  </span>
+              <% end %>
+            </td>
+
+            <td class="whitespace-nowrap px-6 py-4 text-right">
+              <button
+                type="button"
+                aria-label="Open <%= full_name %> customer options"
+                class="rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
+              >
+                <i data-lucide="ellipsis" class="h-5 w-5"></i>
+              </button>
+            </td>
+          </tr>
+        <% end %>
+
+        <% if @customers.empty? %>
+          <tr>
+            <td colspan="7" class="px-6 py-16 text-center">
+              <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-slate-500">
+                <i data-lucide="users" class="h-6 w-6"></i>
+              </div>
+
+              <p class="mt-4 font-semibold text-slate-900">
+                No customers yet
+              </p>
+
+              <p class="mt-1 text-sm text-slate-500">
+                Customers will appear here after they make a booking.
+              </p>
+            </td>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Mobile customer cards -->
+    <div class="divide-y divide-slate-100 lg:hidden">
+      <% @customers.each do |customer| %>
+        <% user = customer[:user] %>
+        <% last_booking = customer[:last_booking] %>
+
+        <% first_name =
+             if user.respond_to?(:first_name) && user.first_name.present?
+               user.first_name
+             else
+               user.email.to_s.split("@").first.to_s.titleize
+             end
+        %>
+
+        <% last_name =
+             if user.respond_to?(:last_name)
+               user.last_name.presence
+             end
+        %>
+
+        <% full_name = [first_name, last_name].compact.join(" ") %>
+
+        <% initials = [first_name, last_name]
+          .compact
+          .filter_map { |name| name.to_s.first }
+          .join
+          .upcase
+        %>
+
+        <article class="p-5">
+          <div class="flex items-start justify-between gap-4">
+            <div class="flex min-w-0 items-center gap-3">
+              <div
+                class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-sm font-semibold text-indigo-700"
+              >
+                <%= initials.presence || "CU" %>
+              </div>
+
+              <div class="min-w-0">
+                <p class="truncate font-semibold text-slate-900">
+                  <%= full_name %>
+                </p>
+
+                <p class="mt-0.5 truncate text-sm text-slate-500">
+                  <%= user.email %>
+                </p>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              aria-label="Open <%= full_name %> customer options"
+              class="rounded-lg p-2 text-slate-400 hover:bg-slate-100"
+            >
+              <i data-lucide="ellipsis" class="h-5 w-5"></i>
+            </button>
+          </div>
+
+          <div class="mt-4 grid grid-cols-2 gap-3">
+            <div class="rounded-xl bg-slate-50 p-3">
+              <p class="text-xs font-medium text-slate-500">
+                Bookings
+              </p>
+
+              <p class="mt-1 text-sm font-semibold text-slate-900">
+                <%= customer[:total_bookings] %>
+              </p>
+            </div>
+
+            <div class="rounded-xl bg-slate-50 p-3">
+              <p class="text-xs font-medium text-slate-500">
+                Total spent
+              </p>
+
+              <p class="mt-1 text-sm font-semibold text-slate-900">
+                <%= number_to_currency(
+                      customer[:total_spent],
+                      unit: "£",
+                      precision: 2
+                    ) %>
+              </p>
+            </div>
+          </div>
+
+          <div class="mt-4 flex items-center justify-between gap-4">
+            <% if customer[:active] %>
+              <span
+                class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700"
+              >
+                <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
+                Active
+              </span>
+            <% else %>
+              <span
+                class="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-600"
+              >
+                <span class="h-1.5 w-1.5 rounded-full bg-slate-400"></span>
+                Inactive
+              </span>
+            <% end %>
+
+            <% if last_booking.present? %>
+              <p class="text-right text-xs text-slate-500">
+                Last booked
+                <%= last_booking.date.strftime("%-d %B") %>
+              </p>
+            <% end %>
+          </div>
+        </article>
+      <% end %>
+
+      <% if @customers.empty? %>
+        <div class="px-5 py-14 text-center">
+          <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-slate-500">
+            <i data-lucide="users" class="h-6 w-6"></i>
+          </div>
+
+          <p class="mt-4 font-semibold text-slate-900">
+            No customers yet
+          </p>
+
+          <p class="mt-1 text-sm text-slate-500">
+            Customers will appear here after they make a booking.
+          </p>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Customer count -->
+    <% if @customers.any? %>
+      <div class="border-t border-slate-200 px-5 py-4 sm:px-6">
+        <p class="text-sm text-slate-500">
+          Showing
+          <span class="font-semibold text-slate-900">
+            <%= @customers.count %>
+          </span>
+          <%= "customer".pluralize(@customers.count) %>
+        </p>
+      </div>
+    <% end %>
+  </section>
+</main>

@@ -1,0 +1,876 @@
+<!-- Settings content -->
+<!--
+  Field naming convention:
+  - user[...]              -> User model (first_name, last_name, email, password)
+  - customer_setting[...] -> CustomerSettings model (everything else)
+  Both are updated in one request by Account::SettingsController#update.
+-->
+<main class="p-4 sm:p-6 lg:p-8">
+  <!-- Page heading -->
+  <section
+    class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+  >
+    <div>
+      <h2 class="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+        Account Settings
+      </h2>
+
+      <p class="mt-1 text-sm text-slate-500">
+        Update your contact details, password and notification preferences.
+      </p>
+    </div>
+
+    <button
+      type="submit"
+      form="customerSettingsForm"
+      class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:w-auto"
+    >
+      <i data-lucide="save" class="h-4 w-4"></i>
+      Save changes
+    </button>
+  </section>
+
+  <% if current_user.errors.any? || @customer_settings.errors.any? %>
+    <div class="mt-6 rounded-xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">
+      <p class="font-semibold">There was a problem saving your changes:</p>
+      <ul class="mt-2 list-inside list-disc">
+        <% (current_user.errors.full_messages + @customer_settings.errors.full_messages).each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <!-- Profile summary -->
+  <section
+    class="mt-8 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"
+  >
+    <div class="bg-slate-950 px-5 py-6 text-white sm:px-6">
+      <div
+        class="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between"
+      >
+        <div class="flex items-center gap-4">
+          <div
+            class="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-indigo-500 text-xl font-bold text-white"
+          >
+            <%= current_user.first_name.first %><%= current_user.last_name.first %>
+          </div>
+
+          <div>
+            <h3 class="text-lg font-bold">
+              <%= current_user.first_name %> <%= current_user.last_name %>
+            </h3>
+
+            <p class="mt-1 text-sm text-slate-300">
+              <%= current_user.email %>
+            </p>
+
+            <p class="mt-1 text-xs text-slate-400">
+              Customer since <%= current_user.created_at.strftime("%B %Y") %>
+            </p>
+          </div>
+        </div>
+
+        <label
+          class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl bg-white/10 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-white/20"
+        >
+          <i data-lucide="camera" class="h-4 w-4"></i>
+          Change photo
+
+          <input
+            type="file"
+            name="user[profile_photo]"
+            accept="image/png,image/jpeg"
+            form="customerSettingsForm"
+            class="hidden"
+            />
+        </label>
+      </div>
+    </div>
+  </section>
+
+  <%= form_tag account_settings_path, method: :patch, id: "customerSettingsForm", multipart: true, class: "mt-8" do %>
+    <div class="grid gap-8 xl:grid-cols-[240px_minmax(0,1fr)]">
+      <!-- Settings navigation -->
+      <aside>
+        <nav
+          class="sticky top-28 rounded-2xl border border-slate-200 bg-white p-2 shadow-sm"
+        >
+          <a
+            href="#personal-details"
+            class="flex items-center gap-3 rounded-xl bg-indigo-50 px-4 py-3 text-sm font-semibold text-indigo-700"
+          >
+            <i data-lucide="user-round" class="h-5 w-5"></i>
+            Personal details
+          </a>
+
+          <a
+            href="#contact-details"
+            class="mt-1 flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-slate-900"
+          >
+            <i data-lucide="contact" class="h-5 w-5"></i>
+            Contact details
+          </a>
+
+          <a
+            href="#notifications"
+            class="mt-1 flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-slate-900"
+          >
+            <i data-lucide="bell" class="h-5 w-5"></i>
+            Notifications
+          </a>
+
+          <a
+            href="#security"
+            class="mt-1 flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-slate-900"
+          >
+            <i data-lucide="shield-check" class="h-5 w-5"></i>
+            Security
+          </a>
+
+          <a
+            href="#privacy"
+            class="mt-1 flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-slate-900"
+          >
+            <i data-lucide="lock-keyhole" class="h-5 w-5"></i>
+            Privacy
+          </a>
+        </nav>
+      </aside>
+
+      <!-- Settings panels -->
+      <div class="space-y-8">
+        <!-- Personal details -->
+        <section
+          id="personal-details"
+          class="scroll-mt-28 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"
+        >
+          <div class="border-b border-slate-200 px-5 py-5 sm:px-6">
+            <div class="flex items-start gap-3">
+              <div class="rounded-xl bg-indigo-50 p-3 text-indigo-600">
+                <i data-lucide="user-round" class="h-5 w-5"></i>
+              </div>
+
+              <div>
+                <h3 class="text-lg font-bold text-slate-900">
+                  Personal details
+                </h3>
+
+                <p class="mt-1 text-sm text-slate-500">
+                  Update the personal information linked to your account.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid gap-5 p-5 sm:grid-cols-2 sm:p-6">
+            <div>
+              <label
+                for="firstName"
+                class="mb-2 block text-sm font-semibold text-slate-700"
+              >
+                First name
+              </label>
+
+              <input
+                id="firstName"
+                type="text"
+                name="user[first_name]"
+                value="<%= current_user.first_name %>"
+                autocomplete="given-name"
+                class="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+                />
+            </div>
+
+            <div>
+              <label
+                for="lastName"
+                class="mb-2 block text-sm font-semibold text-slate-700"
+              >
+                Last name
+              </label>
+
+              <input
+                id="lastName"
+                type="text"
+                name="user[last_name]"
+                value="<%= current_user.last_name %>"
+                autocomplete="family-name"
+                class="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+                />
+            </div>
+
+            <div>
+              <label
+                for="dateOfBirth"
+                class="mb-2 block text-sm font-semibold text-slate-700"
+              >
+                Date of birth
+              </label>
+
+              <input
+                id="dateOfBirth"
+                type="date"
+                name="customer_setting[date_of_birth]"
+                value="<%= @customer_settings.date_of_birth %>"
+                class="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+                />
+            </div>
+
+            <div>
+              <label
+                for="preferredName"
+                class="mb-2 block text-sm font-semibold text-slate-700"
+              >
+                Preferred name
+                <span class="font-normal text-slate-400">
+                  (optional)
+                </span>
+              </label>
+
+              <input
+                id="preferredName"
+                type="text"
+                name="customer_setting[preferred_name]"
+                value="<%= @customer_settings.preferred_name %>"
+                class="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+                />
+            </div>
+          </div>
+        </section>
+
+        <!-- Contact details -->
+        <section
+          id="contact-details"
+          class="scroll-mt-28 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"
+        >
+          <div class="border-b border-slate-200 px-5 py-5 sm:px-6">
+            <div class="flex items-start gap-3">
+              <div class="rounded-xl bg-blue-50 p-3 text-blue-600">
+                <i data-lucide="contact" class="h-5 w-5"></i>
+              </div>
+
+              <div>
+                <h3 class="text-lg font-bold text-slate-900">
+                  Contact details
+                </h3>
+
+                <p class="mt-1 text-sm text-slate-500">
+                  These details may be used for booking confirmations and
+                  reminders.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid gap-5 p-5 sm:grid-cols-2 sm:p-6">
+            <div class="sm:col-span-2">
+              <label
+                for="emailAddress"
+                class="mb-2 block text-sm font-semibold text-slate-700"
+              >
+                Email address
+              </label>
+
+              <div class="relative">
+                <i
+                  data-lucide="mail"
+                  class="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
+                ></i>
+
+                <input
+                  id="emailAddress"
+                  type="email"
+                  name="user[email]"
+                  value="<%= current_user.email %>"
+                  autocomplete="email"
+                  class="w-full rounded-xl border border-slate-200 py-3 pl-11 pr-4 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+                  />
+              </div>
+
+              <div class="mt-2 flex items-center gap-2 text-xs text-emerald-700">
+                <i data-lucide="badge-check" class="h-4 w-4"></i>
+                Email address verified
+              </div>
+            </div>
+
+            <div>
+              <label
+                for="phoneNumber"
+                class="mb-2 block text-sm font-semibold text-slate-700"
+              >
+                Phone number
+              </label>
+
+              <div class="relative">
+                <i
+                  data-lucide="phone"
+                  class="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
+                ></i>
+
+                <input
+                  id="phoneNumber"
+                  type="tel"
+                  name="customer_setting[phone_number]"
+                  value="<%= @customer_settings.phone_number %>"
+                  autocomplete="tel"
+                  class="w-full rounded-xl border border-slate-200 py-3 pl-11 pr-4 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+                  />
+              </div>
+            </div>
+
+            <div>
+              <label
+                for="preferredContact"
+                class="mb-2 block text-sm font-semibold text-slate-700"
+              >
+                Preferred contact method
+              </label>
+
+              <select
+                id="preferredContact"
+                name="customer_setting[preferred_contact_method]"
+                class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+              >
+                <% ["Email", "SMS", "Phone call"].each do |option| %>
+                  <option value="<%= option %>" <%= "selected" if @customer_settings.preferred_contact_method == option %>><%= option %></option>
+                <% end %>
+              </select>
+            </div>
+          </div>
+        </section>
+
+        <!-- Address -->
+        <section
+          class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"
+        >
+          <div class="border-b border-slate-200 px-5 py-5 sm:px-6">
+            <div class="flex items-start gap-3">
+              <div class="rounded-xl bg-violet-50 p-3 text-violet-600">
+                <i data-lucide="map-pin" class="h-5 w-5"></i>
+              </div>
+
+              <div>
+                <h3 class="text-lg font-bold text-slate-900">
+                  Address
+                </h3>
+
+                <p class="mt-1 text-sm text-slate-500">
+                  Your address may be used for mobile or home-based services.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid gap-5 p-5 sm:grid-cols-2 sm:p-6">
+            <div class="sm:col-span-2">
+              <label
+                for="addressLineOne"
+                class="mb-2 block text-sm font-semibold text-slate-700"
+              >
+                Address line 1
+              </label>
+
+              <input
+                id="addressLineOne"
+                type="text"
+                name="customer_setting[address_line_1]"
+                value="<%= @customer_settings.address_line_1 %>"
+                autocomplete="address-line1"
+                class="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+                />
+            </div>
+
+            <div class="sm:col-span-2">
+              <label
+                for="addressLineTwo"
+                class="mb-2 block text-sm font-semibold text-slate-700"
+              >
+                Address line 2
+                <span class="font-normal text-slate-400">
+                  (optional)
+                </span>
+              </label>
+
+              <input
+                id="addressLineTwo"
+                type="text"
+                name="customer_setting[address_line_2]"
+                value="<%= @customer_settings.address_line_2 %>"
+                autocomplete="address-line2"
+                placeholder="Apartment, suite or unit"
+                class="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+                />
+            </div>
+
+            <div>
+              <label
+                for="townCity"
+                class="mb-2 block text-sm font-semibold text-slate-700"
+              >
+                Town or city
+              </label>
+
+              <input
+                id="townCity"
+                type="text"
+                name="customer_setting[town_or_city]"
+                value="<%= @customer_settings.town_or_city %>"
+                autocomplete="address-level2"
+                class="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+                />
+            </div>
+
+            <div>
+              <label
+                for="postcode"
+                class="mb-2 block text-sm font-semibold text-slate-700"
+              >
+                Postcode
+              </label>
+
+              <input
+                id="postcode"
+                type="text"
+                name="customer_setting[postcode]"
+                value="<%= @customer_settings.postcode %>"
+                autocomplete="postal-code"
+                class="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm uppercase text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+                />
+            </div>
+
+            <div class="sm:col-span-2">
+              <label
+                for="country"
+                class="mb-2 block text-sm font-semibold text-slate-700"
+              >
+                Country
+              </label>
+
+              <select
+                id="country"
+                name="customer_setting[country]"
+                autocomplete="country-name"
+                class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+              >
+                <% ["United Kingdom", "Ireland", "United States", "Canada", "Australia"].each do |option| %>
+                  <option value="<%= option %>" <%= "selected" if @customer_settings.country == option %>><%= option %></option>
+                <% end %>
+              </select>
+            </div>
+          </div>
+        </section>
+
+        <!-- Notification preferences -->
+        <section
+          id="notifications"
+          class="scroll-mt-28 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"
+        >
+          <div class="border-b border-slate-200 px-5 py-5 sm:px-6">
+            <div class="flex items-start gap-3">
+              <div class="rounded-xl bg-amber-50 p-3 text-amber-600">
+                <i data-lucide="bell" class="h-5 w-5"></i>
+              </div>
+
+              <div>
+                <h3 class="text-lg font-bold text-slate-900">
+                  Notification preferences
+                </h3>
+
+                <p class="mt-1 text-sm text-slate-500">
+                  Choose which booking updates you receive.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="divide-y divide-slate-100">
+            <div
+              class="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6"
+            >
+              <div>
+                <p class="font-semibold text-slate-900">
+                  Booking confirmations
+                </p>
+
+                <p class="mt-1 text-sm leading-6 text-slate-500">
+                  Receive confirmation when a new appointment is booked.
+                </p>
+              </div>
+
+              <label class="relative inline-flex cursor-pointer items-center">
+                <!-- Hidden fallback so an unchecked box still submits "0" -->
+                <input type="hidden" name="customer_setting[booking_confirmations]" value="0" />
+                <input
+                  type="checkbox"
+                  name="customer_setting[booking_confirmations]"
+                  value="1"
+                  class="peer sr-only"
+                  <%= "checked" if @customer_settings.booking_confirmations %>
+                  />
+
+                <span
+                  class="h-6 w-11 rounded-full bg-slate-200 transition peer-checked:bg-indigo-600 peer-focus:ring-2 peer-focus:ring-indigo-200 after:absolute after:left-1 after:top-1 after:h-4 after:w-4 after:rounded-full after:bg-white after:transition peer-checked:after:translate-x-5"
+                ></span>
+              </label>
+            </div>
+
+            <div
+              class="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6"
+            >
+              <div>
+                <p class="font-semibold text-slate-900">
+                  Appointment reminders
+                </p>
+
+                <p class="mt-1 text-sm leading-6 text-slate-500">
+                  Receive reminders before upcoming appointments.
+                </p>
+              </div>
+
+              <label class="relative inline-flex cursor-pointer items-center">
+                <input type="hidden" name="customer_setting[appointment_reminders]" value="0" />
+                <input
+                  type="checkbox"
+                  name="customer_setting[appointment_reminders]"
+                  value="1"
+                  class="peer sr-only"
+                  <%= "checked" if @customer_settings.appointment_reminders %>
+                  />
+
+                <span
+                  class="h-6 w-11 rounded-full bg-slate-200 transition peer-checked:bg-indigo-600 peer-focus:ring-2 peer-focus:ring-indigo-200 after:absolute after:left-1 after:top-1 after:h-4 after:w-4 after:rounded-full after:bg-white after:transition peer-checked:after:translate-x-5"
+                ></span>
+              </label>
+            </div>
+
+            <div
+              class="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6"
+            >
+              <div>
+                <p class="font-semibold text-slate-900">
+                  Booking changes
+                </p>
+
+                <p class="mt-1 text-sm leading-6 text-slate-500">
+                  Receive updates when an appointment is changed or
+                  cancelled.
+                </p>
+              </div>
+
+              <label class="relative inline-flex cursor-pointer items-center">
+                <input type="hidden" name="customer_setting[booking_changes]" value="0" />
+                <input
+                  type="checkbox"
+                  name="customer_setting[booking_changes]"
+                  value="1"
+                  class="peer sr-only"
+                  <%= "checked" if @customer_settings.booking_changes %>
+                  />
+
+                <span
+                  class="h-6 w-11 rounded-full bg-slate-200 transition peer-checked:bg-indigo-600 peer-focus:ring-2 peer-focus:ring-indigo-200 after:absolute after:left-1 after:top-1 after:h-4 after:w-4 after:rounded-full after:bg-white after:transition peer-checked:after:translate-x-5"
+                ></span>
+              </label>
+            </div>
+
+            <div
+              class="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6"
+            >
+              <div>
+                <p class="font-semibold text-slate-900">
+                  Offers and service updates
+                </p>
+
+                <p class="mt-1 text-sm leading-6 text-slate-500">
+                  Receive occasional updates from businesses you have booked
+                  with.
+                </p>
+              </div>
+
+              <label class="relative inline-flex cursor-pointer items-center">
+                <input type="hidden" name="customer_setting[offers_and_service_updates]" value="0" />
+                <input
+                  type="checkbox"
+                  name="customer_setting[offers_and_service_updates]"
+                  value="1"
+                  class="peer sr-only"
+                  <%= "checked" if @customer_settings.offers_and_service_updates %>
+                  />
+
+                <span
+                  class="h-6 w-11 rounded-full bg-slate-200 transition peer-checked:bg-indigo-600 peer-focus:ring-2 peer-focus:ring-indigo-200 after:absolute after:left-1 after:top-1 after:h-4 after:w-4 after:rounded-full after:bg-white after:transition peer-checked:after:translate-x-5"
+                ></span>
+              </label>
+            </div>
+
+            <div class="grid gap-5 p-5 sm:grid-cols-2 sm:p-6">
+              <div>
+                <label
+                  for="reminderTiming"
+                  class="mb-2 block text-sm font-semibold text-slate-700"
+                >
+                  Reminder timing
+                </label>
+
+                <select
+                  id="reminderTiming"
+                  name="customer_setting[reminder_timing]"
+                  class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+                >
+                  <% ["1 hour before", "2 hours before", "24 hours before", "48 hours before"].each do |option| %>
+                    <option value="<%= option %>" <%= "selected" if @customer_settings.reminder_timing == option %>><%= option %></option>
+                  <% end %>
+                </select>
+              </div>
+
+              <div>
+                <label
+                  for="notificationMethod"
+                  class="mb-2 block text-sm font-semibold text-slate-700"
+                >
+                  Reminder method
+                </label>
+
+                <select
+                  id="notificationMethod"
+                  name="customer_setting[reminder_method]"
+                  class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+                >
+                  <% ["Email and SMS", "Email only", "SMS only"].each do |option| %>
+                    <option value="<%= option %>" <%= "selected" if @customer_settings.reminder_method == option %>><%= option %></option>
+                  <% end %>
+                </select>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Security -->
+        <section
+          id="security"
+          class="scroll-mt-28 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"
+        >
+          <div class="border-b border-slate-200 px-5 py-5 sm:px-6">
+            <div class="flex items-start gap-3">
+              <div class="rounded-xl bg-emerald-50 p-3 text-emerald-600">
+                <i data-lucide="shield-check" class="h-5 w-5"></i>
+              </div>
+
+              <div>
+                <h3 class="text-lg font-bold text-slate-900">
+                  Security
+                </h3>
+
+                <p class="mt-1 text-sm text-slate-500">
+                  Keep your account secure by updating your password.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid gap-5 p-5 sm:p-6">
+            <div>
+              <label
+                for="currentPassword"
+                class="mb-2 block text-sm font-semibold text-slate-700"
+              >
+                Current password
+              </label>
+
+              <div class="relative">
+                <input
+                  id="currentPassword"
+                  type="password"
+                  name="user[current_password]"
+                  placeholder="Enter your current password"
+                  autocomplete="current-password"
+                  class="w-full rounded-xl border border-slate-200 py-3 pl-4 pr-12 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+                  />
+
+                <button
+                  type="button"
+                  aria-label="Show current password"
+                  class="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
+                >
+                  <i data-lucide="eye" class="h-4 w-4"></i>
+                </button>
+              </div>
+
+              <p class="mt-2 text-xs text-slate-500">
+                Only required if you're changing your password below.
+              </p>
+            </div>
+
+            <div class="grid gap-5 sm:grid-cols-2">
+              <div>
+                <label
+                  for="newPassword"
+                  class="mb-2 block text-sm font-semibold text-slate-700"
+                >
+                  New password
+                </label>
+
+                <div class="relative">
+                  <input
+                    id="newPassword"
+                    type="password"
+                    name="user[password]"
+                    placeholder="Enter a new password"
+                    autocomplete="new-password"
+                    class="w-full rounded-xl border border-slate-200 py-3 pl-4 pr-12 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+                    />
+
+                  <button
+                    type="button"
+                    aria-label="Show new password"
+                    class="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
+                  >
+                    <i data-lucide="eye" class="h-4 w-4"></i>
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <label
+                  for="confirmPassword"
+                  class="mb-2 block text-sm font-semibold text-slate-700"
+                >
+                  Confirm new password
+                </label>
+
+                <div class="relative">
+                  <input
+                    id="confirmPassword"
+                    type="password"
+                    name="user[password_confirmation]"
+                    placeholder="Repeat your new password"
+                    autocomplete="new-password"
+                    class="w-full rounded-xl border border-slate-200 py-3 pl-4 pr-12 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+                    />
+
+                  <button
+                    type="button"
+                    aria-label="Show confirmed password"
+                    class="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
+                  >
+                    <i data-lucide="eye" class="h-4 w-4"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div
+              class="rounded-xl border border-slate-200 bg-slate-50 p-4"
+            >
+              <p class="text-sm font-semibold text-slate-900">
+                Password requirements
+              </p>
+
+              <div class="mt-3 grid gap-2 text-sm text-slate-500 sm:grid-cols-2">
+                <span class="flex items-center gap-2">
+                  <i
+                    data-lucide="circle-check"
+                    class="h-4 w-4 text-emerald-500"
+                  ></i>
+                  At least 8 characters
+                </span>
+
+                <span class="flex items-center gap-2">
+                  <i
+                    data-lucide="circle-check"
+                    class="h-4 w-4 text-emerald-500"
+                  ></i>
+                  One uppercase letter
+                </span>
+
+                <span class="flex items-center gap-2">
+                  <i
+                    data-lucide="circle-check"
+                    class="h-4 w-4 text-emerald-500"
+                  ></i>
+                  One number
+                </span>
+
+                <span class="flex items-center gap-2">
+                  <i
+                    data-lucide="circle-check"
+                    class="h-4 w-4 text-emerald-500"
+                  ></i>
+                  One special character
+                </span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Danger zone -->
+        <section
+          class="overflow-hidden rounded-2xl border border-rose-200 bg-white shadow-sm"
+        >
+          <div class="border-b border-rose-100 bg-rose-50 px-5 py-5 sm:px-6">
+            <div class="flex items-start gap-3">
+              <div class="rounded-xl bg-white p-3 text-rose-600">
+                <i data-lucide="triangle-alert" class="h-5 w-5"></i>
+              </div>
+
+              <div>
+                <h3 class="text-lg font-bold text-rose-900">
+                  Danger zone
+                </h3>
+
+                <p class="mt-1 text-sm text-rose-700">
+                  These actions permanently affect your customer account.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6"
+          >
+            <div>
+              <p class="font-semibold text-slate-900">
+                Delete customer account
+              </p>
+
+              <p class="mt-1 max-w-2xl text-sm leading-6 text-slate-500">
+                Permanently delete your personal details and access to your
+                booking history. Upcoming appointments may need to be
+                cancelled first.
+              </p>
+            </div>
+
+            <button
+              type="button"
+              class="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl border border-rose-200 px-4 py-2.5 text-sm font-semibold text-rose-600 transition hover:bg-rose-50"
+            >
+              <i data-lucide="trash-2" class="h-4 w-4"></i>
+              Delete account
+            </button>
+          </div>
+        </section>
+
+        <!-- Bottom actions -->
+        <div
+          class="flex flex-col-reverse gap-3 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:flex-row sm:items-center sm:justify-end"
+        >
+          <button
+            type="reset"
+            class="inline-flex items-center justify-center rounded-xl border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+          >
+            Discard changes
+          </button>
+
+          <button
+            type="submit"
+            class="inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+          >
+            <i data-lucide="save" class="h-4 w-4"></i>
+            Save changes
+          </button>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</main>

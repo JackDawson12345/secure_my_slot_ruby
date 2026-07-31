@@ -1,0 +1,51 @@
+<%# app/views/business_portal/opening_hours/_break_fields.html.erb %>
+
+<div
+  class="rounded-xl border border-slate-200 bg-slate-50 p-4"
+  data-nested-form-target="item"
+>
+  <%= form.hidden_field :id if form.object.persisted? %>
+
+  <div class="flex flex-col gap-3 sm:flex-row sm:items-end">
+    <div class="flex-1">
+      <%= form.label(
+            :starts_at,
+            "Break starts",
+            class: "mb-1.5 block text-xs font-semibold text-slate-500"
+          ) %>
+
+      <%= form.time_field(
+            :starts_at,
+            class: "w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+          ) %>
+    </div>
+
+    <div class="flex-1">
+      <%= form.label(
+            :ends_at,
+            "Break ends",
+            class: "mb-1.5 block text-xs font-semibold text-slate-500"
+          ) %>
+
+      <%= form.time_field(
+            :ends_at,
+            class: "w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+          ) %>
+    </div>
+
+    <%= form.hidden_field(
+          :_destroy,
+          value: "0",
+          data: { nested_form_target: "destroyField" }
+        ) %>
+
+    <button
+      type="button"
+      aria-label="Remove break"
+      class="inline-flex h-11 items-center justify-center rounded-xl border border-slate-200 bg-white px-3 text-slate-400 transition hover:border-rose-200 hover:bg-rose-50 hover:text-rose-600"
+      data-action="nested-form#remove"
+    >
+      <i data-lucide="trash-2" class="h-4 w-4"></i>
+    </button>
+  </div>
+</div>

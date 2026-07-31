@@ -1,0 +1,2 @@
+module BusinessPortal::PaymentsHelper
+end

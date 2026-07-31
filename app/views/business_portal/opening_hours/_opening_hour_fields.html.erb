@@ -1,0 +1,127 @@
+<%# app/views/business_portal/opening_hours/_opening_hour_fields.html.erb %>
+
+<%
+  day = opening_hour.day_of_week
+  row_classes =
+    opening_hour.open? ? "" : "bg-slate-50"
+%>
+
+<div
+  class="p-5 sm:p-6 <%= row_classes %>"
+  data-opening-hours-target="day"
+>
+  <%= form.hidden_field :id %>
+  <%= form.hidden_field :day_of_week %>
+
+  <div class="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
+    <div class="flex items-center gap-3 lg:w-40">
+      <label class="relative inline-flex cursor-pointer items-center">
+        <%= form.check_box(
+              :open,
+              {
+                class: "peer sr-only",
+                data: {
+                  action: "change->opening-hours#toggleDay",
+                  opening_hours_target: "toggle"
+                }
+              },
+              "1",
+              "0"
+            ) %>
+
+        <span class="h-6 w-11 rounded-full bg-slate-300 transition peer-checked:bg-indigo-600 peer-focus:ring-2 peer-focus:ring-indigo-200 after:absolute after:left-1 after:top-1 after:h-4 after:w-4 after:rounded-full after:bg-white after:transition peer-checked:after:translate-x-5"></span>
+      </label>
+
+      <div>
+        <p class="font-semibold text-slate-900">
+          <%= opening_hour.day_name %>
+        </p>
+
+        <p
+          class="text-xs <%= opening_hour.open? ? "text-emerald-600" : "text-slate-500" %>"
+          data-opening-hours-target="status"
+        >
+          <%= opening_hour.open? ? "Open" : "Closed" %>
+        </p>
+      </div>
+    </div>
+
+    <div class="flex flex-1 flex-col gap-4">
+      <div
+        class="<%= opening_hour.open? ? "" : "hidden" %>"
+        data-opening-hours-target="fields"
+      >
+        <div class="grid gap-3 sm:grid-cols-[1fr_auto_1fr_auto]">
+          <div>
+            <%= form.label(
+                  :opens_at,
+                  "Opens",
+                  class: "mb-1.5 block text-xs font-semibold text-slate-500"
+                ) %>
+
+            <%= form.time_field(
+                  :opens_at,
+                  class: "w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+                ) %>
+          </div>
+
+          <div class="hidden items-end pb-3 text-slate-400 sm:flex">
+            to
+          </div>
+
+          <div>
+            <%= form.label(
+                  :closes_at,
+                  "Closes",
+                  class: "mb-1.5 block text-xs font-semibold text-slate-500"
+                ) %>
+
+            <%= form.time_field(
+                  :closes_at,
+                  class: "w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+                ) %>
+          </div>
+
+          <div class="flex items-end">
+            <button
+              type="button"
+              class="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 px-3 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 sm:w-auto"
+              data-action="nested-form#add"
+              data-nested-form-container-param="breaks-<%= form.index %>"
+              data-nested-form-template-param="break-template-<%= form.index %>"
+            >
+              <i data-lucide="plus" class="h-4 w-4"></i>
+              Break
+            </button>
+          </div>
+        </div>
+
+        <div
+          id="breaks-<%= form.index %>"
+          class="mt-4 space-y-3"
+        >
+          <%= form.fields_for :breaks do |break_form| %>
+            <%= render "break_fields", form: break_form %>
+          <% end %>
+        </div>
+
+        <template id="break-template-<%= form.index %>">
+          <%= form.fields_for(
+            :breaks,
+            BusinessOpeningHourBreak.new,
+            child_index: "NEW_RECORD"
+          ) do |break_form| %>
+            <%= render "break_fields", form: break_form %>
+          <% end %>
+        </template>
+      </div>
+
+      <div
+        class="<%= opening_hour.open? ? "hidden" : "" %> flex items-center justify-center rounded-xl border border-dashed border-slate-300 px-4 py-4 text-sm text-slate-500"
+        data-opening-hours-target="closedMessage"
+      >
+        No appointments available
+      </div>
+    </div>
+  </div>
+</div>

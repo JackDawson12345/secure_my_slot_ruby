@@ -1,0 +1,152 @@
+<%# app/views/business_portal/bookings/show.html.erb %>
+
+<main class="p-4 sm:p-6 lg:p-8">
+
+  <!-- Header -->
+  <div class="mb-8 flex items-center justify-between">
+    <div>
+      <div class="flex items-center gap-2 text-sm text-slate-500">
+        <%= link_to "Bookings", business_bookings_path, class: "hover:text-slate-700" %>
+        <i data-lucide="chevron-right" class="h-4 w-4"></i>
+        <span class="text-slate-700">Booking details</span>
+      </div>
+
+      <h1 class="mt-2 text-2xl font-bold tracking-tight sm:text-3xl">
+        <%= @booking.service&.name || "Booking" %>
+      </h1>
+
+      <p class="mt-1 text-sm text-slate-500">
+        <%= @booking.date.strftime("%A, %-d %B %Y") %> at <%= @booking.time.strftime("%-I:%M %P") %>
+      </p>
+    </div>
+
+    <%= link_to business_bookings_path,
+                class: "hidden items-center gap-2 rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 sm:inline-flex" do %>
+      <i data-lucide="arrow-left" class="h-4 w-4"></i>
+      Back to bookings
+    <% end %>
+  </div>
+
+  <div class="grid gap-6 xl:grid-cols-[1fr_340px]">
+
+    <div class="space-y-6">
+
+      <!-- Appointment -->
+      <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <div class="border-b border-slate-200 px-5 py-5 sm:px-6">
+          <h2 class="text-lg font-bold">Appointment</h2>
+        </div>
+
+        <div class="grid gap-5 p-5 sm:grid-cols-2 sm:px-6">
+          <div class="flex items-start gap-3">
+            <div class="rounded-lg bg-indigo-50 p-2 text-indigo-600">
+              <i data-lucide="briefcase-business" class="h-5 w-5"></i>
+            </div>
+            <div>
+              <p class="text-sm font-medium text-slate-500">Service</p>
+              <p class="font-semibold text-slate-900"><%= @booking.service&.name || "—" %></p>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-3">
+            <div class="rounded-lg bg-blue-50 p-2 text-blue-600">
+              <i data-lucide="clock-3" class="h-5 w-5"></i>
+            </div>
+            <div>
+              <p class="text-sm font-medium text-slate-500">Duration</p>
+              <p class="font-semibold text-slate-900">
+                <%= @booking.service&.minutes_duration ? "#{@booking.service.minutes_duration} minutes" : "—" %>
+              </p>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-3">
+            <div class="rounded-lg bg-violet-50 p-2 text-violet-600">
+              <i data-lucide="calendar-days" class="h-5 w-5"></i>
+            </div>
+            <div>
+              <p class="text-sm font-medium text-slate-500">Date</p>
+              <p class="font-semibold text-slate-900"><%= @booking.date.strftime("%-d %B %Y") %></p>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-3">
+            <div class="rounded-lg bg-emerald-50 p-2 text-emerald-600">
+              <i data-lucide="wallet-cards" class="h-5 w-5"></i>
+            </div>
+            <div>
+              <p class="text-sm font-medium text-slate-500">Price</p>
+              <p class="font-semibold text-slate-900">
+                <%= @booking.service ? number_to_currency(@booking.service.price, unit: "£") : "—" %>
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Customer -->
+      <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <div class="border-b border-slate-200 px-5 py-5 sm:px-6">
+          <h2 class="text-lg font-bold">Customer</h2>
+        </div>
+
+        <% user = @booking.user %>
+        <% customer_name = [user.first_name, user.last_name].compact.join(" ") %>
+        <% customer_name = user.email.split("@").first.titleize if customer_name.blank? %>
+        <% initials = [user.first_name, user.last_name].compact.filter_map { |n| n.first }.join.upcase %>
+        <% initials = customer_name.split.map { |n| n.first }.first(2).join.upcase if initials.blank? %>
+
+        <div class="flex items-center gap-4 p-5 sm:px-6">
+          <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-lg font-semibold text-indigo-700">
+            <%= initials %>
+          </div>
+
+          <div>
+            <p class="font-semibold text-slate-900"><%= customer_name %></p>
+            <p class="text-sm text-slate-500"><%= user.email %></p>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Status sidebar -->
+    <aside>
+      <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm xl:sticky xl:top-8">
+        <h2 class="text-lg font-bold">Status</h2>
+
+        <% status_classes =
+             case @booking.status
+             when "confirmed" then "bg-emerald-50 text-emerald-700"
+             when "pending" then "bg-amber-50 text-amber-700"
+             when "canceled", "cancelled" then "bg-rose-50 text-rose-700"
+             else "bg-slate-100 text-slate-600"
+             end
+        %>
+
+        <span class="mt-4 inline-flex rounded-full px-3 py-1.5 text-sm font-semibold <%= status_classes %>">
+          <%= @booking.status.titleize %>
+        </span>
+
+        <div class="mt-6 space-y-3 border-t border-slate-100 pt-5 text-sm">
+          <div class="flex justify-between">
+            <span class="text-slate-500">Booking ID</span>
+            <span class="font-semibold text-slate-900">#<%= @booking.id %></span>
+          </div>
+
+          <div class="flex justify-between">
+            <span class="text-slate-500">Created</span>
+            <span class="font-semibold text-slate-900"><%= @booking.created_at.strftime("%-d %b %Y") %></span>
+          </div>
+        </div>
+
+        <%= link_to business_bookings_path,
+                    class: "mt-6 flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-600 transition hover:bg-slate-50" do %>
+          <i data-lucide="arrow-left" class="h-4 w-4"></i>
+          Back to bookings
+        <% end %>
+      </div>
+    </aside>
+
+  </div>
+</main>

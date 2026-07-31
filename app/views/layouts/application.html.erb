@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= content_for(:title) || "Secure My Slot" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= yield :head %>
+
+    <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
+    <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
+
+    <link rel="icon" href="/icon.png" type="image/png">
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/icon.png">
+
+    <%# Includes all stylesheet files in app/assets/stylesheets %>
+    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+  </head>
+
+  <body class="bg-white text-slate-900 antialiased">
+
+    <!-- Announcement bar -->
+    <div class="bg-slate-950 px-4 py-2.5 text-center text-sm text-slate-200">
+      <p>
+        Start accepting online bookings today.
+
+        <a
+          href="#pricing"
+          class="ml-1 font-semibold text-white underline decoration-indigo-400 underline-offset-4 transition hover:text-indigo-300"
+        >
+          View our plans
+        </a>
+      </p>
+    </div>
+
+    <!-- Header -->
+    <header
+      class="sticky top-0 z-50 border-b border-slate-200 bg-white/90 backdrop-blur-xl"
+    >
+      <div
+        class="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8"
+      >
+        <!-- Logo -->
+        <a href="/" class="flex items-center gap-3">
+            <span
+              class="flex h-11 w-11 items-center justify-center rounded-2xl bg-indigo-600 text-white shadow-sm"
+            >
+              <i data-lucide="calendar-check-2" class="h-6 w-6"></i>
+            </span>
+
+          <span>
+              <span class="block text-lg font-bold tracking-tight text-slate-950">
+                SecureMySlot
+              </span>
+
+              <span class="block text-[11px] font-medium text-slate-500">
+                Bookings made simple
+              </span>
+            </span>
+        </a>
+
+        <!-- Desktop navigation -->
+        <nav class="hidden items-center gap-8 lg:flex">
+          <a
+            href="/#features"
+            class="text-sm font-semibold text-slate-600 transition hover:text-indigo-600"
+          >
+            Features
+          </a>
+
+          <a
+            href="/#businesses"
+            class="text-sm font-semibold text-slate-600 transition hover:text-indigo-600"
+          >
+            For Businesses
+          </a>
+
+          <a
+            href="/#customers"
+            class="text-sm font-semibold text-slate-600 transition hover:text-indigo-600"
+          >
+            For Customers
+          </a>
+
+          <a
+            href="/#pricing"
+            class="text-sm font-semibold text-slate-600 transition hover:text-indigo-600"
+          >
+            Pricing
+          </a>
+
+          <a
+            href="/#faq"
+            class="text-sm font-semibold text-slate-600 transition hover:text-indigo-600"
+          >
+            FAQ
+          </a>
+        </nav>
+
+        <!-- Desktop actions -->
+        <div class="hidden items-center gap-3 lg:flex">
+          <% if user_signed_in? %>
+            <% if current_user.role == "customer" %>
+              <%= link_to account_dashboard_path,
+                          class: "inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" do %>
+                My Account
+                <i data-lucide="arrow-right" class="h-4 w-4"></i>
+              <% end %>
+
+            <% elsif current_user.role == "business" %>
+              <%= link_to business_dashboard_path,
+                          class: "inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" do %>
+                Dashboard
+                <i data-lucide="arrow-right" class="h-4 w-4"></i>
+              <% end %>
+            <% end %>
+
+          <% else %>
+            <%= link_to "Sign in",
+                        new_user_session_path,
+                        class: "inline-flex items-center justify-center rounded-xl px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-100" %>
+
+            <%= link_to new_user_registration_path,
+                        class: "inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" do %>
+              Start free
+              <i data-lucide="arrow-right" class="h-4 w-4"></i>
+            <% end %>
+          <% end %>
+
+        </div>
+
+        <!-- Mobile menu button -->
+        <button
+          id="openMobileMenu"
+          type="button"
+          aria-label="Open navigation"
+          aria-expanded="false"
+          class="rounded-xl border border-slate-200 p-2.5 text-slate-700 transition hover:bg-slate-100 lg:hidden"
+        >
+          <i data-lucide="menu" class="h-5 w-5"></i>
+        </button>
+      </div>
+
+      <!-- Mobile navigation -->
+      <div
+        id="mobileMenu"
+        class="hidden border-t border-slate-200 bg-white px-4 py-5 lg:hidden"
+      >
+        <nav class="mx-auto max-w-7xl space-y-1">
+          <a
+            href="#features"
+            class="mobile-nav-link flex items-center rounded-xl px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-100"
+          >
+            Features
+          </a>
+
+          <a
+            href="#businesses"
+            class="mobile-nav-link flex items-center rounded-xl px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-100"
+          >
+            For Businesses
+          </a>
+
+          <a
+            href="#customers"
+            class="mobile-nav-link flex items-center rounded-xl px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-100"
+          >
+            For Customers
+          </a>
+
+          <a
+            href="#pricing"
+            class="mobile-nav-link flex items-center rounded-xl px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-100"
+          >
+            Pricing
+          </a>
+
+          <a
+            href="#faq"
+            class="mobile-nav-link flex items-center rounded-xl px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-100"
+          >
+            FAQ
+          </a>
+
+          <div class="grid gap-3 border-t border-slate-200 pt-4">
+            <a
+              href="#"
+              class="inline-flex items-center justify-center rounded-xl border border-slate-200 px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+            >
+              Sign in
+            </a>
+
+            <a
+              href="#"
+              class="inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-indigo-700"
+            >
+              Start free
+              <i data-lucide="arrow-right" class="h-4 w-4"></i>
+            </a>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <%= yield %>
+
+    <!-- Footer -->
+    <footer class="bg-slate-950 text-slate-300">
+      <div
+        class="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr] lg:px-8"
+      >
+        <div>
+          <a href="#" class="flex items-center gap-3">
+            <span
+              class="flex h-11 w-11 items-center justify-center rounded-2xl bg-indigo-600 text-white"
+            >
+              <i data-lucide="calendar-check-2" class="h-6 w-6"></i>
+            </span>
+
+            <span>
+              <span class="block text-lg font-bold text-white">
+                SecureMySlot
+              </span>
+
+              <span class="block text-[11px] text-slate-400">
+                Bookings made simple
+              </span>
+            </span>
+          </a>
+
+          <p class="mt-5 max-w-md text-sm leading-7 text-slate-400">
+            Online appointment booking software that helps businesses manage
+            their schedule and gives customers a simpler way to book.
+          </p>
+
+          <div class="mt-6 flex gap-3">
+            <a
+              href="#"
+              aria-label="Facebook"
+              class="flex h-10 w-10 items-center justify-center rounded-xl bg-white/5 text-slate-400 transition hover:bg-indigo-600 hover:text-white"
+            >
+              <i data-lucide="facebook" class="h-5 w-5"></i>
+            </a>
+
+            <a
+              href="#"
+              aria-label="Instagram"
+              class="flex h-10 w-10 items-center justify-center rounded-xl bg-white/5 text-slate-400 transition hover:bg-indigo-600 hover:text-white"
+            >
+              <i data-lucide="instagram" class="h-5 w-5"></i>
+            </a>
+
+            <a
+              href="#"
+              aria-label="LinkedIn"
+              class="flex h-10 w-10 items-center justify-center rounded-xl bg-white/5 text-slate-400 transition hover:bg-indigo-600 hover:text-white"
+            >
+              <i data-lucide="linkedin" class="h-5 w-5"></i>
+            </a>
+          </div>
+        </div>
+
+        <div>
+          <h3 class="font-bold text-white">
+            Product
+          </h3>
+
+          <ul class="mt-5 space-y-3 text-sm">
+            <li>
+              <a href="#features" class="transition hover:text-white">
+                Features
+              </a>
+            </li>
+
+            <li>
+              <a href="#pricing" class="transition hover:text-white">
+                Pricing
+              </a>
+            </li>
+
+            <li>
+              <a href="#businesses" class="transition hover:text-white">
+                For businesses
+              </a>
+            </li>
+
+            <li>
+              <a href="#customers" class="transition hover:text-white">
+                For customers
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <h3 class="font-bold text-white">
+            Company
+          </h3>
+
+          <ul class="mt-5 space-y-3 text-sm">
+            <li>
+              <a href="#" class="transition hover:text-white">
+                About us
+              </a>
+            </li>
+
+            <li>
+              <a href="#" class="transition hover:text-white">
+                Contact
+              </a>
+            </li>
+
+            <li>
+              <a href="#" class="transition hover:text-white">
+                Support
+              </a>
+            </li>
+
+            <li>
+              <a href="#faq" class="transition hover:text-white">
+                FAQ
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <h3 class="font-bold text-white">
+            Legal
+          </h3>
+
+          <ul class="mt-5 space-y-3 text-sm">
+            <li>
+              <a href="#" class="transition hover:text-white">
+                Privacy policy
+              </a>
+            </li>
+
+            <li>
+              <a href="#" class="transition hover:text-white">
+                Terms of service
+              </a>
+            </li>
+
+            <li>
+              <a href="#" class="transition hover:text-white">
+                Cookie policy
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="border-t border-white/10">
+        <div
+          class="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-6 text-sm text-slate-500 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8"
+        >
+          <p>
+            © 2026 SecureMySlot. All rights reserved.
+          </p>
+
+          <p class="flex items-center gap-2">
+            <i data-lucide="shield-check" class="h-4 w-4"></i>
+            Secure online booking software
+          </p>
+        </div>
+      </div>
+    </footer>
+    <script>
+        function initialiseHomepage() {
+            // Render all Lucide icons on the newly loaded page.
+            if (window.lucide) {
+                lucide.createIcons();
+            }
+
+            const mobileMenu = document.getElementById("mobileMenu");
+            const openMobileMenuButton =
+                document.getElementById("openMobileMenu");
+
+            // This page may not contain the homepage navigation.
+            if (mobileMenu && openMobileMenuButton) {
+                const mobileNavigationLinks =
+                    document.querySelectorAll(".mobile-nav-link");
+
+                openMobileMenuButton.addEventListener("click", toggleMobileMenu);
+
+                mobileNavigationLinks.forEach((link) => {
+                    link.addEventListener("click", closeMobileMenu);
+                });
+
+                function toggleMobileMenu() {
+                    const menuIsHidden =
+                        mobileMenu.classList.contains("hidden");
+
+                    mobileMenu.classList.toggle("hidden");
+
+                    openMobileMenuButton.setAttribute(
+                        "aria-expanded",
+                        menuIsHidden ? "true" : "false",
+                    );
+
+                    openMobileMenuButton.innerHTML = menuIsHidden
+                        ? '<i data-lucide="x" class="h-5 w-5"></i>'
+                        : '<i data-lucide="menu" class="h-5 w-5"></i>';
+
+                    lucide.createIcons();
+                }
+
+                function closeMobileMenu() {
+                    mobileMenu.classList.add("hidden");
+
+                    openMobileMenuButton.setAttribute(
+                        "aria-expanded",
+                        "false",
+                    );
+
+                    openMobileMenuButton.innerHTML =
+                        '<i data-lucide="menu" class="h-5 w-5"></i>';
+
+                    lucide.createIcons();
+                }
+            }
+
+            const faqButtons = document.querySelectorAll(".faq-button");
+
+            faqButtons.forEach((button) => {
+                button.addEventListener("click", () => {
+                    const faqItem = button.closest(".faq-item");
+                    const answer = faqItem?.querySelector(".faq-answer");
+                    const icon = faqItem?.querySelector(".faq-icon");
+
+                    if (!faqItem || !answer || !icon) return;
+
+                    const isExpanded =
+                        button.getAttribute("aria-expanded") === "true";
+
+                    button.setAttribute(
+                        "aria-expanded",
+                        isExpanded ? "false" : "true",
+                    );
+
+                    answer.classList.toggle("hidden", isExpanded);
+
+                    icon.outerHTML = isExpanded
+                        ? '<i data-lucide="plus" class="faq-icon h-5 w-5 shrink-0 text-slate-400"></i>'
+                        : '<i data-lucide="minus" class="faq-icon h-5 w-5 shrink-0 text-indigo-600"></i>';
+
+                    lucide.createIcons();
+                });
+            });
+        }
+
+        document.addEventListener("turbo:load", initialiseHomepage);
+    </script>
+  </body>
+</html>

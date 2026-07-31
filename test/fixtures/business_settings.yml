@@ -1,0 +1,43 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  business: one
+  business_name: MyString
+  business_category: MyString
+  phone_number: MyString
+  business_email: MyString
+  business_description: MyText
+  address_line_1: MyString
+  address_line_2: MyString
+  town_or_city: MyString
+  postcode: MyString
+  country: MyString
+  booking_page_live: false
+  automatically_confirm_bookings: false
+  allow_customer_cancellations: false
+  require_customer_phone_number: false
+  cancellation_notice_hours: 1
+  new_booking_notifications: false
+  cancellation_notifications: false
+  daily_appointment_summary: false
+
+two:
+  business: two
+  business_name: MyString
+  business_category: MyString
+  phone_number: MyString
+  business_email: MyString
+  business_description: MyText
+  address_line_1: MyString
+  address_line_2: MyString
+  town_or_city: MyString
+  postcode: MyString
+  country: MyString
+  booking_page_live: false
+  automatically_confirm_bookings: false
+  allow_customer_cancellations: false
+  require_customer_phone_number: false
+  cancellation_notice_hours: 1
+  new_booking_notifications: false
+  cancellation_notifications: false
+  daily_appointment_summary: false

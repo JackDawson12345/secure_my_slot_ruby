@@ -1,0 +1,99 @@
+<%= form_with model: service,
+              url: service.persisted? ? business_service_path(service) : business_services_path,
+              class: "space-y-6" do |form| %>
+
+  <% if service.errors.any? %>
+    <div class="rounded-xl border border-red-200 bg-red-50 p-4">
+      <div class="flex items-start gap-3">
+        <i data-lucide="circle-alert"
+           class="mt-0.5 h-5 w-5 shrink-0 text-red-600"></i>
+
+        <div>
+          <h3 class="font-semibold text-red-800">
+            Please correct the following:
+          </h3>
+
+          <ul class="mt-2 list-inside list-disc space-y-1 text-sm text-red-700">
+            <% service.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <div>
+    <%= form.label :name,
+                   "Service name",
+                   class: "block text-sm font-semibold text-slate-700" %>
+
+    <%= form.text_field :name,
+                        placeholder: "For example, Standard Appointment",
+                        autofocus: true,
+                        class: "mt-2 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" %>
+  </div>
+
+  <div>
+    <%= form.label :description,
+                   class: "block text-sm font-semibold text-slate-700" %>
+
+    <%= form.text_area :description,
+                       rows: 5,
+                       placeholder: "Describe what is included in this service...",
+                       class: "mt-2 w-full resize-y rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" %>
+  </div>
+
+  <div class="grid gap-5 sm:grid-cols-2">
+    <div>
+      <%= form.label :price,
+                     "Price (£)",
+                     class: "block text-sm font-semibold text-slate-700" %>
+
+      <%= form.number_field :price,
+                            min: 0,
+                            step: 0.01,
+                            placeholder: "0.00",
+                            class: "mt-2 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" %>
+    </div>
+
+    <div>
+      <%= form.label :minutes_duration,
+                     "Duration",
+                     class: "block text-sm font-semibold text-slate-700" %>
+
+      <%= form.number_field :minutes_duration,
+                            min: 5,
+                            step: 5,
+                            placeholder: "30",
+                            class: "mt-2 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" %>
+
+      <p class="mt-2 text-xs text-slate-500">
+        Enter the duration in minutes.
+      </p>
+    </div>
+  </div>
+
+  <div>
+    <%= form.label :status,
+                   class: "block text-sm font-semibold text-slate-700" %>
+
+    <%= form.select :status,
+                    Service::STATUSES.map { |status| [status.titleize, status] },
+                    {},
+                    class: "mt-2 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" %>
+
+    <p class="mt-2 text-xs text-slate-500">
+      Inactive services will not be available for new bookings.
+    </p>
+  </div>
+
+  <div class="flex flex-col-reverse gap-3 border-t border-slate-200 pt-6 sm:flex-row sm:justify-end">
+    <%= link_to "Cancel",
+                service.persisted? ? business_service_path(service) : business_services_path,
+                class: "inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50" %>
+
+    <%= form.submit service.persisted? ? "Update service" : "Create service",
+                    class: "inline-flex cursor-pointer items-center justify-center rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" %>
+  </div>
+<% end %>

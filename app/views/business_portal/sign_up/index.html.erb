@@ -1,0 +1,670 @@
+<main class="min-h-screen bg-slate-50">
+  <section class="relative overflow-hidden py-12 sm:py-16 lg:py-20">
+    <!-- Background decoration -->
+    <div
+      class="pointer-events-none absolute inset-x-0 top-0 h-[520px] bg-gradient-to-b from-indigo-50 via-slate-50 to-transparent"
+    ></div>
+
+    <div
+      class="pointer-events-none absolute -left-32 top-24 h-80 w-80 rounded-full bg-indigo-200/40 blur-3xl"
+    ></div>
+
+    <div
+      class="pointer-events-none absolute -right-32 top-16 h-80 w-80 rounded-full bg-violet-200/40 blur-3xl"
+    ></div>
+
+    <div
+      class="relative mx-auto grid max-w-7xl gap-10 px-4 sm:px-6 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:items-start lg:px-8"
+    >
+      <!-- Left content -->
+      <aside class="lg:sticky lg:top-28">
+        <span
+          class="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-white px-3 py-1.5 text-sm font-semibold text-indigo-700 shadow-sm"
+        >
+          <i data-lucide="briefcase-business" class="h-4 w-4"></i>
+          Business account
+        </span>
+
+        <h1
+          class="mt-6 text-4xl font-bold tracking-tight text-slate-950 sm:text-5xl"
+        >
+          Start taking bookings
+          <span class="text-indigo-600">online.</span>
+        </h1>
+
+        <p class="mt-5 max-w-xl text-lg leading-8 text-slate-600">
+          Create your SecureMySlot business account and get everything you need
+          to manage services, working hours, appointments and customers.
+        </p>
+
+        <!-- Benefits -->
+        <div class="mt-8 space-y-5">
+          <div class="flex items-start gap-4">
+            <span
+              class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo-100 text-indigo-600"
+            >
+              <i data-lucide="calendar-check-2" class="h-5 w-5"></i>
+            </span>
+
+            <div>
+              <h2 class="font-bold text-slate-900">
+                Your own booking page
+              </h2>
+
+              <p class="mt-1 text-sm leading-6 text-slate-600">
+                Give customers a dedicated link where they can view your
+                services and available appointment times.
+              </p>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-4">
+            <span
+              class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-violet-100 text-violet-600"
+            >
+              <i data-lucide="clock-3" class="h-5 w-5"></i>
+            </span>
+
+            <div>
+              <h2 class="font-bold text-slate-900">
+                Control your availability
+              </h2>
+
+              <p class="mt-1 text-sm leading-6 text-slate-600">
+                Set opening hours, breaks and closed days so customers only see
+                valid booking times.
+              </p>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-4">
+            <span
+              class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-100 text-emerald-600"
+            >
+              <i data-lucide="users-round" class="h-5 w-5"></i>
+            </span>
+
+            <div>
+              <h2 class="font-bold text-slate-900">
+                Manage customers and bookings
+              </h2>
+
+              <p class="mt-1 text-sm leading-6 text-slate-600">
+                Keep appointments, customer information and service details
+                organised from one dashboard.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Trust panel -->
+        <div
+          class="mt-8 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
+        >
+          <div class="flex items-start gap-3">
+            <span
+              class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-950 text-white"
+            >
+              <i data-lucide="shield-check" class="h-5 w-5"></i>
+            </span>
+
+            <div>
+              <p class="font-bold text-slate-900">
+                Simple and secure setup
+              </p>
+
+              <p class="mt-1 text-sm leading-6 text-slate-500">
+                Your account details are securely stored and can be updated
+                from your business dashboard.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <p class="mt-6 text-sm text-slate-500">
+          Already have a business account?
+
+          <%= link_to "Sign in",
+                      new_user_session_path,
+                      class: "font-semibold text-indigo-600 transition hover:text-indigo-700" %>
+        </p>
+      </aside>
+
+      <!-- Sign-up form -->
+      <div
+        class="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl shadow-slate-200/60"
+      >
+        <!-- Form header -->
+        <div class="border-b border-slate-200 px-5 py-6 sm:px-8">
+          <div class="flex items-start gap-4">
+            <span
+              class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-indigo-600 text-white"
+            >
+              <i data-lucide="user-plus" class="h-6 w-6"></i>
+            </span>
+
+            <div>
+              <h2 class="text-2xl font-bold tracking-tight text-slate-950">
+                Create your business account
+              </h2>
+
+              <p class="mt-1 text-sm leading-6 text-slate-500">
+                Enter your details below to set up your SecureMySlot account.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <%= form_with(
+              url: business_sign_up_path,
+              method: :post,
+              scope: :user,
+              local: true,
+              class: "divide-y divide-slate-200"
+            ) do |form| %>
+
+          <% errors = @user.errors.full_messages + @business.errors.full_messages %>
+
+          <% if errors.any? %>
+            <div class="m-5 rounded-xl border border-rose-200 bg-rose-50 p-4 sm:m-8">
+              <div class="flex items-start gap-3">
+                <i
+                  data-lucide="circle-alert"
+                  class="mt-0.5 h-5 w-5 shrink-0 text-rose-600"
+                ></i>
+
+                <div>
+                  <p class="text-sm font-bold text-rose-900">
+                    Please correct the following errors:
+                  </p>
+
+                  <ul class="mt-2 list-inside list-disc space-y-1 text-sm text-rose-700">
+                    <% errors.uniq.each do |error| %>
+                      <li><%= error %></li>
+                    <% end %>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          <% end %>
+
+          <!-- Personal details -->
+          <fieldset class="p-5 sm:p-8">
+            <div class="mb-6">
+              <legend class="text-lg font-bold text-slate-950">
+                Your details
+              </legend>
+
+              <p class="mt-1 text-sm text-slate-500">
+                Tell us who will manage this business account.
+              </p>
+            </div>
+
+            <div class="grid gap-5 sm:grid-cols-2">
+              <div>
+                <%= form.label :first_name,
+                               "First name",
+                               class: "mb-2 block text-sm font-semibold text-slate-700" %>
+
+                <%= form.text_field :first_name,
+                                    value: @user.first_name,
+                                    autocomplete: "given-name",
+                                    placeholder: "Enter your first name",
+                                    required: true,
+                                    class: "w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" %>
+              </div>
+
+              <div>
+                <%= form.label :last_name,
+                               "Last name",
+                               class: "mb-2 block text-sm font-semibold text-slate-700" %>
+
+                <%= form.text_field :last_name,
+                                    value: @user.last_name,
+                                    autocomplete: "family-name",
+                                    placeholder: "Enter your last name",
+                                    required: true,
+                                    class: "w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" %>
+              </div>
+
+              <div class="sm:col-span-2">
+                <%= form.label :email,
+                               "Email address",
+                               class: "mb-2 block text-sm font-semibold text-slate-700" %>
+
+                <div class="relative">
+                  <i
+                    data-lucide="mail"
+                    class="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
+                  ></i>
+
+                  <%= form.email_field :email,
+                                       value: @user.email,
+                                       autocomplete: "email",
+                                       placeholder: "you@example.com",
+                                       required: true,
+                                       class: "w-full rounded-xl border border-slate-200 py-3 pl-11 pr-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" %>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+
+          <!-- Business details -->
+          <fieldset class="p-5 sm:p-8">
+            <div class="mb-6">
+              <legend class="text-lg font-bold text-slate-950">
+                Business details
+              </legend>
+
+              <p class="mt-1 text-sm text-slate-500">
+                This information will be shown on your public booking page.
+              </p>
+            </div>
+
+            <div class="grid gap-5 sm:grid-cols-2">
+              <div class="sm:col-span-2">
+                <%= label_tag "user_business_attributes_business_name",
+                              "Business name",
+                              class: "mb-2 block text-sm font-semibold text-slate-700" %>
+
+                <div class="relative">
+                  <i
+                    data-lucide="store"
+                    class="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
+                  ></i>
+
+                  <%= text_field_tag "user[business_attributes][business_name]",
+                                     @business.business_name,
+                                     id: "user_business_attributes_business_name",
+                                     autocomplete: "organization",
+                                     placeholder: "Enter your business name",
+                                     required: true,
+                                     class: "w-full rounded-xl border border-slate-200 py-3 pl-11 pr-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" %>
+                </div>
+              </div>
+
+              <div class="sm:col-span-2">
+                <%= label_tag "user_business_attributes_domain_name",
+                              "Booking page address",
+                              class: "mb-2 block text-sm font-semibold text-slate-700" %>
+
+                <div
+                  class="flex overflow-hidden rounded-xl border border-slate-200 transition focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-100"
+                >
+                  <%= text_field_tag "user[business_attributes][domain_name]",
+                                     @business.page_address,
+                                     id: "user_business_attributes_domain_name",
+                                     placeholder: "your-business",
+                                     required: true,
+                                     pattern: "[a-z0-9-]+",
+                                     autocomplete: "off",
+                                     class: "min-w-0 flex-1 border-0 px-4 py-3 text-sm text-slate-900 outline-none placeholder:text-slate-400" %>
+
+                  <span
+                    class="flex items-center border-l border-slate-200 bg-slate-50 px-3 text-xs font-medium text-slate-500 sm:text-sm"
+                  >
+                    .securemyslot.co.uk
+                  </span>
+                </div>
+
+                <p class="mt-2 text-xs leading-5 text-slate-500">
+                  Use lowercase letters, numbers and hyphens only.
+                </p>
+              </div>
+
+              <div>
+                <%= label_tag "user_business_attributes_category",
+                              "Business category",
+                              class: "mb-2 block text-sm font-semibold text-slate-700" %>
+
+                <%= select_tag "user[business_attributes][category]",
+                               options_for_select(
+                                 [
+                                   ["Select a category", ""],
+                                   ["Barber", "barber"],
+                                   ["Hairdresser", "hairdresser"],
+                                   ["Beauty and Nails", "beauty_and_nails"],
+                                   ["Personal Trainer", "personal_trainer"],
+                                   ["Coach", "coach"],
+                                   ["Tutor", "tutor"],
+                                   ["Consultant", "consultant"],
+                                   ["Therapist", "therapist"],
+                                   ["Massage Professional", "massage_professional"],
+                                   ["Photographer", "photographer"],
+                                   ["Cleaner", "cleaner"],
+                                   ["Tradesperson", "tradesperson"],
+                                   ["Mobile Service", "mobile_service"],
+                                   ["Repair Service", "repair_service"],
+                                   ["Other", "other"]
+                                 ],
+                                 @business.category
+                               ),
+                               id: "user_business_attributes_category",
+                               required: true,
+                               class: "w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" %>
+              </div>
+
+              <div>
+                <%= label_tag "user_business_attributes_phone_number",
+                              "Business phone number",
+                              class: "mb-2 block text-sm font-semibold text-slate-700" %>
+
+                <div class="relative">
+                  <i
+                    data-lucide="phone"
+                    class="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
+                  ></i>
+
+                  <%= telephone_field_tag "user[business_attributes][phone_number]",
+                                          @business.phone_number,
+                                          id: "user_business_attributes_phone_number",
+                                          autocomplete: "tel",
+                                          placeholder: "Enter a phone number",
+                                          required: true,
+                                          class: "w-full rounded-xl border border-slate-200 py-3 pl-11 pr-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" %>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+
+          <!-- Business address -->
+          <fieldset class="p-5 sm:p-8">
+            <div class="mb-6">
+              <legend class="text-lg font-bold text-slate-950">
+                Business address
+              </legend>
+
+              <p class="mt-1 text-sm text-slate-500">
+                Add the main address associated with your business.
+              </p>
+            </div>
+
+            <div class="grid gap-5 sm:grid-cols-2">
+              <div class="sm:col-span-2">
+                <%= label_tag "user_business_attributes_line_1",
+                              "Address line 1",
+                              class: "mb-2 block text-sm font-semibold text-slate-700" %>
+
+                <%= text_field_tag "user[business_attributes][line_1]",
+                                   @business.line_1,
+                                   id: "user_business_attributes_line_1",
+                                   autocomplete: "address-line1",
+                                   placeholder: "Building number and street",
+                                   required: true,
+                                   class: "w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" %>
+              </div>
+
+              <div class="sm:col-span-2">
+                <%= label_tag "user_business_attributes_line_2",
+                              class: "mb-2 block text-sm font-semibold text-slate-700" do %>
+                  Address line 2
+                  <span class="font-normal text-slate-400">
+                    (optional)
+                  </span>
+                <% end %>
+
+                <%= text_field_tag "user[business_attributes][line_2]",
+                                   @business.line_2,
+                                   id: "user_business_attributes_line_2",
+                                   autocomplete: "address-line2",
+                                   placeholder: "Unit, suite or additional address",
+                                   class: "w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" %>
+              </div>
+
+              <div>
+                <%= label_tag "user_business_attributes_city",
+                              "Town or city",
+                              class: "mb-2 block text-sm font-semibold text-slate-700" %>
+
+                <%= text_field_tag "user[business_attributes][city]",
+                                   @business.city,
+                                   id: "user_business_attributes_city",
+                                   autocomplete: "address-level2",
+                                   placeholder: "Enter your town or city",
+                                   required: true,
+                                   class: "w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" %>
+              </div>
+
+              <div>
+                <%= label_tag "user_business_attributes_postcode",
+                              "Postcode",
+                              class: "mb-2 block text-sm font-semibold text-slate-700" %>
+
+                <%= text_field_tag "user[business_attributes][postcode]",
+                                   @business.postcode,
+                                   id: "user_business_attributes_postcode",
+                                   autocomplete: "postal-code",
+                                   placeholder: "Enter your postcode",
+                                   required: true,
+                                   class: "w-full rounded-xl border border-slate-200 px-4 py-3 text-sm uppercase text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" %>
+              </div>
+
+              <div class="sm:col-span-2">
+                <%= label_tag "user_business_attributes_country",
+                              "Country",
+                              class: "mb-2 block text-sm font-semibold text-slate-700" %>
+
+                <%= select_tag "user[business_attributes][country]",
+                               options_for_select(
+                                 [
+                                   ["United Kingdom", "United Kingdom"],
+                                   ["Ireland", "Ireland"]
+                                 ],
+                                 @business.country.presence || "United Kingdom"
+                               ),
+                               id: "user_business_attributes_country",
+                               autocomplete: "country-name",
+                               required: true,
+                               class: "w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" %>
+              </div>
+            </div>
+          </fieldset>
+
+          <!-- Password -->
+          <fieldset class="p-5 sm:p-8">
+            <div class="mb-6">
+              <legend class="text-lg font-bold text-slate-950">
+                Create a password
+              </legend>
+
+              <p class="mt-1 text-sm text-slate-500">
+                Choose a secure password for your business account.
+              </p>
+            </div>
+
+            <div class="grid gap-5 sm:grid-cols-2">
+              <div>
+                <%= form.label :password,
+                               "Password",
+                               class: "mb-2 block text-sm font-semibold text-slate-700" %>
+
+                <div class="relative">
+                  <%= form.password_field :password,
+                                          autocomplete: "new-password",
+                                          placeholder: "Create a password",
+                                          minlength: 8,
+                                          required: true,
+                                          class: "w-full rounded-xl border border-slate-200 py-3 pl-4 pr-12 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" %>
+
+                  <button
+                    type="button"
+                    data-password-toggle="user_password"
+                    aria-label="Show password"
+                    class="password-toggle absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
+                  >
+                    <i data-lucide="eye" class="h-4 w-4"></i>
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <%= form.label :password_confirmation,
+                               "Confirm password",
+                               class: "mb-2 block text-sm font-semibold text-slate-700" %>
+
+                <div class="relative">
+                  <%= form.password_field :password_confirmation,
+                                          autocomplete: "new-password",
+                                          placeholder: "Repeat your password",
+                                          minlength: 8,
+                                          required: true,
+                                          class: "w-full rounded-xl border border-slate-200 py-3 pl-4 pr-12 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" %>
+
+                  <button
+                    type="button"
+                    data-password-toggle="user_password_confirmation"
+                    aria-label="Show password confirmation"
+                    class="password-toggle absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
+                  >
+                    <i data-lucide="eye" class="h-4 w-4"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div
+              class="mt-5 rounded-xl border border-slate-200 bg-slate-50 p-4"
+            >
+              <p class="text-sm font-semibold text-slate-900">
+                Your password should include:
+              </p>
+
+              <div
+                class="mt-3 grid gap-2 text-sm text-slate-500 sm:grid-cols-2"
+              >
+                <span class="flex items-center gap-2">
+                  <i
+                    data-lucide="circle-check"
+                    class="h-4 w-4 text-emerald-500"
+                  ></i>
+                  At least 8 characters
+                </span>
+
+                <span class="flex items-center gap-2">
+                  <i
+                    data-lucide="circle-check"
+                    class="h-4 w-4 text-emerald-500"
+                  ></i>
+                  One uppercase letter
+                </span>
+
+                <span class="flex items-center gap-2">
+                  <i
+                    data-lucide="circle-check"
+                    class="h-4 w-4 text-emerald-500"
+                  ></i>
+                  One number
+                </span>
+
+                <span class="flex items-center gap-2">
+                  <i
+                    data-lucide="circle-check"
+                    class="h-4 w-4 text-emerald-500"
+                  ></i>
+                  One special character
+                </span>
+              </div>
+            </div>
+          </fieldset>
+
+          <!-- Terms and submit -->
+          <div class="p-5 sm:p-8">
+            <label class="flex cursor-pointer items-start gap-3">
+              <%= check_box_tag "user[terms_accepted]",
+                                "1",
+                                params.dig(:user, :terms_accepted) == "1",
+                                required: true,
+                                class: "mt-1 h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" %>
+
+              <span class="text-sm leading-6 text-slate-600">
+                I agree to the
+
+                <a
+                  href="#"
+                  class="font-semibold text-indigo-600 transition hover:text-indigo-700"
+                >
+                  Terms of Service
+                </a>
+
+                and
+
+                <a
+                  href="#"
+                  class="font-semibold text-indigo-600 transition hover:text-indigo-700"
+                >
+                  Privacy Policy
+                </a>.
+              </span>
+            </label>
+
+            <label class="mt-4 flex cursor-pointer items-start gap-3">
+              <%= check_box_tag "user[marketing_consent]",
+                                "1",
+                                params.dig(:user, :marketing_consent) == "1",
+                                class: "mt-1 h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" %>
+
+              <span class="text-sm leading-6 text-slate-600">
+                Send me occasional product updates, booking tips and platform
+                news.
+              </span>
+            </label>
+
+            <%= form.button type: :submit,
+                            class: "mt-7 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 px-6 py-3.5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" do %>
+              Create business account
+              <i data-lucide="arrow-right" class="h-4 w-4"></i>
+            <% end %>
+
+            <p class="mt-5 text-center text-sm text-slate-500">
+              Already registered?
+
+              <%= link_to "Sign in to your account",
+                          new_user_session_path,
+                          class: "font-semibold text-indigo-600 transition hover:text-indigo-700" %>
+            </p>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+    function initialiseBusinessSignUp() {
+        if (window.lucide) {
+            lucide.createIcons();
+        }
+
+        document.querySelectorAll("[data-password-toggle]").forEach((button) => {
+            if (button.dataset.initialised === "true") return;
+
+            button.dataset.initialised = "true";
+
+            button.addEventListener("click", () => {
+                const inputId = button.dataset.passwordToggle;
+                const input = document.getElementById(inputId);
+
+                if (!input) return;
+
+                const showingPassword = input.type === "text";
+
+                input.type = showingPassword ? "password" : "text";
+                button.setAttribute(
+                    "aria-label",
+                    showingPassword ? "Show password" : "Hide password"
+                );
+
+                button.innerHTML = showingPassword
+                    ? '<i data-lucide="eye" class="h-4 w-4"></i>'
+                    : '<i data-lucide="eye-off" class="h-4 w-4"></i>';
+
+                if (window.lucide) {
+                    lucide.createIcons();
+                }
+            });
+        });
+    }
+
+    document.addEventListener("DOMContentLoaded", initialiseBusinessSignUp);
+    document.addEventListener("turbo:load", initialiseBusinessSignUp);
+</script>

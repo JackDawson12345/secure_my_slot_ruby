@@ -1,0 +1,2012 @@
+<main>
+  <!-- Hero -->
+  <section class="relative overflow-hidden bg-slate-50">
+    <!-- Decorative backgrounds -->
+    <div
+      class="pointer-events-none absolute inset-x-0 top-0 -z-0 h-[600px] bg-gradient-to-b from-indigo-50 via-slate-50 to-transparent"
+    ></div>
+
+    <div
+      class="pointer-events-none absolute -left-40 top-28 h-96 w-96 rounded-full bg-indigo-200/40 blur-3xl"
+    ></div>
+
+    <div
+      class="pointer-events-none absolute -right-40 top-10 h-96 w-96 rounded-full bg-violet-200/40 blur-3xl"
+    ></div>
+
+    <div
+      class="relative mx-auto grid max-w-7xl items-center gap-14 px-4 py-20 sm:px-6 sm:py-24 lg:grid-cols-2 lg:px-8 lg:py-28"
+    >
+      <!-- Hero content -->
+      <div>
+        <div
+          class="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-white px-3 py-1.5 text-sm font-semibold text-indigo-700 shadow-sm"
+        >
+              <span class="relative flex h-2 w-2">
+                <span
+                  class="absolute inline-flex h-full w-full animate-ping rounded-full bg-indigo-400 opacity-75"
+                ></span>
+
+                <span
+                  class="relative inline-flex h-2 w-2 rounded-full bg-indigo-600"
+                ></span>
+              </span>
+
+          Online booking for modern businesses
+        </div>
+
+        <h1
+          class="mt-6 max-w-3xl text-4xl font-bold tracking-tight text-slate-950 sm:text-5xl lg:text-6xl lg:leading-[1.08]"
+        >
+          Make booking appointments
+
+          <span class="text-indigo-600">
+                simple for everyone.
+              </span>
+        </h1>
+
+        <p
+          class="mt-6 max-w-2xl text-lg leading-8 text-slate-600"
+        >
+          SecureMySlot gives businesses everything they need to manage
+          services, availability, customers and appointments while giving
+          customers a quick and convenient way to book online.
+        </p>
+
+        <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+
+          <%= link_to business_sign_up_path, class: 'inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-6 py-3.5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2' do %>
+            Create your business account
+            <i data-lucide="arrow-right" class="h-4 w-4"></i>
+          <% end %>
+
+          <a
+            href="#businesses"
+            class="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-6 py-3.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-400 hover:bg-slate-50"
+          >
+            <i data-lucide="circle-play" class="h-4 w-4"></i>
+            See how it works
+          </a>
+        </div>
+
+        <div
+          class="mt-8 flex flex-col gap-3 text-sm text-slate-600 sm:flex-row sm:items-center sm:gap-6"
+        >
+              <span class="flex items-center gap-2">
+                <i
+                  data-lucide="circle-check"
+                  class="h-4 w-4 text-emerald-500"
+                ></i>
+                No setup fee
+              </span>
+
+          <span class="flex items-center gap-2">
+                <i
+                  data-lucide="circle-check"
+                  class="h-4 w-4 text-emerald-500"
+                ></i>
+                Easy to configure
+              </span>
+
+          <span class="flex items-center gap-2">
+                <i
+                  data-lucide="circle-check"
+                  class="h-4 w-4 text-emerald-500"
+                ></i>
+                Cancel at any time
+              </span>
+        </div>
+      </div>
+
+      <!-- Dashboard preview -->
+      <div class="relative">
+        <div
+          class="absolute -inset-6 rounded-[2.5rem] bg-gradient-to-br from-indigo-200/60 to-violet-200/40 blur-2xl"
+        ></div>
+
+        <div
+          class="relative overflow-hidden rounded-3xl border border-white/80 bg-white p-3 shadow-soft"
+        >
+          <!-- Browser bar -->
+          <div
+            class="flex items-center justify-between rounded-2xl rounded-bl-none bg-slate-950 px-4 py-3 text-white"
+          >
+            <div class="flex items-center gap-2">
+              <span class="h-2.5 w-2.5 rounded-full bg-rose-400"></span>
+              <span class="h-2.5 w-2.5 rounded-full bg-amber-400"></span>
+              <span class="h-2.5 w-2.5 rounded-full bg-emerald-400"></span>
+            </div>
+
+            <div
+              class="hidden rounded-lg bg-white/10 px-12 py-1.5 text-[10px] text-slate-300 sm:block"
+            >
+              app.securemyslot.co.uk
+            </div>
+
+            <i data-lucide="shield-check" class="h-4 w-4 text-indigo-300"></i>
+          </div>
+
+          <div class="grid min-h-[440px] grid-cols-[72px_1fr]">
+            <!-- Preview sidebar -->
+            <aside class="bg-slate-950 px-3 py-5">
+              <div
+                class="mx-auto flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-600 text-white"
+              >
+                <i data-lucide="calendar-check-2" class="h-5 w-5"></i>
+              </div>
+
+              <div class="mt-8 space-y-3">
+                    <span
+                      class="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 text-white"
+                    >
+                      <i data-lucide="layout-dashboard" class="h-4 w-4"></i>
+                    </span>
+
+                <span
+                  class="flex h-10 w-10 items-center justify-center rounded-xl text-slate-500"
+                >
+                      <i data-lucide="calendar-days" class="h-4 w-4"></i>
+                    </span>
+
+                <span
+                  class="flex h-10 w-10 items-center justify-center rounded-xl text-slate-500"
+                >
+                      <i data-lucide="users" class="h-4 w-4"></i>
+                    </span>
+
+                <span
+                  class="flex h-10 w-10 items-center justify-center rounded-xl text-slate-500"
+                >
+                      <i data-lucide="briefcase-business" class="h-4 w-4"></i>
+                    </span>
+              </div>
+            </aside>
+
+            <!-- Preview dashboard -->
+            <div class="bg-slate-50 p-4 sm:p-5">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-xs text-slate-500">
+                    Business dashboard
+                  </p>
+
+                  <p class="mt-1 font-bold text-slate-900">
+                    Welcome back, Olivia
+                  </p>
+                </div>
+
+                <span
+                  class="flex h-9 w-9 items-center justify-center rounded-full bg-indigo-100 text-xs font-bold text-indigo-700"
+                >
+                      OT
+                    </span>
+              </div>
+
+              <div class="mt-5 grid grid-cols-2 gap-3">
+                <div
+                  class="rounded-xl border border-slate-200 bg-white p-3 shadow-sm"
+                >
+                  <div class="flex items-center justify-between">
+                    <p class="text-[10px] font-medium text-slate-500">
+                      Today's bookings
+                    </p>
+
+                    <i
+                      data-lucide="calendar-days"
+                      class="h-3.5 w-3.5 text-indigo-500"
+                    ></i>
+                  </div>
+
+                  <p class="mt-2 text-xl font-bold text-slate-900">
+                    8
+                  </p>
+
+                  <p class="mt-1 text-[9px] text-emerald-600">
+                    2 more than yesterday
+                  </p>
+                </div>
+
+                <div
+                  class="rounded-xl border border-slate-200 bg-white p-3 shadow-sm"
+                >
+                  <div class="flex items-center justify-between">
+                    <p class="text-[10px] font-medium text-slate-500">
+                      Customers
+                    </p>
+
+                    <i
+                      data-lucide="users"
+                      class="h-3.5 w-3.5 text-violet-500"
+                    ></i>
+                  </div>
+
+                  <p class="mt-2 text-xl font-bold text-slate-900">
+                    126
+                  </p>
+
+                  <p class="mt-1 text-[9px] text-emerald-600">
+                    14 new this month
+                  </p>
+                </div>
+              </div>
+
+              <div
+                class="mt-4 rounded-xl border border-slate-200 bg-white p-4 shadow-sm"
+              >
+                <div class="flex items-center justify-between">
+                  <div>
+                    <p class="text-xs font-bold text-slate-900">
+                      Upcoming appointments
+                    </p>
+
+                    <p class="mt-0.5 text-[9px] text-slate-500">
+                      Your next customer bookings
+                    </p>
+                  </div>
+
+                  <span class="text-[9px] font-semibold text-indigo-600">
+                        View all
+                      </span>
+                </div>
+
+                <div class="mt-4 space-y-3">
+                  <div
+                    class="flex items-center justify-between rounded-lg bg-slate-50 p-2.5"
+                  >
+                    <div class="flex items-center gap-2.5">
+                          <span
+                            class="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-100 text-[9px] font-bold text-indigo-700"
+                          >
+                            10:30
+                          </span>
+
+                      <div>
+                        <p class="text-[10px] font-semibold text-slate-900">
+                          Olivia Thompson
+                        </p>
+
+                        <p class="text-[9px] text-slate-500">
+                          Standard Appointment
+                        </p>
+                      </div>
+                    </div>
+
+                    <span
+                      class="rounded-full bg-emerald-50 px-2 py-1 text-[8px] font-semibold text-emerald-700"
+                    >
+                          Confirmed
+                        </span>
+                  </div>
+
+                  <div
+                    class="flex items-center justify-between rounded-lg bg-slate-50 p-2.5"
+                  >
+                    <div class="flex items-center gap-2.5">
+                          <span
+                            class="flex h-8 w-8 items-center justify-center rounded-lg bg-violet-100 text-[9px] font-bold text-violet-700"
+                          >
+                            11:30
+                          </span>
+
+                      <div>
+                        <p class="text-[10px] font-semibold text-slate-900">
+                          Daniel Wilson
+                        </p>
+
+                        <p class="text-[9px] text-slate-500">
+                          Initial Consultation
+                        </p>
+                      </div>
+                    </div>
+
+                    <span
+                      class="rounded-full bg-amber-50 px-2 py-1 text-[8px] font-semibold text-amber-700"
+                    >
+                          Pending
+                        </span>
+                  </div>
+
+                  <div
+                    class="flex items-center justify-between rounded-lg bg-slate-50 p-2.5"
+                  >
+                    <div class="flex items-center gap-2.5">
+                          <span
+                            class="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-100 text-[9px] font-bold text-blue-700"
+                          >
+                            13:00
+                          </span>
+
+                      <div>
+                        <p class="text-[10px] font-semibold text-slate-900">
+                          Sophie Taylor
+                        </p>
+
+                        <p class="text-[9px] text-slate-500">
+                          Follow-up Appointment
+                        </p>
+                      </div>
+                    </div>
+
+                    <span
+                      class="rounded-full bg-emerald-50 px-2 py-1 text-[8px] font-semibold text-emerald-700"
+                    >
+                          Confirmed
+                        </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Floating confirmation -->
+        <div
+          class="absolute -bottom-6 -left-2 hidden items-center gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-xl sm:flex lg:-left-10"
+        >
+              <span
+                class="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-100 text-emerald-600"
+              >
+                <i data-lucide="circle-check-big" class="h-5 w-5"></i>
+              </span>
+
+          <div>
+            <p class="text-sm font-bold text-slate-900">
+              Booking confirmed
+            </p>
+
+            <p class="text-xs text-slate-500">
+              Tuesday at 10:30 AM
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Trust strip -->
+  <section class="border-y border-slate-200 bg-white">
+    <div
+      class="mx-auto grid max-w-7xl gap-6 px-4 py-8 sm:grid-cols-2 sm:px-6 lg:grid-cols-4 lg:px-8"
+    >
+      <div class="flex items-center gap-3">
+            <span
+              class="flex h-11 w-11 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600"
+            >
+              <i data-lucide="clock-3" class="h-5 w-5"></i>
+            </span>
+
+        <div>
+          <p class="font-bold text-slate-900">
+            Available 24/7
+          </p>
+
+          <p class="text-sm text-slate-500">
+            Accept bookings at any time
+          </p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3">
+            <span
+              class="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600"
+            >
+              <i data-lucide="shield-check" class="h-5 w-5"></i>
+            </span>
+
+        <div>
+          <p class="font-bold text-slate-900">
+            Secure accounts
+          </p>
+
+          <p class="text-sm text-slate-500">
+            Keep customer data protected
+          </p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3">
+            <span
+              class="flex h-11 w-11 items-center justify-center rounded-xl bg-violet-50 text-violet-600"
+            >
+              <i data-lucide="smartphone" class="h-5 w-5"></i>
+            </span>
+
+        <div>
+          <p class="font-bold text-slate-900">
+            Mobile friendly
+          </p>
+
+          <p class="text-sm text-slate-500">
+            Book from any device
+          </p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3">
+            <span
+              class="flex h-11 w-11 items-center justify-center rounded-xl bg-amber-50 text-amber-600"
+            >
+              <i data-lucide="zap" class="h-5 w-5"></i>
+            </span>
+
+        <div>
+          <p class="font-bold text-slate-900">
+            Quick setup
+          </p>
+
+          <p class="text-sm text-slate-500">
+            Start taking bookings quickly
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section id="features" class="scroll-mt-24 py-20 sm:py-24">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="mx-auto max-w-3xl text-center">
+            <span
+              class="inline-flex rounded-full bg-indigo-50 px-3 py-1.5 text-sm font-semibold text-indigo-700"
+            >
+              Everything in one place
+            </span>
+
+        <h2
+          class="mt-5 text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl"
+        >
+          A simpler way to manage appointments
+        </h2>
+
+        <p class="mt-4 text-lg leading-8 text-slate-600">
+          From business availability to customer reminders, SecureMySlot
+          brings the complete booking journey into one straightforward
+          platform.
+        </p>
+      </div>
+
+      <div class="mt-14 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+        <!-- Feature 1 -->
+        <article
+          class="group rounded-3xl border border-slate-200 bg-white p-7 shadow-sm transition hover:-translate-y-1 hover:border-indigo-200 hover:shadow-lg"
+        >
+              <span
+                class="flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-600 transition group-hover:bg-indigo-600 group-hover:text-white"
+              >
+                <i data-lucide="calendar-range" class="h-6 w-6"></i>
+              </span>
+
+          <h3 class="mt-6 text-xl font-bold text-slate-950">
+            Online appointment booking
+          </h3>
+
+          <p class="mt-3 leading-7 text-slate-600">
+            Give customers a branded booking page where they can choose a
+            service, date and available time slot.
+          </p>
+        </article>
+
+        <!-- Feature 2 -->
+        <article
+          class="group rounded-3xl border border-slate-200 bg-white p-7 shadow-sm transition hover:-translate-y-1 hover:border-indigo-200 hover:shadow-lg"
+        >
+              <span
+                class="flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-50 text-violet-600 transition group-hover:bg-violet-600 group-hover:text-white"
+              >
+                <i data-lucide="clock-arrow-up" class="h-6 w-6"></i>
+              </span>
+
+          <h3 class="mt-6 text-xl font-bold text-slate-950">
+            Flexible working hours
+          </h3>
+
+          <p class="mt-3 leading-7 text-slate-600">
+            Set opening hours, breaks and closed days so customers only see
+            appointments that are genuinely available.
+          </p>
+        </article>
+
+        <!-- Feature 3 -->
+        <article
+          class="group rounded-3xl border border-slate-200 bg-white p-7 shadow-sm transition hover:-translate-y-1 hover:border-indigo-200 hover:shadow-lg"
+        >
+              <span
+                class="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600 transition group-hover:bg-emerald-600 group-hover:text-white"
+              >
+                <i data-lucide="users-round" class="h-6 w-6"></i>
+              </span>
+
+          <h3 class="mt-6 text-xl font-bold text-slate-950">
+            Customer management
+          </h3>
+
+          <p class="mt-3 leading-7 text-slate-600">
+            Keep customer information, appointment history and booking
+            details organised in one secure dashboard.
+          </p>
+        </article>
+
+        <!-- Feature 4 -->
+        <article
+          class="group rounded-3xl border border-slate-200 bg-white p-7 shadow-sm transition hover:-translate-y-1 hover:border-indigo-200 hover:shadow-lg"
+        >
+              <span
+                class="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 transition group-hover:bg-blue-600 group-hover:text-white"
+              >
+                <i data-lucide="briefcase-business" class="h-6 w-6"></i>
+              </span>
+
+          <h3 class="mt-6 text-xl font-bold text-slate-950">
+            Service management
+          </h3>
+
+          <p class="mt-3 leading-7 text-slate-600">
+            Create services with individual prices, descriptions and
+            appointment durations.
+          </p>
+        </article>
+
+        <!-- Feature 5 -->
+        <article
+          class="group rounded-3xl border border-slate-200 bg-white p-7 shadow-sm transition hover:-translate-y-1 hover:border-indigo-200 hover:shadow-lg"
+        >
+              <span
+                class="flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-50 text-amber-600 transition group-hover:bg-amber-500 group-hover:text-white"
+              >
+                <i data-lucide="bell-ring" class="h-6 w-6"></i>
+              </span>
+
+          <h3 class="mt-6 text-xl font-bold text-slate-950">
+            Booking notifications
+          </h3>
+
+          <p class="mt-3 leading-7 text-slate-600">
+            Keep businesses and customers informed with confirmations,
+            changes and appointment reminders.
+          </p>
+        </article>
+
+        <!-- Feature 6 -->
+        <article
+          class="group rounded-3xl border border-slate-200 bg-white p-7 shadow-sm transition hover:-translate-y-1 hover:border-indigo-200 hover:shadow-lg"
+        >
+              <span
+                class="flex h-12 w-12 items-center justify-center rounded-2xl bg-rose-50 text-rose-600 transition group-hover:bg-rose-600 group-hover:text-white"
+              >
+                <i data-lucide="chart-no-axes-combined" class="h-6 w-6"></i>
+              </span>
+
+          <h3 class="mt-6 text-xl font-bold text-slate-950">
+            Business insights
+          </h3>
+
+          <p class="mt-3 leading-7 text-slate-600">
+            See upcoming bookings, customer growth, popular services and
+            revenue information at a glance.
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Business section -->
+  <section
+    id="businesses"
+    class="scroll-mt-24 overflow-hidden bg-slate-950 py-20 text-white sm:py-24"
+  >
+    <div
+      class="mx-auto grid max-w-7xl items-center gap-14 px-4 sm:px-6 lg:grid-cols-2 lg:px-8"
+    >
+      <!-- Business preview -->
+      <div class="order-2 lg:order-1">
+        <div
+          class="rounded-3xl border border-white/10 bg-white/5 p-4 shadow-2xl"
+        >
+          <div class="rounded-2xl bg-slate-900 p-5">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-xs text-slate-400">
+                  Monday, 27 July
+                </p>
+
+                <h3 class="mt-1 text-lg font-bold">
+                  Business overview
+                </h3>
+              </div>
+
+              <button
+                type="button"
+                class="rounded-xl bg-indigo-600 px-3 py-2 text-xs font-semibold text-white"
+              >
+                Add booking
+              </button>
+            </div>
+
+            <div class="mt-5 grid gap-3 sm:grid-cols-3">
+              <div class="rounded-xl bg-white p-4 text-slate-900">
+                <div class="flex items-center justify-between">
+                  <p class="text-xs text-slate-500">
+                    Today
+                  </p>
+
+                  <i
+                    data-lucide="calendar-days"
+                    class="h-4 w-4 text-indigo-600"
+                  ></i>
+                </div>
+
+                <p class="mt-3 text-2xl font-bold">
+                  8
+                </p>
+
+                <p class="mt-1 text-[10px] text-emerald-600">
+                  2 more bookings
+                </p>
+              </div>
+
+              <div class="rounded-xl bg-white p-4 text-slate-900">
+                <div class="flex items-center justify-between">
+                  <p class="text-xs text-slate-500">
+                    This week
+                  </p>
+
+                  <i
+                    data-lucide="calendar-range"
+                    class="h-4 w-4 text-violet-600"
+                  ></i>
+                </div>
+
+                <p class="mt-3 text-2xl font-bold">
+                  34
+                </p>
+
+                <p class="mt-1 text-[10px] text-emerald-600">
+                  Up by 12%
+                </p>
+              </div>
+
+              <div class="rounded-xl bg-white p-4 text-slate-900">
+                <div class="flex items-center justify-between">
+                  <p class="text-xs text-slate-500">
+                    Revenue
+                  </p>
+
+                  <i
+                    data-lucide="badge-pound-sterling"
+                    class="h-4 w-4 text-emerald-600"
+                  ></i>
+                </div>
+
+                <p class="mt-3 text-2xl font-bold">
+                  £1,840
+                </p>
+
+                <p class="mt-1 text-[10px] text-emerald-600">
+                  Up by 8%
+                </p>
+              </div>
+            </div>
+
+            <div class="mt-4 rounded-xl bg-white p-4 text-slate-900">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-sm font-bold">
+                    Today's schedule
+                  </p>
+
+                  <p class="mt-0.5 text-xs text-slate-500">
+                    8 appointments booked
+                  </p>
+                </div>
+
+                <span
+                  class="rounded-lg bg-slate-100 px-2.5 py-1.5 text-xs font-semibold text-slate-600"
+                >
+                      View calendar
+                    </span>
+              </div>
+
+              <div class="mt-4 space-y-3">
+                <div
+                  class="grid grid-cols-[64px_1fr_auto] items-center gap-3 rounded-xl border border-slate-100 p-3"
+                >
+                  <p class="text-xs font-bold text-indigo-600">
+                    10:30
+                  </p>
+
+                  <div>
+                    <p class="text-xs font-semibold">
+                      Olivia Thompson
+                    </p>
+
+                    <p class="mt-0.5 text-[10px] text-slate-500">
+                      Standard Appointment
+                    </p>
+                  </div>
+
+                  <span
+                    class="rounded-full bg-emerald-50 px-2 py-1 text-[9px] font-semibold text-emerald-700"
+                  >
+                        Confirmed
+                      </span>
+                </div>
+
+                <div
+                  class="grid grid-cols-[64px_1fr_auto] items-center gap-3 rounded-xl border border-slate-100 p-3"
+                >
+                  <p class="text-xs font-bold text-indigo-600">
+                    11:30
+                  </p>
+
+                  <div>
+                    <p class="text-xs font-semibold">
+                      Daniel Wilson
+                    </p>
+
+                    <p class="mt-0.5 text-[10px] text-slate-500">
+                      Initial Consultation
+                    </p>
+                  </div>
+
+                  <span
+                    class="rounded-full bg-amber-50 px-2 py-1 text-[9px] font-semibold text-amber-700"
+                  >
+                        Pending
+                      </span>
+                </div>
+
+                <div
+                  class="grid grid-cols-[64px_1fr_auto] items-center gap-3 rounded-xl border border-slate-100 p-3"
+                >
+                  <p class="text-xs font-bold text-indigo-600">
+                    13:00
+                  </p>
+
+                  <div>
+                    <p class="text-xs font-semibold">
+                      Sophie Taylor
+                    </p>
+
+                    <p class="mt-0.5 text-[10px] text-slate-500">
+                      Follow-up Appointment
+                    </p>
+                  </div>
+
+                  <span
+                    class="rounded-full bg-emerald-50 px-2 py-1 text-[9px] font-semibold text-emerald-700"
+                  >
+                        Confirmed
+                      </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Business content -->
+      <div class="order-1 lg:order-2">
+            <span
+              class="inline-flex rounded-full bg-indigo-500/15 px-3 py-1.5 text-sm font-semibold text-indigo-300"
+            >
+              Built for service businesses
+            </span>
+
+        <h2
+          class="mt-5 text-3xl font-bold tracking-tight sm:text-4xl"
+        >
+          Spend less time managing bookings and more time serving customers
+        </h2>
+
+        <p class="mt-5 text-lg leading-8 text-slate-300">
+          SecureMySlot helps independent professionals and growing
+          businesses organise their day, reduce administrative work and
+          offer a smoother customer experience.
+        </p>
+
+        <div class="mt-8 space-y-5">
+          <div class="flex items-start gap-4">
+                <span
+                  class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-indigo-500/15 text-indigo-300"
+                >
+                  <i data-lucide="check" class="h-5 w-5"></i>
+                </span>
+
+            <div>
+              <h3 class="font-bold">
+                Your own booking page
+              </h3>
+
+              <p class="mt-1 leading-7 text-slate-400">
+                Share a dedicated business link where customers can view
+                services and book directly.
+              </p>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-4">
+                <span
+                  class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-indigo-500/15 text-indigo-300"
+                >
+                  <i data-lucide="check" class="h-5 w-5"></i>
+                </span>
+
+            <div>
+              <h3 class="font-bold">
+                Complete appointment control
+              </h3>
+
+              <p class="mt-1 leading-7 text-slate-400">
+                Review bookings, update statuses and keep your daily
+                schedule organised.
+              </p>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-4">
+                <span
+                  class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-indigo-500/15 text-indigo-300"
+                >
+                  <i data-lucide="check" class="h-5 w-5"></i>
+                </span>
+
+            <div>
+              <h3 class="font-bold">
+                Clear business performance
+              </h3>
+
+              <p class="mt-1 leading-7 text-slate-400">
+                Track booking activity, customer numbers and service
+                performance from your dashboard.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <a
+          href="#"
+          class="mt-9 inline-flex items-center justify-center gap-2 rounded-xl bg-white px-6 py-3.5 text-sm font-semibold text-slate-950 transition hover:bg-slate-100"
+        >
+          Create a business account
+          <i data-lucide="arrow-right" class="h-4 w-4"></i>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Customer section -->
+  <section
+    id="customers"
+    class="scroll-mt-24 bg-slate-50 py-20 sm:py-24"
+  >
+    <div
+      class="mx-auto grid max-w-7xl items-center gap-14 px-4 sm:px-6 lg:grid-cols-2 lg:px-8"
+    >
+      <!-- Customer content -->
+      <div>
+            <span
+              class="inline-flex rounded-full bg-indigo-100 px-3 py-1.5 text-sm font-semibold text-indigo-700"
+            >
+              Designed for customers
+            </span>
+
+        <h2
+          class="mt-5 text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl"
+        >
+          Book and manage appointments without the back-and-forth
+        </h2>
+
+        <p class="mt-5 text-lg leading-8 text-slate-600">
+          Customers can find available times, manage upcoming bookings and
+          review their appointment history from one easy-to-use account.
+        </p>
+
+        <div class="mt-8 grid gap-4 sm:grid-cols-2">
+          <div class="rounded-2xl border border-slate-200 bg-white p-5">
+                <span
+                  class="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600"
+                >
+                  <i data-lucide="mouse-pointer-click" class="h-5 w-5"></i>
+                </span>
+
+            <h3 class="mt-4 font-bold text-slate-950">
+              Quick online booking
+            </h3>
+
+            <p class="mt-2 text-sm leading-6 text-slate-600">
+              Choose a service and suitable time in just a few steps.
+            </p>
+          </div>
+
+          <div class="rounded-2xl border border-slate-200 bg-white p-5">
+                <span
+                  class="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-50 text-violet-600"
+                >
+                  <i data-lucide="calendar-cog" class="h-5 w-5"></i>
+                </span>
+
+            <h3 class="mt-4 font-bold text-slate-950">
+              Manage appointments
+            </h3>
+
+            <p class="mt-2 text-sm leading-6 text-slate-600">
+              View, reschedule or cancel eligible future bookings.
+            </p>
+          </div>
+
+          <div class="rounded-2xl border border-slate-200 bg-white p-5">
+                <span
+                  class="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600"
+                >
+                  <i data-lucide="bell" class="h-5 w-5"></i>
+                </span>
+
+            <h3 class="mt-4 font-bold text-slate-950">
+              Helpful reminders
+            </h3>
+
+            <p class="mt-2 text-sm leading-6 text-slate-600">
+              Receive booking confirmations and appointment updates.
+            </p>
+          </div>
+
+          <div class="rounded-2xl border border-slate-200 bg-white p-5">
+                <span
+                  class="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600"
+                >
+                  <i data-lucide="history" class="h-5 w-5"></i>
+                </span>
+
+            <h3 class="mt-4 font-bold text-slate-950">
+              Booking history
+            </h3>
+
+            <p class="mt-2 text-sm leading-6 text-slate-600">
+              Keep a clear record of completed and previous appointments.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Customer dashboard preview -->
+      <div class="relative">
+        <div
+          class="absolute -inset-6 rounded-[2.5rem] bg-gradient-to-br from-indigo-200/60 to-blue-100 blur-2xl"
+        ></div>
+
+        <div
+          class="relative rounded-3xl border border-slate-200 bg-white p-4 shadow-soft"
+        >
+          <div class="rounded-2xl bg-slate-950 p-5 text-white">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-xs text-indigo-300">
+                  Customer dashboard
+                </p>
+
+                <p class="mt-1 text-lg font-bold">
+                  Welcome back, Olivia
+                </p>
+              </div>
+
+              <span
+                class="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-500 text-xs font-bold"
+              >
+                    OT
+                  </span>
+            </div>
+
+            <div class="mt-5 grid grid-cols-2 gap-3">
+              <div class="rounded-xl bg-white/10 p-4">
+                <p class="text-xs text-slate-300">
+                  Upcoming
+                </p>
+
+                <p class="mt-2 text-2xl font-bold">
+                  2
+                </p>
+              </div>
+
+              <div class="rounded-xl bg-white/10 p-4">
+                <p class="text-xs text-slate-300">
+                  Completed
+                </p>
+
+                <p class="mt-2 text-2xl font-bold">
+                  12
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="p-2 pt-5">
+            <div
+              class="rounded-2xl border border-indigo-200 bg-indigo-50 p-5"
+            >
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-xs font-semibold text-indigo-600">
+                    NEXT APPOINTMENT
+                  </p>
+
+                  <h3 class="mt-1 text-lg font-bold text-slate-950">
+                    Standard Appointment
+                  </h3>
+                </div>
+
+                <span
+                  class="rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-semibold text-emerald-700"
+                >
+                      Confirmed
+                    </span>
+              </div>
+
+              <div class="mt-5 flex gap-4">
+                    <span
+                      class="flex h-16 w-16 shrink-0 flex-col items-center justify-center rounded-2xl bg-indigo-600 text-white"
+                    >
+                      <span class="text-[10px] font-semibold uppercase">
+                        Jul
+                      </span>
+
+                      <span class="text-2xl font-bold">
+                        28
+                      </span>
+                    </span>
+
+                <div class="space-y-2">
+                  <p class="flex items-center gap-2 text-sm text-slate-600">
+                    <i data-lucide="clock-3" class="h-4 w-4"></i>
+                    10:30 AM to 11:15 AM
+                  </p>
+
+                  <p class="flex items-center gap-2 text-sm text-slate-600">
+                    <i data-lucide="map-pin" class="h-4 w-4"></i>
+                    Test Business, Normanby
+                  </p>
+
+                  <p class="flex items-center gap-2 text-sm text-slate-600">
+                    <i
+                      data-lucide="badge-pound-sterling"
+                      class="h-4 w-4"
+                    ></i>
+                    £40.00
+                  </p>
+                </div>
+              </div>
+
+              <div class="mt-5 grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  class="rounded-xl bg-indigo-600 px-3 py-2.5 text-xs font-semibold text-white"
+                >
+                  View booking
+                </button>
+
+                <button
+                  type="button"
+                  class="rounded-xl border border-indigo-200 bg-white px-3 py-2.5 text-xs font-semibold text-slate-700"
+                >
+                  Reschedule
+                </button>
+              </div>
+            </div>
+
+            <div class="mt-4 rounded-2xl border border-slate-200 p-5">
+              <div class="flex items-center justify-between">
+                <h3 class="font-bold text-slate-950">
+                  Recent bookings
+                </h3>
+
+                <span class="text-xs font-semibold text-indigo-600">
+                      View all
+                    </span>
+              </div>
+
+              <div class="mt-4 space-y-3">
+                <div
+                  class="flex items-center justify-between rounded-xl bg-slate-50 p-3"
+                >
+                  <div>
+                    <p class="text-sm font-semibold text-slate-900">
+                      Standard Appointment
+                    </p>
+
+                    <p class="mt-1 text-xs text-slate-500">
+                      18 July 2026
+                    </p>
+                  </div>
+
+                  <span
+                    class="rounded-full bg-emerald-50 px-2 py-1 text-[10px] font-semibold text-emerald-700"
+                  >
+                        Completed
+                      </span>
+                </div>
+
+                <div
+                  class="flex items-center justify-between rounded-xl bg-slate-50 p-3"
+                >
+                  <div>
+                    <p class="text-sm font-semibold text-slate-900">
+                      Follow-up Appointment
+                    </p>
+
+                    <p class="mt-1 text-xs text-slate-500">
+                      4 July 2026
+                    </p>
+                  </div>
+
+                  <span
+                    class="rounded-full bg-emerald-50 px-2 py-1 text-[10px] font-semibold text-emerald-700"
+                  >
+                        Completed
+                      </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section class="py-20 sm:py-24">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="mx-auto max-w-3xl text-center">
+            <span
+              class="inline-flex rounded-full bg-indigo-50 px-3 py-1.5 text-sm font-semibold text-indigo-700"
+            >
+              Get started quickly
+            </span>
+
+        <h2
+          class="mt-5 text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl"
+        >
+          Start accepting bookings in three steps
+        </h2>
+
+        <p class="mt-4 text-lg leading-8 text-slate-600">
+          Create your account, add your services and share your booking
+          page with customers.
+        </p>
+      </div>
+
+      <div class="relative mt-14 grid gap-8 md:grid-cols-3">
+        <div
+          class="pointer-events-none absolute left-[16.66%] right-[16.66%] top-10 hidden border-t-2 border-dashed border-indigo-200 md:block"
+        ></div>
+
+        <article class="relative text-center">
+              <span
+                class="relative mx-auto flex h-20 w-20 items-center justify-center rounded-3xl border-8 border-white bg-indigo-600 text-2xl font-bold text-white shadow-lg"
+              >
+                1
+              </span>
+
+          <h3 class="mt-6 text-xl font-bold text-slate-950">
+            Create your account
+          </h3>
+
+          <p class="mt-3 leading-7 text-slate-600">
+            Add your business information and choose your personalised
+            booking page address.
+          </p>
+        </article>
+
+        <article class="relative text-center">
+              <span
+                class="relative mx-auto flex h-20 w-20 items-center justify-center rounded-3xl border-8 border-white bg-indigo-600 text-2xl font-bold text-white shadow-lg"
+              >
+                2
+              </span>
+
+          <h3 class="mt-6 text-xl font-bold text-slate-950">
+            Add services and hours
+          </h3>
+
+          <p class="mt-3 leading-7 text-slate-600">
+            Set your services, prices, durations, working hours and
+            available appointment times.
+          </p>
+        </article>
+
+        <article class="relative text-center">
+              <span
+                class="relative mx-auto flex h-20 w-20 items-center justify-center rounded-3xl border-8 border-white bg-indigo-600 text-2xl font-bold text-white shadow-lg"
+              >
+                3
+              </span>
+
+          <h3 class="mt-6 text-xl font-bold text-slate-950">
+            Share and take bookings
+          </h3>
+
+          <p class="mt-3 leading-7 text-slate-600">
+            Send customers your booking link and manage new appointments
+            from your dashboard.
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Industries -->
+  <section class="bg-slate-50 py-20 sm:py-24">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div
+        class="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between"
+      >
+        <div class="max-w-3xl">
+              <span
+                class="inline-flex rounded-full bg-indigo-100 px-3 py-1.5 text-sm font-semibold text-indigo-700"
+              >
+                Made for appointment-based businesses
+              </span>
+
+          <h2
+            class="mt-5 text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl"
+          >
+            Flexible enough for the way you work
+          </h2>
+
+          <p class="mt-4 text-lg leading-8 text-slate-600">
+            SecureMySlot can support a wide range of independent
+            professionals and service-based businesses.
+          </p>
+        </div>
+      </div>
+
+      <div
+        class="mt-12 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5"
+      >
+        <div
+          class="rounded-2xl border border-slate-200 bg-white p-5 text-center shadow-sm"
+        >
+              <span
+                class="mx-auto flex h-11 w-11 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600"
+              >
+                <i data-lucide="scissors" class="h-5 w-5"></i>
+              </span>
+
+          <p class="mt-3 text-sm font-bold text-slate-900">
+            Barbers
+          </p>
+        </div>
+
+        <div
+          class="rounded-2xl border border-slate-200 bg-white p-5 text-center shadow-sm"
+        >
+              <span
+                class="mx-auto flex h-11 w-11 items-center justify-center rounded-xl bg-rose-50 text-rose-600"
+              >
+                <i data-lucide="sparkles" class="h-5 w-5"></i>
+              </span>
+
+          <p class="mt-3 text-sm font-bold text-slate-900">
+            Beauty
+          </p>
+        </div>
+
+        <div
+          class="rounded-2xl border border-slate-200 bg-white p-5 text-center shadow-sm"
+        >
+              <span
+                class="mx-auto flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600"
+              >
+                <i data-lucide="dumbbell" class="h-5 w-5"></i>
+              </span>
+
+          <p class="mt-3 text-sm font-bold text-slate-900">
+            Trainers
+          </p>
+        </div>
+
+        <div
+          class="rounded-2xl border border-slate-200 bg-white p-5 text-center shadow-sm"
+        >
+              <span
+                class="mx-auto flex h-11 w-11 items-center justify-center rounded-xl bg-violet-50 text-violet-600"
+              >
+                <i data-lucide="graduation-cap" class="h-5 w-5"></i>
+              </span>
+
+          <p class="mt-3 text-sm font-bold text-slate-900">
+            Tutors
+          </p>
+        </div>
+
+        <div
+          class="rounded-2xl border border-slate-200 bg-white p-5 text-center shadow-sm"
+        >
+              <span
+                class="mx-auto flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50 text-blue-600"
+              >
+                <i data-lucide="heart-pulse" class="h-5 w-5"></i>
+              </span>
+
+          <p class="mt-3 text-sm font-bold text-slate-900">
+            Therapists
+          </p>
+        </div>
+
+        <div
+          class="rounded-2xl border border-slate-200 bg-white p-5 text-center shadow-sm"
+        >
+              <span
+                class="mx-auto flex h-11 w-11 items-center justify-center rounded-xl bg-cyan-50 text-cyan-600"
+              >
+                <i data-lucide="camera" class="h-5 w-5"></i>
+              </span>
+
+          <p class="mt-3 text-sm font-bold text-slate-900">
+            Photographers
+          </p>
+        </div>
+
+        <div
+          class="rounded-2xl border border-slate-200 bg-white p-5 text-center shadow-sm"
+        >
+              <span
+                class="mx-auto flex h-11 w-11 items-center justify-center rounded-xl bg-amber-50 text-amber-600"
+              >
+                <i data-lucide="briefcase-business" class="h-5 w-5"></i>
+              </span>
+
+          <p class="mt-3 text-sm font-bold text-slate-900">
+            Consultants
+          </p>
+        </div>
+
+        <div
+          class="rounded-2xl border border-slate-200 bg-white p-5 text-center shadow-sm"
+        >
+              <span
+                class="mx-auto flex h-11 w-11 items-center justify-center rounded-xl bg-orange-50 text-orange-600"
+              >
+                <i data-lucide="wrench" class="h-5 w-5"></i>
+              </span>
+
+          <p class="mt-3 text-sm font-bold text-slate-900">
+            Tradespeople
+          </p>
+        </div>
+
+        <div
+          class="rounded-2xl border border-slate-200 bg-white p-5 text-center shadow-sm"
+        >
+              <span
+                class="mx-auto flex h-11 w-11 items-center justify-center rounded-xl bg-teal-50 text-teal-600"
+              >
+                <i data-lucide="car" class="h-5 w-5"></i>
+              </span>
+
+          <p class="mt-3 text-sm font-bold text-slate-900">
+            Mobile services
+          </p>
+        </div>
+
+        <div
+          class="rounded-2xl border border-slate-200 bg-white p-5 text-center shadow-sm"
+        >
+              <span
+                class="mx-auto flex h-11 w-11 items-center justify-center rounded-xl bg-slate-100 text-slate-600"
+              >
+                <i data-lucide="shapes" class="h-5 w-5"></i>
+              </span>
+
+          <p class="mt-3 text-sm font-bold text-slate-900">
+            Other services
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing -->
+  <section id="pricing" class="scroll-mt-24 py-20 sm:py-24">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="mx-auto max-w-3xl text-center">
+            <span
+              class="inline-flex rounded-full bg-indigo-50 px-3 py-1.5 text-sm font-semibold text-indigo-700"
+            >
+              Straightforward pricing
+            </span>
+
+        <h2
+          class="mt-5 text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl"
+        >
+          Choose the plan that suits your business
+        </h2>
+
+        <p class="mt-4 text-lg leading-8 text-slate-600">
+          Start with the essentials and upgrade as your business grows.
+        </p>
+      </div>
+
+      <div class="mt-14 grid gap-6 lg:grid-cols-3">
+        <!-- Starter -->
+        <article
+          class="flex flex-col rounded-3xl border border-slate-200 bg-white p-7 shadow-sm"
+        >
+          <div>
+            <h3 class="text-xl font-bold text-slate-950">
+              Starter
+            </h3>
+
+            <p class="mt-2 text-sm leading-6 text-slate-600">
+              Essential booking tools for independent professionals.
+            </p>
+
+            <div class="mt-6 flex items-end gap-1">
+                  <span class="text-4xl font-bold tracking-tight text-slate-950">
+                    £9
+                  </span>
+
+              <span class="pb-1 text-sm text-slate-500">
+                    /month
+                  </span>
+            </div>
+          </div>
+
+          <a
+            href="#"
+            class="mt-7 inline-flex items-center justify-center rounded-xl border border-slate-300 px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+          >
+            Start free
+          </a>
+
+          <ul class="mt-7 space-y-4 text-sm text-slate-600">
+            <li class="flex items-start gap-3">
+              <i
+                data-lucide="circle-check"
+                class="mt-0.5 h-5 w-5 shrink-0 text-emerald-500"
+              ></i>
+              Online booking page
+            </li>
+
+            <li class="flex items-start gap-3">
+              <i
+                data-lucide="circle-check"
+                class="mt-0.5 h-5 w-5 shrink-0 text-emerald-500"
+              ></i>
+              Up to 5 services
+            </li>
+
+            <li class="flex items-start gap-3">
+              <i
+                data-lucide="circle-check"
+                class="mt-0.5 h-5 w-5 shrink-0 text-emerald-500"
+              ></i>
+              Appointment management
+            </li>
+
+            <li class="flex items-start gap-3">
+              <i
+                data-lucide="circle-check"
+                class="mt-0.5 h-5 w-5 shrink-0 text-emerald-500"
+              ></i>
+              Customer records
+            </li>
+          </ul>
+        </article>
+
+        <!-- Professional -->
+        <article
+          class="relative flex flex-col rounded-3xl border-2 border-indigo-600 bg-slate-950 p-7 text-white shadow-xl"
+        >
+              <span
+                class="absolute right-5 top-0 -translate-y-1/2 rounded-full bg-indigo-600 px-3 py-1.5 text-xs font-semibold text-white"
+              >
+                Most popular
+              </span>
+
+          <div>
+            <h3 class="text-xl font-bold">
+              Professional
+            </h3>
+
+            <p class="mt-2 text-sm leading-6 text-slate-300">
+              More flexibility and insights for growing businesses.
+            </p>
+
+            <div class="mt-6 flex items-end gap-1">
+                  <span class="text-4xl font-bold tracking-tight">
+                    £19
+                  </span>
+
+              <span class="pb-1 text-sm text-slate-400">
+                    /month
+                  </span>
+            </div>
+          </div>
+
+          <a
+            href="#"
+            class="mt-7 inline-flex items-center justify-center rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-indigo-500"
+          >
+            Start free
+          </a>
+
+          <ul class="mt-7 space-y-4 text-sm text-slate-300">
+            <li class="flex items-start gap-3">
+              <i
+                data-lucide="circle-check"
+                class="mt-0.5 h-5 w-5 shrink-0 text-indigo-300"
+              ></i>
+              Everything in Starter
+            </li>
+
+            <li class="flex items-start gap-3">
+              <i
+                data-lucide="circle-check"
+                class="mt-0.5 h-5 w-5 shrink-0 text-indigo-300"
+              ></i>
+              Unlimited services
+            </li>
+
+            <li class="flex items-start gap-3">
+              <i
+                data-lucide="circle-check"
+                class="mt-0.5 h-5 w-5 shrink-0 text-indigo-300"
+              ></i>
+              Automated reminders
+            </li>
+
+            <li class="flex items-start gap-3">
+              <i
+                data-lucide="circle-check"
+                class="mt-0.5 h-5 w-5 shrink-0 text-indigo-300"
+              ></i>
+              Business reports
+            </li>
+
+            <li class="flex items-start gap-3">
+              <i
+                data-lucide="circle-check"
+                class="mt-0.5 h-5 w-5 shrink-0 text-indigo-300"
+              ></i>
+              Priority support
+            </li>
+          </ul>
+        </article>
+
+        <!-- Business -->
+        <article
+          class="flex flex-col rounded-3xl border border-slate-200 bg-white p-7 shadow-sm"
+        >
+          <div>
+            <h3 class="text-xl font-bold text-slate-950">
+              Business
+            </h3>
+
+            <p class="mt-2 text-sm leading-6 text-slate-600">
+              Advanced tools for established businesses and teams.
+            </p>
+
+            <div class="mt-6 flex items-end gap-1">
+                  <span class="text-4xl font-bold tracking-tight text-slate-950">
+                    £39
+                  </span>
+
+              <span class="pb-1 text-sm text-slate-500">
+                    /month
+                  </span>
+            </div>
+          </div>
+
+          <a
+            href="#"
+            class="mt-7 inline-flex items-center justify-center rounded-xl border border-slate-300 px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+          >
+            Start free
+          </a>
+
+          <ul class="mt-7 space-y-4 text-sm text-slate-600">
+            <li class="flex items-start gap-3">
+              <i
+                data-lucide="circle-check"
+                class="mt-0.5 h-5 w-5 shrink-0 text-emerald-500"
+              ></i>
+              Everything in Professional
+            </li>
+
+            <li class="flex items-start gap-3">
+              <i
+                data-lucide="circle-check"
+                class="mt-0.5 h-5 w-5 shrink-0 text-emerald-500"
+              ></i>
+              Multiple team members
+            </li>
+
+            <li class="flex items-start gap-3">
+              <i
+                data-lucide="circle-check"
+                class="mt-0.5 h-5 w-5 shrink-0 text-emerald-500"
+              ></i>
+              Advanced permissions
+            </li>
+
+            <li class="flex items-start gap-3">
+              <i
+                data-lucide="circle-check"
+                class="mt-0.5 h-5 w-5 shrink-0 text-emerald-500"
+              ></i>
+              Enhanced reporting
+            </li>
+          </ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <section class="bg-slate-50 py-20 sm:py-24">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="mx-auto max-w-3xl text-center">
+            <span
+              class="inline-flex rounded-full bg-indigo-100 px-3 py-1.5 text-sm font-semibold text-indigo-700"
+            >
+              Trusted by busy professionals
+            </span>
+
+        <h2
+          class="mt-5 text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl"
+        >
+          Built to make the working day easier
+        </h2>
+      </div>
+
+      <div class="mt-14 grid gap-6 lg:grid-cols-3">
+        <article
+          class="rounded-3xl border border-slate-200 bg-white p-7 shadow-sm"
+        >
+          <div class="flex gap-1 text-amber-400">
+            <i data-lucide="star" class="h-4 w-4 fill-current"></i>
+            <i data-lucide="star" class="h-4 w-4 fill-current"></i>
+            <i data-lucide="star" class="h-4 w-4 fill-current"></i>
+            <i data-lucide="star" class="h-4 w-4 fill-current"></i>
+            <i data-lucide="star" class="h-4 w-4 fill-current"></i>
+          </div>
+
+          <blockquote class="mt-5 leading-7 text-slate-700">
+            “SecureMySlot has made it much easier to keep track of my
+            appointments. Customers can book without needing to message me
+            first.”
+          </blockquote>
+
+          <div class="mt-6 flex items-center gap-3">
+                <span
+                  class="flex h-11 w-11 items-center justify-center rounded-full bg-indigo-100 text-sm font-bold text-indigo-700"
+                >
+                  SM
+                </span>
+
+            <div>
+              <p class="font-bold text-slate-900">
+                Sarah Mitchell
+              </p>
+
+              <p class="text-sm text-slate-500">
+                Beauty professional
+              </p>
+            </div>
+          </div>
+        </article>
+
+        <article
+          class="rounded-3xl border border-slate-200 bg-white p-7 shadow-sm"
+        >
+          <div class="flex gap-1 text-amber-400">
+            <i data-lucide="star" class="h-4 w-4 fill-current"></i>
+            <i data-lucide="star" class="h-4 w-4 fill-current"></i>
+            <i data-lucide="star" class="h-4 w-4 fill-current"></i>
+            <i data-lucide="star" class="h-4 w-4 fill-current"></i>
+            <i data-lucide="star" class="h-4 w-4 fill-current"></i>
+          </div>
+
+          <blockquote class="mt-5 leading-7 text-slate-700">
+            “The dashboard gives me a clear view of the week ahead. Setting
+            my hours and breaks was simple, and the booking page looks
+            professional.”
+          </blockquote>
+
+          <div class="mt-6 flex items-center gap-3">
+                <span
+                  class="flex h-11 w-11 items-center justify-center rounded-full bg-violet-100 text-sm font-bold text-violet-700"
+                >
+                  DW
+                </span>
+
+            <div>
+              <p class="font-bold text-slate-900">
+                Daniel Wright
+              </p>
+
+              <p class="text-sm text-slate-500">
+                Personal trainer
+              </p>
+            </div>
+          </div>
+        </article>
+
+        <article
+          class="rounded-3xl border border-slate-200 bg-white p-7 shadow-sm"
+        >
+          <div class="flex gap-1 text-amber-400">
+            <i data-lucide="star" class="h-4 w-4 fill-current"></i>
+            <i data-lucide="star" class="h-4 w-4 fill-current"></i>
+            <i data-lucide="star" class="h-4 w-4 fill-current"></i>
+            <i data-lucide="star" class="h-4 w-4 fill-current"></i>
+            <i data-lucide="star" class="h-4 w-4 fill-current"></i>
+          </div>
+
+          <blockquote class="mt-5 leading-7 text-slate-700">
+            “As a customer, I can quickly see my next appointment and
+            manage my bookings without searching through old emails.”
+          </blockquote>
+
+          <div class="mt-6 flex items-center gap-3">
+                <span
+                  class="flex h-11 w-11 items-center justify-center rounded-full bg-emerald-100 text-sm font-bold text-emerald-700"
+                >
+                  OT
+                </span>
+
+            <div>
+              <p class="font-bold text-slate-900">
+                Olivia Thompson
+              </p>
+
+              <p class="text-sm text-slate-500">
+                Customer
+              </p>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" class="scroll-mt-24 py-20 sm:py-24">
+    <div
+      class="mx-auto grid max-w-7xl gap-12 px-4 sm:px-6 lg:grid-cols-[360px_1fr] lg:px-8"
+    >
+      <div>
+            <span
+              class="inline-flex rounded-full bg-indigo-50 px-3 py-1.5 text-sm font-semibold text-indigo-700"
+            >
+              Frequently asked questions
+            </span>
+
+        <h2
+          class="mt-5 text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl"
+        >
+          Questions about SecureMySlot?
+        </h2>
+
+        <p class="mt-4 text-lg leading-8 text-slate-600">
+          Here are answers to some common questions about setting up and
+          using the platform.
+        </p>
+
+        <div class="mt-8 rounded-2xl bg-slate-950 p-5 text-white">
+          <i data-lucide="messages-square" class="h-6 w-6 text-indigo-300"></i>
+
+          <h3 class="mt-4 font-bold">
+            Still need help?
+          </h3>
+
+          <p class="mt-2 text-sm leading-6 text-slate-300">
+            Contact our support team and we will help with your question.
+          </p>
+
+          <a
+            href="#"
+            class="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-white"
+          >
+            Contact support
+            <i data-lucide="arrow-right" class="h-4 w-4"></i>
+          </a>
+        </div>
+      </div>
+
+      <div class="space-y-4">
+        <!-- FAQ item -->
+        <article
+          class="faq-item overflow-hidden rounded-2xl border border-slate-200 bg-white"
+        >
+          <button
+            type="button"
+            class="faq-button flex w-full items-center justify-between gap-4 px-5 py-5 text-left sm:px-6"
+            aria-expanded="true"
+          >
+                <span class="font-bold text-slate-900">
+                  How do customers book an appointment?
+                </span>
+
+            <i
+              data-lucide="minus"
+              class="faq-icon h-5 w-5 shrink-0 text-indigo-600"
+            ></i>
+          </button>
+
+          <div class="faq-answer px-5 pb-5 sm:px-6">
+            <p class="leading-7 text-slate-600">
+              Customers visit the business booking page, select a service,
+              choose an available date and time, then enter their contact
+              details to confirm the booking.
+            </p>
+          </div>
+        </article>
+
+        <!-- FAQ item -->
+        <article
+          class="faq-item overflow-hidden rounded-2xl border border-slate-200 bg-white"
+        >
+          <button
+            type="button"
+            class="faq-button flex w-full items-center justify-between gap-4 px-5 py-5 text-left sm:px-6"
+            aria-expanded="false"
+          >
+                <span class="font-bold text-slate-900">
+                  Can I set different opening hours for each day?
+                </span>
+
+            <i
+              data-lucide="plus"
+              class="faq-icon h-5 w-5 shrink-0 text-slate-400"
+            ></i>
+          </button>
+
+          <div class="faq-answer hidden px-5 pb-5 sm:px-6">
+            <p class="leading-7 text-slate-600">
+              Yes. You can set individual opening and closing times for
+              every day of the week, mark specific days as closed and add
+              breaks during the working day.
+            </p>
+          </div>
+        </article>
+
+        <!-- FAQ item -->
+        <article
+          class="faq-item overflow-hidden rounded-2xl border border-slate-200 bg-white"
+        >
+          <button
+            type="button"
+            class="faq-button flex w-full items-center justify-between gap-4 px-5 py-5 text-left sm:px-6"
+            aria-expanded="false"
+          >
+                <span class="font-bold text-slate-900">
+                  Can customers manage their own bookings?
+                </span>
+
+            <i
+              data-lucide="plus"
+              class="faq-icon h-5 w-5 shrink-0 text-slate-400"
+            ></i>
+          </button>
+
+          <div class="faq-answer hidden px-5 pb-5 sm:px-6">
+            <p class="leading-7 text-slate-600">
+              Customers can use their account dashboard to view upcoming
+              appointments, review booking history and manage eligible
+              bookings.
+            </p>
+          </div>
+        </article>
+
+        <!-- FAQ item -->
+        <article
+          class="faq-item overflow-hidden rounded-2xl border border-slate-200 bg-white"
+        >
+          <button
+            type="button"
+            class="faq-button flex w-full items-center justify-between gap-4 px-5 py-5 text-left sm:px-6"
+            aria-expanded="false"
+          >
+                <span class="font-bold text-slate-900">
+                  Can I create more than one service?
+                </span>
+
+            <i
+              data-lucide="plus"
+              class="faq-icon h-5 w-5 shrink-0 text-slate-400"
+            ></i>
+          </button>
+
+          <div class="faq-answer hidden px-5 pb-5 sm:px-6">
+            <p class="leading-7 text-slate-600">
+              Yes. Each service can have its own name, description, price
+              and appointment duration, allowing customers to choose the
+              correct option when booking.
+            </p>
+          </div>
+        </article>
+
+        <!-- FAQ item -->
+        <article
+          class="faq-item overflow-hidden rounded-2xl border border-slate-200 bg-white"
+        >
+          <button
+            type="button"
+            class="faq-button flex w-full items-center justify-between gap-4 px-5 py-5 text-left sm:px-6"
+            aria-expanded="false"
+          >
+                <span class="font-bold text-slate-900">
+                  Will SecureMySlot prevent double bookings?
+                </span>
+
+            <i
+              data-lucide="plus"
+              class="faq-icon h-5 w-5 shrink-0 text-slate-400"
+            ></i>
+          </button>
+
+          <div class="faq-answer hidden px-5 pb-5 sm:px-6">
+            <p class="leading-7 text-slate-600">
+              Available time slots are calculated using your working hours,
+              breaks and existing appointments, helping prevent customers
+              from selecting an unavailable time.
+            </p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Final CTA -->
+  <section class="px-4 pb-20 sm:px-6 sm:pb-24 lg:px-8">
+    <div
+      class="relative mx-auto max-w-7xl overflow-hidden rounded-[2rem] bg-indigo-600 px-6 py-14 text-center text-white shadow-xl sm:px-12 sm:py-16"
+    >
+      <div
+        class="pointer-events-none absolute -left-20 -top-20 h-64 w-64 rounded-full bg-white/10 blur-3xl"
+      ></div>
+
+      <div
+        class="pointer-events-none absolute -bottom-24 -right-16 h-72 w-72 rounded-full bg-violet-400/30 blur-3xl"
+      ></div>
+
+      <div class="relative mx-auto max-w-3xl">
+            <span
+              class="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-white/15"
+            >
+              <i data-lucide="calendar-check-2" class="h-7 w-7"></i>
+            </span>
+
+        <h2
+          class="mt-6 text-3xl font-bold tracking-tight sm:text-4xl"
+        >
+          Ready to simplify your bookings?
+        </h2>
+
+        <p class="mt-4 text-lg leading-8 text-indigo-100">
+          Create your SecureMySlot account, add your services and start
+          accepting online appointments.
+        </p>
+
+        <div
+          class="mt-8 flex flex-col justify-center gap-3 sm:flex-row"
+        >
+          <a
+            href="#"
+            class="inline-flex items-center justify-center gap-2 rounded-xl bg-white px-6 py-3.5 text-sm font-semibold text-indigo-700 transition hover:bg-indigo-50"
+          >
+            Start free
+            <i data-lucide="arrow-right" class="h-4 w-4"></i>
+          </a>
+
+          <a
+            href="#"
+            class="inline-flex items-center justify-center rounded-xl border border-white/30 bg-white/10 px-6 py-3.5 text-sm font-semibold text-white transition hover:bg-white/20"
+          >
+            Sign in to your account
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>

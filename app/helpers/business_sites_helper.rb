@@ -1,0 +1,2 @@
+module BusinessSitesHelper
+end
