@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_07_31_140137) do
+ActiveRecord::Schema[8.0].define(version: 2026_07_31_144911) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -27,6 +27,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_31_140137) do
     t.string "stripe_checkout_session_id"
     t.string "stripe_payment_intent_id"
     t.text "notes"
+    t.datetime "reminder_email_sent_at"
+    t.datetime "reminder_sms_sent_at"
     t.index ["business_id"], name: "index_bookings_on_business_id"
     t.index ["service_id"], name: "index_bookings_on_service_id"
     t.index ["stripe_checkout_session_id"], name: "index_bookings_on_stripe_checkout_session_id", unique: true

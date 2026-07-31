@@ -1,0 +1,28 @@
+<!-- app/views/booking_mailer/appointment_reminder.html.erb -->
+
+<h1>Your appointment is coming up</h1>
+
+<p>Hi <%= @user.first_name %>,</p>
+
+<p>
+  This is a reminder that your appointment with
+  <strong><%= @business.business_name %></strong>
+  starts in approximately one hour.
+</p>
+
+<p>
+  <strong>Service:</strong>
+  <%= @service.name %>
+</p>
+
+<p>
+  <strong>Date:</strong>
+  <%= @booking.date.strftime("%-d %B %Y") %>
+</p>
+
+<p>
+  <strong>Time:</strong>
+  <%= @booking.time.strftime("%-I:%M %p") %>
+</p>
+
+<p>We look forward to seeing you.</p>

@@ -1,0 +1,12 @@
+<%# app/views/booking_mailer/appointment_reminder.text.erb %>
+
+Hi <%= @user.first_name %>,
+
+This is a reminder that your appointment with <%= @business.business_name %>
+starts in approximately one hour.
+
+Service: <%= @service.name %>
+Date: <%= @booking.date.strftime("%-d %B %Y") %>
+Time: <%= @booking.time.strftime("%-I:%M %p") %>
+
+We look forward to seeing you.
