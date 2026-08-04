@@ -121,6 +121,14 @@ Rails.application.routes.draw do
     post "sign-up",
          to: "sign_up#create"
 
+    get "sign-up/check-page-address",
+        to: "sign_up#check_page_address",
+        as: :check_business_page_address
+
+    get "subscription",
+        to: "subscription#index",
+        as: :subscription
+
 
     get "dashboard",
         to: "dashboard#index",
@@ -154,9 +162,28 @@ Rails.application.routes.draw do
         to: "opening_hours#index",
         as: :opening_hours
 
-
     patch "dashboard/opening-hours",
           to: "opening_hours#update"
+
+    get "dashboard/opening-hours/block-time",
+        to: "blocked_times#index",
+        as: :blocked_times
+
+    post "dashboard/opening-hours/block-time",
+         to: "blocked_times#create",
+         as: :create_blocked_time
+
+    get "dashboard/opening-hours/block-time/:id/edit",
+        to: "blocked_times#edit",
+        as: :edit_blocked_time
+
+    patch "dashboard/opening-hours/block-time/:id",
+          to: "blocked_times#update",
+          as: :blocked_time
+
+    delete "dashboard/opening-hours/block-time/:id",
+           to: "blocked_times#destroy",
+           as: :delete_blocked_time
 
 
     get "dashboard/settings",
@@ -165,6 +192,13 @@ Rails.application.routes.draw do
 
     patch "dashboard/settings",
           to: "settings#update"
+
+    get "dashboard/website-settings",
+        to: "website_settings#index",
+        as: :website_settings
+
+    patch "dashboard/website-settings",
+          to: "website_settings#update"
 
     patch "dashboard/password",
           to: "settings#update_password",
@@ -198,6 +232,14 @@ Rails.application.routes.draw do
     get "dashboard",
         to: "dashboard#index",
         as: :dashboard
+
+    scope "dashboard" do
+      resources :customers, only: %i[index show]
+
+      get "settings",
+          to: "settings#index",
+          as: :settings
+    end
 
   end
 

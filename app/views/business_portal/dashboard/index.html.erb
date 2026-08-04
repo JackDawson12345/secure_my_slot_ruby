@@ -408,10 +408,8 @@
             <i data-lucide="chevron-right" class="h-4 w-4 text-slate-400"></i>
           <% end %>
 
-          <button
-            type="button"
-            class="flex w-full items-center gap-3 rounded-xl border border-slate-200 p-3 text-left transition hover:border-indigo-200 hover:bg-indigo-50"
-          >
+          <%= link_to new_business_service_path,
+                      class: "flex w-full items-center gap-3 rounded-xl border border-slate-200 p-3 text-left transition hover:border-indigo-200 hover:bg-indigo-50" do %>
             <div class="rounded-lg bg-blue-100 p-2 text-blue-600">
               <i data-lucide="briefcase-business" class="h-5 w-5"></i>
             </div>
@@ -430,12 +428,10 @@
               data-lucide="chevron-right"
               class="h-4 w-4 text-slate-400"
             ></i>
-          </button>
+          <% end %>
 
-          <button
-            type="button"
-            class="flex w-full items-center gap-3 rounded-xl border border-slate-200 p-3 text-left transition hover:border-indigo-200 hover:bg-indigo-50"
-          >
+          <%= link_to business_opening_hours_path,
+                      class: "flex w-full items-center gap-3 rounded-xl border border-slate-200 p-3 text-left transition hover:border-indigo-200 hover:bg-indigo-50" do %>
             <div class="rounded-lg bg-violet-100 p-2 text-violet-600">
               <i data-lucide="clock-3" class="h-5 w-5"></i>
             </div>
@@ -454,12 +450,10 @@
               data-lucide="chevron-right"
               class="h-4 w-4 text-slate-400"
             ></i>
-          </button>
+          <% end %>
 
-          <button
-            type="button"
-            class="flex w-full items-center gap-3 rounded-xl border border-slate-200 p-3 text-left transition hover:border-indigo-200 hover:bg-indigo-50"
-          >
+          <%= link_to business_blocked_times_path,
+                      class: "flex w-full items-center gap-3 rounded-xl border border-slate-200 p-3 text-left transition hover:border-indigo-200 hover:bg-indigo-50" do %>
             <div class="rounded-lg bg-rose-100 p-2 text-rose-600">
               <i data-lucide="calendar-x" class="h-5 w-5"></i>
             </div>
@@ -478,7 +472,8 @@
               data-lucide="chevron-right"
               class="h-4 w-4 text-slate-400"
             ></i>
-          </button>
+          <% end %>
+
         </div>
       </section>
 

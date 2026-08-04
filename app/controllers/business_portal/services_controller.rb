@@ -70,7 +70,10 @@ class BusinessPortal::ServicesController < BusinessPortal::BaseController
       :description,
       :price,
       :minutes_duration,
-      :status
+      :status,
+      :deposit_enabled,
+      :deposit,
+      :icon
     )
   end
 end

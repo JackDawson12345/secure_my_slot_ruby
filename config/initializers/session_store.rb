@@ -10,7 +10,6 @@ else
   Rails.application.config.session_store(
     :cookie_store,
     key: "_secure_my_slot_session",
-    domain: ".lvh.me",
     same_site: :lax,
     secure: false
   )

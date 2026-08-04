@@ -307,9 +307,15 @@
                   </span>
                 </div>
 
-                <p class="mt-2 text-xs leading-5 text-slate-500">
-                  Use lowercase letters, numbers and hyphens only.
-                </p>
+                <div class="mt-2 min-h-5">
+                  <p
+                    id="page-address-status"
+                    class="text-xs leading-5 text-slate-500"
+                    aria-live="polite"
+                  >
+                    Use lowercase letters, numbers and hyphens only.
+                  </p>
+                </div>
               </div>
 
               <div>
@@ -630,41 +636,250 @@
 </main>
 
 <script>
+    function createBookingPageAddress(value) {
+        return value
+            .toLowerCase()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .replace(/&/g, " and ")
+            .replace(/['’]/g, "")
+            .replace(/[^a-z0-9]+/g, "-")
+            .replace(/^-+|-+$/g, "")
+            .replace(/-{2,}/g, "");
+    }
+
+    function debounce(callback, delay = 500) {
+        let timeoutId;
+
+        return (...args) => {
+            window.clearTimeout(timeoutId);
+
+            timeoutId = window.setTimeout(() => {
+                callback(...args);
+            }, delay);
+        };
+    }
+
+    async function checkPageAddressAvailability(
+        pageAddress,
+        input,
+        status
+    ) {
+        const normalisedAddress =
+            createBookingPageAddress(pageAddress);
+
+        if (!normalisedAddress) {
+            input.setCustomValidity("");
+
+            status.textContent =
+                "Use lowercase letters, numbers and hyphens only.";
+
+            status.className =
+                "text-xs leading-5 text-slate-500";
+
+            return;
+        }
+
+        status.textContent = "Checking availability...";
+        status.className = "text-xs leading-5 text-slate-500";
+
+        try {
+            const query = new URLSearchParams({
+                page_address: normalisedAddress
+            });
+
+            const response = await fetch(
+                `/business/sign-up/check-page-address?${query.toString()}`,
+                {
+                    method: "GET",
+                    headers: {
+                        Accept: "application/json"
+                    }
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error("Availability request failed");
+            }
+
+            const result = await response.json();
+
+            if (
+                createBookingPageAddress(input.value) !==
+                result.page_address
+            ) {
+                return;
+            }
+
+            if (result.available) {
+                input.setCustomValidity("");
+
+                status.textContent =
+                    `${result.page_address}.securemyslot.co.uk is available.`;
+
+                status.className =
+                    "text-xs font-semibold leading-5 text-emerald-600";
+            } else {
+                input.setCustomValidity(
+                    "This booking page address is already in use."
+                );
+
+                status.textContent =
+                    "This booking page address is already in use.";
+
+                status.className =
+                    "text-xs font-semibold leading-5 text-rose-600";
+            }
+        } catch (error) {
+            input.setCustomValidity("");
+
+            status.textContent =
+                "We could not check availability. It will be checked when you submit.";
+
+            status.className =
+                "text-xs leading-5 text-amber-600";
+
+            console.error(error);
+        }
+    }
+
     function initialiseBusinessSignUp() {
         if (window.lucide) {
             lucide.createIcons();
         }
 
-        document.querySelectorAll("[data-password-toggle]").forEach((button) => {
-            if (button.dataset.initialised === "true") return;
+        const businessNameInput = document.getElementById(
+            "user_business_attributes_business_name"
+        );
 
-            button.dataset.initialised = "true";
+        const domainNameInput = document.getElementById(
+            "user_business_attributes_domain_name"
+        );
 
-            button.addEventListener("click", () => {
-                const inputId = button.dataset.passwordToggle;
-                const input = document.getElementById(inputId);
+        const pageAddressStatus = document.getElementById(
+            "page-address-status"
+        );
 
-                if (!input) return;
+        if (
+            businessNameInput &&
+            domainNameInput &&
+            pageAddressStatus &&
+            businessNameInput.dataset.domainInitialised !== "true"
+        ) {
+            businessNameInput.dataset.domainInitialised = "true";
 
-                const showingPassword = input.type === "text";
+            let domainManuallyEdited =
+                domainNameInput.value.trim() !== "";
 
-                input.type = showingPassword ? "password" : "text";
-                button.setAttribute(
-                    "aria-label",
-                    showingPassword ? "Show password" : "Hide password"
+            const debouncedAvailabilityCheck = debounce(() => {
+                checkPageAddressAvailability(
+                    domainNameInput.value,
+                    domainNameInput,
+                    pageAddressStatus
                 );
+            }, 500);
 
-                button.innerHTML = showingPassword
-                    ? '<i data-lucide="eye" class="h-4 w-4"></i>'
-                    : '<i data-lucide="eye-off" class="h-4 w-4"></i>';
+            domainNameInput.addEventListener("input", () => {
+                domainManuallyEdited = true;
 
-                if (window.lucide) {
-                    lucide.createIcons();
+                const normalisedAddress =
+                    createBookingPageAddress(
+                        domainNameInput.value
+                    );
+
+                if (
+                    domainNameInput.value !== normalisedAddress
+                ) {
+                    domainNameInput.value = normalisedAddress;
                 }
+
+                domainNameInput.setCustomValidity("");
+
+                pageAddressStatus.textContent =
+                    normalisedAddress
+                        ? "Waiting to check availability..."
+                        : "Use lowercase letters, numbers and hyphens only.";
+
+                pageAddressStatus.className =
+                    "text-xs leading-5 text-slate-500";
+
+                debouncedAvailabilityCheck();
             });
-        });
+
+            businessNameInput.addEventListener("input", () => {
+                if (domainManuallyEdited) return;
+
+                domainNameInput.value =
+                    createBookingPageAddress(
+                        businessNameInput.value
+                    );
+
+                domainNameInput.setCustomValidity("");
+
+                pageAddressStatus.textContent =
+                    domainNameInput.value
+                        ? "Waiting to check availability..."
+                        : "Use lowercase letters, numbers and hyphens only.";
+
+                pageAddressStatus.className =
+                    "text-xs leading-5 text-slate-500";
+
+                debouncedAvailabilityCheck();
+            });
+
+            if (domainNameInput.value.trim() !== "") {
+                debouncedAvailabilityCheck();
+            }
+        }
+
+        document
+            .querySelectorAll("[data-password-toggle]")
+            .forEach((button) => {
+                if (button.dataset.initialised === "true") return;
+
+                button.dataset.initialised = "true";
+
+                button.addEventListener("click", () => {
+                    const inputId =
+                        button.dataset.passwordToggle;
+
+                    const input =
+                        document.getElementById(inputId);
+
+                    if (!input) return;
+
+                    const showingPassword =
+                        input.type === "text";
+
+                    input.type = showingPassword
+                        ? "password"
+                        : "text";
+
+                    button.setAttribute(
+                        "aria-label",
+                        showingPassword
+                            ? "Show password"
+                            : "Hide password"
+                    );
+
+                    button.innerHTML = showingPassword
+                        ? '<i data-lucide="eye" class="h-4 w-4"></i>'
+                        : '<i data-lucide="eye-off" class="h-4 w-4"></i>';
+
+                    if (window.lucide) {
+                        lucide.createIcons();
+                    }
+                });
+            });
     }
 
-    document.addEventListener("DOMContentLoaded", initialiseBusinessSignUp);
-    document.addEventListener("turbo:load", initialiseBusinessSignUp);
+    document.addEventListener(
+        "DOMContentLoaded",
+        initialiseBusinessSignUp
+    );
+
+    document.addEventListener(
+        "turbo:load",
+        initialiseBusinessSignUp
+    );
 </script>

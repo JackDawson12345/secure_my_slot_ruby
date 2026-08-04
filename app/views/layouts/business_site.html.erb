@@ -22,6 +22,7 @@
   <%= javascript_importmap_tags %>
 
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
 
   <script>
       tailwind.config = {
@@ -96,5 +97,12 @@
 
 <body class="bg-slate-50 text-slate-900">
   <%= yield %>
+  <script>
+      function initialiseIcons() {
+          lucide.createIcons();
+      }
+
+      document.addEventListener("turbo:load", initialiseIcons);
+  </script>
 </body>
 </html>

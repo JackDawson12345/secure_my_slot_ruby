@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  business: one
+  hero: 
+  services: 
+  about_us: 
+  visit: 
+
+two:
+  business: two
+  hero: 
+  services: 
+  about_us: 
+  visit: 

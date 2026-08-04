@@ -1,6 +1,6 @@
 <% if @business.business_setting.booking_page_live == true %>
   <!-- Header -->
-  <header class="sticky top-0 z-50 border-b border-blue-200/80 bg-white/90 backdrop-blur">
+  <header class="sticky top-0 z-50 border-b border-<%= @business.business_website.colour %>-200/80 bg-white/90 backdrop-blur">
     <div class="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 lg:px-8">
 
 
@@ -10,7 +10,7 @@
                       class: "h-10 rounded-xl object-contain" %>
         <% else %>
         <a href="#top" class="flex items-center gap-3">
-          <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-blue-500 text-white shadow-lg shadow-blue-500/20">
+          <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-<%= @business.business_website.colour %>-500 text-white shadow-lg shadow-<%= @business.business_website.colour %>-500/20">
             <svg
               class="h-6 w-6"
               viewBox="0 0 24 24"
@@ -28,10 +28,10 @@
           </div>
 
           <div>
-            <span class="block text-base font-bold leading-tight text-blue-950">
+            <span class="block text-base font-bold leading-tight text-<%= @business.business_website.colour %>-950">
               <%= @business.business_name %>
             </span>
-            <span class="block text-xs font-medium text-blue-500">
+            <span class="block text-xs font-medium text-<%= @business.business_website.colour %>-500">
               Online booking
             </span>
           </div>
@@ -43,28 +43,28 @@
       <nav class="hidden items-center gap-8 md:flex">
         <a
           href="#services"
-          class="text-sm font-semibold text-blue-600 transition hover:text-blue-600"
+          class="text-sm font-semibold text-<%= @business.business_website.colour %>-600 transition hover:text-<%= @business.business_website.colour %>-600"
         >
           Services
         </a>
 
         <a
           href="#about"
-          class="text-sm font-semibold text-blue-600 transition hover:text-blue-600"
+          class="text-sm font-semibold text-<%= @business.business_website.colour %>-600 transition hover:text-<%= @business.business_website.colour %>-600"
         >
           About
         </a>
 
         <a
           href="#location"
-          class="text-sm font-semibold text-blue-600 transition hover:text-blue-600"
+          class="text-sm font-semibold text-<%= @business.business_website.colour %>-600 transition hover:text-<%= @business.business_website.colour %>-600"
         >
           Location
         </a>
 
         <a
           href="#booking"
-          class="rounded-xl bg-blue-500 px-5 py-3 text-sm font-bold text-white shadow-lg shadow-blue-500/20 transition hover:bg-blue-600"
+          class="rounded-xl bg-<%= @business.business_website.colour %>-500 px-5 py-3 text-sm font-bold text-white shadow-lg shadow-<%= @business.business_website.colour %>-500/20 transition hover:bg-<%= @business.business_website.colour %>-600"
         >
           Book now
         </a>
@@ -72,7 +72,7 @@
 
       <a
         href="#booking"
-        class="rounded-xl bg-blue-500 px-4 py-2.5 text-sm font-bold text-white md:hidden"
+        class="rounded-xl bg-<%= @business.business_website.colour %>-500 px-4 py-2.5 text-sm font-bold text-white md:hidden"
       >
         Book
       </a>
@@ -82,15 +82,24 @@
   <main id="top">
 
     <!-- Hero -->
-    <section class="relative overflow-hidden bg-blue-950">
+    <section class="relative overflow-hidden bg-<%= @business.business_website.colour %>-950">
       <div class="absolute inset-0">
-        <img
-          src="https://images.unsplash.com/photo-1621605815971-fbc98d665033?auto=format&fit=crop&w=1800&q=85"
-          alt="Professional barber working in the shop"
-          class="h-full w-full object-cover opacity-40"
-        >
+        <% if @business.business_website.hero_image.attached? %>
+          <%= image_tag @business.business_website.hero_image,
+                        alt: "#{@business.business_name} hero image",
+                        class: "h-full w-full object-cover opacity-40" %>
+        <% else %>
+          <%= image_tag 'hero.jpg',
+                        alt: "Hero image",
+                        class: "h-full w-full object-cover opacity-40" %>
+          <img
+            src="https://images.unsplash.com/photo-1621605815971-fbc98d665033?auto=format&fit=crop&w=1800&q=85"
+            alt="Professional barber working in the shop"
+            class="h-full w-full object-cover opacity-40"
+          >
+        <% end %>
 
-        <div class="absolute inset-0 bg-gradient-to-r from-blue-950 via-blue-950/90 to-blue-950/30"></div>
+        <div class="absolute inset-0 bg-gradient-to-r from-<%= @business.business_website.colour %>-950 via-<%= @business.business_website.colour %>-950/30 to-<%= @business.business_website.colour %>-950/30"></div>
 
         <div
           class="absolute inset-0 opacity-20"
@@ -110,44 +119,35 @@
           </div>
 
           <h1 class="max-w-3xl text-4xl font-black tracking-tight text-white sm:text-5xl lg:text-7xl">
-            Look sharp.
-            <span class="text-blue-300">Book your next cut online.</span>
+            <%= @business.business_website.hero['title'].presence || 'Book your next appointment online' %>
           </h1>
 
-          <p class="mt-6 max-w-2xl text-lg leading-8 text-blue-300 sm:text-xl">
-            Professional barbering in the heart of Manchester. Choose your
-            service, select an available time and confirm your appointment in
-            just a few steps.
+          <p class="mt-6 max-w-2xl text-lg leading-8 text-<%= @business.business_website.colour %>-300 sm:text-xl">
+            <%= @business.business_website.hero['sentence'].presence || 'Professional services delivered at a time that works for you. Choose your service, select an available appointment and confirm your booking in just a few simple steps.' %>
+
           </p>
 
-          <div class="mt-8 flex flex-wrap gap-3 text-sm font-semibold text-blue-200">
+          <div class="mt-8 flex flex-wrap gap-3 text-sm font-semibold text-<%= @business.business_website.colour %>-200">
             <div class="flex items-center gap-2 rounded-xl border border-white/10 bg-white/10 px-4 py-3 backdrop-blur">
-              <svg class="h-5 w-5 text-blue-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="m5 13 4 4L19 7"/>
-              </svg>
-              Instant confirmation
+              <i data-lucide="<%= @business.business_website.hero['info_boxes'][0]['icon'].presence || 'check' %>" class="h-5 w-5"></i>
+              <%= @business.business_website.hero['info_boxes'][0]['title'].presence || 'Instant confirmation' %>
             </div>
 
             <div class="flex items-center gap-2 rounded-xl border border-white/10 bg-white/10 px-4 py-3 backdrop-blur">
-              <svg class="h-5 w-5 text-blue-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 2"/>
-                <circle cx="12" cy="12" r="9"/>
-              </svg>
-              Live availability
+              <i data-lucide="<%= @business.business_website.hero['info_boxes'][1]['icon'].presence || 'clock' %>" class="h-5 w-5"></i>
+              <%= @business.business_website.hero['info_boxes'][1]['title'].presence || 'Live availability' %>
             </div>
 
             <div class="flex items-center gap-2 rounded-xl border border-white/10 bg-white/10 px-4 py-3 backdrop-blur">
-              <svg class="h-5 w-5 text-blue-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 17h.01M8 2h8a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Z"/>
-              </svg>
-              Mobile friendly
+              <i data-lucide="<%= @business.business_website.hero['info_boxes'][2]['icon'].presence || 'smartphone' %>" class="h-5 w-5"></i>
+              <%= @business.business_website.hero['info_boxes'][2]['title'].presence || 'Mobile friendly' %>
             </div>
           </div>
 
           <div class="mt-10 flex flex-col gap-4 sm:flex-row">
             <a
               href="#booking"
-              class="inline-flex items-center justify-center gap-2 rounded-2xl bg-blue-500 px-7 py-4 text-base font-bold text-white shadow-xl shadow-blue-500/20 transition hover:-tranblue-y-0.5 hover:bg-blue-600"
+              class="inline-flex items-center justify-center gap-2 rounded-2xl bg-<%= @business.business_website.colour %>-500 px-7 py-4 text-base font-bold text-white shadow-xl shadow-<%= @business.business_website.colour %>-500/20 transition hover:-tran<%= @business.business_website.colour %>-y-0.5 hover:bg-<%= @business.business_website.colour %>-600"
             >
               Book an appointment
 
@@ -157,13 +157,13 @@
             </a>
 
             <a
-              href="tel:01615551234"
+              href="tel:<%= @business.business_setting.phone_number %>"
               class="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/20 bg-white/10 px-7 py-4 text-base font-bold text-white backdrop-blur transition hover:bg-white/20"
             >
-              <svg class="h-5 w-5 text-blue-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <svg class="h-5 w-5 text-<%= @business.business_website.colour %>-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.9.33 1.78.62 2.63a2 2 0 0 1-.45 2.11L8 9.73a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.85.29 1.73.5 2.63.62A2 2 0 0 1 22 16.92Z"/>
               </svg>
-              0161 555 1234
+              <%= @business.business_setting.phone_number %>
             </a>
           </div>
         </div>
@@ -174,15 +174,15 @@
             <div class="rounded-[1.5rem] bg-white p-7">
               <div class="flex items-start justify-between gap-4">
                 <div>
-                  <p class="text-sm font-bold uppercase tracking-[0.18em] text-blue-600">
+                  <p class="text-sm font-bold uppercase tracking-[0.18em] text-<%= @business.business_website.colour %>-600">
                     Opening hours
                   </p>
-                  <h2 class="mt-2 text-2xl font-black text-blue-950">
+                  <h2 class="mt-2 text-2xl font-black text-<%= @business.business_website.colour %>-950">
                     Plan your visit
                   </h2>
                 </div>
 
-                <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 text-blue-600">
+                <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-<%= @business.business_website.colour %>-50 text-<%= @business.business_website.colour %>-600">
                   <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
                     <circle cx="12" cy="12" r="9"/>
                     <path stroke-linecap="round" d="M12 7v5l3 2"/>
@@ -194,12 +194,12 @@
 
               <div class="mt-6 space-y-3">
                 <% @business.opening_hours.each do |opening_hour| %>
-                  <div class="flex items-center justify-between border-b border-blue-100 pb-3">
-                    <span class="font-medium text-blue-600 capitalize"><%= opening_hour.day_of_week %></span>
+                  <div class="flex items-center justify-between border-b border-<%= @business.business_website.colour %>-100 pb-3">
+                    <span class="font-medium text-<%= @business.business_website.colour %>-600 capitalize"><%= opening_hour.day_of_week %></span>
                     <% if opening_hour.open == true %>
-                      <span class="font-bold text-blue-900"><%= opening_hour.opens_at.strftime("%H:%M") %> – <%= opening_hour.closes_at.strftime("%H:%M") %></span>
+                      <span class="font-bold text-<%= @business.business_website.colour %>-900"><%= opening_hour.opens_at.strftime("%H:%M") %> – <%= opening_hour.closes_at.strftime("%H:%M") %></span>
                   <% else %>
-                      <span class="font-bold text-blue-900">Closed</span>
+                      <span class="font-bold text-<%= @business.business_website.colour %>-900">Closed</span>
                   <% end %>
                   </div>
                 <% end %>
@@ -232,11 +232,11 @@
     </section>
 
     <!-- Business Summary -->
-    <section class="border-b border-blue-200 bg-white">
-      <div class="mx-auto grid max-w-7xl divide-y divide-blue-200 px-5 sm:grid-cols-3 sm:divide-x sm:divide-y-0 lg:px-8">
+    <section class="border-b border-<%= @business.business_website.colour %>-200 bg-white">
+      <div class="mx-auto grid max-w-7xl divide-y divide-<%= @business.business_website.colour %>-200 px-5 sm:grid-cols-3 sm:divide-x sm:divide-y-0 lg:px-8">
 
         <div class="flex items-center gap-4 py-6 sm:px-6 sm:first:pl-0">
-          <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-600">
+          <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-<%= @business.business_website.colour %>-50 text-<%= @business.business_website.colour %>-600">
             <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
               <path stroke-linecap="round" stroke-linejoin="round" d="M12 21s7-4.35 7-11A7 7 0 1 0 5 10c0 6.65 7 11 7 11Z"/>
               <circle cx="12" cy="10" r="2"/>
@@ -244,26 +244,26 @@
           </div>
 
           <div>
-            <p class="text-sm font-semibold text-blue-500">Location</p>
-            <p class="font-bold text-blue-900"><%= @business.business_setting.address_line_1 %>, <%= @business.business_setting.town_or_city %>, <%= @business.business_setting.postcode %></p>
+            <p class="text-sm font-semibold text-<%= @business.business_website.colour %>-500">Location</p>
+            <p class="font-bold text-<%= @business.business_website.colour %>-900"><%= @business.business_setting.address_line_1 %>, <%= @business.business_setting.town_or_city %>, <%= @business.business_setting.postcode %></p>
           </div>
         </div>
 
         <div class="flex items-center gap-4 py-6 sm:px-6">
-          <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-600">
+          <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-<%= @business.business_website.colour %>-50 text-<%= @business.business_website.colour %>-600">
             <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
               <path stroke-linecap="round" stroke-linejoin="round" d="m3 11 2-2 4 4L19 3l2 2L9 17l-6-6Z"/>
             </svg>
           </div>
 
           <div>
-            <p class="text-sm font-semibold text-blue-500">Appointments</p>
-            <p class="font-bold text-blue-900">Instantly confirmed</p>
+            <p class="text-sm font-semibold text-<%= @business.business_website.colour %>-500">Appointments</p>
+            <p class="font-bold text-<%= @business.business_website.colour %>-900">Instantly confirmed</p>
           </div>
         </div>
 
         <div class="flex items-center gap-4 py-6 sm:px-6 sm:last:pr-0">
-          <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-600">
+          <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-<%= @business.business_website.colour %>-50 text-<%= @business.business_website.colour %>-600">
             <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
               <path stroke-linecap="round" stroke-linejoin="round" d="M4 7h16M7 3v4m10-4v4M5 5h14a1 1 0 0 1 1 1v14H4V6a1 1 0 0 1 1-1Z"/>
               <path stroke-linecap="round" d="M8 11h3m2 0h3m-8 4h3m2 0h3"/>
@@ -271,8 +271,8 @@
           </div>
 
           <div>
-            <p class="text-sm font-semibold text-blue-500">Booking</p>
-            <p class="font-bold text-blue-900">Available 24 hours a day</p>
+            <p class="text-sm font-semibold text-<%= @business.business_website.colour %>-500">Booking</p>
+            <p class="font-bold text-<%= @business.business_website.colour %>-900">Available 24 hours a day</p>
           </div>
         </div>
 
@@ -284,56 +284,65 @@
       <div class="mx-auto max-w-7xl px-5 lg:px-8">
 
         <div class="mx-auto max-w-2xl text-center">
-          <p class="text-sm font-bold uppercase tracking-[0.2em] text-blue-600">
+          <p class="text-sm font-bold uppercase tracking-[0.2em] text-<%= @business.business_website.colour %>-600">
             Our services
           </p>
 
-          <h2 class="mt-3 text-3xl font-black tracking-tight text-blue-950 sm:text-5xl">
-            Choose the right appointment
+          <h2 class="mt-3 text-3xl font-black tracking-tight text-<%= @business.business_website.colour %>-950 sm:text-5xl">
+            <%= @business.business_website.services['title'].presence || 'Choose the right service' %>
           </h2>
 
-          <p class="mt-5 text-lg leading-8 text-blue-600">
-            Select from our most popular barbering services. Every appointment
-            includes a consultation before your service begins.
+          <p class="mt-5 text-lg leading-8 text-<%= @business.business_website.colour %>-600">
+            <%= @business.business_website.services['sentence'].presence || 'Browse our available services and select the option that best matches your requirements. Full details, appointment lengths and prices are shown before you book.' %>
           </p>
         </div>
 
         <div class="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
 
           <% @business.services.each do |service| %>
-            <article class="group rounded-3xl border border-blue-200 bg-white p-6 shadow-card transition hover:-tranblue-y-1 hover:border-blue-200 hover:shadow-soft">
+            <article class="group rounded-3xl border border-<%= @business.business_website.colour %>-200 bg-white p-6 shadow-card transition hover:-tran<%= @business.business_website.colour %>-y-1 hover:border-<%= @business.business_website.colour %>-200 hover:shadow-soft">
               <div class="flex items-start justify-between gap-4">
-                <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-50 text-blue-600">
-                  <svg class="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                    <circle cx="6" cy="6" r="3"/>
-                    <circle cx="6" cy="18" r="3"/>
-                    <path stroke-linecap="round" d="m8.6 7.5 11 6.5M8.6 16.5l11-6.5"/>
-                  </svg>
+                <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-<%= @business.business_website.colour %>-50 text-<%= @business.business_website.colour %>-600">
+                  <i
+                    data-lucide="<%= service.icon.presence || 'calendar-check' %>"
+                    class="h-6 w-6"
+                  ></i>
                 </div>
 
-                <span class="rounded-full bg-blue-100 px-3 py-1.5 text-xs font-bold text-blue-600">
+                <span class="rounded-full bg-<%= @business.business_website.colour %>-100 px-3 py-1.5 text-xs font-bold text-<%= @business.business_website.colour %>-600">
                   <%= service.minutes_duration %> mins
                 </span>
               </div>
 
-              <h3 class="mt-6 text-xl font-black text-blue-950">
+              <h3 class="mt-6 text-xl font-black text-<%= @business.business_website.colour %>-950">
                 <%= service.name %>
               </h3>
 
-              <p class="mt-3 leading-7 text-blue-600">
+              <p class="mt-3 leading-7 text-<%= @business.business_website.colour %>-600">
                 <%= service.description %>
               </p>
 
               <div class="mt-6 flex items-end justify-between">
                 <div>
-                  <span class="text-sm font-semibold text-blue-400">From</span>
-                  <p class="text-2xl font-black text-blue-950"><%= number_to_currency(service.price, unit: "£") %></p>
+  <span class="text-sm font-semibold text-<%= @business.business_website.colour %>-400">
+    Price
+  </span>
+
+                  <p class="text-2xl font-black text-<%= @business.business_website.colour %>-950">
+                    <%= number_to_currency(service.price, unit: "£") %>
+                  </p>
+
+                  <% if service.deposit_enabled? && service.deposit.present? %>
+                    <p class="mt-1 text-xs font-bold text-<%= @business.business_website.colour %>-600">
+                      <%= number_to_currency(service.deposit, unit: "£") %> deposit required
+                    </p>
+                  <% end %>
                 </div>
 
                 <a
                   href="#booking"
-                  data-service-link="Classic Haircut"
-                  class="inline-flex items-center gap-2 text-sm font-bold text-blue-600 transition group-hover:gap-3"
+                  data-service-id="<%= service.id %>"
+                  class="inline-flex items-center gap-2 text-sm font-bold text-<%= @business.business_website.colour %>-600 transition group-hover:gap-3"
                 >
                   Select
                   <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -349,19 +358,19 @@
     </section>
 
     <!-- Booking Section -->
-    <section id="booking" class="bg-blue-100 py-20 sm:py-24">
+    <section id="booking" class="bg-<%= @business.business_website.colour %>-100 py-20 sm:py-24">
       <div class="mx-auto max-w-7xl px-5 lg:px-8">
 
         <div class="mb-12 max-w-3xl">
-          <p class="text-sm font-bold uppercase tracking-[0.2em] text-blue-600">
+          <p class="text-sm font-bold uppercase tracking-[0.2em] text-<%= @business.business_website.colour %>-600">
             Book online
           </p>
 
-          <h2 class="mt-3 text-3xl font-black tracking-tight text-blue-950 sm:text-5xl">
+          <h2 class="mt-3 text-3xl font-black tracking-tight text-<%= @business.business_website.colour %>-950 sm:text-5xl">
             Find your next available appointment
           </h2>
 
-          <p class="mt-5 text-lg leading-8 text-blue-600">
+          <p class="mt-5 text-lg leading-8 text-<%= @business.business_website.colour %>-600">
             Choose your service, appointment date and preferred time.
           </p>
         </div>
@@ -374,16 +383,14 @@
                       class: "grid gap-8 lg:grid-cols-[1fr_380px]",
                       id: "booking-form" do |form| %>
 
-          <%= form.hidden_field :business_id, value: @business.id %>
-
 
           <div class="space-y-8">
 
 
             <!-- Service -->
-            <div class="rounded-3xl border border-blue-200 bg-white p-6 shadow-card sm:p-8">
+            <div class="rounded-3xl border border-<%= @business.business_website.colour %>-200 bg-white p-6 shadow-card sm:p-8">
 
-              <h3 class="text-xl font-black text-blue-950">
+              <h3 class="text-xl font-black text-<%= @business.business_website.colour %>-950">
                 Select a service
               </h3>
 
@@ -403,34 +410,44 @@
                       value="<%= service.id %>"
                       data-duration="<%= service.minutes_duration %>"
                       data-price="<%= service.price %>"
+                      data-deposit-enabled="<%= service.deposit_enabled? %>"
+                      data-deposit="<%= service.deposit || 0 %>"
                       required
                     >
 
 
                     <label
                       for="service-<%= service.id %>"
-                      class="block cursor-pointer rounded-2xl border-2 border-blue-200 p-4 hover:border-blue-500"
+                      class="block cursor-pointer rounded-2xl border-2 border-<%= @business.business_website.colour %>-200 p-4 hover:border-<%= @business.business_website.colour %>-500"
                     >
 
                       <div class="flex justify-between">
 
                         <div>
 
-                        <span class="block font-bold text-blue-900">
+                        <span class="service-name block font-bold text-<%= @business.business_website.colour %>-900">
                           <%= service.name %>
                         </span>
 
 
-                          <span class="text-sm text-blue-500">
+                          <span class="text-sm text-<%= @business.business_website.colour %>-500">
                             <%= service.minutes_duration %> minutes
                           </span>
 
                         </div>
 
 
-                        <span class="font-black text-blue-900">
-                          <%= number_to_currency(service.price, unit: "£") %>
-                        </span>
+                        <div class="text-right">
+  <span class="block font-black text-<%= @business.business_website.colour %>-900">
+    <%= number_to_currency(service.price, unit: "£") %>
+  </span>
+
+                          <% if service.deposit_enabled? && service.deposit.present? %>
+    <span class="mt-1 block text-xs font-semibold text-<%= @business.business_website.colour %>-600">
+      <%= number_to_currency(service.deposit, unit: "£") %> deposit
+    </span>
+                          <% end %>
+                        </div>
 
                       </div>
 
@@ -449,9 +466,9 @@
 
 
             <!-- Date -->
-            <div class="rounded-3xl border border-blue-200 bg-white p-6 shadow-card sm:p-8">
+            <div class="rounded-3xl border border-<%= @business.business_website.colour %>-200 bg-white p-6 shadow-card sm:p-8">
 
-              <h3 class="text-xl font-black text-blue-950">
+              <h3 class="text-xl font-black text-<%= @business.business_website.colour %>-950">
                 Choose a date
               </h3>
 
@@ -460,12 +477,12 @@
                 type="date"
                 name="booking[date]"
                 id="booking-date"
-                class="mt-6 w-full rounded-2xl border border-blue-300 px-4 py-4"
+                class="mt-6 w-full rounded-2xl border border-<%= @business.business_website.colour %>-300 px-4 py-4"
                 required
               >
 
 
-              <p class="mt-6 font-bold text-blue-700">
+              <p class="mt-6 font-bold text-<%= @business.business_website.colour %>-700">
                 Available times
               </p>
 
@@ -474,9 +491,9 @@
                 class="mt-4"
               >
 
-                <div class="flex flex-col items-center justify-center rounded-2xl border border-dashed border-blue-200 bg-blue-50 px-6 py-10 text-center">
+                <div class="flex flex-col items-center justify-center rounded-2xl border border-dashed border-<%= @business.business_website.colour %>-200 bg-<%= @business.business_website.colour %>-50 px-6 py-10 text-center">
 
-                  <div class="flex h-12 w-12 items-center justify-center rounded-full bg-white text-blue-500 shadow-sm">
+                  <div class="flex h-12 w-12 items-center justify-center rounded-full bg-white text-<%= @business.business_website.colour %>-500 shadow-sm">
 
                     <svg
                       class="h-6 w-6"
@@ -495,12 +512,12 @@
                   </div>
 
 
-                  <p class="mt-4 text-base font-bold text-blue-900">
+                  <p class="mt-4 text-base font-bold text-<%= @business.business_website.colour %>-900">
                     Choose your service and date
                   </p>
 
 
-                  <p class="mt-2 max-w-sm text-sm leading-6 text-blue-500">
+                  <p class="mt-2 max-w-sm text-sm leading-6 text-<%= @business.business_website.colour %>-500">
                     Available appointment times will appear here once you select your preferred service and booking date.
                   </p>
 
@@ -515,10 +532,10 @@
 
 
             <!-- Customer Details -->
-            <div class="rounded-3xl border border-blue-200 bg-white p-6 shadow-card sm:p-8">
+            <div class="rounded-3xl border border-<%= @business.business_website.colour %>-200 bg-white p-6 shadow-card sm:p-8">
 
 
-              <h3 class="text-xl font-black text-blue-950">
+              <h3 class="text-xl font-black text-<%= @business.business_website.colour %>-950">
                 Your details
               </h3>
 
@@ -530,7 +547,7 @@
                   type="text"
                   name="booking[first_name]"
                   placeholder="First name"
-                  class="rounded-2xl border border-blue-300 px-4 py-3"
+                  class="rounded-2xl border border-<%= @business.business_website.colour %>-300 px-4 py-3"
                   required
                 >
 
@@ -539,7 +556,7 @@
                   type="text"
                   name="booking[last_name]"
                   placeholder="Last name"
-                  class="rounded-2xl border border-blue-300 px-4 py-3"
+                  class="rounded-2xl border border-<%= @business.business_website.colour %>-300 px-4 py-3"
                   required
                 >
 
@@ -548,7 +565,7 @@
                   type="email"
                   name="booking[email]"
                   placeholder="Email"
-                  class="rounded-2xl border border-blue-300 px-4 py-3"
+                  class="rounded-2xl border border-<%= @business.business_website.colour %>-300 px-4 py-3"
                   required
                 >
 
@@ -557,7 +574,7 @@
                   type="tel"
                   name="booking[phone_number]"
                   placeholder="Phone number"
-                  class="rounded-2xl border border-blue-300 px-4 py-3"
+                  class="rounded-2xl border border-<%= @business.business_website.colour %>-300 px-4 py-3"
                   required
                 >
 
@@ -565,8 +582,18 @@
                 <textarea
                   name="booking[notes]"
                   placeholder="Additional notes"
-                  class="sm:col-span-2 rounded-2xl border border-blue-300 px-4 py-3"
+                  class="sm:col-span-2 rounded-2xl border border-<%= @business.business_website.colour %>-300 px-4 py-3"
                 ></textarea>
+
+                <div class="flex items-start gap-3">
+                  <%= form.check_box :terms_accepted,
+                                     required: true,
+                                     class: "mt-1 h-4 w-4 rounded border-gray-300" %>
+
+                  <%= form.label :terms_accepted, class: "text-sm text-gray-700" do %>
+                    I agree to the terms and conditions
+                  <% end %>
+                </div>
 
 
               </div>
@@ -585,10 +612,10 @@
 
           <aside>
 
-            <div class="rounded-3xl border border-blue-200 bg-white p-6 shadow-soft lg:sticky lg:top-28">
+            <div class="rounded-3xl border border-<%= @business.business_website.colour %>-200 bg-white p-6 shadow-soft lg:sticky lg:top-28">
 
 
-              <h3 class="text-2xl font-black text-blue-950">
+              <h3 class="text-2xl font-black text-<%= @business.business_website.colour %>-950">
                 Your appointment
               </h3>
 
@@ -633,29 +660,74 @@
                 </span>
                 </div>
 
+                <div
+                  id="summary-deposit-row"
+                  class="hidden items-center justify-between gap-5 border-b border-slate-100 pb-4"
+                >
+  <span class="text-sm font-semibold text-slate-500">
+    Deposit
+  </span>
 
-                <div class="flex justify-between">
+                  <span
+                    id="summary-deposit"
+                    class="text-right text-sm font-bold text-slate-900"
+                  >
+    £0.00
+  </span>
+                </div>
 
-                <span class="font-bold">
-                  Total
-                </span>
+
+                <div class="flex items-end justify-between gap-5">
+                  <div>
+    <span class="block font-bold text-slate-900">
+      Service total
+    </span>
+
+                    <span
+                      id="summary-payment-note"
+                      class="mt-1 block text-xs text-slate-500"
+                    >
+      Select a service
+    </span>
+                  </div>
 
                   <span
                     id="summary-price"
-                    class="text-3xl font-black"
+                    class="text-3xl font-black text-slate-900"
                   >
-                  £0
-                </span>
-
+    £0.00
+  </span>
                 </div>
+
+                <div
+                  id="summary-due-container"
+                  class="mt-5 rounded-2xl bg-<%= @business.business_website.colour %>-50 p-4"
+                >
+                  <div class="flex items-center justify-between gap-4">
+    <span
+      id="summary-due-label"
+      class="text-sm font-bold text-<%= @business.business_website.colour %>-700"
+    >
+      Amount due
+    </span>
+
+                    <span
+                      id="summary-due"
+                      class="text-xl font-black text-<%= @business.business_website.colour %>-950"
+                    >
+      £0.00
+    </span>
+                  </div>
+                </div>
+
 
 
               </div>
 
               <% if @business.stripe_ready? %>
-                <div class="mt-5 flex items-start gap-3 rounded-2xl bg-blue-50 p-4">
+                <div class="mt-5 flex items-start gap-3 rounded-2xl bg-<%= @business.business_website.colour %>-50 p-4">
                   <svg
-                    class="mt-0.5 h-5 w-5 shrink-0 text-blue-600"
+                    class="mt-0.5 h-5 w-5 shrink-0 text-<%= @business.business_website.colour %>-600"
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
@@ -665,7 +737,7 @@
                     <path d="M3 10h18"/>
                   </svg>
 
-                  <p class="text-sm leading-6 text-blue-700">
+                  <p class="text-sm leading-6 text-<%= @business.business_website.colour %>-700">
                     You will be redirected to Stripe to securely pay for this appointment.
                   </p>
                 </div>
@@ -692,13 +764,15 @@
 
               <button
                 type="submit"
-                class="mt-7 w-full rounded-2xl bg-blue-500 px-5 py-4 font-black text-white transition hover:bg-blue-600"
+                class="mt-7 w-full rounded-2xl bg-<%= @business.business_website.colour %>-500 px-5 py-4 font-black text-white transition hover:bg-<%= @business.business_website.colour %>-600"
               >
-                <% if @business.stripe_ready? %>
-                  Continue to secure payment
-                <% else %>
-                  Confirm booking
-                <% end %>
+                <span id="booking-submit-text">
+                  <% if @business.stripe_ready? %>
+                    Continue to secure payment
+                  <% else %>
+                    Confirm booking
+                  <% end %>
+                </span>
               </button>
 
 
@@ -719,110 +793,94 @@
 
         <div class="relative">
           <div class="overflow-hidden rounded-[2rem]">
-            <img
-              src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=1200&q=85"
-              alt="Sharp and Co barber shop"
-              class="aspect-[4/3] w-full object-cover"
-            >
+            <% if @business.business_website.about_image.attached? %>
+              <%= image_tag @business.business_website.about_image,
+                            alt: "About #{@business.business_name}",
+                            class: "aspect-[4/3] w-full object-cover" %>
+            <% else %>
+              <%= image_tag 'about-us.jpg',
+                            alt: "About",
+                            class: "aspect-[4/3] w-full object-cover" %>
+            <% end %>
           </div>
 
-          <div class="absolute -bottom-7 right-4 rounded-3xl border border-blue-200 bg-white p-5 shadow-soft sm:right-8">
-            <div class="flex items-center gap-4">
-              <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-50 text-amber-500">
-                <svg class="h-7 w-7" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2.5 14.8 8l6.2.9-4.5 4.4 1.1 6.2-5.6-2.9-5.6 2.9 1.1-6.2L3 8.9 9.2 8 12 2.5Z"/>
-                </svg>
-              </div>
 
-              <div>
-                <p class="text-2xl font-black text-blue-950">4.9 / 5</p>
-                <p class="text-sm font-semibold text-blue-500">
-                  Based on customer reviews
-                </p>
-              </div>
-            </div>
-          </div>
         </div>
 
         <div class="pt-6 lg:pt-0">
-          <p class="text-sm font-bold uppercase tracking-[0.2em] text-blue-600">
+          <p class="text-sm font-bold uppercase tracking-[0.2em] text-<%= @business.business_website.colour %>-600">
             About us
           </p>
 
-          <h2 class="mt-3 text-3xl font-black tracking-tight text-blue-950 sm:text-5xl">
-            Traditional barbering with a modern approach
+          <h2 class="mt-3 text-3xl font-black tracking-tight text-<%= @business.business_website.colour %>-950 sm:text-5xl">
+            <%= @business.business_website.about_us['title'].presence || 'Professional service with a personal approach' %>
           </h2>
 
-          <p class="mt-6 text-lg leading-8 text-blue-600">
-            Sharp & Co Barbers provides professional barbering services in a
-            relaxed and welcoming environment. Our experienced team takes the
-            time to understand your style and deliver a finish that suits you.
-          </p>
+          <%= simple_format(
+                @business.business_website.about_us['paragraph'].presence ||
+                'We provide reliable, professional services tailored to the needs of each customer. Our team takes the time to understand your requirements and deliver a service that meets your expectations.
 
-          <p class="mt-4 leading-7 text-blue-600">
-            From classic cuts and skin fades to beard shaping and complete
-            restyles, every service is carried out with attention to detail.
-            Online booking makes it simple to secure a convenient appointment
-            before you arrive.
-          </p>
+Every appointment is handled with care, clear communication and attention to detail. Our online booking system makes it easy to view availability, choose the right service and secure an appointment at a convenient time.',
+                class: "mt-6 text-lg leading-8 text-#{@business.business_website.colour}-600"
+              ) %>
 
           <div class="mt-8 grid gap-4 sm:grid-cols-2">
             <div class="flex items-start gap-3">
-                <span class="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-blue-100 text-blue-700">
+                <span class="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-<%= @business.business_website.colour %>-100 text-<%= @business.business_website.colour %>-700">
                   <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
                     <path stroke-linecap="round" stroke-linejoin="round" d="m5 13 4 4L19 7"/>
                   </svg>
                 </span>
 
               <div>
-                <h3 class="font-bold text-blue-900">Experienced barbers</h3>
-                <p class="mt-1 text-sm leading-6 text-blue-500">
-                  Skilled professionals with years of industry experience.
+                <h3 class="font-bold text-<%= @business.business_website.colour %>-900"><%= @business.business_website.about_us['icon_boxes'][0]['title'].presence || 'Experienced professionals' %></h3>
+                <p class="mt-1 text-sm leading-6 text-<%= @business.business_website.colour %>-500">
+                  <%= @business.business_website.about_us['icon_boxes'][0]['sentence'].presence || 'Skilled and knowledgeable professionals you can rely on.' %>
                 </p>
               </div>
             </div>
 
             <div class="flex items-start gap-3">
-                <span class="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-blue-100 text-blue-700">
+                <span class="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-<%= @business.business_website.colour %>-100 text-<%= @business.business_website.colour %>-700">
                   <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
                     <path stroke-linecap="round" stroke-linejoin="round" d="m5 13 4 4L19 7"/>
                   </svg>
                 </span>
 
               <div>
-                <h3 class="font-bold text-blue-900">Personal service</h3>
-                <p class="mt-1 text-sm leading-6 text-blue-500">
-                  Every appointment begins with a clear consultation.
+                <h3 class="font-bold text-<%= @business.business_website.colour %>-900"><%= @business.business_website.about_us['icon_boxes'][1]['title'].presence || 'Personal service' %></h3>
+                <p class="mt-1 text-sm leading-6 text-<%= @business.business_website.colour %>-500">
+                  <%= @business.business_website.about_us['icon_boxes'][1]['sentence'].presence || 'Every appointment is tailored to your individual requirements.' %>
                 </p>
               </div>
             </div>
 
             <div class="flex items-start gap-3">
-                <span class="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-blue-100 text-blue-700">
+                <span class="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-<%= @business.business_website.colour %>-100 text-<%= @business.business_website.colour %>-700">
                   <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
                     <path stroke-linecap="round" stroke-linejoin="round" d="m5 13 4 4L19 7"/>
                   </svg>
                 </span>
 
               <div>
-                <h3 class="font-bold text-blue-900">Quality products</h3>
-                <p class="mt-1 text-sm leading-6 text-blue-500">
-                  Professional products selected for a lasting finish.
+                <h3 class="font-bold text-<%= @business.business_website.colour %>-900"><%= @business.business_website.about_us['icon_boxes'][2]['title'].presence || 'Quality service' %></h3>
+                <p class="mt-1 text-sm leading-6 text-<%= @business.business_website.colour %>-500">
+                  <%= @business.business_website.about_us['icon_boxes'][2]['sentence'].presence || 'A consistent focus on quality, reliability and attention to detail.' %>
                 </p>
               </div>
             </div>
 
             <div class="flex items-start gap-3">
-                <span class="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-blue-100 text-blue-700">
+                <span class="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-<%= @business.business_website.colour %>-100 text-<%= @business.business_website.colour %>-700">
                   <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
                     <path stroke-linecap="round" stroke-linejoin="round" d="m5 13 4 4L19 7"/>
                   </svg>
                 </span>
 
               <div>
-                <h3 class="font-bold text-blue-900">Easy online booking</h3>
-                <p class="mt-1 text-sm leading-6 text-blue-500">
-                  View availability and book at any time.
+                <h3 class="font-bold text-<%= @business.business_website.colour %>-900"><%= @business.business_website.about_us['icon_boxes'][3]['title'].presence || 'Easy online booking' %></h3>
+                <p class="mt-1 text-sm leading-6 text-<%= @business.business_website.colour %>-500">
+                  <%= @business.business_website.about_us['icon_boxes'][2]['sentence'].presence || 'View live availability and book your appointment at any time.' %>
                 </p>
               </div>
             </div>
@@ -830,7 +888,7 @@
 
           <a
             href="#booking"
-            class="mt-9 inline-flex items-center justify-center gap-2 rounded-2xl bg-blue-950 px-6 py-4 font-bold text-white transition hover:bg-blue-600"
+            class="mt-9 inline-flex items-center justify-center gap-2 rounded-2xl bg-<%= @business.business_website.colour %>-950 px-6 py-4 font-bold text-white transition hover:bg-<%= @business.business_website.colour %>-600"
           >
             Book your appointment
 
@@ -844,26 +902,25 @@
     </section>
 
     <!-- Location -->
-    <section id="location" class="bg-blue-950 py-20 text-white sm:py-24">
+    <section id="location" class="bg-<%= @business.business_website.colour %>-950 py-20 text-white sm:py-24">
       <div class="mx-auto grid max-w-7xl gap-10 px-5 lg:grid-cols-[0.8fr_1.2fr] lg:px-8">
 
         <div>
-          <p class="text-sm font-bold uppercase tracking-[0.2em] text-blue-300">
+          <p class="text-sm font-bold uppercase tracking-[0.2em] text-<%= @business.business_website.colour %>-300">
             Visit us
           </p>
 
           <h2 class="mt-3 text-3xl font-black tracking-tight sm:text-5xl">
-            Find the shop
+            <%= @business.business_website.visit['title'].presence || 'Find the business' %>
           </h2>
 
-          <p class="mt-5 max-w-xl text-lg leading-8 text-blue-300">
-            We are conveniently located in Manchester city centre, within easy
-            reach of public transport and nearby parking.
+          <p class="mt-5 max-w-xl text-lg leading-8 text-<%= @business.business_website.colour %>-300">
+            <%= @business.business_website.visit['sentence'].presence || 'View our address, telephone number and email address below. Please contact us directly if you need help before making a booking.' %>
           </p>
 
           <div class="mt-8 space-y-5">
             <div class="flex items-start gap-4">
-              <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/10 text-blue-300">
+              <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/10 text-<%= @business.business_website.colour %>-300">
                 <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M12 21s7-4.35 7-11A7 7 0 1 0 5 10c0 6.65 7 11 7 11Z"/>
                   <circle cx="12" cy="10" r="2"/>
@@ -872,7 +929,7 @@
 
               <div>
                 <p class="font-bold">Address</p>
-                <p class="mt-1 leading-7 text-blue-400">
+                <p class="mt-1 leading-7 text-<%= @business.business_website.colour %>-400">
                   <%= @business.business_setting.address_line_1 %><br>
                   <%= @business.business_setting.town_or_city %><br>
                   <span class="uppercase"><%= @business.business_setting.postcode %></span><br>
@@ -882,7 +939,7 @@
             </div>
 
             <div class="flex items-start gap-4">
-              <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/10 text-blue-300">
+              <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/10 text-<%= @business.business_website.colour %>-300">
                 <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.9.33 1.78.62 2.63a2 2 0 0 1-.45 2.11L8 9.73a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.85.29 1.73.5 2.63.62A2 2 0 0 1 22 16.92Z"/>
                 </svg>
@@ -892,7 +949,7 @@
                 <p class="font-bold">Phone</p>
                 <a
                   href="tel:<%= @business.business_setting.phone_number %>"
-                  class="mt-1 block text-blue-400 transition hover:text-blue-300"
+                  class="mt-1 block text-<%= @business.business_website.colour %>-400 transition hover:text-<%= @business.business_website.colour %>-300"
                 >
                   <%= @business.business_setting.phone_number %>
                 </a>
@@ -900,7 +957,7 @@
             </div>
 
             <div class="flex items-start gap-4">
-              <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/10 text-blue-300">
+              <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/10 text-<%= @business.business_website.colour %>-300">
                 <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M3 5h18v14H3z"/>
                   <path stroke-linecap="round" stroke-linejoin="round" d="m3 6 9 7 9-7"/>
@@ -911,7 +968,7 @@
                 <p class="font-bold">Email</p>
                 <a
                   href="mailto:<%= @business.business_setting.business_email %>"
-                  class="mt-1 block text-blue-400 transition hover:text-blue-300"
+                  class="mt-1 block text-<%= @business.business_website.colour %>-400 transition hover:text-<%= @business.business_website.colour %>-300"
                 >
                   <%= @business.business_setting.business_email %>
                 </a>
@@ -920,7 +977,7 @@
           </div>
         </div>
 
-        <div class="min-h-[420px] overflow-hidden rounded-[2rem] border border-white/10 bg-blue-900">
+        <div class="min-h-[420px] overflow-hidden rounded-[2rem] border border-white/10 bg-<%= @business.business_website.colour %>-900">
           <% if @coordinates %>
             <iframe
               title="<%= @business.business_name %> location"
@@ -941,18 +998,18 @@
   </main>
 
   <!-- Footer -->
-  <footer class="bg-blue-950 pb-24 text-white md:pb-0">
+  <footer class="bg-<%= @business.business_website.colour %>-950 pb-24 text-white md:pb-0">
     <div class="border-t border-white/10">
       <div class="mx-auto flex max-w-7xl flex-col gap-6 px-5 py-8 md:flex-row md:items-center md:justify-between lg:px-8">
 
         <div>
-          <p class="font-bold">Sharp & Co Barbers</p>
-          <p class="mt-1 text-sm text-blue-500">
-            © <span id="current-year"></span> Sharp & Co Barbers. All rights reserved.
+          <p class="font-bold"><%= @business.business_name %></p>
+          <p class="mt-1 text-sm text-<%= @business.business_website.colour %>-500">
+            © <span id="current-year"></span> <%= @business.business_name %>. All rights reserved.
           </p>
         </div>
 
-        <div class="flex flex-wrap gap-x-6 gap-y-3 text-sm font-semibold text-blue-400">
+        <div class="flex flex-wrap gap-x-6 gap-y-3 text-sm font-semibold text-<%= @business.business_website.colour %>-400">
           <a href="/privacy-policy" class="transition hover:text-white">
             Privacy Policy
           </a>
@@ -960,15 +1017,11 @@
           <a href="/terms-and-conditions" class="transition hover:text-white">
             Terms & Conditions
           </a>
-
-          <a href="#booking" class="transition hover:text-white">
-            Book online
-          </a>
         </div>
 
         <a
           href="https://securemyslot.co.uk"
-          class="text-sm font-semibold text-blue-500 transition hover:text-white"
+          class="text-sm font-semibold text-<%= @business.business_website.colour %>-500 transition hover:text-white"
         >
           Powered by
           <span class="font-black text-white">SecureMySlot</span>
@@ -978,10 +1031,10 @@
   </footer>
 
   <!-- Mobile Booking Bar -->
-  <div class="fixed inset-x-0 bottom-0 z-50 border-t border-blue-200 bg-white/95 p-3 shadow-[0_-10px_30px_rgba(15,23,42,0.08)] backdrop-blur md:hidden">
+  <div class="fixed inset-x-0 bottom-0 z-50 border-t border-<%= @business.business_website.colour %>-200 bg-white/95 p-3 shadow-[0_-10px_30px_rgba(15,23,42,0.08)] backdrop-blur md:hidden">
     <a
       href="#booking"
-      class="flex w-full items-center justify-center gap-2 rounded-2xl bg-blue-500 px-5 py-4 font-black text-white"
+      class="flex w-full items-center justify-center gap-2 rounded-2xl bg-<%= @business.business_website.colour %>-500 px-5 py-4 font-black text-white"
     >
       Book an appointment
 
@@ -993,6 +1046,13 @@
 
   <script>
       document.addEventListener("turbo:load", () => {
+          const bookingForm = document.getElementById("booking-form");
+
+          if (!bookingForm || bookingForm.dataset.initialised === "true") {
+              return;
+          }
+
+          bookingForm.dataset.initialised = "true";
 
           const dateInput = document.getElementById("booking-date");
           const timeOptions = document.getElementById("time-options");
@@ -1003,50 +1063,178 @@
           const summaryDuration = document.getElementById("summary-duration");
           const summaryPrice = document.getElementById("summary-price");
 
+          const summaryDepositRow = document.getElementById(
+              "summary-deposit-row"
+          );
+
+          const summaryDeposit = document.getElementById(
+              "summary-deposit"
+          );
+
+          const summaryPaymentNote = document.getElementById(
+              "summary-payment-note"
+          );
+
+          const summaryDueLabel = document.getElementById(
+              "summary-due-label"
+          );
+
+          const summaryDue = document.getElementById("summary-due");
+
+          const paymentMessage = document.getElementById(
+              "payment-message"
+          );
+
+          const bookingSubmitText = document.getElementById(
+              "booking-submit-text"
+          );
+
+          const serviceInputs = document.querySelectorAll(
+              ".service-radio"
+          );
+
+          const serviceLinks = document.querySelectorAll(
+              "[data-service-id]"
+          );
+
+          const stripeReady = <%= @business.stripe_ready?.to_json %>;
 
           let selectedServiceId = null;
 
+          function formatCurrency(amount) {
+              return new Intl.NumberFormat("en-GB", {
+                  style: "currency",
+                  currency: "GBP"
+              }).format(amount);
+          }
 
-          const serviceInputs = document.querySelectorAll(".service-radio");
+          function updatePaymentSummary(input) {
+              const price = Number.parseFloat(
+                  input.dataset.price || "0"
+              );
 
+              const deposit = Number.parseFloat(
+                  input.dataset.deposit || "0"
+              );
+
+              const depositEnabled =
+                  input.dataset.depositEnabled === "true" &&
+                  deposit > 0;
+
+              summaryPrice.textContent = formatCurrency(price);
+
+              if (depositEnabled) {
+                  summaryDepositRow.classList.remove("hidden");
+                  summaryDepositRow.classList.add("flex");
+
+                  summaryDeposit.textContent = formatCurrency(deposit);
+
+                  summaryPaymentNote.textContent =
+                      `${formatCurrency(price - deposit)} remaining after deposit`;
+
+                  summaryDueLabel.textContent = stripeReady
+                      ? "Deposit due today"
+                      : "Deposit required";
+
+                  summaryDue.textContent = formatCurrency(deposit);
+
+                  if (paymentMessage) {
+                      paymentMessage.textContent = stripeReady
+                          ? `You will be redirected to Stripe to securely pay the ${formatCurrency(deposit)} deposit.`
+                          : `A ${formatCurrency(deposit)} deposit is required and will be arranged directly with the business.`;
+                  }
+
+                  if (bookingSubmitText) {
+                      bookingSubmitText.textContent = stripeReady
+                          ? `Pay ${formatCurrency(deposit)} deposit`
+                          : "Confirm booking";
+                  }
+              } else {
+                  summaryDepositRow.classList.add("hidden");
+                  summaryDepositRow.classList.remove("flex");
+
+                  summaryDeposit.textContent = "£0.00";
+
+                  summaryPaymentNote.textContent = stripeReady
+                      ? "Full payment due today"
+                      : "Payment arranged with the business";
+
+                  summaryDueLabel.textContent = stripeReady
+                      ? "Amount due today"
+                      : "Service price";
+
+                  summaryDue.textContent = formatCurrency(price);
+
+                  if (paymentMessage) {
+                      paymentMessage.textContent = stripeReady
+                          ? "You will be redirected to Stripe to securely pay for this appointment."
+                          : "Payment will be arranged directly with the business.";
+                  }
+
+                  if (bookingSubmitText) {
+                      bookingSubmitText.textContent = stripeReady
+                          ? "Continue to secure payment"
+                          : "Confirm booking";
+                  }
+              }
+          }
+
+          function selectService(input) {
+              selectedServiceId = input.value;
+
+              const label = document.querySelector(
+                  `label[for="${input.id}"]`
+              );
+
+              const serviceName = label.querySelector(
+                  ".service-name"
+              );
+
+              summaryService.textContent = serviceName
+                  ? serviceName.textContent.trim()
+                  : "Selected service";
+
+              summaryDuration.textContent =
+                  `${input.dataset.duration} minutes`;
+
+              updatePaymentSummary(input);
+              loadTimes();
+          }
 
           serviceInputs.forEach((input) => {
-
               input.addEventListener("change", () => {
-
-                  selectedServiceId = input.value;
-
-
-                  const label = document.querySelector(
-                      `label[for="${input.id}"]`
-                  );
-
-
-                  summaryService.textContent =
-                      label.querySelector("span").innerText.trim();
-
-
-                  summaryDuration.textContent =
-                      `${input.dataset.duration} minutes`;
-
-
-                  summaryPrice.textContent =
-                      `£${input.dataset.price}`;
-
-
-                  loadTimes();
-
+                  selectService(input);
               });
-
           });
 
+          serviceLinks.forEach((link) => {
+              link.addEventListener("click", () => {
+                  const serviceId = link.dataset.serviceId;
 
+                  const input = document.getElementById(
+                      `service-${serviceId}`
+                  );
+
+                  if (!input) {
+                      return;
+                  }
+
+                  input.checked = true;
+                  input.dispatchEvent(
+                      new Event("change", { bubbles: true })
+                  );
+              });
+          });
 
           dateInput.addEventListener("change", () => {
+              if (!dateInput.value) {
+                  summaryDate.textContent = "Not selected";
+                  return;
+              }
 
-
-              const selectedDate = new Date(`${dateInput.value}T12:00:00`);
-
+              const selectedDate = new Date(
+                  `${dateInput.value}T12:00:00`
+              );
 
               summaryDate.textContent =
                   selectedDate.toLocaleDateString("en-GB", {
@@ -1056,108 +1244,121 @@
                       year: "numeric"
                   });
 
+              summaryTime.textContent = "Not selected";
 
               loadTimes();
-
           });
 
-
-
-
-
           function loadTimes() {
-
-
               if (!selectedServiceId || !dateInput.value) {
                   return;
               }
 
+              timeOptions.className = "mt-4";
 
+              timeOptions.innerHTML = `
+        <div class="rounded-2xl border border-<%= @business.business_website.colour %>-200 bg-<%= @business.business_website.colour %>-50 px-5 py-6 text-center">
+          <p class="font-bold text-<%= @business.business_website.colour %>-900">
+            Loading available times...
+          </p>
+        </div>
+      `;
 
               fetch(
                   `/booking_slots?business_id=<%= @business.id %>&service_id=${selectedServiceId}&date=${dateInput.value}`
               )
+                  .then((response) => {
+                      if (!response.ok) {
+                          throw new Error("Unable to load appointment times.");
+                      }
 
-                  .then(response => response.json())
-
-                  .then(times => {
-
-
+                      return response.json();
+                  })
+                  .then((times) => {
                       timeOptions.innerHTML = "";
 
                       timeOptions.className =
                           "mt-4 grid grid-cols-3 gap-3 sm:grid-cols-4";
 
-
-                      if(times.length === 0) {
+                      if (times.length === 0) {
+                          timeOptions.className = "mt-4";
 
                           timeOptions.innerHTML = `
-                      <p class="text-red-500">
-                          No available appointments
-                      </p>
-                  `;
+              <div class="rounded-2xl border border-red-200 bg-red-50 px-5 py-6 text-center">
+                <p class="font-bold text-red-700">
+                  No available appointments
+                </p>
+
+                <p class="mt-1 text-sm text-red-600">
+                  Please choose another date.
+                </p>
+              </div>
+            `;
 
                           return;
-
                       }
 
+                      times.forEach((time, index) => {
+                          const safeTimeId = time.replace(
+                              /[^a-zA-Z0-9]/g,
+                              "-"
+                          );
 
-
-                      times.forEach(time => {
-
+                          const inputId =
+                              `time-${safeTimeId}-${index}`;
 
                           const wrapper = document.createElement("div");
 
-
                           wrapper.innerHTML = `
+              <input
+                class="time-radio peer sr-only"
+                type="radio"
+                name="booking[time]"
+                id="${inputId}"
+                value="${time}"
+                required
+              >
 
-                      <input
-                          class="time-radio sr-only"
-                          type="radio"
-                          name="booking[time]"
-                          id="time-${time}"
-                          value="${time}"
-                          required
-                      >
-
-                      <label
-                          for="time-${time}"
-                          class="block cursor-pointer rounded-xl border-2 border-blue-200 px-3 py-3 text-center font-bold text-blue-700 hover:border-blue-500"
-                      >
-                          ${time}
-                      </label>
-
-                  `;
-
+              <label
+                for="${inputId}"
+                class="block cursor-pointer rounded-xl border-2 border-<%= @business.business_website.colour %>-200 px-3 py-3 text-center font-bold text-<%= @business.business_website.colour %>-700 transition hover:border-<%= @business.business_website.colour %>-500 peer-checked:border-<%= @business.business_website.colour %>-500 peer-checked:bg-<%= @business.business_website.colour %>-50 peer-checked:text-<%= @business.business_website.colour %>-900"
+              >
+                ${time}
+              </label>
+            `;
 
                           timeOptions.appendChild(wrapper);
 
-
-
-                          wrapper.querySelector("input")
+                          wrapper
+                              .querySelector("input")
                               .addEventListener("change", () => {
-
                                   summaryTime.textContent = time;
-
                               });
-
-
                       });
+                  })
+                  .catch(() => {
+                      timeOptions.className = "mt-4";
 
+                      timeOptions.innerHTML = `
+            <div class="rounded-2xl border border-red-200 bg-red-50 px-5 py-6 text-center">
+              <p class="font-bold text-red-700">
+                Appointment times could not be loaded
+              </p>
 
+              <p class="mt-1 text-sm text-red-600">
+                Please try again.
+              </p>
+            </div>
+          `;
                   });
-
-
           }
-
-
       });
   </script>
 <% else %>
-  <section class="flex min-h-screen items-center justify-center bg-blue-950 px-5">
+  <section class="flex min-h-screen items-center justify-center bg-<%= @business.business_website.colour %>-950 px-5">
     <div class="max-w-xl rounded-3xl bg-white p-10 text-center shadow-2xl">
 
-      <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-100 text-blue-600">
+      <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-<%= @business.business_website.colour %>-100 text-<%= @business.business_website.colour %>-600">
         <svg
           class="h-8 w-8"
           viewBox="0 0 24 24"
@@ -1173,18 +1374,18 @@
         </svg>
       </div>
 
-      <h1 class="mt-6 text-3xl font-black text-blue-950">
+      <h1 class="mt-6 text-3xl font-black text-<%= @business.business_website.colour %>-950">
         This booking page is not live
       </h1>
 
-      <p class="mt-4 text-lg leading-8 text-blue-600">
+      <p class="mt-4 text-lg leading-8 text-<%= @business.business_website.colour %>-600">
         Online bookings are currently unavailable. Please check back soon or contact us directly to arrange an appointment.
       </p>
 
       <% if @business.phone_number.present? %>
         <a
           href="tel:<%= @business.phone_number %>"
-          class="mt-8 inline-flex rounded-2xl bg-blue-500 px-7 py-4 font-bold text-white transition hover:bg-blue-600"
+          class="mt-8 inline-flex rounded-2xl bg-<%= @business.business_website.colour %>-500 px-7 py-4 font-bold text-white transition hover:bg-<%= @business.business_website.colour %>-600"
         >
           Contact us
         </a>

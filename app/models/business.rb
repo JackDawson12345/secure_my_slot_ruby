@@ -1,5 +1,8 @@
 class Business < ApplicationRecord
   belongs_to :user
+  has_one :business_website, dependent: :destroy
+  has_many :business_blocked_times,
+           dependent: :destroy
 
   store_accessor :address,
                  :line_1,
@@ -12,7 +15,10 @@ class Business < ApplicationRecord
 
   validates :page_address,
             presence: true,
-            uniqueness: { case_sensitive: false },
+            uniqueness: {
+              case_sensitive: false,
+              message: "is already in use"
+            },
             format: {
               with: /\A[a-z0-9-]+\z/,
               message: "can only contain lowercase letters, numbers and hyphens"
@@ -210,11 +216,7 @@ class Business < ApplicationRecord
   end
 
   def normalise_page_address
-    self.page_address = page_address.to_s
-                                    .strip
-                                    .downcase
-                                    .gsub(/\s+/, "-")
-                                    .gsub(/[^a-z0-9-]/, "")
+    self.page_address = page_address.to_s.parameterize
   end
 
   def create_default_availability

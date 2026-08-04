@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_07_31_150533) do
+ActiveRecord::Schema[8.0].define(version: 2026_08_04_100706) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -57,11 +57,25 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_31_150533) do
     t.text "notes"
     t.datetime "reminder_email_sent_at"
     t.datetime "reminder_sms_sent_at"
+    t.decimal "amount_paid", precision: 10, scale: 2, default: "0.0", null: false
     t.index ["business_id"], name: "index_bookings_on_business_id"
     t.index ["service_id"], name: "index_bookings_on_service_id"
     t.index ["stripe_checkout_session_id"], name: "index_bookings_on_stripe_checkout_session_id", unique: true
     t.index ["stripe_payment_intent_id"], name: "index_bookings_on_stripe_payment_intent_id", unique: true
     t.index ["user_id"], name: "index_bookings_on_user_id"
+  end
+
+  create_table "business_blocked_times", force: :cascade do |t|
+    t.bigint "business_id", null: false
+    t.string "title", null: false
+    t.datetime "starts_at", null: false
+    t.datetime "ends_at", null: false
+    t.boolean "all_day", default: false, null: false
+    t.text "notes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["business_id", "starts_at", "ends_at"], name: "index_business_blocked_times_on_period"
+    t.index ["business_id"], name: "index_business_blocked_times_on_business_id"
   end
 
   create_table "business_booking_settings", force: :cascade do |t|
@@ -123,6 +137,18 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_31_150533) do
     t.index ["business_id"], name: "index_business_settings_on_business_id"
   end
 
+  create_table "business_websites", force: :cascade do |t|
+    t.bigint "business_id", null: false
+    t.jsonb "hero", default: {}, null: false
+    t.jsonb "services", default: {}, null: false
+    t.jsonb "about_us", default: {}, null: false
+    t.jsonb "visit", default: {}, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "colour", default: "blue", null: false
+    t.index ["business_id"], name: "index_business_websites_on_business_id"
+  end
+
   create_table "businesses", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.string "business_name"
@@ -136,6 +162,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_31_150533) do
     t.boolean "stripe_details_submitted", default: false, null: false
     t.boolean "stripe_charges_enabled", default: false, null: false
     t.boolean "stripe_payouts_enabled", default: false, null: false
+    t.boolean "subscribed", default: false
+    t.index "lower((page_address)::text)", name: "index_businesses_on_lower_page_address", unique: true
     t.index ["stripe_account_id"], name: "index_businesses_on_stripe_account_id", unique: true
     t.index ["user_id"], name: "index_businesses_on_user_id"
   end
@@ -181,6 +209,9 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_31_150533) do
     t.string "status", default: "active", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "deposit_enabled", default: false, null: false
+    t.decimal "deposit", precision: 10, scale: 2
+    t.string "icon", default: "calendar-check", null: false
     t.index ["business_id"], name: "index_services_on_business_id"
   end
 
@@ -196,6 +227,9 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_31_150533) do
     t.string "first_name"
     t.string "last_name"
     t.string "phone_number"
+    t.boolean "terms_accepted", default: false, null: false
+    t.datetime "terms_accepted_at"
+    t.boolean "marketing_consent", default: false, null: false
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["role"], name: "index_users_on_role"
@@ -206,10 +240,12 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_31_150533) do
   add_foreign_key "bookings", "businesses"
   add_foreign_key "bookings", "services"
   add_foreign_key "bookings", "users"
+  add_foreign_key "business_blocked_times", "businesses"
   add_foreign_key "business_booking_settings", "businesses"
   add_foreign_key "business_opening_hour_breaks", "business_opening_hours"
   add_foreign_key "business_opening_hours", "businesses"
   add_foreign_key "business_settings", "businesses"
+  add_foreign_key "business_websites", "businesses"
   add_foreign_key "businesses", "users"
   add_foreign_key "customer_settings", "users"
   add_foreign_key "services", "businesses"

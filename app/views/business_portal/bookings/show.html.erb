@@ -1,4 +1,17 @@
 <%# app/views/business_portal/bookings/show.html.erb %>
+<%
+  starts_at = Time.zone.parse("#{@booking.date} #{@booking.time}")
+  ends_at = starts_at + @booking.service.minutes_duration.minutes
+
+  google_calendar_url = "https://calendar.google.com/calendar/render?" + {
+    action: "TEMPLATE",
+    text: @booking.service.name,
+    dates: "#{starts_at.utc.strftime('%Y%m%dT%H%M%SZ')}/#{ends_at.utc.strftime('%Y%m%dT%H%M%SZ')}",
+    details: "Appointment with #{@booking.user.first_name} #{@booking.user.last_name}. Amount Due: #{number_to_currency((@booking.service.price - @booking.amount_paid), unit: "£", precision: 2)}",
+    location: @booking.business.address
+  }.to_query
+%>
+
 
 <main class="p-4 sm:p-6 lg:p-8">
 
@@ -145,6 +158,12 @@
           <i data-lucide="arrow-left" class="h-4 w-4"></i>
           Back to bookings
         <% end %>
+
+        <%= link_to "Add to Google Calendar",
+                    google_calendar_url,
+                    target: "_blank",
+                    rel: "noopener",
+                    class: "flex items-center justify-center rounded-lg bg-blue-600 px-4 py-2 font-semibold w-full mt-4 text-white hover:bg-blue-700" %>
       </div>
     </aside>
 

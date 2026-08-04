@@ -45,6 +45,7 @@ class BookingsController < ApplicationController
         )
       else
         SendBookingConfirmationSmsJob.perform_later(booking.id)
+        SendBusinessBookingConfirmationSmsJob.perform_later(booking.id)
 
         redirect_to(
           business_site_url(
@@ -112,7 +113,8 @@ class BookingsController < ApplicationController
 
     @booking.update!(
       stripe_payment_intent_id: checkout_session.payment_intent,
-      payment_status: "paid"
+      payment_status: "paid",
+      amount_paid: amount_from_stripe(checkout_session.amount_total)
     )
 
     unless sms_already_sent
@@ -140,9 +142,9 @@ class BookingsController < ApplicationController
   private
 
   def find_or_create_user
-    user = User.find_or_initialize_by(
-      email: booking_params[:email].to_s.downcase.strip
-    )
+    email = booking_params[:email].to_s.downcase.strip
+
+    user = User.find_or_initialize_by(email: email)
 
     user.assign_attributes(
       first_name: booking_params[:first_name],
@@ -151,7 +153,11 @@ class BookingsController < ApplicationController
     )
 
     if user.new_record?
-      user.password = SecureRandom.hex(16)
+      user.assign_attributes(
+        password: SecureRandom.hex(16),
+        role: :customer,
+        terms_accepted: booking_params[:terms_accepted]
+      )
     end
 
     user.save!
@@ -165,6 +171,14 @@ class BookingsController < ApplicationController
       port: request.optional_port,
       protocol: request.protocol
     )
+
+    if service.deposit_enabled == true
+      price = service.deposit
+      service_name = service.name + ' (Deposit)'
+    else
+      price = service.price
+      service_name = service.name
+    end
 
     # Stripe replaces this placeholder with the real Checkout Session ID.
     # It must be appended manually so Rails does not encode the braces.
@@ -187,11 +201,11 @@ class BookingsController < ApplicationController
               currency: "gbp",
 
               product_data: {
-                name: service.name,
+                name: service_name,
                 description: booking_description(booking)
               },
 
-              unit_amount: price_in_pence(service.price)
+              unit_amount: price_in_pence(price)
             },
 
             quantity: 1
@@ -264,6 +278,10 @@ class BookingsController < ApplicationController
     "#{date} at #{time}"
   end
 
+  def amount_from_stripe(amount_in_pence)
+    BigDecimal(amount_in_pence.to_s) / 100
+  end
+
   def booking_params
     params.require(:booking).permit(
       :service_id,
@@ -273,7 +291,8 @@ class BookingsController < ApplicationController
       :last_name,
       :email,
       :phone_number,
-      :notes
+      :notes,
+      :terms_accepted
     )
   end
 end
