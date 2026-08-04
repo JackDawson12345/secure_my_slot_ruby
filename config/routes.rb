@@ -234,11 +234,34 @@ Rails.application.routes.draw do
         as: :dashboard
 
     scope "dashboard" do
-      resources :customers, only: %i[index show]
+      resources :customers, only: %i[index show new create] do
+        resources :services,
+                  controller: "customer_services",
+                  except: %i[index show]
+
+        resource :opening_hours,
+                 controller: "customer_opening_hours",
+                 only: %i[edit update]
+
+        resource :website_settings,
+                 controller: "customer_website_settings",
+                 only: %i[edit update]
+
+        resource :settings,
+                 controller: "customer_settings",
+                 only: %i[edit update]
+      end
 
       get "settings",
           to: "settings#index",
           as: :settings
+
+      patch "settings",
+            to: "settings#update"
+
+      patch "password",
+            to: "settings#update_password",
+            as: :password
     end
 
   end

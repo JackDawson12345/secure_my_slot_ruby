@@ -1,0 +1,192 @@
+<%# app/views/admin/customer_opening_hours/edit.html.erb %>
+
+<main
+  class="p-4 sm:p-6 lg:p-8"
+  data-controller="opening-hours nested-form"
+>
+  <nav class="mb-5 flex items-center gap-2 text-sm text-slate-500">
+    <%= link_to(
+          "Customers",
+          admin_customers_path,
+          class: "hover:text-indigo-600"
+        ) %>
+
+    <i data-lucide="chevron-right" class="h-4 w-4"></i>
+
+    <%= link_to(
+          @business.business_name,
+          admin_customer_path(@customer, tab: "opening_hours"),
+          class: "hover:text-indigo-600"
+        ) %>
+
+    <i data-lucide="chevron-right" class="h-4 w-4"></i>
+
+    <span class="font-medium text-slate-900">
+      Edit opening hours
+    </span>
+  </nav>
+
+  <section class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div>
+      <h1 class="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+        Edit opening hours
+      </h1>
+
+      <p class="mt-1 text-sm text-slate-500">
+        Manage availability, breaks and booking settings for
+        <%= @business.business_name %>.
+      </p>
+    </div>
+
+    <button
+      type="submit"
+      form="adminOpeningHoursForm"
+      class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:w-auto"
+    >
+      <i data-lucide="save" class="h-4 w-4"></i>
+      Save changes
+    </button>
+  </section>
+
+  <% if flash[:notice].present? %>
+    <div class="mt-6 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-medium text-emerald-700">
+      <%= flash[:notice] %>
+    </div>
+  <% end %>
+
+  <% if flash[:alert].present? %>
+    <div class="mt-6 rounded-xl border border-rose-200 bg-rose-50 p-4 text-sm font-medium text-rose-700">
+      <%= flash[:alert] %>
+    </div>
+  <% end %>
+
+  <% if @business.errors.any? %>
+    <section class="mt-6 rounded-xl border border-rose-200 bg-rose-50 p-5">
+      <h2 class="font-semibold text-rose-800">
+        The opening hours could not be saved
+      </h2>
+
+      <ul class="mt-2 list-disc space-y-1 pl-5 text-sm text-rose-700">
+        <% @business.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+
+        <% @opening_hours.each do |opening_hour| %>
+          <% opening_hour.errors.full_messages.each do |message| %>
+            <li>
+              <%= opening_hour.day_name %>: <%= message %>
+            </li>
+          <% end %>
+
+          <% opening_hour.breaks.each do |break_record| %>
+            <% break_record.errors.full_messages.each do |message| %>
+              <li>
+                <%= opening_hour.day_name %> break:
+                <%= message %>
+              </li>
+            <% end %>
+          <% end %>
+        <% end %>
+      </ul>
+    </section>
+  <% end %>
+
+  <section class="mt-8 flex flex-col gap-4 rounded-2xl border border-indigo-100 bg-indigo-50 p-5 sm:flex-row sm:items-center sm:justify-between">
+    <div class="flex items-start gap-3">
+      <div class="rounded-xl bg-indigo-100 p-2.5 text-indigo-600">
+        <i data-lucide="info" class="h-5 w-5"></i>
+      </div>
+
+      <div>
+        <h2 class="font-semibold text-indigo-950">
+          Customer booking availability
+        </h2>
+
+        <p class="mt-1 text-sm leading-6 text-indigo-700">
+          Customers can only book appointments during the opening
+          hours configured below.
+        </p>
+      </div>
+    </div>
+
+    <span class="inline-flex w-fit items-center gap-2 rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-indigo-700 shadow-sm">
+      <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
+      Admin management
+    </span>
+  </section>
+
+  <%= form_with(
+        model: @business,
+        url: admin_customer_opening_hours_path(@customer),
+        method: :patch,
+        id: "adminOpeningHoursForm",
+        class: "mt-8"
+      ) do |form| %>
+    <div class="grid gap-8 xl:grid-cols-[1fr_340px]">
+      <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <div class="border-b border-slate-200 px-5 py-5 sm:px-6">
+          <h2 class="text-lg font-bold text-slate-900">
+            Weekly hours
+          </h2>
+
+          <p class="mt-1 text-sm text-slate-500">
+            Choose which days the business is open and set its
+            available times.
+          </p>
+        </div>
+
+        <div class="divide-y divide-slate-100">
+          <%= form.fields_for(
+            :opening_hours,
+            @opening_hours
+          ) do |hours_form| %>
+            <%= render(
+                  "business_portal/opening_hours/opening_hour_fields",
+                  form: hours_form,
+                  opening_hour: hours_form.object
+                ) %>
+          <% end %>
+        </div>
+      </section>
+
+      <aside class="space-y-6">
+        <%= form.fields_for(
+          :booking_setting,
+          @booking_setting
+        ) do |settings_form| %>
+          <%= render(
+                "business_portal/opening_hours/booking_settings_fields",
+                form: settings_form
+              ) %>
+        <% end %>
+
+        <%= render(
+              "business_portal/opening_hours/weekly_summary",
+              opening_hours: @opening_hours
+            ) %>
+
+
+        <%= link_to(
+              admin_customer_path(
+                @customer,
+                tab: "opening_hours"
+              ),
+              class: "inline-flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+            ) do %>
+          <i data-lucide="arrow-left" class="h-4 w-4"></i>
+          Cancel
+        <% end %>
+      </aside>
+    </div>
+
+    <div class="mt-8 sm:hidden">
+      <%= form.button(
+        type: "submit",
+        class: "inline-flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700"
+      ) do %>
+        <i data-lucide="save" class="h-4 w-4"></i>
+        Save opening hours
+      <% end %>
+    </div>
+  <% end %>
+</main>

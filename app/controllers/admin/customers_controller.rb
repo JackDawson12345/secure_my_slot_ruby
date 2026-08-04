@@ -81,6 +81,42 @@ class Admin::CustomersController < Admin::BaseController
     @customers = customer_scope.order(created_at: :desc)
   end
 
+  def new
+    @customer = User.new
+    build_new_customer_records
+  end
+
+  def create
+    @customer = User.new(customer_params)
+    @customer.role = 1
+
+    @business = @customer.build_business(
+      business_params.merge(subscribed: true)
+    )
+
+    @business_setting = @business.build_business_setting(
+      business_setting_params
+    )
+
+    @business_website = @business.build_business_website(
+      colour: "indigo"
+    )
+
+    ActiveRecord::Base.transaction do
+      @customer.save!
+    end
+
+    redirect_to admin_customer_path(@customer),
+                notice: "Customer and business were created successfully."
+  rescue ActiveRecord::RecordInvalid => error
+    prepare_failed_create(error.record)
+
+    flash.now[:alert] =
+      "The customer could not be created. Please check the form."
+
+    render :new, status: :unprocessable_entity
+  end
+
   def show
     @customer = User
                   .where(role: 1)
@@ -110,7 +146,6 @@ class Admin::CustomersController < Admin::BaseController
                          .order(date: :desc, time: :desc)
 
     @services = @business.services.order(:name)
-
     @opening_hours = @business.opening_hours
 
     @booking_customers = User
@@ -133,6 +168,81 @@ class Admin::CustomersController < Admin::BaseController
   end
 
   private
+
+  def customer_params
+    params.require(:customer).permit(
+      :first_name,
+      :last_name,
+      :email,
+      :phone_number,
+      :password,
+      :password_confirmation,
+      :terms_accepted,
+      :marketing_consent
+    )
+  end
+
+  def business_params
+    params.require(:business).permit(
+      :business_name,
+      :page_address
+    )
+  end
+
+  def business_setting_params
+    params.require(:business_setting).permit(
+      :business_name,
+      :business_category,
+      :phone_number,
+      :business_email,
+      :business_description,
+      :address_line_1,
+      :address_line_2,
+      :town_or_city,
+      :postcode,
+      :country,
+      :booking_page_live,
+      :automatically_confirm_bookings,
+      :allow_customer_cancellations,
+      :require_customer_phone_number,
+      :cancellation_notice_hours,
+      :new_booking_notifications,
+      :cancellation_notifications,
+      :daily_appointment_summary
+    )
+  end
+
+  def build_new_customer_records
+    @business = @customer.build_business
+    @business_setting = @business.build_business_setting(
+      booking_page_live: false,
+      automatically_confirm_bookings: true,
+      allow_customer_cancellations: true,
+      require_customer_phone_number: true,
+      cancellation_notice_hours: 24,
+      new_booking_notifications: true,
+      cancellation_notifications: true,
+      daily_appointment_summary: false,
+      country: "United Kingdom"
+    )
+  end
+
+  def prepare_failed_create(invalid_record)
+    @business ||= @customer.business || @customer.build_business
+
+    @business_setting ||=
+      @business.business_setting ||
+      @business.build_business_setting
+
+    case invalid_record
+    when User
+      @customer = invalid_record
+    when Business
+      @business = invalid_record
+    when BusinessSetting
+      @business_setting = invalid_record
+    end
+  end
 
   def permitted_tab
     params[:tab].presence_in(TABS) || "overview"

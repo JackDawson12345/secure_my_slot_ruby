@@ -1,0 +1,1021 @@
+<main class="p-4 sm:p-6 lg:p-8">
+  <!-- Breadcrumb -->
+  <nav class="mb-5 flex items-center gap-2 text-sm text-slate-500">
+    <%= link_to(
+          "Customers",
+          admin_customers_path,
+          class: "transition hover:text-indigo-600"
+        ) %>
+
+    <i data-lucide="chevron-right" class="h-4 w-4"></i>
+
+    <span class="font-medium text-slate-900">
+      New customer
+    </span>
+  </nav>
+
+  <%= form_with(
+        url: admin_customers_path,
+        method: :post,
+        class: "space-y-6"
+      ) do %>
+
+    <% errors = [
+      @customer.errors,
+      @business.errors,
+      @business_setting.errors
+    ].flat_map(&:full_messages).uniq %>
+
+    <% if errors.any? %>
+      <div class="rounded-2xl border border-red-200 bg-red-50 p-5">
+        <div class="flex items-start gap-3">
+          <i
+            data-lucide="circle-alert"
+            class="mt-0.5 h-5 w-5 shrink-0 text-red-600"
+          ></i>
+
+          <div>
+            <p class="font-semibold text-red-900">
+              The customer could not be created
+            </p>
+
+            <ul class="mt-2 list-inside list-disc space-y-1 text-sm text-red-700">
+              <% errors.each do |message| %>
+                <li><%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+        </div>
+      </div>
+    <% end %>
+
+    <!-- Heading -->
+    <section>
+      <h1 class="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+        Create customer
+      </h1>
+
+      <p class="mt-1 text-sm text-slate-500">
+        Create a business login and configure the initial business details.
+      </p>
+    </section>
+
+    <!-- Account information -->
+    <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <div class="border-b border-slate-200 p-5 sm:p-6">
+        <h2 class="text-lg font-bold text-slate-900">
+          Account information
+        </h2>
+
+        <p class="mt-1 text-sm text-slate-500">
+          These details will be used to access the business portal.
+        </p>
+      </div>
+
+      <div class="grid gap-5 p-5 sm:grid-cols-2 sm:p-6">
+        <div>
+          <%= label_tag(
+                "customer_first_name",
+                "First name",
+                class: "block text-sm font-semibold text-slate-700"
+              ) %>
+
+          <%= text_field_tag(
+                "customer[first_name]",
+                @customer.first_name,
+                id: "customer_first_name",
+                required: true,
+                autocomplete: "given-name",
+                class: "mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+              ) %>
+        </div>
+
+        <div>
+          <%= label_tag(
+                "customer_last_name",
+                "Last name",
+                class: "block text-sm font-semibold text-slate-700"
+              ) %>
+
+          <%= text_field_tag(
+                "customer[last_name]",
+                @customer.last_name,
+                id: "customer_last_name",
+                required: true,
+                autocomplete: "family-name",
+                class: "mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+              ) %>
+        </div>
+
+        <div>
+          <%= label_tag(
+                "customer_email",
+                "Email address",
+                class: "block text-sm font-semibold text-slate-700"
+              ) %>
+
+          <%= email_field_tag(
+                "customer[email]",
+                @customer.email,
+                id: "customer_email",
+                required: true,
+                autocomplete: "email",
+                class: "mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+              ) %>
+        </div>
+
+        <div>
+          <%= label_tag(
+                "customer_phone_number",
+                "Phone number",
+                class: "block text-sm font-semibold text-slate-700"
+              ) %>
+
+          <%= telephone_field_tag(
+                "customer[phone_number]",
+                @customer.phone_number,
+                id: "customer_phone_number",
+                autocomplete: "tel",
+                class: "mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+              ) %>
+        </div>
+
+        <div
+          class="sm:col-span-2"
+          data-password-generator
+        >
+          <div class="grid gap-5 sm:grid-cols-2">
+            <!-- Password -->
+            <div>
+              <div class="flex items-center justify-between gap-3">
+                <%= label_tag(
+                      "customer_password",
+                      "Password",
+                      class: "block text-sm font-semibold text-slate-700"
+                    ) %>
+
+                <button
+                  type="button"
+                  data-password-generate
+                  class="inline-flex items-center gap-1.5 text-sm font-semibold text-indigo-600 transition hover:text-indigo-700"
+                >
+                  <i data-lucide="wand-sparkles" class="h-4 w-4"></i>
+                  Generate password
+                </button>
+              </div>
+
+              <div class="relative mt-2">
+                <%= password_field_tag(
+                      "customer[password]",
+                      nil,
+                      id: "customer_password",
+                      required: true,
+                      autocomplete: "new-password",
+                      minlength: 6,
+                      data: {
+                        password_input: true
+                      },
+                      class: "w-full rounded-xl border border-slate-200 py-3 pl-4 pr-12 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+                    ) %>
+
+                <button
+                  type="button"
+                  data-password-toggle
+                  aria-label="Show password"
+                  aria-pressed="false"
+                  class="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-1.5 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
+                >
+                  <i
+                    data-password-toggle-icon
+                    data-lucide="eye"
+                    class="h-4 w-4"
+                  ></i>
+                </button>
+              </div>
+
+              <p class="mt-2 text-xs text-slate-500">
+                Generate a secure 20 character password or enter one manually.
+              </p>
+            </div>
+
+            <!-- Password confirmation -->
+            <div>
+              <%= label_tag(
+                    "customer_password_confirmation",
+                    "Confirm password",
+                    class: "block text-sm font-semibold text-slate-700"
+                  ) %>
+
+              <div class="relative mt-2">
+                <%= password_field_tag(
+                      "customer[password_confirmation]",
+                      nil,
+                      id: "customer_password_confirmation",
+                      required: true,
+                      autocomplete: "new-password",
+                      minlength: 6,
+                      data: {
+                        password_confirmation_input: true
+                      },
+                      class: "w-full rounded-xl border border-slate-200 py-3 pl-4 pr-12 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+                    ) %>
+
+                <button
+                  type="button"
+                  data-password-toggle
+                  aria-label="Show password confirmation"
+                  aria-pressed="false"
+                  class="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-1.5 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
+                >
+                  <i
+                    data-password-toggle-icon
+                    data-lucide="eye"
+                    class="h-4 w-4"
+                  ></i>
+                </button>
+              </div>
+
+              <p
+                data-password-status
+                aria-live="polite"
+                class="mt-2 hidden text-xs font-medium"
+              ></p>
+            </div>
+          </div>
+        </div>
+
+        <%= hidden_field_tag "customer[terms_accepted]", "1" %>
+        <%= hidden_field_tag "customer[marketing_consent]", "0" %>
+      </div>
+    </section>
+
+    <!-- Business details -->
+    <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <div class="border-b border-slate-200 p-5 sm:p-6">
+        <h2 class="text-lg font-bold text-slate-900">
+          Business details
+        </h2>
+
+        <p class="mt-1 text-sm text-slate-500">
+          Enter the public name and booking page address.
+        </p>
+      </div>
+
+      <div class="grid gap-5 p-5 sm:grid-cols-2 sm:p-6">
+        <div>
+          <%= label_tag(
+                "business_business_name",
+                "Business name",
+                class: "block text-sm font-semibold text-slate-700"
+              ) %>
+
+          <div class="relative mt-2">
+            <i
+              data-lucide="store"
+              class="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
+            ></i>
+
+            <%= text_field_tag(
+                  "business[business_name]",
+                  @business.business_name,
+                  id: "business_business_name",
+                  required: true,
+                  autocomplete: "organization",
+                  placeholder: "Enter the business name",
+                  class: "w-full rounded-xl border border-slate-200 py-3 pl-11 pr-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+                ) %>
+          </div>
+        </div>
+
+        <div>
+          <%= label_tag(
+                "business_page_address",
+                "Booking page address",
+                class: "block text-sm font-semibold text-slate-700"
+              ) %>
+
+          <div class="mt-2 flex overflow-hidden rounded-xl border border-slate-200 transition focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-100">
+            <%= text_field_tag(
+                  "business[page_address]",
+                  @business.page_address,
+                  id: "business_page_address",
+                  required: true,
+                  autocomplete: "off",
+                  placeholder: "your-business",
+                  pattern: "[a-z0-9-]+",
+                  class: "min-w-0 flex-1 border-0 px-4 py-3 text-sm text-slate-900 outline-none placeholder:text-slate-400"
+                ) %>
+
+            <span class="flex shrink-0 items-center border-l border-slate-200 bg-slate-50 px-3 text-xs font-medium text-slate-500 sm:text-sm">
+      .securemyslot.co.uk
+    </span>
+          </div>
+
+          <div class="mt-2 min-h-5">
+            <p
+              id="admin-page-address-status"
+              class="text-xs leading-5 text-slate-500"
+              aria-live="polite"
+            >
+              Use lowercase letters, numbers and hyphens only.
+            </p>
+          </div>
+        </div>
+
+        <div>
+          <%= label_tag(
+                "business_setting_business_category",
+                "Business category",
+                class: "block text-sm font-semibold text-slate-700"
+              ) %>
+
+          <%= select_tag(
+                "business_setting[business_category]",
+                options_for_select(
+                  [
+                    ["Select a category", ""],
+                    ["Barber", "barber"],
+                    ["Hairdresser", "hairdresser"],
+                    ["Beauty and Nails", "beauty_and_nails"],
+                    ["Personal Trainer", "personal_trainer"],
+                    ["Coach", "coach"],
+                    ["Tutor", "tutor"],
+                    ["Consultant", "consultant"],
+                    ["Therapist", "therapist"],
+                    ["Massage Professional", "massage_professional"],
+                    ["Photographer", "photographer"],
+                    ["Cleaner", "cleaner"],
+                    ["Tradesperson", "tradesperson"],
+                    ["Mobile Service", "mobile_service"],
+                    ["Repair Service", "repair_service"],
+                    ["Other", "other"]
+                  ],
+                  @business_setting.business_category
+                ),
+                id: "business_setting_business_category",
+                required: true,
+                class: "mt-2 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+              ) %>
+        </div>
+
+        <div>
+          <%= label_tag(
+                "business_setting_business_email",
+                "Business email",
+                class: "block text-sm font-semibold text-slate-700"
+              ) %>
+
+          <%= email_field_tag(
+                "business_setting[business_email]",
+                @business_setting.business_email,
+                id: "business_setting_business_email",
+                placeholder: "Defaults to the account email",
+                class: "mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+              ) %>
+        </div>
+
+        <div>
+          <%= label_tag(
+                "business_setting_phone_number",
+                "Business phone number",
+                class: "block text-sm font-semibold text-slate-700"
+              ) %>
+
+          <%= telephone_field_tag(
+                "business_setting[phone_number]",
+                @business_setting.phone_number,
+                id: "business_setting_phone_number",
+                class: "mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+              ) %>
+        </div>
+
+        <div>
+          <%= label_tag(
+                "business_setting_country",
+                "Country",
+                class: "block text-sm font-semibold text-slate-700"
+              ) %>
+
+          <%= text_field_tag(
+                "business_setting[country]",
+                @business_setting.country,
+                id: "business_setting_country",
+                class: "mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+              ) %>
+        </div>
+
+        <div class="sm:col-span-2">
+          <%= label_tag(
+                "business_setting_business_description",
+                "Business description",
+                class: "block text-sm font-semibold text-slate-700"
+              ) %>
+
+          <%= text_area_tag(
+                "business_setting[business_description]",
+                @business_setting.business_description,
+                id: "business_setting_business_description",
+                rows: 5,
+                class: "mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm leading-6 text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+              ) %>
+        </div>
+      </div>
+    </section>
+
+    <!-- Address -->
+    <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <div class="border-b border-slate-200 p-5 sm:p-6">
+        <h2 class="text-lg font-bold text-slate-900">
+          Business address
+        </h2>
+      </div>
+
+      <div class="grid gap-5 p-5 sm:grid-cols-2 sm:p-6">
+        <% [
+             [
+               :address_line_1,
+               "Address line 1",
+               @business_setting.address_line_1
+             ],
+             [
+               :address_line_2,
+               "Address line 2",
+               @business_setting.address_line_2
+             ],
+             [
+               :town_or_city,
+               "Town or city",
+               @business_setting.town_or_city
+             ],
+             [
+               :postcode,
+               "Postcode",
+               @business_setting.postcode
+             ]
+           ].each do |field, label, value| %>
+          <div>
+            <%= label_tag(
+                  "business_setting_#{field}",
+                  label,
+                  class: "block text-sm font-semibold text-slate-700"
+                ) %>
+
+            <%= text_field_tag(
+                  "business_setting[#{field}]",
+                  value,
+                  id: "business_setting_#{field}",
+                  class: "mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+                ) %>
+          </div>
+        <% end %>
+      </div>
+    </section>
+
+    <!-- Initial settings -->
+    <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <div class="border-b border-slate-200 p-5 sm:p-6">
+        <h2 class="text-lg font-bold text-slate-900">
+          Initial booking settings
+        </h2>
+
+        <p class="mt-1 text-sm text-slate-500">
+          These can be changed from the customer account after creation.
+        </p>
+      </div>
+
+      <div class="divide-y divide-slate-100">
+        <% [
+             [
+               :booking_page_live,
+               "Booking page live",
+               "Allow the business to accept public bookings."
+             ],
+             [
+               :automatically_confirm_bookings,
+               "Automatically confirm bookings",
+               "New bookings will not require manual approval."
+             ],
+             [
+               :allow_customer_cancellations,
+               "Allow customer cancellations",
+               "Customers can cancel their own appointments."
+             ],
+             [
+               :require_customer_phone_number,
+               "Require customer phone number",
+               "Customers must provide a telephone number."
+             ],
+             [
+               :new_booking_notifications,
+               "New booking notifications",
+               "Notify the business when a booking is created."
+             ],
+             [
+               :cancellation_notifications,
+               "Cancellation notifications",
+               "Notify the business when a booking is cancelled."
+             ],
+             [
+               :daily_appointment_summary,
+               "Daily appointment summary",
+               "Send the business a daily appointment summary."
+             ]
+           ].each do |field, title, description| %>
+          <label class="flex items-start justify-between gap-5 p-5 sm:px-6">
+            <span>
+              <span class="block text-sm font-semibold text-slate-900">
+                <%= title %>
+              </span>
+
+              <span class="mt-1 block text-sm text-slate-500">
+                <%= description %>
+              </span>
+            </span>
+
+            <%= hidden_field_tag(
+                  "business_setting[#{field}]",
+                  "0"
+                ) %>
+
+            <%= check_box_tag(
+                  "business_setting[#{field}]",
+                  "1",
+                  @business_setting.public_send(field),
+                  id: "business_setting_#{field}",
+                  class: "mt-1 h-5 w-5 shrink-0 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                ) %>
+          </label>
+        <% end %>
+      </div>
+
+      <div class="border-t border-slate-200 p-5 sm:p-6">
+        <%= label_tag(
+              "business_setting_cancellation_notice_hours",
+              "Cancellation notice period",
+              class: "block text-sm font-semibold text-slate-700"
+            ) %>
+
+        <div class="mt-2 flex max-w-sm items-center gap-3">
+          <%= number_field_tag(
+                "business_setting[cancellation_notice_hours]",
+                @business_setting.cancellation_notice_hours,
+                id: "business_setting_cancellation_notice_hours",
+                min: 0,
+                step: 1,
+                class: "w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+              ) %>
+
+          <span class="text-sm font-medium text-slate-500">
+            hours
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Actions -->
+    <div class="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+      <%= link_to(
+            "Cancel",
+            admin_customers_path,
+            class: "inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+          ) %>
+
+      <%= submit_tag(
+            "Create customer",
+            class: "cursor-pointer rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-700"
+          ) %>
+    </div>
+  <% end %>
+</main>
+
+<script>
+    (() => {
+        const initialisePasswordGenerators = () => {
+            document.querySelectorAll("[data-password-generator]").forEach((container) => {
+                if (container.dataset.passwordGeneratorInitialised === "true") {
+                    return;
+                }
+
+                container.dataset.passwordGeneratorInitialised = "true";
+
+                const passwordInput = container.querySelector("[data-password-input]");
+                const confirmationInput = container.querySelector(
+                    "[data-password-confirmation-input]"
+                );
+                const generateButton = container.querySelector("[data-password-generate]");
+                const status = container.querySelector("[data-password-status]");
+
+                if (!passwordInput || !confirmationInput || !generateButton) {
+                    return;
+                }
+
+                const characterSets = {
+                    lowercase: "abcdefghijklmnopqrstuvwxyz",
+                    uppercase: "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+                    numbers: "0123456789",
+                    symbols: "!@#$%^&*()_+-=[]{}|;:,.<>?"
+                };
+
+                const allCharacters = Object.values(characterSets).join("");
+
+                const secureRandomIndex = (maximum) => {
+                    const values = new Uint32Array(1);
+                    const maximumValidValue =
+                        Math.floor(0x100000000 / maximum) * maximum;
+
+                    let randomValue;
+
+                    do {
+                        window.crypto.getRandomValues(values);
+                        randomValue = values[0];
+                    } while (randomValue >= maximumValidValue);
+
+                    return randomValue % maximum;
+                };
+
+                const randomCharacter = (characters) => {
+                    return characters[secureRandomIndex(characters.length)];
+                };
+
+                const secureShuffle = (characters) => {
+                    const result = [...characters];
+
+                    for (let index = result.length - 1; index > 0; index -= 1) {
+                        const randomIndex = secureRandomIndex(index + 1);
+
+                        [result[index], result[randomIndex]] = [
+                            result[randomIndex],
+                            result[index]
+                        ];
+                    }
+
+                    return result.join("");
+                };
+
+                const generatePassword = (length = 20) => {
+                    const requiredCharacters = [
+                        randomCharacter(characterSets.lowercase),
+                        randomCharacter(characterSets.uppercase),
+                        randomCharacter(characterSets.numbers),
+                        randomCharacter(characterSets.symbols)
+                    ];
+
+                    while (requiredCharacters.length < length) {
+                        requiredCharacters.push(
+                            randomCharacter(allCharacters)
+                        );
+                    }
+
+                    return secureShuffle(requiredCharacters);
+                };
+
+                const updatePasswordStatus = () => {
+                    if (!status) {
+                        return;
+                    }
+
+                    if (
+                        passwordInput.value.length === 0 &&
+                        confirmationInput.value.length === 0
+                    ) {
+                        status.classList.add("hidden");
+                        status.textContent = "";
+                        return;
+                    }
+
+                    status.classList.remove(
+                        "hidden",
+                        "text-emerald-600",
+                        "text-red-600"
+                    );
+
+                    if (passwordInput.value === confirmationInput.value) {
+                        status.textContent = "Passwords match";
+                        status.classList.add("text-emerald-600");
+                    } else {
+                        status.textContent = "Passwords do not match";
+                        status.classList.add("text-red-600");
+                    }
+                };
+
+                generateButton.addEventListener("click", () => {
+                    const generatedPassword = generatePassword(20);
+
+                    passwordInput.value = generatedPassword;
+                    confirmationInput.value = generatedPassword;
+
+                    passwordInput.type = "text";
+                    confirmationInput.type = "text";
+
+                    container
+                        .querySelectorAll("[data-password-toggle]")
+                        .forEach((button) => {
+                            button.setAttribute("aria-pressed", "true");
+                            button.setAttribute(
+                                "aria-label",
+                                button.closest("div").querySelector("input") === passwordInput
+                                    ? "Hide password"
+                                    : "Hide password confirmation"
+                            );
+
+                            const icon = button.querySelector(
+                                "[data-password-toggle-icon]"
+                            );
+
+                            if (icon) {
+                                icon.setAttribute("data-lucide", "eye-off");
+                            }
+                        });
+
+                    if (window.lucide) {
+                        window.lucide.createIcons();
+                    }
+
+                    passwordInput.dispatchEvent(
+                        new Event("input", { bubbles: true })
+                    );
+
+                    confirmationInput.dispatchEvent(
+                        new Event("input", { bubbles: true })
+                    );
+
+                    updatePasswordStatus();
+                });
+
+                container
+                    .querySelectorAll("[data-password-toggle]")
+                    .forEach((button) => {
+                        button.addEventListener("click", () => {
+                            const wrapper = button.parentElement;
+                            const input = wrapper.querySelector("input");
+                            const icon = button.querySelector(
+                                "[data-password-toggle-icon]"
+                            );
+
+                            if (!input) {
+                                return;
+                            }
+
+                            const isVisible = input.type === "text";
+
+                            input.type = isVisible ? "password" : "text";
+
+                            button.setAttribute(
+                                "aria-pressed",
+                                String(!isVisible)
+                            );
+
+                            button.setAttribute(
+                                "aria-label",
+                                isVisible ? "Show password" : "Hide password"
+                            );
+
+                            if (icon) {
+                                icon.setAttribute(
+                                    "data-lucide",
+                                    isVisible ? "eye" : "eye-off"
+                                );
+                            }
+
+                            if (window.lucide) {
+                                window.lucide.createIcons();
+                            }
+                        });
+                    });
+
+                passwordInput.addEventListener(
+                    "input",
+                    updatePasswordStatus
+                );
+
+                confirmationInput.addEventListener(
+                    "input",
+                    updatePasswordStatus
+                );
+            });
+        };
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            initialisePasswordGenerators
+        );
+
+        document.addEventListener(
+            "turbo:load",
+            initialisePasswordGenerators
+        );
+    })();
+</script>
+
+<script>
+    (() => {
+        function createBookingPageAddress(value) {
+            return value
+                .toLowerCase()
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .replace(/&/g, " and ")
+                .replace(/['’]/g, "")
+                .replace(/[^a-z0-9]+/g, "-")
+                .replace(/^-+|-+$/g, "")
+                .replace(/-{2,}/g, "");
+        }
+
+        function debounce(callback, delay = 500) {
+            let timeoutId;
+
+            return (...args) => {
+                window.clearTimeout(timeoutId);
+
+                timeoutId = window.setTimeout(() => {
+                    callback(...args);
+                }, delay);
+            };
+        }
+
+        async function checkAdminPageAddressAvailability(
+            pageAddress,
+            input,
+            status
+        ) {
+            const normalisedAddress =
+                createBookingPageAddress(pageAddress);
+
+            if (!normalisedAddress) {
+                input.setCustomValidity("");
+
+                status.textContent =
+                    "Use lowercase letters, numbers and hyphens only.";
+
+                status.className =
+                    "text-xs leading-5 text-slate-500";
+
+                return;
+            }
+
+            status.textContent = "Checking availability...";
+            status.className = "text-xs leading-5 text-slate-500";
+
+            try {
+                const query = new URLSearchParams({
+                    page_address: normalisedAddress
+                });
+
+                const response = await fetch(
+                    `/business/sign-up/check-page-address?${query.toString()}`,
+                    {
+                        method: "GET",
+                        headers: {
+                            Accept: "application/json"
+                        }
+                    }
+                );
+
+                if (!response.ok) {
+                    throw new Error("Availability request failed");
+                }
+
+                const result = await response.json();
+
+                if (
+                    createBookingPageAddress(input.value) !==
+                    result.page_address
+                ) {
+                    return;
+                }
+
+                if (result.available) {
+                    input.setCustomValidity("");
+
+                    status.textContent =
+                        `${result.page_address}.securemyslot.co.uk is available.`;
+
+                    status.className =
+                        "text-xs font-semibold leading-5 text-emerald-600";
+                } else {
+                    input.setCustomValidity(
+                        "This booking page address is already in use."
+                    );
+
+                    status.textContent =
+                        "This booking page address is already in use.";
+
+                    status.className =
+                        "text-xs font-semibold leading-5 text-rose-600";
+                }
+            } catch (error) {
+                input.setCustomValidity("");
+
+                status.textContent =
+                    "We could not check availability. It will be checked when you submit.";
+
+                status.className =
+                    "text-xs leading-5 text-amber-600";
+
+                console.error(error);
+            }
+        }
+
+        function initialiseAdminCustomerPageAddress() {
+            const businessNameInput = document.getElementById(
+                "business_business_name"
+            );
+
+            const pageAddressInput = document.getElementById(
+                "business_page_address"
+            );
+
+            const pageAddressStatus = document.getElementById(
+                "admin-page-address-status"
+            );
+
+            if (
+                !businessNameInput ||
+                !pageAddressInput ||
+                !pageAddressStatus
+            ) {
+                return;
+            }
+
+            if (
+                businessNameInput.dataset.pageAddressInitialised ===
+                "true"
+            ) {
+                return;
+            }
+
+            businessNameInput.dataset.pageAddressInitialised = "true";
+
+            let pageAddressManuallyEdited =
+                pageAddressInput.value.trim() !== "";
+
+            const debouncedAvailabilityCheck = debounce(() => {
+                checkAdminPageAddressAvailability(
+                    pageAddressInput.value,
+                    pageAddressInput,
+                    pageAddressStatus
+                );
+            }, 500);
+
+            pageAddressInput.addEventListener("input", () => {
+                pageAddressManuallyEdited = true;
+
+                const normalisedAddress =
+                    createBookingPageAddress(pageAddressInput.value);
+
+                if (pageAddressInput.value !== normalisedAddress) {
+                    pageAddressInput.value = normalisedAddress;
+                }
+
+                pageAddressInput.setCustomValidity("");
+
+                pageAddressStatus.textContent =
+                    normalisedAddress
+                        ? "Waiting to check availability..."
+                        : "Use lowercase letters, numbers and hyphens only.";
+
+                pageAddressStatus.className =
+                    "text-xs leading-5 text-slate-500";
+
+                debouncedAvailabilityCheck();
+            });
+
+            businessNameInput.addEventListener("input", () => {
+                if (pageAddressManuallyEdited) {
+                    return;
+                }
+
+                pageAddressInput.value =
+                    createBookingPageAddress(
+                        businessNameInput.value
+                    );
+
+                pageAddressInput.setCustomValidity("");
+
+                pageAddressStatus.textContent =
+                    pageAddressInput.value
+                        ? "Waiting to check availability..."
+                        : "Use lowercase letters, numbers and hyphens only.";
+
+                pageAddressStatus.className =
+                    "text-xs leading-5 text-slate-500";
+
+                debouncedAvailabilityCheck();
+            });
+
+            if (pageAddressInput.value.trim() !== "") {
+                debouncedAvailabilityCheck();
+            }
+        }
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            initialiseAdminCustomerPageAddress
+        );
+
+        document.addEventListener(
+            "turbo:load",
+            initialiseAdminCustomerPageAddress
+        );
+    })();
+</script>

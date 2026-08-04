@@ -1,2 +1,578 @@
-<h1>Admin::Dashboard#index</h1>
-<p>Find me in app/views/admin/dashboard/index.html.erb</p>
+<main class="min-h-screen bg-slate-50 p-4 sm:p-6 lg:p-8">
+  <div class="mx-auto max-w-7xl">
+    <!-- Page heading -->
+    <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div>
+        <p class="text-sm font-semibold uppercase tracking-wider text-indigo-600">
+          Secure My Slot
+        </p>
+
+        <h1 class="mt-1 text-3xl font-bold tracking-tight text-slate-900">
+          Admin dashboard
+        </h1>
+
+        <p class="mt-2 text-sm text-slate-500">
+          Monitor businesses, customers and bookings across the platform.
+        </p>
+      </div>
+
+      <div class="flex flex-wrap gap-3">
+        <%= link_to(
+              admin_customers_path,
+              class: "inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50"
+            ) do %>
+          <i data-lucide="users" class="h-4 w-4"></i>
+          View customers
+        <% end %>
+
+        <% if respond_to?(:admin_businesses_path) %>
+          <%= link_to(
+                admin_businesses_path,
+                class: "inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700"
+              ) do %>
+            <i data-lucide="building-2" class="h-4 w-4"></i>
+            View businesses
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Summary cards -->
+    <section class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <!-- Businesses -->
+      <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div class="flex items-start justify-between">
+          <div>
+            <p class="text-sm font-medium text-slate-500">
+              Businesses
+            </p>
+
+            <p class="mt-2 text-3xl font-bold tracking-tight text-slate-900">
+              <%= number_with_delimiter(@businesses_count) %>
+            </p>
+          </div>
+
+          <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
+            <i data-lucide="building-2" class="h-5 w-5"></i>
+          </div>
+        </div>
+
+        <div class="mt-4 flex items-center gap-2 text-xs text-slate-500">
+          <span class="font-semibold text-emerald-600">
+            <%= @live_booking_pages_count %>
+          </span>
+          booking pages currently live
+        </div>
+      </div>
+
+      <!-- Customers -->
+      <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div class="flex items-start justify-between">
+          <div>
+            <p class="text-sm font-medium text-slate-500">
+              Customers
+            </p>
+
+            <p class="mt-2 text-3xl font-bold tracking-tight text-slate-900">
+              <%= number_with_delimiter(@customers_count) %>
+            </p>
+          </div>
+
+          <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-violet-50 text-violet-600">
+            <i data-lucide="users" class="h-5 w-5"></i>
+          </div>
+        </div>
+
+        <div class="mt-4 text-xs text-slate-500">
+          Registered customer accounts
+        </div>
+      </div>
+
+      <!-- Total bookings -->
+      <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div class="flex items-start justify-between">
+          <div>
+            <p class="text-sm font-medium text-slate-500">
+              Total bookings
+            </p>
+
+            <p class="mt-2 text-3xl font-bold tracking-tight text-slate-900">
+              <%= number_with_delimiter(@bookings_count) %>
+            </p>
+          </div>
+
+          <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
+            <i data-lucide="calendar-check-2" class="h-5 w-5"></i>
+          </div>
+        </div>
+
+        <div class="mt-4 text-xs text-slate-500">
+          <span class="font-semibold text-slate-700">
+            <%= @upcoming_bookings_count %>
+          </span>
+          scheduled within 30 days
+        </div>
+      </div>
+
+      <!-- Services -->
+      <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div class="flex items-start justify-between">
+          <div>
+            <p class="text-sm font-medium text-slate-500">
+              Active services
+            </p>
+
+            <p class="mt-2 text-3xl font-bold tracking-tight text-slate-900">
+              <%= number_with_delimiter(@services_count) %>
+            </p>
+          </div>
+
+          <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-amber-50 text-amber-600">
+            <i data-lucide="briefcase-business" class="h-5 w-5"></i>
+          </div>
+        </div>
+
+        <div class="mt-4 text-xs text-slate-500">
+          Across all registered businesses
+        </div>
+      </div>
+    </section>
+
+    <!-- Booking performance -->
+    <section class="mt-6 grid gap-6 lg:grid-cols-3">
+      <div class="overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-600 to-violet-600 p-6 text-white shadow-lg shadow-indigo-200 lg:col-span-2">
+        <div class="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <p class="text-sm font-medium text-indigo-100">
+              Bookings this month
+            </p>
+
+            <p class="mt-2 text-4xl font-bold tracking-tight">
+              <%= number_with_delimiter(@bookings_this_month) %>
+            </p>
+
+            <div class="mt-4 flex items-center gap-2 text-sm text-indigo-100">
+              <% if @monthly_booking_change.positive? %>
+                <span class="inline-flex items-center gap-1 rounded-full bg-white/15 px-2.5 py-1 font-semibold text-white">
+                  <i data-lucide="trending-up" class="h-3.5 w-3.5"></i>
+                  <%= @monthly_booking_change %>%
+                </span>
+
+                <span>increase from last month</span>
+              <% elsif @monthly_booking_change.negative? %>
+                <span class="inline-flex items-center gap-1 rounded-full bg-white/15 px-2.5 py-1 font-semibold text-white">
+                  <i data-lucide="trending-down" class="h-3.5 w-3.5"></i>
+                  <%= @monthly_booking_change.abs %>%
+                </span>
+
+                <span>decrease from last month</span>
+              <% else %>
+                <span>No change from last month</span>
+              <% end %>
+            </div>
+          </div>
+
+          <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white/15">
+            <i data-lucide="chart-no-axes-combined" class="h-7 w-7"></i>
+          </div>
+        </div>
+
+        <div class="mt-8 grid gap-3 sm:grid-cols-3">
+          <div class="rounded-xl bg-white/10 p-4 backdrop-blur-sm">
+            <p class="text-xs font-medium uppercase tracking-wide text-indigo-100">
+              Today
+            </p>
+
+            <p class="mt-1 text-2xl font-bold">
+              <%= @today_bookings_count %>
+            </p>
+          </div>
+
+          <div class="rounded-xl bg-white/10 p-4 backdrop-blur-sm">
+            <p class="text-xs font-medium uppercase tracking-wide text-indigo-100">
+              Next 30 days
+            </p>
+
+            <p class="mt-1 text-2xl font-bold">
+              <%= @upcoming_bookings_count %>
+            </p>
+          </div>
+
+          <div class="rounded-xl bg-white/10 p-4 backdrop-blur-sm">
+            <p class="text-xs font-medium uppercase tracking-wide text-indigo-100">
+              Last month
+            </p>
+
+            <p class="mt-1 text-2xl font-bold">
+              <%= @bookings_last_month %>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Platform status -->
+      <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="font-bold text-slate-900">
+              Platform status
+            </h2>
+
+            <p class="mt-1 text-sm text-slate-500">
+              Current account overview
+            </p>
+          </div>
+
+          <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 text-slate-600">
+            <i data-lucide="activity" class="h-5 w-5"></i>
+          </div>
+        </div>
+
+        <div class="mt-6 space-y-5">
+          <div>
+            <div class="mb-2 flex items-center justify-between text-sm">
+              <span class="text-slate-600">
+                Live booking pages
+              </span>
+
+              <span class="font-semibold text-slate-900">
+                <%= @live_booking_pages_count %> / <%= @businesses_count %>
+              </span>
+            </div>
+
+            <% live_percentage =
+                 if @businesses_count.zero?
+                   0
+                 else
+                   ((@live_booking_pages_count.to_f / @businesses_count) * 100).round
+                 end %>
+
+            <div class="h-2 overflow-hidden rounded-full bg-slate-100">
+              <div
+                class="h-full rounded-full bg-indigo-600"
+                style="width: <%= live_percentage %>%"
+              ></div>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between border-t border-slate-100 pt-4">
+            <div class="flex items-center gap-3">
+              <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600">
+                <i data-lucide="user-cog" class="h-4 w-4"></i>
+              </div>
+
+              <div>
+                <p class="text-sm font-semibold text-slate-800">
+                  Business users
+                </p>
+
+                <p class="text-xs text-slate-500">
+                  Registered account holders
+                </p>
+              </div>
+            </div>
+
+            <span class="font-bold text-slate-900">
+              <%= @business_users_count %>
+            </span>
+          </div>
+
+          <div class="flex items-center justify-between border-t border-slate-100 pt-4">
+            <div class="flex items-center gap-3">
+              <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
+                <i data-lucide="circle-check-big" class="h-4 w-4"></i>
+              </div>
+
+              <div>
+                <p class="text-sm font-semibold text-slate-800">
+                  Live page rate
+                </p>
+
+                <p class="text-xs text-slate-500">
+                  Businesses accepting bookings
+                </p>
+              </div>
+            </div>
+
+            <span class="font-bold text-slate-900">
+              <%= live_percentage %>%
+            </span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Today's appointments and recent businesses -->
+    <section class="mt-6 grid gap-6 xl:grid-cols-3">
+      <!-- Today's appointments -->
+      <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm xl:col-span-2">
+        <div class="flex items-center justify-between border-b border-slate-200 px-5 py-4 sm:px-6">
+          <div>
+            <h2 class="font-bold text-slate-900">
+              Today’s bookings
+            </h2>
+
+            <p class="mt-1 text-sm text-slate-500">
+              <%= Date.current.strftime("%A, %-d %B %Y") %>
+            </p>
+          </div>
+
+          <span class="rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-700">
+            <%= pluralize(@today_bookings_count, "booking") %>
+          </span>
+        </div>
+
+        <% if @today_bookings.any? %>
+          <div class="divide-y divide-slate-100">
+            <% @today_bookings.first(8).each do |booking| %>
+              <% customer_name = [
+                                   booking.user&.first_name,
+                                   booking.user&.last_name
+                                 ].compact_blank.join(" ").presence ||
+                                 booking.user&.email ||
+                                 "Customer" %>
+
+              <div class="flex flex-col gap-4 px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+                <div class="flex min-w-0 items-center gap-4">
+                  <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-sm font-bold text-indigo-700">
+                    <%= booking.time&.strftime("%H:%M") || "--:--" %>
+                  </div>
+
+                  <div class="min-w-0">
+                    <p class="truncate font-semibold text-slate-900">
+                      <%= customer_name %>
+                    </p>
+
+                    <p class="mt-1 truncate text-sm text-slate-500">
+                      <%= booking.service&.name || "Service unavailable" %>
+                      <span class="mx-1 text-slate-300">•</span>
+                      <%= booking.business&.business_name || "Business unavailable" %>
+                    </p>
+                  </div>
+                </div>
+
+                <div class="flex items-center gap-2 self-start sm:self-auto">
+                  <% if booking.respond_to?(:status) && booking.status.present? %>
+                    <span class="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold capitalize text-slate-600">
+                      <%= booking.status.to_s.humanize %>
+                    </span>
+                  <% end %>
+
+                  <% if respond_to?(:admin_booking_path) %>
+                    <%= link_to(
+                          admin_booking_path(booking),
+                          class: "flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 text-slate-500 transition hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-600",
+                          aria: { label: "View booking" }
+                        ) do %>
+                      <i data-lucide="arrow-up-right" class="h-4 w-4"></i>
+                    <% end %>
+                  <% end %>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <div class="flex flex-col items-center justify-center px-6 py-14 text-center">
+            <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100 text-slate-400">
+              <i data-lucide="calendar-x-2" class="h-7 w-7"></i>
+            </div>
+
+            <h3 class="mt-4 font-semibold text-slate-900">
+              No bookings today
+            </h3>
+
+            <p class="mt-1 max-w-sm text-sm text-slate-500">
+              There are currently no appointments scheduled across the platform today.
+            </p>
+          </div>
+        <% end %>
+      </div>
+
+      <!-- New businesses -->
+      <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <div class="border-b border-slate-200 px-5 py-4">
+          <h2 class="font-bold text-slate-900">
+            New businesses
+          </h2>
+
+          <p class="mt-1 text-sm text-slate-500">
+            Recently registered accounts
+          </p>
+        </div>
+
+        <% if @recent_businesses.any? %>
+          <div class="divide-y divide-slate-100">
+            <% @recent_businesses.each do |business| %>
+              <div class="flex items-center gap-3 px-5 py-4">
+                <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo-50 font-bold text-indigo-700">
+                  <%= business.business_name.to_s.first&.upcase || "B" %>
+                </div>
+
+                <div class="min-w-0 flex-1">
+                  <p class="truncate text-sm font-semibold text-slate-900">
+                    <%= business.business_name %>
+                  </p>
+
+                  <p class="mt-0.5 truncate text-xs text-slate-500">
+                    <%= business.user&.email || "No email address" %>
+                  </p>
+                </div>
+
+                <% booking_page_live =
+                     business.business_setting&.booking_page_live? %>
+
+                <span
+                  class="<%= booking_page_live ? "bg-emerald-50 text-emerald-700" : "bg-slate-100 text-slate-500" %> rounded-full px-2 py-1 text-[11px] font-semibold"
+                >
+                  <%= booking_page_live ? "Live" : "Draft" %>
+                </span>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <div class="px-5 py-10 text-center text-sm text-slate-500">
+            No businesses have registered yet.
+          </div>
+        <% end %>
+      </div>
+    </section>
+
+    <!-- Recent activity -->
+    <section class="mt-6 grid gap-6 xl:grid-cols-2">
+      <!-- Recent bookings -->
+      <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <div class="flex items-center justify-between border-b border-slate-200 px-5 py-4 sm:px-6">
+          <div>
+            <h2 class="font-bold text-slate-900">
+              Recent bookings
+            </h2>
+
+            <p class="mt-1 text-sm text-slate-500">
+              Latest bookings made across the platform
+            </p>
+          </div>
+
+          <i data-lucide="history" class="h-5 w-5 text-slate-400"></i>
+        </div>
+
+        <% if @recent_bookings.any? %>
+          <div class="divide-y divide-slate-100">
+            <% @recent_bookings.each do |booking| %>
+              <% customer_name = [
+                                   booking.user&.first_name,
+                                   booking.user&.last_name
+                                 ].compact_blank.join(" ").presence ||
+                                 booking.user&.email ||
+                                 "Customer" %>
+
+              <div class="flex items-center gap-4 px-5 py-4 sm:px-6">
+                <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
+                  <i data-lucide="calendar-plus-2" class="h-5 w-5"></i>
+                </div>
+
+                <div class="min-w-0 flex-1">
+                  <p class="truncate text-sm font-semibold text-slate-900">
+                    <%= customer_name %>
+                  </p>
+
+                  <p class="mt-1 truncate text-xs text-slate-500">
+                    <%= booking.service&.name || "Service" %>
+                    with
+                    <%= booking.business&.business_name || "business" %>
+                  </p>
+                </div>
+
+                <div class="shrink-0 text-right">
+                  <p class="text-xs font-semibold text-slate-700">
+                    <%= booking.date&.strftime("%-d %b") || "No date" %>
+                  </p>
+
+                  <p class="mt-1 text-xs text-slate-400">
+                    <%= booking.time&.strftime("%H:%M") || "--:--" %>
+                  </p>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <div class="px-6 py-12 text-center text-sm text-slate-500">
+            No bookings have been created yet.
+          </div>
+        <% end %>
+      </div>
+
+      <!-- Recent customers -->
+      <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <div class="flex items-center justify-between border-b border-slate-200 px-5 py-4 sm:px-6">
+          <div>
+            <h2 class="font-bold text-slate-900">
+              New customers
+            </h2>
+
+            <p class="mt-1 text-sm text-slate-500">
+              Latest customer registrations
+            </p>
+          </div>
+
+          <%= link_to(
+                "View all",
+                admin_customers_path,
+                class: "text-sm font-semibold text-indigo-600 transition hover:text-indigo-700"
+              ) %>
+        </div>
+
+        <% if @recent_customers.any? %>
+          <div class="divide-y divide-slate-100">
+            <% @recent_customers.each do |customer| %>
+              <% customer_name = [
+                                   customer.first_name,
+                                   customer.last_name
+                                 ].compact_blank.join(" ").presence ||
+                                 "Customer" %>
+
+              <div class="flex items-center gap-4 px-5 py-4 sm:px-6">
+                <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-violet-50 font-semibold text-violet-700">
+                  <%= customer.first_name.to_s.first&.upcase ||
+                        customer.email.to_s.first&.upcase ||
+                        "C" %>
+                </div>
+
+                <div class="min-w-0 flex-1">
+                  <p class="truncate text-sm font-semibold text-slate-900">
+                    <%= customer_name %>
+                  </p>
+
+                  <p class="mt-1 truncate text-xs text-slate-500">
+                    <%= customer.email %>
+                  </p>
+                </div>
+
+                <div class="shrink-0 text-right">
+                  <p class="text-xs text-slate-500">
+                    Joined
+                  </p>
+
+                  <p class="mt-1 text-xs font-semibold text-slate-700">
+                    <%= customer.created_at.strftime("%-d %b %Y") %>
+                  </p>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <div class="px-6 py-12 text-center text-sm text-slate-500">
+            No customers have registered yet.
+          </div>
+        <% end %>
+      </div>
+    </section>
+  </div>
+</main>
+
+<script>
+    document.addEventListener("turbo:load", () => {
+        if (window.lucide) {
+            window.lucide.createIcons();
+        }
+    });
+</script>

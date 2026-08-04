@@ -753,14 +753,24 @@
     <!-- Services -->
     <% if @active_tab == "services" %>
       <section class="mt-8">
-        <div class="mb-5">
-          <h2 class="text-lg font-bold text-slate-900">
-            Services
-          </h2>
+        <div class="mb-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h2 class="text-lg font-bold text-slate-900">
+              Services
+            </h2>
 
-          <p class="mt-1 text-sm text-slate-500">
-            Services offered by this business.
-          </p>
+            <p class="mt-1 text-sm text-slate-500">
+              Services offered by this business.
+            </p>
+          </div>
+
+          <%= link_to(
+                new_admin_customer_service_path(@customer),
+                class: "inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-700"
+              ) do %>
+            <i data-lucide="plus" class="h-4 w-4"></i>
+            Add service
+          <% end %>
         </div>
 
         <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
@@ -782,8 +792,8 @@
 
                 <div class="rounded-xl bg-indigo-50 p-2.5 text-indigo-600">
                   <i
-                    data-lucide="briefcase-business"
-                    class="h-5 w-5"
+                    data-lucide="<%= service.icon.presence || 'calendar-check' %>"
+                    class="h-6 w-6"
                   ></i>
                 </div>
               </div>
@@ -795,8 +805,8 @@
                   </dt>
 
                   <dd class="mt-1 text-sm font-semibold text-slate-900">
-                    <%= service.respond_to?(:duration) ?
-                          "#{service.duration} minutes" :
+                    <%= service.respond_to?(:minutes_duration) ?
+                          "#{service.minutes_duration} minutes" :
                           "Not available" %>
                   </dd>
                 </div>
@@ -818,6 +828,31 @@
                   </dd>
                 </div>
               </dl>
+
+              <div class="mt-5 flex items-center gap-3 border-t border-slate-100 pt-4">
+                <%= link_to(
+                      edit_admin_customer_service_path(@customer, service),
+                      class: "inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-slate-200 px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+                    ) do %>
+                  <i data-lucide="pencil" class="h-4 w-4"></i>
+                  Edit
+                <% end %>
+
+                <%= button_to(
+                      admin_customer_service_path(@customer, service),
+                      method: :delete,
+                      form: {
+                        class: "flex-1",
+                        data: {
+                          turbo_confirm: "Are you sure you want to remove #{service.name}?"
+                        }
+                      },
+                      class: "inline-flex w-full items-center justify-center gap-2 rounded-xl border border-red-200 px-3 py-2 text-sm font-semibold text-red-600 transition hover:bg-red-50"
+                    ) do %>
+                  <i data-lucide="trash-2" class="h-4 w-4"></i>
+                  Remove
+                <% end %>
+              </div>
             </article>
           <% end %>
         </div>
@@ -854,14 +889,24 @@
          ] %>
 
       <section class="mt-8 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-        <div class="border-b border-slate-200 px-5 py-5 sm:px-6">
-          <h2 class="text-lg font-bold text-slate-900">
-            Opening hours
-          </h2>
+        <div class="border-b border-slate-200 px-5 py-5 sm:px-6 flex justify-between items-center">
+          <div>
+            <h2 class="text-lg font-bold text-slate-900">
+              Opening hours
+            </h2>
 
-          <p class="mt-1 text-sm text-slate-500">
-            Current weekly booking availability.
-          </p>
+            <p class="mt-1 text-sm text-slate-500">
+              Current weekly booking availability.
+            </p>
+          </div>
+
+          <%= link_to(
+                edit_admin_customer_opening_hours_path(@customer),
+                class: "inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700"
+              ) do %>
+            <i data-lucide="pencil" class="h-4 w-4"></i>
+            Edit opening hours
+          <% end %>
         </div>
 
         <div class="divide-y divide-slate-100">
@@ -898,14 +943,24 @@
 
       <section class="mt-8 grid gap-6 xl:grid-cols-3">
         <article class="rounded-2xl border border-slate-200 bg-white shadow-sm xl:col-span-2">
-          <div class="border-b border-slate-200 px-5 py-5 sm:px-6">
-            <h2 class="text-lg font-bold text-slate-900">
-              Website content
-            </h2>
+          <div class="border-b border-slate-200 px-5 py-5 sm:px-6 flex justify-between items-center">
+            <div>
+              <h2 class="text-lg font-bold text-slate-900">
+                Website content
+              </h2>
 
-            <p class="mt-1 text-sm text-slate-500">
-              Content configured for the public booking page.
-            </p>
+              <p class="mt-1 text-sm text-slate-500">
+                Content configured for the public booking page.
+              </p>
+            </div>
+
+            <%= link_to(
+                  edit_admin_customer_website_settings_path(@customer),
+                  class: "inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700"
+                ) do %>
+              <i data-lucide="pencil" class="h-4 w-4"></i>
+              Edit website
+            <% end %>
           </div>
 
           <% if website.present? %>
@@ -1022,96 +1077,208 @@
     <% if @active_tab == "settings" %>
       <% settings = @business.business_setting %>
 
-      <section class="mt-8 grid gap-6 xl:grid-cols-2">
-        <article class="rounded-2xl border border-slate-200 bg-white shadow-sm">
-          <div class="border-b border-slate-200 px-5 py-5 sm:px-6">
-            <h2 class="text-lg font-bold text-slate-900">
-              Booking settings
-            </h2>
-          </div>
+      <section class="mt-8 space-y-6">
+        <!-- Subscription -->
+        <article class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+          <div class="flex flex-col gap-4 border-b border-slate-200 px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+            <div>
+              <h2 class="text-lg font-bold text-slate-900">
+                Subscription
+              </h2>
 
-          <% if settings.present? %>
-            <dl class="divide-y divide-slate-100">
-              <% [
-                   ["Automatically confirm bookings", settings.automatically_confirm_bookings],
-                   ["Allow customer cancellations", settings.allow_customer_cancellations],
-                   ["Require customer phone number", settings.require_customer_phone_number],
-                   ["New booking notifications", settings.new_booking_notifications],
-                   ["Cancellation notifications", settings.cancellation_notifications],
-                   ["Daily appointment summary", settings.daily_appointment_summary]
-                 ].each do |label, enabled| %>
-                <div class="flex items-center justify-between gap-4 px-5 py-4 sm:px-6">
-                  <dt class="text-sm font-medium text-slate-700">
-                    <%= label %>
-                  </dt>
-
-                  <dd>
-                    <% if enabled %>
-                      <span class="rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700">
-                        Enabled
-                      </span>
-                    <% else %>
-                      <span class="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-600">
-                        Disabled
-                      </span>
-                    <% end %>
-                  </dd>
-                </div>
-              <% end %>
-            </dl>
-          <% else %>
-            <div class="px-5 py-14 text-center">
-              <p class="font-semibold text-slate-900">
-                Settings not configured
+              <p class="mt-1 text-sm text-slate-500">
+                The current subscription access for this business.
               </p>
             </div>
-          <% end %>
-        </article>
 
-        <article class="rounded-2xl border border-slate-200 bg-white shadow-sm">
-          <div class="border-b border-slate-200 px-5 py-5 sm:px-6">
-            <h2 class="text-lg font-bold text-slate-900">
-              Cancellation settings
-            </h2>
+            <%= link_to(
+                  edit_admin_customer_settings_path(@customer),
+                  class: "inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700"
+                ) do %>
+              <i data-lucide="pencil" class="h-4 w-4"></i>
+              Edit settings
+            <% end %>
           </div>
 
-          <dl class="space-y-6 p-5 sm:p-6">
-            <div>
-              <dt class="text-sm font-medium text-slate-500">
-                Cancellation notice
-              </dt>
+          <div class="flex flex-col gap-4 px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+            <div class="flex items-start gap-3">
+              <div class="<%= @business.subscribed? ? "bg-emerald-50 text-emerald-600" : "bg-slate-100 text-slate-500" %> flex h-11 w-11 shrink-0 items-center justify-center rounded-xl">
+                <i
+                  data-lucide="<%= @business.subscribed? ? "badge-check" : "badge-x" %>"
+                  class="h-5 w-5"
+                ></i>
+              </div>
 
-              <dd class="mt-1 text-lg font-bold text-slate-900">
-                <% if settings&.cancellation_notice_hours.present? %>
-                  <%= pluralize(
-                        settings.cancellation_notice_hours,
-                        "hour"
-                      ) %>
-                <% else %>
-                  Not configured
-                <% end %>
-              </dd>
+              <div>
+                <p class="font-semibold text-slate-900">
+                  Active subscription
+                </p>
+
+                <p class="mt-1 text-sm text-slate-500">
+                  <% if @business.subscribed? %>
+                    This business currently has access to subscribed features.
+                  <% else %>
+                    This business does not currently have subscription access.
+                  <% end %>
+                </p>
+              </div>
             </div>
 
-            <div>
-              <dt class="text-sm font-medium text-slate-500">
-                Booking page
-              </dt>
-
-              <dd class="mt-2">
-                <% if settings&.booking_page_live? %>
-                  <span class="rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700">
-                    Accepting bookings
-                  </span>
-                <% else %>
-                  <span class="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-600">
-                    Not accepting bookings
-                  </span>
-                <% end %>
-              </dd>
-            </div>
-          </dl>
+            <% if @business.subscribed? %>
+          <span class="inline-flex w-fit items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-700">
+            <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
+            Enabled
+          </span>
+            <% else %>
+          <span class="inline-flex w-fit items-center gap-1.5 rounded-full bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-600">
+            <span class="h-1.5 w-1.5 rounded-full bg-slate-400"></span>
+            Disabled
+          </span>
+            <% end %>
+          </div>
         </article>
+
+        <div class="grid gap-6 xl:grid-cols-2">
+          <!-- Booking settings -->
+          <article class="rounded-2xl border border-slate-200 bg-white shadow-sm">
+            <div class="border-b border-slate-200 px-5 py-5 sm:px-6">
+              <h2 class="text-lg font-bold text-slate-900">
+                Booking settings
+              </h2>
+
+              <p class="mt-1 text-sm text-slate-500">
+                Current booking and notification preferences.
+              </p>
+            </div>
+
+            <% if settings.present? %>
+              <dl class="divide-y divide-slate-100">
+                <% [
+                     [
+                       "Booking page live",
+                       settings.booking_page_live
+                     ],
+                     [
+                       "Automatically confirm bookings",
+                       settings.automatically_confirm_bookings
+                     ],
+                     [
+                       "Allow customer cancellations",
+                       settings.allow_customer_cancellations
+                     ],
+                     [
+                       "Require customer phone number",
+                       settings.require_customer_phone_number
+                     ],
+                     [
+                       "New booking notifications",
+                       settings.new_booking_notifications
+                     ],
+                     [
+                       "Cancellation notifications",
+                       settings.cancellation_notifications
+                     ],
+                     [
+                       "Daily appointment summary",
+                       settings.daily_appointment_summary
+                     ]
+                   ].each do |label, enabled| %>
+                  <div class="flex items-center justify-between gap-4 px-5 py-4 sm:px-6">
+                    <dt class="text-sm font-medium text-slate-700">
+                      <%= label %>
+                    </dt>
+
+                    <dd>
+                      <% if enabled %>
+                    <span class="rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700">
+                      Enabled
+                    </span>
+                      <% else %>
+                    <span class="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-600">
+                      Disabled
+                    </span>
+                      <% end %>
+                    </dd>
+                  </div>
+                <% end %>
+              </dl>
+            <% else %>
+              <div class="px-5 py-14 text-center">
+                <p class="font-semibold text-slate-900">
+                  Settings not configured
+                </p>
+              </div>
+            <% end %>
+          </article>
+
+          <!-- Cancellation settings -->
+          <article class="rounded-2xl border border-slate-200 bg-white shadow-sm">
+            <div class="border-b border-slate-200 px-5 py-5 sm:px-6">
+              <h2 class="text-lg font-bold text-slate-900">
+                Cancellation settings
+              </h2>
+
+              <p class="mt-1 text-sm text-slate-500">
+                Current cancellation and booking-page status.
+              </p>
+            </div>
+
+            <dl class="space-y-6 p-5 sm:p-6">
+              <div>
+                <dt class="text-sm font-medium text-slate-500">
+                  Cancellation notice
+                </dt>
+
+                <dd class="mt-1 text-lg font-bold text-slate-900">
+                  <% if settings&.cancellation_notice_hours.present? %>
+                    <%= pluralize(
+                          settings.cancellation_notice_hours,
+                          "hour"
+                        ) %>
+                  <% else %>
+                    Not configured
+                  <% end %>
+                </dd>
+              </div>
+
+              <div>
+                <dt class="text-sm font-medium text-slate-500">
+                  Booking page
+                </dt>
+
+                <dd class="mt-2">
+                  <% if settings&.booking_page_live? %>
+                <span class="rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700">
+                  Accepting bookings
+                </span>
+                  <% else %>
+                <span class="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-600">
+                  Not accepting bookings
+                </span>
+                  <% end %>
+                </dd>
+              </div>
+
+              <div>
+                <dt class="text-sm font-medium text-slate-500">
+                  Subscription access
+                </dt>
+
+                <dd class="mt-2">
+                  <% if @business.subscribed? %>
+                <span class="rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700">
+                  Subscribed
+                </span>
+                  <% else %>
+                <span class="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-600">
+                  Not subscribed
+                </span>
+                  <% end %>
+                </dd>
+              </div>
+            </dl>
+          </article>
+        </div>
       </section>
     <% end %>
   <% end %>

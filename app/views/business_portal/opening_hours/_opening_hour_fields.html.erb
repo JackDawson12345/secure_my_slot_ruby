@@ -101,7 +101,10 @@
           class="mt-4 space-y-3"
         >
           <%= form.fields_for :breaks do |break_form| %>
-            <%= render "break_fields", form: break_form %>
+            <%= render(
+                  "business_portal/opening_hours/break_fields",
+                  form: break_form
+                ) %>
           <% end %>
         </div>
 
@@ -111,7 +114,10 @@
             BusinessOpeningHourBreak.new,
             child_index: "NEW_RECORD"
           ) do |break_form| %>
-            <%= render "break_fields", form: break_form %>
+            <%= render(
+                  "business_portal/opening_hours/break_fields",
+                  form: break_form
+                ) %>
           <% end %>
         </template>
       </div>

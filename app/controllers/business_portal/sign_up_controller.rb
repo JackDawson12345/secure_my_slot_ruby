@@ -1,7 +1,8 @@
 # app/controllers/business_portal/sign_up_controller.rb
 
 class BusinessPortal::SignUpController < ApplicationController
-  before_action :check_login
+  before_action :check_login,
+                except: :check_page_address
 
   def index
     @user = User.new
@@ -37,6 +38,7 @@ class BusinessPortal::SignUpController < ApplicationController
   end
 
   def check_page_address
+
     page_address = params[:page_address].to_s.parameterize
 
     available =
