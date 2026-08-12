@@ -29,7 +29,7 @@ class BusinessSitesController < ApplicationController
       "https://maps.googleapis.com/maps/api/geocode/json",
       query: {
         address: address,
-        key: "AIzaSyBeTSw6kn3eIqQab4tZy1-EXF9gM91R97U"
+        key: Rails.application.credentials.dig(:google_maps, :api_key)
       }
     )
 
