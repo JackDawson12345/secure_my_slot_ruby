@@ -11,7 +11,8 @@ module Api
         params.require(:user).permit(
           :email,
           :password,
-          :password_confirmation
+          :password_confirmation,
+          :terms_accepted
         ).merge(role: :customer)
       end
 
@@ -35,7 +36,8 @@ module Api
           email: user.email,
           role: user.role,
           created_at: user.created_at,
-          terms_accepted: true
+          terms_accepted: user.terms_accepted,
+          terms_accepted_at: user.terms_accepted_at
         }
       end
     end
