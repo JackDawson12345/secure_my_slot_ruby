@@ -180,6 +180,8 @@ module Api
           business = ::Business.find_by(id: params[:id])
           user = ::User.find(params[:customer_id])
 
+          bookings = ::Booking.where(user: user, business: business)
+
           unless user.role == 'customer'
             return render json: {
               error: "User is not a Customer."
@@ -198,11 +200,42 @@ module Api
               phone_number: user.phone_number,
               terms_accepted: user.terms_accepted,
               terms_accepted_at: user.terms_accepted_at,
-              marketing_consent: user.marketing_consent
+              marketing_consent: user.marketing_consent,
+              settings: {
+                date_of_birth: user.customer_setting.date_of_birth,
+                preferred_name: user.customer_setting.preferred_name,
+                phone_number: user.customer_setting.phone_number,
+                preferred_contact_method: user.customer_setting.preferred_contact_method,
+                address_line_1: user.customer_setting. address_line_1,
+                address_line_2: user.customer_setting.address_line_2,
+                town_or_city: user.customer_setting.town_or_city,
+                postcode: user.customer_setting.postcode,
+                country: user.customer_setting.country,
+              }
+            },
+            bookings: {
+              total_bookings: bookings.count,
+              bookings: bookings.map do |booking|
+                {
+                  date: booking.date,
+                  time: booking.time,
+                  status: booking.status,
+                  payment_status: booking.payment_status,
+                  amount_paid: booking.amount_paid,
+                  service:{
+                    name: booking.service.name,
+                    description: booking.service.description,
+                    price: booking.service.price,
+                    minutes_duration: booking.service.minutes_duration,
+                    status: booking.service.status,
+                    deposit_enabled: booking.service.deposit_enabled,
+                    deposit: booking.service.deposit,
+                  }
+                }
+              end
             }
           }, status: :ok
 
-          byebug
         end
 
       end

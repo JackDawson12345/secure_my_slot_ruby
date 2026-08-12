@@ -32,9 +32,14 @@ class BookingsController < ApplicationController
       date: booking_params[:date],
       time: booking_params[:time],
       notes: booking_params[:notes],
-      status: "pending",
       payment_status: business.stripe_ready? ? "awaiting_payment" : "not_required"
     )
+
+    if business.business_setting.automatically_confirm_bookings == true
+      booking.status = 'confirmed'
+    else
+      booking.status = 'pending'
+    end
 
     if booking.save
       if business.stripe_ready?

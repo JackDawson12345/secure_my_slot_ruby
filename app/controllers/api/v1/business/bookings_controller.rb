@@ -96,9 +96,12 @@ module Api
               notes: booking.notes,
               reminder_email_sent_at: booking.reminder_email_sent_at,
               reminder_sms_sent_at: booking.reminder_sms_sent_at,
+              total_price: booking.service.price,
               amount_paid: booking.amount_paid,
               created_at: booking.created_at,
-              updated_at: booking.updated_at
+              updated_at: booking.updated_at,
+              users_email: booking.user.email,
+              users_phone: booking.user.phone_number
             }
           }, status: :ok
         end
@@ -197,16 +200,19 @@ module Api
             new_user.terms_accepted = true
           end
 
-
           booking = Booking.new(
             business_id: business.id,
             user_id: user.id,
             service_id: booking_params[:service_id],
             date: booking_params[:date],
-            time: booking_params[:time],
-            status: "pending"
+            time: booking_params[:time]
           )
 
+          if business.business_setting&.automatically_confirm_bookings == true
+            booking.status = 'confirmed'
+          else
+            booking.status = 'pending'
+          end
 
           if booking.save
 
