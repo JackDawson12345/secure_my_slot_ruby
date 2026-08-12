@@ -8,12 +8,16 @@ module Api
       private
 
       def sign_up_params
-        params.require(:user).permit(
+        permitted = params.require(:user).permit(
           :email,
           :password,
           :password_confirmation,
           :terms_accepted
         ).merge(role: :customer)
+
+        Rails.logger.info "SIGN UP PARAMS: #{permitted.inspect}"
+
+        permitted
       end
 
       def respond_with(resource, _options = {})
