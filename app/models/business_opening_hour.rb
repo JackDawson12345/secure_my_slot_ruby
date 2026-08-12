@@ -1,6 +1,9 @@
 class BusinessOpeningHour < ApplicationRecord
   belongs_to :business, inverse_of: :opening_hours
 
+  has_many :business_opening_hour_breaks,
+           dependent: :destroy
+
   has_many :breaks,
            class_name: "BusinessOpeningHourBreak",
            dependent: :destroy,

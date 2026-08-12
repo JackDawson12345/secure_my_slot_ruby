@@ -348,7 +348,7 @@
                     </div>
                   </div>
 
-                  <%= link_to '/',
+                  <%= link_to account_show_booking_path(booking),
                               class: "inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50" do %>
                     View booking
                     <i data-lucide="arrow-right" class="h-4 w-4"></i>
@@ -640,7 +640,8 @@
             </div>
           </div>
 
-          <%= link_to "View appointment", account_booking_path(@next_booking),
+
+          <%= link_to "View appointment", account_show_booking_path(@next_booking),
                       class: "mt-4 inline-flex w-full items-center justify-center rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-amber-800 shadow-sm transition hover:bg-amber-100" %>
         </section>
       <% end %>

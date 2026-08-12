@@ -26,11 +26,94 @@ Rails.application.routes.draw do
 
       namespace :business do
         get "dashboard", to: "dashboard#show"
+        get "get-dashboard-details/:id", to: "get_info#get_dashboard_details"
+
+        get "get-businesses",
+            to: "get_info#get_businesses"
+        get "get-users-business/:user_id",
+            to: "get_info#get_users_business"
+        get "/:id",
+            to: "get_info#get_business"
+
+        get "/:id/business-settings",
+            to: "get_info#get_business_settings"
+        get "/:id/website-settings",
+            to: "get_info#get_business_website_settings"
+
+        get "/:id/bookings",
+            to: "bookings#get_bookings"
+        get "/:id/booking/:booking_id",
+            to: "bookings#get_booking"
+        patch "/:id/booking/:booking_id",
+              to: "bookings#update_status"
+        get "/:id/get-booking-slots",
+            to: "bookings#get_booking_slots"
+        post ":id/create-booking",
+             to: "bookings#create"
+
+        get "/:id/services",
+            to: "services#get_services"
+        get "/:id/service/:service_id",
+            to: "services#get_service"
+        patch "/:id/service/:service_id",
+              to: "services#update_service"
+        post "/:id/services",
+             to: "services#create_service"
+
+        get '/:id/get-opening-hours',
+            to: "opening_hours#get_opening_hours"
+        patch '/:id/update-opening-hours',
+              to: "opening_hours#update_opening_hours"
+
+        get '/:id/get_customers',
+            to: "customers#get_customers"
+        get '/:id/get-customer/:customer_id',
+            to: "customers#get_customer"
+
+        get ":id/settings",
+            to: "settings#show"
+        patch ":id/settings",
+              to: "settings#update"
+        patch ":id/settings/password",
+              to: "settings#update_password"
+
       end
 
       namespace :customer do
-        get "dashboard", to: "dashboard#show"
+        get "dashboard",
+            to: "dashboard#show"
+
+        get "/:id/get-dashboard-details",
+            to: "get_info#get_dashboard_details"
+
+        get "/:id/booking/:booking_id",
+            to: "bookings#get_booking"
+
+        get "/:id/bookings",
+            to: "bookings#get_bookings"
+
+        get "/:id/settings",
+            to: "settings#show"
+
+        patch "/:id/settings",
+              to: "settings#update"
+
+        patch "/:id/settings/password",
+              to: "settings#update_password"
       end
+
+      get '/:id/get-businesses',
+          to: "businesses#get_businesses"
+      get '/:id/get-business/:business_id',
+          to: "businesses#get_business"
+
+      post "customer/:id/business/:business_id/create-booking",
+           to: "businesses#create_customer_booking"
+      get "customer/:id/bookings/:booking_id/payment-success",
+          to: "businesses#customer_payment_success"
+      get "customer/:id/bookings/:booking_id/payment-cancelled",
+          to: "businesses#customer_payment_cancelled"
+
 
 
       devise_scope :user do
@@ -90,6 +173,9 @@ Rails.application.routes.draw do
     get "dashboard/bookings",
         to: "bookings#index",
         as: :bookings
+    get "dashboard/bookings/:id",
+        to: "bookings#show",
+        as: :show_booking
 
     get "dashboard/booking-history",
         to: "booking_history#index",

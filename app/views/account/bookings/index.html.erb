@@ -225,7 +225,7 @@
           </div>
 
           <div class="flex flex-col gap-3 sm:flex-row">
-            <%= link_to account_booking_path(@next_booking),
+            <%= link_to account_show_booking_path(@next_booking),
                         class: "inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-700" do %>
               View booking
               <i data-lucide="arrow-right" class="h-4 w-4"></i>
@@ -496,13 +496,12 @@
               </td>
 
               <td class="whitespace-nowrap px-6 py-5 text-right">
-                <button
-                  type="button"
-                  aria-label="Open booking options"
-                  class="rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
-                >
+
+                  <%= link_to account_show_booking_path(booking), class: 'rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700' do %>
                   <i data-lucide="ellipsis" class="h-5 w-5"></i>
-                </button>
+                  <% end %>
+
+
               </td>
             </tr>
           <% end %>

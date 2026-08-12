@@ -12,6 +12,9 @@ class BusinessPortal::SignUpController < ApplicationController
   def create
     @user = User.new(user_params)
     @user.role = 1
+    @user.terms_accepted = true
+    @user.terms_accepted_at = Time.now
+
 
     @business = @user.build_business(
       business_name: business_params[:business_name],

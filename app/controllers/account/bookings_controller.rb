@@ -84,4 +84,8 @@ class Account::BookingsController < Account::BaseController
                   .limit(@per_page)
                   .offset((@page - 1) * @per_page)
   end
+
+  def show
+    @booking = Booking.find(params[:id])
+  end
 end
