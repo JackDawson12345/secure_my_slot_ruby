@@ -22,6 +22,8 @@ module Api
 
       def respond_with(resource, _options = {})
         if resource.persisted?
+          CustomerSetting.create!(user_id: resource.id)
+
           render json: {
             message: "Account created successfully",
             user: user_json(resource)
