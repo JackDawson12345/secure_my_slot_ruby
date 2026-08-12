@@ -139,7 +139,8 @@ module Api
 
         def authenticate_api_key!
           provided_api_key = request.headers["X-API-Key"]
-          expected_api_key = Rails.application.credentials.secure_my_slot_api_key
+          expected_api_key = ENV["SECURE_MY_SLOT_API_KEY"].presence ||
+                             Rails.application.credentials.secure_my_slot_api_key
 
           Rails.logger.info "PROVIDED API KEY PRESENT: #{provided_api_key.present?}"
           Rails.logger.info "EXPECTED API KEY PRESENT: #{expected_api_key.present?}"
