@@ -9,7 +9,10 @@ module Api
 
       def sign_up_params
         permitted = params.require(:user).permit(
+          :first_name,
+          :last_name,
           :email,
+          :phone_number,
           :password,
           :password_confirmation,
           :terms_accepted
@@ -39,7 +42,10 @@ module Api
       def user_json(user)
         {
           id: user.id,
+          first_name: user.first_name,
+          last_name: user.last_name,
           email: user.email,
+          phone_number: user.phone_number,
           role: user.role,
           created_at: user.created_at,
           terms_accepted: user.terms_accepted,
