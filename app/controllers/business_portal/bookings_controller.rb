@@ -2,13 +2,49 @@
 
 class BusinessPortal::BookingsController < BusinessPortal::BaseController
   def index
-    @bookings = current_user.business.bookings
-                            .where(
-                              "date > :today OR (date = :today AND time >= :current_time)",
-                              today: Date.current,
-                              current_time: Time.current
-                            )
-                            .order(date: :asc, time: :asc)
+    business = current_user.business
+    bookings = business.bookings
+
+    today = Date.current
+    current_time = Time.current
+
+    # Upcoming bookings list
+    @bookings = bookings
+                  .where(
+                    "date > :today OR (date = :today AND time >= :current_time)",
+                    today: today,
+                    current_time: current_time
+                  )
+                  .order(date: :asc, time: :asc)
+
+    # Today
+    todays_bookings = bookings.where(date: today)
+
+    @today_count = todays_bookings.count
+    @today_confirmed_count = todays_bookings.where(status: :confirmed).count
+    @today_pending_count = todays_bookings.where(status: :pending).count
+
+    # Upcoming over the next 7 days
+    @upcoming_count = bookings
+                        .where(date: today..(today + 7.days))
+                        .where(
+                          "date > :today OR (date = :today AND time >= :current_time)",
+                          today: today,
+                          current_time: current_time
+                        )
+                        .count
+
+    # Completed this month
+    @completed_count = bookings
+                         .where(status: :completed)
+                         .where(date: today.beginning_of_month..today.end_of_month)
+                         .count
+
+    # Cancelled this month
+    @cancelled_count = bookings
+                         .where(status: :cancelled)
+                         .where(date: today.beginning_of_month..today.end_of_month)
+                         .count
   end
 
   def add_booking

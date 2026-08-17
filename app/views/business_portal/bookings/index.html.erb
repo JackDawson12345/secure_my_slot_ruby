@@ -32,7 +32,7 @@
           </p>
 
           <p class="mt-2 text-3xl font-bold tracking-tight text-slate-900">
-            12
+            <%= @today_count %>
           </p>
         </div>
 
@@ -42,7 +42,7 @@
       </div>
 
       <p class="mt-4 text-sm text-slate-500">
-        9 confirmed, 3 pending
+        <%= @today_confirmed_count %> confirmed, <%= @today_pending_count %> pending
       </p>
     </article>
 
@@ -57,7 +57,7 @@
           </p>
 
           <p class="mt-2 text-3xl font-bold tracking-tight text-slate-900">
-            46
+            <%= @upcoming_count %>
           </p>
         </div>
 
@@ -82,7 +82,7 @@
           </p>
 
           <p class="mt-2 text-3xl font-bold tracking-tight text-slate-900">
-            128
+            <%= @completed_count %>
           </p>
         </div>
 
@@ -107,7 +107,7 @@
           </p>
 
           <p class="mt-2 text-3xl font-bold tracking-tight text-slate-900">
-            8
+            <%= @cancelled_count %>
           </p>
         </div>
 
