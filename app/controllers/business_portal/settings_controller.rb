@@ -8,19 +8,16 @@ class BusinessPortal::SettingsController < BusinessPortal::BaseController
 
 
   def update
-    ActiveRecord::Base.transaction do
+    Rails.logger.info "SETTINGS PARAMS: #{settings_params.inspect}"
 
+    ActiveRecord::Base.transaction do
       @settings.update!(settings_params)
 
       @user.update!(user_params) if user_params.present?
-
     end
 
     redirect_to business_settings_path,
                 notice: "Settings updated successfully."
-
-  rescue ActiveRecord::RecordInvalid
-    render :index, status: :unprocessable_entity
   end
 
 
