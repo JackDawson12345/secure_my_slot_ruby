@@ -24,6 +24,9 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
 
+      post "forgot_password", to: "passwords#create"
+      patch "reset_password", to: "passwords#update"
+
       namespace :business do
         get "dashboard", to: "dashboard#show"
         get "get-dashboard-details/:id", to: "get_info#get_dashboard_details"
