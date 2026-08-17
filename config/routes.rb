@@ -78,17 +78,31 @@ Rails.application.routes.draw do
               to: "settings#update_password"
 
 
+        # Payments
+
         get "/:id/payments",
-            to: "payments#index"
+            to: "payments#index",
+            as: :payments
 
         post "/:id/payments/connect",
-             to: "payments#connect"
+             to: "payments#connect",
+             as: :payments_connect
 
         get "/:id/payments/status",
-            to: "payments#status"
+            to: "payments#status",
+            as: :payments_status
 
         post "/:id/payments/refresh",
-             to: "payments#refresh"
+             to: "payments#refresh",
+             as: :payments_refresh
+
+        get "/:id/payments/stripe-return",
+            to: "payments#stripe_return",
+            as: :payments_stripe_return
+
+        get "/:id/payments/stripe-refresh",
+            to: "payments#stripe_refresh",
+            as: :payments_stripe_refresh
       end
 
       namespace :customer do
