@@ -298,6 +298,20 @@
                     This description may appear on your public booking page.
                   </p>
                 </div>
+
+                <div class="sm:col-span-2">
+                  <label
+                    for="checkVerifyLink"
+                    class="mb-2 block text-sm font-semibold text-slate-700"
+                  >
+                    Check Verify Reviews Link
+                  </label>
+
+                  <%= f.text_field :check_verify_link,
+                                   id: "checkVerifyLink",
+                                   placeholder: 'https://www.checkverify.co.uk/review/business_name',
+                                   class: "w-full rounded-xl border border-slate-200 px-4 py-3 text-sm" %>
+                </div>
               </div>
             </div>
           </section>

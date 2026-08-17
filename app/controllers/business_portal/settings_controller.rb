@@ -98,6 +98,7 @@ class BusinessPortal::SettingsController < BusinessPortal::BaseController
       :business_email,
       :business_description,
       :logo,
+      :check_verify_link,
 
       :address_line_1,
       :address_line_2,

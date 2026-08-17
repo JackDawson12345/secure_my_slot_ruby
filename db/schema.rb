@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_08_17_090934) do
+ActiveRecord::Schema[8.0].define(version: 2026_08_17_151457) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -134,6 +134,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_08_17_090934) do
     t.datetime "updated_at", null: false
     t.decimal "latitude", precision: 10, scale: 7
     t.decimal "longitude", precision: 10, scale: 7
+    t.string "check_verify_link"
     t.index ["business_id"], name: "index_business_settings_on_business_id"
   end
 
