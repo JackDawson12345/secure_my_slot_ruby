@@ -1,16 +1,299 @@
-<h2>Forgot your password?</h2>
+<main class="min-h-screen bg-slate-50">
+  <section class="relative overflow-hidden py-12 sm:py-16 lg:py-20">
 
-<%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post }) do |f| %>
-  <%= render "devise/shared/error_messages", resource: resource %>
+    <!-- Background decoration -->
+    <div
+      class="pointer-events-none absolute inset-x-0 top-0 h-[520px] bg-gradient-to-b from-indigo-50 via-slate-50 to-transparent"
+    ></div>
 
-  <div class="field">
-    <p><%= f.label :email %></p>
-    <p><%= f.email_field :email, autofocus: true, autocomplete: "email" %></p>
-  </div>
+    <div
+      class="pointer-events-none absolute -left-32 top-24 h-80 w-80 rounded-full bg-indigo-200/40 blur-3xl"
+    ></div>
 
-  <div class="actions">
-    <%= f.submit "Send me password reset instructions" %>
-  </div>
-<% end %>
+    <div
+      class="pointer-events-none absolute -right-32 top-16 h-80 w-80 rounded-full bg-violet-200/40 blur-3xl"
+    ></div>
 
-<%= render "devise/shared/links" %>
+
+    <div
+      class="relative mx-auto grid max-w-7xl gap-10 px-4 sm:px-6 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:items-center lg:px-8"
+    >
+
+      <!-- Left content -->
+      <aside>
+
+        <span
+          class="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-white px-3 py-1.5 text-sm font-semibold text-indigo-700 shadow-sm"
+        >
+          <i data-lucide="key-round" class="h-4 w-4"></i>
+          Account recovery
+        </span>
+
+
+        <h1 class="mt-6 text-4xl font-bold tracking-tight text-slate-950 sm:text-5xl">
+          Reset your
+          <span class="text-indigo-600">password.</span>
+        </h1>
+
+
+        <p class="mt-5 max-w-xl text-lg leading-8 text-slate-600">
+          Enter the email address linked to your SecureMySlot account and
+          we'll send you instructions to create a new password.
+        </p>
+
+
+        <div class="mt-8 space-y-5">
+
+          <div class="flex items-start gap-4">
+            <span
+              class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo-100 text-indigo-600"
+            >
+              <i data-lucide="mail" class="h-5 w-5"></i>
+            </span>
+
+            <div>
+              <h2 class="font-bold text-slate-900">
+                Check your inbox
+              </h2>
+
+              <p class="mt-1 text-sm leading-6 text-slate-600">
+                We'll email password reset instructions to the address
+                associated with your account.
+              </p>
+            </div>
+          </div>
+
+
+          <div class="flex items-start gap-4">
+            <span
+              class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-violet-100 text-violet-600"
+            >
+              <i data-lucide="mouse-pointer-click" class="h-5 w-5"></i>
+            </span>
+
+            <div>
+              <h2 class="font-bold text-slate-900">
+                Follow the reset link
+              </h2>
+
+              <p class="mt-1 text-sm leading-6 text-slate-600">
+                Open the link in the email and choose a new password for
+                your account.
+              </p>
+            </div>
+          </div>
+
+
+          <div class="flex items-start gap-4">
+            <span
+              class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-100 text-emerald-600"
+            >
+              <i data-lucide="log-in" class="h-5 w-5"></i>
+            </span>
+
+            <div>
+              <h2 class="font-bold text-slate-900">
+                Sign back in
+              </h2>
+
+              <p class="mt-1 text-sm leading-6 text-slate-600">
+                Once your password has been changed, you can return to
+                SecureMySlot and sign in as normal.
+              </p>
+            </div>
+          </div>
+
+        </div>
+
+
+        <div class="mt-8 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+          <div class="flex items-start gap-3">
+
+            <span
+              class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-950 text-white"
+            >
+              <i data-lucide="shield-check" class="h-5 w-5"></i>
+            </span>
+
+            <div>
+              <p class="font-bold text-slate-900">
+                Secure password reset
+              </p>
+
+              <p class="mt-1 text-sm leading-6 text-slate-500">
+                Password reset links are sent directly to your registered
+                email address.
+              </p>
+            </div>
+
+          </div>
+        </div>
+
+      </aside>
+
+
+      <!-- Password reset form -->
+      <div
+        class="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl shadow-slate-200/60"
+      >
+
+        <div class="border-b border-slate-200 px-5 py-6 sm:px-8">
+
+          <div class="flex items-start gap-4">
+
+            <span
+              class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-indigo-600 text-white"
+            >
+              <i data-lucide="key-round" class="h-6 w-6"></i>
+            </span>
+
+            <div>
+
+              <h2 class="text-2xl font-bold tracking-tight text-slate-950">
+                Forgot your password?
+              </h2>
+
+              <p class="mt-1 text-sm leading-6 text-slate-500">
+                Enter your email address to receive reset instructions.
+              </p>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <%= form_for(
+              resource,
+              as: resource_name,
+              url: password_path(resource_name),
+              html: {
+                method: :post,
+                class: "p-5 sm:p-8"
+              }
+            ) do |f| %>
+
+          <%= render "devise/shared/error_messages", resource: resource %>
+
+
+          <% if flash[:alert].present? %>
+            <div class="mb-6 rounded-xl border border-rose-200 bg-rose-50 p-4">
+              <div class="flex items-start gap-3">
+
+                <i
+                  data-lucide="circle-alert"
+                  class="mt-0.5 h-5 w-5 shrink-0 text-rose-600"
+                ></i>
+
+                <p class="text-sm font-medium leading-6 text-rose-700">
+                  <%= flash[:alert] %>
+                </p>
+
+              </div>
+            </div>
+          <% end %>
+
+
+          <% if flash[:notice].present? %>
+            <div class="mb-6 rounded-xl border border-emerald-200 bg-emerald-50 p-4">
+              <div class="flex items-start gap-3">
+
+                <i
+                  data-lucide="circle-check"
+                  class="mt-0.5 h-5 w-5 shrink-0 text-emerald-600"
+                ></i>
+
+                <p class="text-sm font-medium leading-6 text-emerald-700">
+                  <%= flash[:notice] %>
+                </p>
+
+              </div>
+            </div>
+          <% end %>
+
+
+          <div>
+
+            <%= f.label :email,
+                        "Email address",
+                        class: "mb-2 block text-sm font-semibold text-slate-700" %>
+
+            <div class="relative">
+
+              <i
+                data-lucide="mail"
+                class="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
+              ></i>
+
+              <%= f.email_field :email,
+                                autofocus: true,
+                                autocomplete: "email",
+                                placeholder: "you@example.com",
+                                required: true,
+                                class: "w-full rounded-xl border border-slate-200 py-3 pl-11 pr-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" %>
+
+            </div>
+
+          </div>
+
+
+          <%= f.button type: :submit,
+                       class: "mt-7 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 px-6 py-3.5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" do %>
+
+            Send reset instructions
+
+            <i data-lucide="arrow-right" class="h-4 w-4"></i>
+
+          <% end %>
+
+
+          <div class="my-7 flex items-center gap-4">
+
+            <div class="h-px flex-1 bg-slate-200"></div>
+
+            <span class="text-xs font-medium uppercase tracking-wider text-slate-400">
+              Remembered your password?
+            </span>
+
+            <div class="h-px flex-1 bg-slate-200"></div>
+
+          </div>
+
+
+          <%= link_to new_session_path(resource_name),
+                      class: "inline-flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700" do %>
+
+            <i data-lucide="arrow-left" class="h-4 w-4"></i>
+
+            Back to sign in
+
+          <% end %>
+
+        <% end %>
+
+      </div>
+
+    </div>
+
+  </section>
+</main>
+
+
+<script>
+    function initialisePasswordReset() {
+        if (window.lucide) {
+            lucide.createIcons();
+        }
+    }
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        initialisePasswordReset
+    );
+
+    document.addEventListener(
+        "turbo:load",
+        initialisePasswordReset
+    );
+</script>
