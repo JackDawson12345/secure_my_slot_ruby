@@ -1,7 +1,7 @@
 module Api
   module V1
     class PasswordsController < BaseController
-      skip_before_action :verify_authenticity_token
+
 
       # POST /api/v1/forgot_password
       def create
