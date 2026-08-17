@@ -65,6 +65,18 @@ Rails.application.routes.draw do
         patch '/:id/update-opening-hours',
               to: "opening_hours#update_opening_hours"
 
+        get ":id/blocked-times",
+            to: "opening_hours#get_blocked_times"
+
+        post ":id/blocked-times",
+             to: "opening_hours#create_blocked_time"
+
+        patch ":id/blocked-times/:blocked_time_id",
+              to: "opening_hours#update_blocked_time"
+
+        delete ":id/blocked-times/:blocked_time_id",
+               to: "opening_hours#delete_blocked_time"
+
         get '/:id/get_customers',
             to: "customers#get_customers"
         get '/:id/get-customer/:customer_id',
