@@ -133,11 +133,11 @@
 
           <div class="min-w-0 flex-1">
             <p class="truncate text-sm font-semibold">
-              John Doe
+              <%= current_user.first_name %> <%= current_user.last_name %>
             </p>
 
             <p class="truncate text-xs text-slate-400">
-              john@example.co.uk
+              <%= current_user.email %>
             </p>
           </div>
         </div>
@@ -189,7 +189,7 @@
 
           <div class="hidden text-left sm:block">
             <p class="text-sm font-semibold text-slate-900">
-              Olivia Thompson
+              <%= current_user.first_name %> <%= current_user.last_name %>
             </p>
 
             <p class="text-xs text-slate-500">
