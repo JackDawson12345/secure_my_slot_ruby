@@ -77,6 +77,18 @@ Rails.application.routes.draw do
         patch ":id/settings/password",
               to: "settings#update_password"
 
+
+        get "/:id/payments",
+            to: "payments#index"
+
+        post "/:id/payments/connect",
+             to: "payments#connect"
+
+        get "/:id/payments/status",
+            to: "payments#status"
+
+        post "/:id/payments/refresh",
+             to: "payments#refresh"
       end
 
       namespace :customer do
