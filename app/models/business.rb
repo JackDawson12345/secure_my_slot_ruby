@@ -212,7 +212,8 @@ class Business < ApplicationRecord
   end
 
   def google_maps_api_key
-    Rails.application.credentials.dig(:google_maps, :api_key)
+    ENV["GOOGLE_MAPS_API_KEY"].presence ||
+      Rails.application.credentials.dig(:google_maps, :api_key)
   end
 
   def normalise_page_address

@@ -23,17 +23,17 @@ class SmsService
   end
 
   def self.account_sid
-    ENV["TWILIO_ACCOUNT_SID"] ||
+    ENV["TWILIO_ACCOUNT_SID"].presence ||
       Rails.application.credentials.dig(:twilio, :account_sid)
   end
 
   def self.auth_token
-    ENV["TWILIO_AUTH_TOKEN"] ||
+    ENV["TWILIO_AUTH_TOKEN"].presence ||
       Rails.application.credentials.dig(:twilio, :auth_token)
   end
 
   def self.twilio_phone_number
-    ENV["TWILIO_PHONE_NUMBER"] ||
+    ENV["TWILIO_PHONE_NUMBER"].presence ||
       Rails.application.credentials.dig(:twilio, :phone_number)
   end
 
