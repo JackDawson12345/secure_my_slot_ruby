@@ -414,8 +414,7 @@ module Api
           return
         end
 
-        session_id =
-          params[:session_id].to_s
+        session_id = params[:session_id].to_s
 
         if session_id.blank?
           render json: {
@@ -450,6 +449,13 @@ module Api
             session_id
           )
 
+        Rails.logger.info(
+          "Stripe payment verification for booking #{booking.id}: " \
+            "session=#{checkout_session.id}, " \
+            "payment_status=#{checkout_session.payment_status}, " \
+            "payment_intent=#{checkout_session.payment_intent}"
+        )
+
         unless checkout_session.payment_status == "paid"
           render json: {
             success: false,
@@ -476,13 +482,27 @@ module Api
         )
 
         unless already_paid
-          SendBookingConfirmationSmsJob.perform_later(
-            booking.id
-          )
+          begin
+            SendBookingConfirmationSmsJob.perform_later(
+              booking.id
+            )
+          rescue StandardError => e
+            Rails.logger.error(
+              "Failed to enqueue customer booking confirmation SMS " \
+                "for booking #{booking.id}: #{e.class} - #{e.message}"
+            )
+          end
 
-          SendBusinessBookingConfirmationSmsJob.perform_later(
-            booking.id
-          )
+          begin
+            SendBusinessBookingConfirmationSmsJob.perform_later(
+              booking.id
+            )
+          rescue StandardError => e
+            Rails.logger.error(
+              "Failed to enqueue business booking confirmation SMS " \
+                "for booking #{booking.id}: #{e.class} - #{e.message}"
+            )
+          end
         end
 
         render json: {
@@ -503,15 +523,48 @@ module Api
           error: "Booking not found."
         }, status: :not_found
 
+      rescue ActiveRecord::RecordInvalid => e
+        Rails.logger.error(
+          "Customer payment booking update failed: " \
+            "#{e.class} - #{e.message}"
+        )
+
+        Rails.logger.error(
+          e.record.errors.full_messages.join(", ")
+        )
+
+        render json: {
+          success: false,
+          error: "Payment was confirmed by Stripe, but the booking could not be updated.",
+          errors: e.record.errors.full_messages
+        }, status: :unprocessable_entity
+
       rescue Stripe::StripeError => e
         Rails.logger.error(
-          "Customer payment verification error: #{e.class} - #{e.message}"
+          "Customer payment verification error: " \
+            "#{e.class} - #{e.message}"
         )
 
         render json: {
           success: false,
           error: "We could not verify your payment."
         }, status: :unprocessable_entity
+
+      rescue StandardError => e
+        Rails.logger.error(
+          "Customer payment success unexpected error: " \
+            "#{e.class} - #{e.message}"
+        )
+
+        Rails.logger.error(
+          e.backtrace.first(20).join("\n")
+        )
+
+        render json: {
+          success: false,
+          error: "Payment verification failed.",
+          debug_error: "#{e.class}: #{e.message}"
+        }, status: :internal_server_error
       end
 
       def customer_payment_cancelled
