@@ -4,6 +4,11 @@ module Api
   module V1
     module Business
       class GetInfoController < ApplicationController
+
+        require "net/http"
+        require "json"
+
+
         def get_businesses
           businesses = ::Business.order(created_at: :desc)
 
@@ -177,6 +182,43 @@ module Api
               monthly_revenue: set_monthly_revenue
             }
           }, status: :ok
+        end
+
+        def get_reviews
+          business = ::Business.find_by(id: params[:id])
+          settings = business.business_setting
+          check_verify_link = settings.check_verify_link
+
+          unless check_verify_link.present?
+            return render json: {
+              error: "No reviews found."
+            }, status: :not_found
+          end
+
+          check_verify_slug = URI.parse(check_verify_link).path.split("/").last
+
+          uri = URI("https://www.checkverify.co.uk/api/v1/reviews/user/#{check_verify_slug}")
+
+          response = Net::HTTP.get_response(uri)
+
+          unless response.is_a?(Net::HTTPSuccess)
+            return render json: {
+              error: "Unable to retrieve reviews."
+            }, status: :bad_gateway
+          end
+
+          data = JSON.parse(response.body)
+
+          recent_reviews = data["reviews"]
+                             .sort_by { |review| Time.parse(review["created_at"]) }
+                             .reverse
+                             .first(5)
+
+          render json: {
+            total_reviews: data.dig("user", "total_reviews"),
+            average_rating: data.dig("user", "average_rating").to_f.round(2),
+            reviews: recent_reviews
+          }
         end
 
         private

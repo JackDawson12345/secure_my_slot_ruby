@@ -38,6 +38,9 @@ Rails.application.routes.draw do
         get "/:id",
             to: "get_info#get_business"
 
+        get "/:id/get-reviews",
+            to: "get_info#get_reviews"
+
         get "/:id/business-settings",
             to: "get_info#get_business_settings"
         get "/:id/website-settings",
