@@ -8,7 +8,7 @@ class SendBookingConfirmationSmsJob < ApplicationJob
     return if booking.user.phone_number.blank?
 
     SmsService.send_message(
-      to: booking.user.phone_number,
+      to: booking.user.customer_setting.phone_number,
       body: message_for(booking)
     )
   end
