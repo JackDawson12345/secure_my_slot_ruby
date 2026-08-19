@@ -52,7 +52,7 @@ module BusinessPortal
 
     def google_oauth_url
       params = {
-        client_id: Rails.application.credentials.dig(:google, :client_id),
+        client_id: ENV["GOOGLE_CLIENT_ID"] || Rails.application.credentials.dig(:google, :client_id),
         redirect_uri: business_google_calendar_callback_url,
         response_type: "code",
         scope: "https://www.googleapis.com/auth/calendar.readonly",
@@ -68,8 +68,8 @@ module BusinessPortal
       response = Faraday.post(
         "https://oauth2.googleapis.com/token",
         {
-          client_id: Rails.application.credentials.dig(:google, :client_id),
-          client_secret: Rails.application.credentials.dig(:google, :client_secret),
+          client_id: ENV["GOOGLE_CLIENT_ID"] || Rails.application.credentials.dig(:google, :client_id),
+          client_secret: ENV["GOOGLE_CLIENT_SECRET"] || Rails.application.credentials.dig(:google, :client_secret),
           code: code,
           grant_type: "authorization_code",
           redirect_uri: business_google_calendar_callback_url
