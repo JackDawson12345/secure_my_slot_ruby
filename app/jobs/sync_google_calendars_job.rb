@@ -3,23 +3,23 @@ class SyncGoogleCalendarsJob < ApplicationJob
 
   def perform
 
+    Rails.logger.info "Google calendar sync started"
+
     CalendarConnection.find_each do |connection|
 
-      begin
+      Rails.logger.info "Syncing connection #{connection.id}"
 
-        GoogleCalendarService
-          .new(connection)
-          .sync_events
+      GoogleCalendarService
+        .new(connection)
+        .sync_events
 
-      rescue => e
+    rescue => e
 
-        Rails.logger.error(
-          "Google Calendar sync failed for #{connection.id}: #{e.message}"
-        )
-
-      end
+      Rails.logger.error "Google sync failed: #{e.message}"
 
     end
+
+    Rails.logger.info "Google calendar sync finished"
 
   end
 end
