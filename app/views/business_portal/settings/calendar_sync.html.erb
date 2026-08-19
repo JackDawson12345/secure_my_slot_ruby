@@ -1,0 +1,30 @@
+<h2>
+  Calendar Sync
+</h2>
+
+
+<% if current_user.business.calendar_connection.present? %>
+
+  <p>
+    Connected:
+    <%= current_user.business.calendar_connection.email %>
+  </p>
+
+  <%= link_to "Sync Now",
+              business_google_calendar_sync_path,
+              class: "mt-4 inline-block rounded-lg bg-indigo-600 px-4 py-2 text-white" %>
+
+  <% if current_user.business.calendar_connection.last_synced_at.present? %>
+    <p class="mt-2 text-sm text-gray-500">
+      Last synced:
+      <%= time_ago_in_words(current_user.business.calendar_connection.last_synced_at) %> ago
+    </p>
+  <% end %>
+
+<% else %>
+
+  <%= link_to "Connect Google Calendar",
+              business_google_calendar_connect_path,
+              class: "rounded-lg bg-indigo-600 px-4 py-2 text-white" %>
+
+<% end %>

@@ -315,19 +315,38 @@ Rails.application.routes.draw do
            to: "blocked_times#destroy",
            as: :delete_blocked_time
 
-
-    get "dashboard/settings",
+    get "dashboard/settings/",
         to: "settings#index",
         as: :settings
+
+    get "dashboard/settings/general-settings",
+        to: "settings#general_settings",
+        as: :general_settings
+
+    get "dashboard/settings/calendar-sync",
+        to: "settings#calendar_sync",
+        as: :calendar_sync
+
+    get "dashboard/settings/calendar-sync/google",
+        to: "calendar_connections#google",
+        as: :google_calendar_connect
+
+    get "dashboard/settings/calendar-sync/google/callback",
+        to: "calendar_connections#callback",
+        as: :google_calendar_callback
+
+    get "dashboard/settings/calendar-sync/google/sync",
+        to: "calendar_connections#sync",
+        as: :google_calendar_sync
 
     patch "dashboard/settings",
           to: "settings#update"
 
-    get "dashboard/website-settings",
+    get "dashboard/settings/website-settings",
         to: "website_settings#index",
         as: :website_settings
 
-    patch "dashboard/website-settings",
+    patch "dashboard/settings/website-settings",
           to: "website_settings#update"
 
     patch "dashboard/password",
@@ -338,19 +357,19 @@ Rails.application.routes.draw do
            to: "settings#destroy_logo",
            as: :settings_logo
 
-    get "dashboard/payments",
+    get "dashboard/settings/payments",
         to: "payments#index",
         as: :payments
 
-    post "dashboard/payments/connect",
+    post "dashboard/settings/payments/connect",
          to: "payments#connect",
          as: :payments_connect
 
-    get "dashboard/payments/return",
+    get "dashboard/settings/payments/return",
         to: "payments#stripe_return",
         as: :payments_return
 
-    get "dashboard/payments/refresh",
+    get "dashboard/settings/payments/refresh",
         to: "payments#stripe_refresh",
         as: :payments_refresh
 

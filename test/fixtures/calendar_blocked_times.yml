@@ -1,0 +1,23 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  business: one
+  calendar_connection: one
+  title: MyString
+  starts_at: 2026-08-19 09:45:43
+  ends_at: 2026-08-19 09:45:43
+  all_day: false
+  source: MyString
+  external_id: MyString
+  notes: MyText
+
+two:
+  business: two
+  calendar_connection: two
+  title: MyString
+  starts_at: 2026-08-19 09:45:43
+  ends_at: 2026-08-19 09:45:43
+  all_day: false
+  source: MyString
+  external_id: MyString
+  notes: MyText

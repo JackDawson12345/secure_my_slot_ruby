@@ -23,6 +23,11 @@ class BusinessBlockedTime < ApplicationRecord
       .order(starts_at: :desc)
   }
 
+  enum :source, {
+    manual: "manual",
+    google: "google"
+  }
+
   private
 
   def ends_after_start

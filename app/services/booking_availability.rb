@@ -141,13 +141,23 @@ class BookingAvailability
   end
 
   def blocked_times_for_date
-    @blocked_times_for_date ||= @business.business_blocked_times
-                                         .where(
-                                           "starts_at < ? AND ends_at > ?",
-                                           day_end,
-                                           day_start
-                                         )
-                                         .to_a
+    @blocked_times_for_date ||= begin
+                                  business_blocks = @business.business_blocked_times
+                                                             .where(
+                                                               "starts_at < ? AND ends_at > ?",
+                                                               day_end,
+                                                               day_start
+                                                             )
+
+                                  calendar_blocks = @business.calendar_blocked_times
+                                                             .where(
+                                                               "starts_at < ? AND ends_at > ?",
+                                                               day_end,
+                                                               day_start
+                                                             )
+
+                                  (business_blocks + calendar_blocks).to_a
+                                end
   end
 
   def overlaps?(

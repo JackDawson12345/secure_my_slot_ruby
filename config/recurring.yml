@@ -16,6 +16,9 @@ production:
   send_appointment_reminders:
     class: SendAppointmentRemindersJob
     schedule: every 5 minutes
+  google_calendar_sync:
+    class: SyncGoogleCalendarsJob
+    schedule: every 10 minutes
 
 development:
   send_appointment_reminders:

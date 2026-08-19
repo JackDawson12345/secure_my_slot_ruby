@@ -3,7 +3,16 @@ class BusinessPortal::SettingsController < BusinessPortal::BaseController
   before_action :set_settings
   before_action :set_user
 
+
   def index
+
+  end
+
+  def calendar_sync
+
+  end
+
+  def general_settings
   end
 
 

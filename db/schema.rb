@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_08_17_151457) do
+ActiveRecord::Schema[8.0].define(version: 2026_08_19_084543) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -74,6 +74,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_08_17_151457) do
     t.text "notes"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "source"
+    t.string "external_id"
     t.index ["business_id", "starts_at", "ends_at"], name: "index_business_blocked_times_on_period"
     t.index ["business_id"], name: "index_business_blocked_times_on_business_id"
   end
@@ -167,6 +169,37 @@ ActiveRecord::Schema[8.0].define(version: 2026_08_17_151457) do
     t.index "lower((page_address)::text)", name: "index_businesses_on_lower_page_address", unique: true
     t.index ["stripe_account_id"], name: "index_businesses_on_stripe_account_id", unique: true
     t.index ["user_id"], name: "index_businesses_on_user_id"
+  end
+
+  create_table "calendar_blocked_times", force: :cascade do |t|
+    t.bigint "business_id", null: false
+    t.bigint "calendar_connection_id", null: false
+    t.string "title"
+    t.datetime "starts_at"
+    t.datetime "ends_at"
+    t.boolean "all_day"
+    t.string "source"
+    t.string "external_id"
+    t.text "notes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["business_id"], name: "index_calendar_blocked_times_on_business_id"
+    t.index ["calendar_connection_id"], name: "index_calendar_blocked_times_on_calendar_connection_id"
+  end
+
+  create_table "calendar_connections", force: :cascade do |t|
+    t.bigint "business_id", null: false
+    t.string "provider"
+    t.string "email"
+    t.text "access_token"
+    t.text "refresh_token"
+    t.datetime "expires_at"
+    t.string "calendar_id"
+    t.datetime "last_synced_at"
+    t.boolean "active", default: true
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["business_id"], name: "index_calendar_connections_on_business_id"
   end
 
   create_table "customer_settings", force: :cascade do |t|
@@ -369,6 +402,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_08_17_151457) do
   add_foreign_key "business_settings", "businesses"
   add_foreign_key "business_websites", "businesses"
   add_foreign_key "businesses", "users"
+  add_foreign_key "calendar_blocked_times", "businesses"
+  add_foreign_key "calendar_blocked_times", "calendar_connections"
   add_foreign_key "customer_settings", "users"
   add_foreign_key "services", "businesses"
   add_foreign_key "solid_queue_blocked_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade

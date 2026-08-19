@@ -3,6 +3,8 @@ class Business < ApplicationRecord
   has_one :business_website, dependent: :destroy
   has_many :business_blocked_times,
            dependent: :destroy
+  has_one :calendar_connection, dependent: :destroy
+  has_many :calendar_blocked_times, dependent: :destroy
 
   store_accessor :address,
                  :line_1,
