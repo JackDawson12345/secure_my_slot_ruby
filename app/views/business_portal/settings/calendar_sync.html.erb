@@ -1,30 +1,261 @@
-<h2>
-  Calendar Sync
-</h2>
+<main class="p-4 sm:p-6 lg:p-8">
+
+  <!-- Page heading -->
+  <section
+    class="overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-600 to-indigo-700 px-6 py-8 text-white shadow-sm sm:px-8"
+  >
+    <div class="max-w-3xl">
+
+      <div class="flex items-center gap-3">
+
+        <div class="rounded-xl bg-white/10 p-3 backdrop-blur">
+          <i data-lucide="calendar-sync" class="h-6 w-6"></i>
+        </div>
+
+        <h2 class="text-2xl font-bold tracking-tight sm:text-3xl">
+          Calendar sync
+        </h2>
+
+      </div>
 
 
-<% if current_user.business.calendar_connection.present? %>
+      <p class="mt-3 text-sm leading-6 text-indigo-100 sm:text-base">
+        Connect your calendars to automatically block unavailable times and keep your appointments synchronised.
+      </p>
 
-  <p>
-    Connected:
-    <%= current_user.business.calendar_connection.email %>
-  </p>
+    </div>
+  </section>
 
-  <%= link_to "Sync Now",
-              business_google_calendar_sync_path,
-              class: "mt-4 inline-block rounded-lg bg-indigo-600 px-4 py-2 text-white" %>
 
-  <% if current_user.business.calendar_connection.last_synced_at.present? %>
-    <p class="mt-2 text-sm text-gray-500">
-      Last synced:
-      <%= time_ago_in_words(current_user.business.calendar_connection.last_synced_at) %> ago
-    </p>
-  <% end %>
+  <!-- Calendar integrations -->
+  <section class="mt-8 grid gap-6 lg:grid-cols-2">
 
-<% else %>
 
-  <%= link_to "Connect Google Calendar",
-              business_google_calendar_connect_path,
-              class: "rounded-lg bg-indigo-600 px-4 py-2 text-white" %>
+    <!-- Google Calendar -->
+    <div
+      class="group flex flex-col rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+    >
 
-<% end %>
+      <div class="flex items-start justify-between">
+
+        <div class="rounded-2xl bg-red-50 p-4 text-red-600 transition group-hover:bg-red-100">
+          <i data-lucide="calendar" class="h-7 w-7"></i>
+        </div>
+
+
+        <% if current_user.business.calendar_connection.present? %>
+
+          <span class="rounded-full bg-green-50 px-3 py-1 text-xs font-semibold text-green-700">
+            Connected
+          </span>
+
+        <% else %>
+
+          <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
+            Available
+          </span>
+
+        <% end %>
+
+      </div>
+
+
+      <div class="mt-6">
+
+        <h3 class="text-xl font-bold text-slate-900">
+          Google Calendar
+        </h3>
+
+
+        <p class="mt-2 text-sm leading-6 text-slate-500">
+          Connect Google Calendar to automatically import busy times and prevent double bookings.
+        </p>
+
+
+        <% if current_user.business.calendar_connection.present? %>
+
+          <div class="mt-4 rounded-xl bg-slate-50 p-4">
+
+            <p class="text-sm font-medium text-slate-700">
+              Connected account
+            </p>
+
+            <p class="mt-1 text-sm text-slate-500">
+              <%= current_user.business.calendar_connection.email %>
+            </p>
+
+
+            <% if current_user.business.calendar_connection.last_synced_at.present? %>
+
+              <p class="mt-2 text-xs text-slate-400">
+                Last synced:
+                <%= time_ago_in_words(current_user.business.calendar_connection.last_synced_at) %> ago
+              </p>
+
+            <% end %>
+
+          </div>
+
+        <% end %>
+
+      </div>
+
+
+      <div class="mt-auto pt-6">
+
+
+        <% if current_user.business.calendar_connection.present? %>
+
+          <div class="flex flex-wrap gap-3">
+
+            <%= link_to business_google_calendar_sync_path,
+                        class: "inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-indigo-700" do %>
+
+              Sync now
+
+              <i data-lucide="refresh-cw" class="h-4 w-4"></i>
+
+            <% end %>
+
+
+            <%= link_to business_google_calendar_disconnect_path,
+                        data: { turbo_method: :delete, turbo_confirm: "Are you sure you want to disconnect Google Calendar?" },
+                        class: "inline-flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 px-5 py-3 text-sm font-semibold text-red-700 transition hover:bg-red-100" do %>
+
+              Disconnect
+
+              <i data-lucide="unlink" class="h-4 w-4"></i>
+
+            <% end %>
+
+          </div>
+
+
+        <% else %>
+
+
+          <%= link_to business_google_calendar_connect_path,
+                      class: "inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-indigo-700" do %>
+
+            Connect Google Calendar
+
+            <i data-lucide="arrow-right" class="h-4 w-4"></i>
+
+          <% end %>
+
+
+        <% end %>
+
+
+      </div>
+
+    </div>
+
+
+
+    <!-- Microsoft Outlook -->
+    <div
+      class="group flex flex-col rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+    >
+
+      <div class="flex items-start justify-between">
+
+        <div class="rounded-2xl bg-blue-50 p-4 text-blue-600 transition group-hover:bg-blue-100">
+          <i data-lucide="calendar-days" class="h-7 w-7"></i>
+        </div>
+
+
+        <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
+          Coming soon
+        </span>
+
+      </div>
+
+
+      <div class="mt-6">
+
+        <h3 class="text-xl font-bold text-slate-900">
+          Microsoft Outlook
+        </h3>
+
+
+        <p class="mt-2 text-sm leading-6 text-slate-500">
+          Connect Outlook calendars to manage availability across Microsoft accounts.
+        </p>
+
+      </div>
+
+
+      <div class="mt-auto pt-6">
+
+        <button
+          disabled
+          class="inline-flex cursor-not-allowed items-center gap-2 rounded-xl bg-slate-100 px-5 py-3 text-sm font-semibold text-slate-400"
+        >
+
+          Coming soon
+
+          <i data-lucide="clock" class="h-4 w-4"></i>
+
+        </button>
+
+      </div>
+
+    </div>
+
+
+
+    <!-- Apple Calendar -->
+    <div
+      class="group flex flex-col rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+    >
+
+      <div class="flex items-start justify-between">
+
+        <div class="rounded-2xl bg-slate-100 p-4 text-slate-700 transition group-hover:bg-slate-200">
+          <i data-lucide="calendar-plus" class="h-7 w-7"></i>
+        </div>
+
+
+        <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
+          Coming soon
+        </span>
+
+      </div>
+
+
+      <div class="mt-6">
+
+        <h3 class="text-xl font-bold text-slate-900">
+          Apple Calendar
+        </h3>
+
+
+        <p class="mt-2 text-sm leading-6 text-slate-500">
+          Sync appointments with Apple Calendar and keep your schedule updated everywhere.
+        </p>
+
+      </div>
+
+
+      <div class="mt-auto pt-6">
+
+        <button
+          disabled
+          class="inline-flex cursor-not-allowed items-center gap-2 rounded-xl bg-slate-100 px-5 py-3 text-sm font-semibold text-slate-400"
+        >
+
+          Coming soon
+
+          <i data-lucide="clock" class="h-4 w-4"></i>
+
+        </button>
+
+      </div>
+
+    </div>
+
+
+  </section>
+
+</main>

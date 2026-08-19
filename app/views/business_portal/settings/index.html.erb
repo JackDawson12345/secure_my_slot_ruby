@@ -133,9 +133,25 @@
         </div>
 
 
-        <span class="rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700">
-          Not connected
-        </span>
+        <% if @business.stripe_ready? %>
+
+  <span class="rounded-full bg-green-50 px-3 py-1 text-xs font-semibold text-green-700">
+    Connected
+  </span>
+
+        <% elsif @business.stripe_connected? %>
+
+  <span class="rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700">
+    Setup incomplete
+  </span>
+
+        <% else %>
+
+  <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
+    Not connected
+  </span>
+
+        <% end %>
 
       </div>
 
@@ -147,7 +163,13 @@
         </h3>
 
         <p class="mt-2 text-sm leading-6 text-slate-500">
-          Connect payments, manage payouts and control how customers pay for appointments.
+          <% if @business.stripe_ready? %>
+            Stripe is connected and customers can pay online when booking appointments.
+          <% elsif @business.stripe_connected? %>
+            Your Stripe account has been created but still needs setup before payments can be accepted.
+          <% else %>
+            Connect payments, manage payouts and allow customers to pay for appointments online.
+          <% end %>
         </p>
 
       </div>
@@ -159,7 +181,13 @@
           href="<%= business_payments_path %>"
           class="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-indigo-700"
         >
-          Setup payments
+          <% if @business.stripe_ready? %>
+            Manage payments
+          <% elsif @business.stripe_connected? %>
+            Continue setup
+          <% else %>
+            Setup payments
+          <% end %>
           <i data-lucide="arrow-right" class="h-4 w-4"></i>
         </a>
 
@@ -202,7 +230,6 @@
 
 
       <div class="mt-auto pt-6">
-<% BusinessBlockedTime %>
         <a
           href="<%= business_calendar_sync_path %>"
           class="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-indigo-700"

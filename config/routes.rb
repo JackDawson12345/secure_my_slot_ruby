@@ -339,6 +339,10 @@ Rails.application.routes.draw do
         to: "calendar_connections#sync",
         as: :google_calendar_sync
 
+    delete "dashboard/settings/calendar-sync/google",
+           to: "calendar_connections#disconnect",
+           as: :google_calendar_disconnect
+
     patch "dashboard/settings",
           to: "settings#update"
 

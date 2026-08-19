@@ -48,6 +48,26 @@ module BusinessPortal
                   notice: "Google Calendar synced successfully."
     end
 
+    def disconnect
+
+      connection = current_user.business.calendar_connection
+
+      if connection.present?
+
+        CalendarBlockedTime
+          .where(calendar_connection: connection)
+          .destroy_all
+
+        connection.destroy
+
+      end
+
+
+      redirect_to business_calendar_sync_path,
+                  notice: "Google Calendar disconnected successfully."
+
+    end
+
     private
 
     def google_oauth_url
