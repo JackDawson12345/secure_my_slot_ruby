@@ -1,0 +1,259 @@
+<main class="bg-slate-50">
+
+  <!-- Hero -->
+  <section class="relative overflow-hidden">
+    <div class="absolute inset-x-0 top-0 h-[500px] bg-gradient-to-b from-indigo-50 via-slate-50 to-transparent"></div>
+
+    <div class="relative mx-auto max-w-5xl px-4 py-20 sm:px-6 lg:px-8">
+      <div class="text-center">
+
+        <span class="inline-flex rounded-full bg-indigo-50 px-3 py-1.5 text-sm font-semibold text-indigo-700">
+          Secure My Slot Terms
+        </span>
+
+        <h1 class="mt-6 text-4xl font-bold tracking-tight text-slate-950 sm:text-5xl">
+          Terms of Service
+        </h1>
+
+        <p class="mx-auto mt-6 max-w-3xl text-lg leading-8 text-slate-600">
+          These terms explain the rules and conditions for using Secure My Slot.
+          Please read them carefully before creating an account or using our platform.
+        </p>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- Terms -->
+  <section class="pb-20">
+    <div class="mx-auto max-w-5xl space-y-6 px-4 sm:px-6 lg:px-8">
+
+
+      <%
+        sections = [
+          {
+            title: "Introduction",
+            content: [
+              "These Terms of Service explain the rules and conditions for using Secure My Slot.",
+              "By accessing or using Secure My Slot, you agree to these terms. If you do not agree with any part of these terms, you should not use the platform.",
+              "Secure My Slot provides a platform that allows businesses to manage appointments and allows customers to discover and book services with participating businesses."
+            ]
+          },
+
+          {
+            title: "About Secure My Slot",
+            content: [
+              "Secure My Slot provides online booking tools that help businesses manage:",
+              "<ul class='mt-3 list-disc space-y-2 pl-5'>
+                <li>Services and pricing.</li>
+                <li>Availability and working hours.</li>
+                <li>Customer bookings.</li>
+                <li>Appointment management.</li>
+                <li>Business information.</li>
+              </ul>",
+              "Secure My Slot acts as a technology platform connecting businesses and customers. We do not provide the services offered by businesses listed on the platform.",
+              "Any service booked through Secure My Slot is provided by the individual business, not Secure My Slot."
+            ]
+          },
+
+          {
+            title: "Account Registration",
+            content: [
+              "To use certain features of Secure My Slot, you may need to create an account.",
+              "When creating an account, you agree to:",
+              "<ul class='mt-3 list-disc space-y-2 pl-5'>
+                <li>Provide accurate and up-to-date information.</li>
+                <li>Keep your account details secure.</li>
+                <li>Maintain confidentiality of your login information.</li>
+                <li>Notify us if you believe your account has been compromised.</li>
+              </ul>",
+              "You are responsible for all activity carried out through your account."
+            ]
+          },
+
+          {
+            title: "Business Accounts",
+            content: [
+              "Businesses using Secure My Slot are responsible for:",
+              "<ul class='mt-3 list-disc space-y-2 pl-5'>
+                <li>Ensuring their business information is accurate.</li>
+                <li>Providing correct service descriptions and pricing.</li>
+                <li>Managing availability and appointment schedules.</li>
+                <li>Communicating with customers appropriately.</li>
+                <li>Delivering services booked through the platform.</li>
+              </ul>",
+              "Businesses must not use Secure My Slot for unlawful, misleading or fraudulent activities.",
+              "Secure My Slot does not verify, guarantee or endorse the quality of services provided by businesses using the platform."
+            ]
+          },
+
+          {
+            title: "Customer Bookings",
+            content: [
+              "Customers can use Secure My Slot to request and manage appointments with businesses.",
+              "When making a booking, customers agree to:",
+              "<ul class='mt-3 list-disc space-y-2 pl-5'>
+                <li>Provide accurate booking information.</li>
+                <li>Attend appointments at the agreed time.</li>
+                <li>Follow business cancellation requirements.</li>
+                <li>Communicate with the business regarding changes or issues.</li>
+              </ul>",
+              "A booking confirmation does not create a service agreement with Secure My Slot. The agreement exists between the customer and the business."
+            ]
+          },
+
+          {
+            title: "Payments",
+            content: [
+              "Some businesses may use payment features available through Secure My Slot.",
+              "<ul class='mt-3 list-disc space-y-2 pl-5'>
+                <li>Prices are set by individual businesses.</li>
+                <li>Payment processing may be handled by third-party providers.</li>
+                <li>Refunds and payment disputes are managed according to applicable business policies.</li>
+              </ul>",
+              "Secure My Slot is not responsible for disputes relating to services purchased from businesses."
+            ]
+          },
+
+          {
+            title: "Acceptable Use",
+            content: [
+              "You agree not to:",
+              "<ul class='mt-3 list-disc space-y-2 pl-5'>
+                <li>Use Secure My Slot for illegal purposes.</li>
+                <li>Create false accounts or bookings.</li>
+                <li>Attempt to access another user's account.</li>
+                <li>Interfere with platform security or operation.</li>
+                <li>Upload harmful, misleading or inappropriate content.</li>
+                <li>Abuse communication features.</li>
+              </ul>"
+            ]
+          },
+
+          {
+            title: "Intellectual Property",
+            content: [
+              "All content, branding, software, designs and functionality belonging to Secure My Slot remain the property of Secure My Slot or its licensors.",
+              "You may not copy, reproduce, modify, distribute or use any part of the platform without written permission.",
+              "Businesses retain ownership of their own content uploaded to the platform."
+            ]
+          },
+
+          {
+            title: "Third-Party Services",
+            content: [
+              "Secure My Slot may use third-party services including:",
+              "<ul class='mt-3 list-disc space-y-2 pl-5'>
+                <li>Payment processing.</li>
+                <li>Email delivery.</li>
+                <li>Calendar integrations.</li>
+                <li>Hosting and infrastructure.</li>
+              </ul>",
+              "These services may have their own terms and privacy policies. Secure My Slot is not responsible for the availability or performance of third-party services."
+            ]
+          },
+
+          {
+            title: "Platform Availability",
+            content: [
+              "We aim to provide a reliable service; however, we cannot guarantee that Secure My Slot will always be available.",
+              "The platform may occasionally be unavailable due to maintenance, updates, technical issues, third-party interruptions or events outside our control."
+            ]
+          },
+
+          {
+            title: "Limitation of Liability",
+            content: [
+              "Secure My Slot provides the platform on an 'as available' basis.",
+              "To the fullest extent permitted by law, Secure My Slot is not responsible for:",
+              "<ul class='mt-3 list-disc space-y-2 pl-5'>
+                <li>The quality of services provided by businesses.</li>
+                <li>Customer or business disputes.</li>
+                <li>Losses caused by inaccurate information.</li>
+                <li>Issues caused by third-party services.</li>
+                <li>Interruptions outside our reasonable control.</li>
+              </ul>"
+            ]
+          },
+
+          {
+            title: "Termination",
+            content: [
+              "We may suspend or terminate access to Secure My Slot where:",
+              "<ul class='mt-3 list-disc space-y-2 pl-5'>
+                <li>These terms have been breached.</li>
+                <li>The platform is being misused.</li>
+                <li>Activity creates risk to users or the platform.</li>
+              </ul>"
+            ]
+          },
+
+          {
+            title: "Changes To These Terms",
+            content: [
+              "We may update these Terms of Service from time to time.",
+              "Where changes are significant, we may notify users through the platform or email.",
+              "Continued use of Secure My Slot after changes means you accept the updated terms."
+            ]
+          },
+
+          {
+            title: "Governing Law",
+            content: [
+              "These Terms of Service are governed by the laws of England and Wales.",
+              "Any disputes relating to these terms will be subject to the jurisdiction of the courts of England and Wales."
+            ]
+          }
+        ]
+      %>
+
+
+      <% sections.each do |section| %>
+
+        <div class="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+
+          <h2 class="text-2xl font-bold text-slate-950">
+            <%= section[:title] %>
+          </h2>
+
+          <div class="mt-4 space-y-4 leading-7 text-slate-600">
+            <% section[:content].each do |paragraph| %>
+              <%= raw paragraph %>
+            <% end %>
+          </div>
+
+        </div>
+
+      <% end %>
+
+
+      <!-- Contact -->
+      <div class="rounded-3xl bg-slate-950 p-8 text-white">
+
+        <h2 class="text-2xl font-bold">
+          Contact Us
+        </h2>
+
+        <p class="mt-4 text-slate-300">
+          If you have any questions about these Terms of Service, please contact us.
+        </p>
+
+        <div class="mt-5">
+          <p class="font-semibold">
+            Secure My Slot
+          </p>
+
+          <a href="mailto:support@securemyslot.co.uk"
+             class="mt-2 inline-block text-indigo-300 hover:text-indigo-200">
+            support@securemyslot.co.uk
+          </a>
+        </div>
+
+      </div>
+
+
+    </div>
+  </section>
+
+</main>

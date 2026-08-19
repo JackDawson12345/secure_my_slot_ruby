@@ -206,6 +206,12 @@ Rails.application.routes.draw do
   get "businesses/:id",
       to: "pages/business_website#index"
 
+  get "privacy-policy",
+      to: "pages/website#privacy_policy"
+
+  get "terms-of-use",
+      to: "pages/website#terms_of_use"
+
 
   # Customer account
   namespace :account do
