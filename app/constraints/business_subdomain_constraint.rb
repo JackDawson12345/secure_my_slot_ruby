@@ -3,6 +3,7 @@ class BusinessSubdomainConstraint
     riverboat-canyon-expensive
     secure-my-slot-5b52497b10fa
     securemyslot
+    securemyslot.co.uk
     www
     api
   ].freeze
