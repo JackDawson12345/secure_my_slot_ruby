@@ -121,6 +121,23 @@ Rails.application.routes.draw do
         get "/:id/payments/stripe-refresh",
             to: "payments#stripe_refresh",
             as: :payments_stripe_refresh
+
+        get "calendar-sync",
+            to: "calendar_sync#show"
+
+        get "calendar-sync/connect",
+            to: "calendar_sync#connect"
+
+        get "calendar-sync/callback",
+            to: "calendar_sync#callback"
+
+        post "calendar-sync/sync",
+             to: "calendar_sync#sync"
+
+        delete "calendar-sync",
+               to: "calendar_sync#disconnect"
+
+
       end
 
       namespace :customer do
