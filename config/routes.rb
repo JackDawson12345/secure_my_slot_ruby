@@ -35,8 +35,21 @@ Rails.application.routes.draw do
             to: "get_info#get_businesses"
         get "get-users-business/:user_id",
             to: "get_info#get_users_business"
+
+        get "calendar-sync",
+            to: "calendar_sync#show"
+        get "calendar-sync/connect",
+            to: "calendar_sync#connect"
+        get "calendar-sync/callback",
+            to: "calendar_sync#callback"
+        post "calendar-sync/sync",
+             to: "calendar_sync#sync"
+        delete "calendar-sync",
+               to: "calendar_sync#disconnect"
+
         get "/:id",
-            to: "get_info#get_business"
+            to: "get_info#get_business",
+            constraints: { id: /\d+/ }
 
         get "/:id/get-reviews",
             to: "get_info#get_reviews"
@@ -66,26 +79,23 @@ Rails.application.routes.draw do
         post "/:id/services",
              to: "services#create_service"
 
-        get '/:id/get-opening-hours',
+        get "/:id/get-opening-hours",
             to: "opening_hours#get_opening_hours"
-        patch '/:id/update-opening-hours',
+        patch "/:id/update-opening-hours",
               to: "opening_hours#update_opening_hours"
 
         get ":id/blocked-times",
             to: "opening_hours#get_blocked_times"
-
         post ":id/blocked-times",
              to: "opening_hours#create_blocked_time"
-
         patch ":id/blocked-times/:blocked_time_id",
               to: "opening_hours#update_blocked_time"
-
         delete ":id/blocked-times/:blocked_time_id",
                to: "opening_hours#delete_blocked_time"
 
-        get '/:id/get_customers',
+        get "/:id/get_customers",
             to: "customers#get_customers"
-        get '/:id/get-customer/:customer_id',
+        get "/:id/get-customer/:customer_id",
             to: "customers#get_customer"
 
         get ":id/settings",
@@ -95,49 +105,24 @@ Rails.application.routes.draw do
         patch ":id/settings/password",
               to: "settings#update_password"
 
-
-        # Payments
-
         get "/:id/payments",
             to: "payments#index",
             as: :payments
-
         post "/:id/payments/connect",
              to: "payments#connect",
              as: :payments_connect
-
         get "/:id/payments/status",
             to: "payments#status",
             as: :payments_status
-
         post "/:id/payments/refresh",
              to: "payments#refresh",
              as: :payments_refresh
-
         get "/:id/payments/stripe-return",
             to: "payments#stripe_return",
             as: :payments_stripe_return
-
         get "/:id/payments/stripe-refresh",
             to: "payments#stripe_refresh",
             as: :payments_stripe_refresh
-
-        get "calendar-sync",
-            to: "calendar_sync#show"
-
-        get "calendar-sync/connect",
-            to: "calendar_sync#connect"
-
-        get "calendar-sync/callback",
-            to: "calendar_sync#callback"
-
-        post "calendar-sync/sync",
-             to: "calendar_sync#sync"
-
-        delete "calendar-sync",
-               to: "calendar_sync#disconnect"
-
-
       end
 
       namespace :customer do

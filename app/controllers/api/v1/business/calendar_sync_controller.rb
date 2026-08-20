@@ -3,8 +3,11 @@ module Api
     module Business
       class CalendarSyncController < ApplicationController
 
+        skip_before_action :verify_authenticity_token
+
         def show
           connection = current_user.business.calendar_connection
+
 
           if connection
             render json: {
@@ -22,8 +25,11 @@ module Api
         end
 
 
+
+
         def connect
           state = generate_oauth_state(current_user)
+
 
           render json: {
             url: google_oauth_url(state)
@@ -31,20 +37,28 @@ module Api
         end
 
 
+
+
         def callback
           code = params[:code]
           state = params[:state]
 
+
           raise "Missing Google code" unless code.present?
           raise "Missing OAuth state" unless state.present?
 
+
           user = verify_oauth_state(state)
+
 
           token = exchange_google_code(code)
 
+
           business = user.business
 
+
           existing_connection = business.calendar_connection
+
 
           connection = if existing_connection
                          existing_connection.update!(
@@ -53,6 +67,7 @@ module Api
                            refresh_token: token["refresh_token"].presence || existing_connection.refresh_token,
                            expires_at: Time.current + token["expires_in"].seconds
                          )
+
 
                          existing_connection
                        else
@@ -64,22 +79,29 @@ module Api
                          )
                        end
 
+
           GoogleCalendarService.new(connection).sync_details
           GoogleCalendarService.new(connection).sync_events
 
+
           redirect_to "securemyslot://calendar-connected?success=true"
+
 
         rescue => e
           Rails.logger.error(
             "Google Calendar connection failed: #{e.class}: #{e.message}"
           )
 
+
           redirect_to "securemyslot://calendar-connected?success=false"
         end
 
 
+
+
         def sync
           connection = current_user.business.calendar_connection
+
 
           unless connection
             render json: {
@@ -87,10 +109,13 @@ module Api
               error: "Google Calendar is not connected."
             }, status: :unprocessable_entity
 
+
             return
           end
 
+
           GoogleCalendarService.new(connection).sync_events
+
 
           render json: {
             connected: true,
@@ -100,16 +125,21 @@ module Api
         end
 
 
+
+
         def disconnect
           connection = current_user.business.calendar_connection
+
 
           if connection
             CalendarBlockedTime
               .where(calendar_connection: connection)
               .destroy_all
 
+
             connection.destroy
           end
+
 
           render json: {
             connected: false
@@ -117,7 +147,11 @@ module Api
         end
 
 
+
+
         private
+
+
 
 
         def google_oauth_url(state)
@@ -131,8 +165,11 @@ module Api
             state: state
           }
 
+
           "https://accounts.google.com/o/oauth2/v2/auth?#{params.to_query}"
         end
+
+
 
 
         def exchange_google_code(code)
@@ -147,20 +184,26 @@ module Api
             }
           )
 
+
           body = JSON.parse(response.body)
+
 
           unless response.success?
             raise "Google token exchange failed: #{body}"
           end
 
+
           body
         end
+
+
 
 
         def generate_oauth_state(user)
           verifier = Rails.application.message_verifier(
             "google-calendar-oauth"
           )
+
 
           verifier.generate(
             {
@@ -171,20 +214,27 @@ module Api
         end
 
 
+
+
         def verify_oauth_state(state)
           verifier = Rails.application.message_verifier(
             "google-calendar-oauth"
           )
 
+
           data = verifier.verify(state)
+
 
           User.find(data.fetch(:user_id))
         rescue ActiveSupport::MessageVerifier::InvalidSignature,
           ActiveRecord::RecordNotFound,
           KeyError
 
+
           raise "Invalid Google OAuth state"
         end
+
+
 
 
         def google_client_id
@@ -193,12 +243,21 @@ module Api
         end
 
 
+
+
         def google_client_secret
           ENV["GOOGLE_CLIENT_SECRET"] ||
             Rails.application.credentials.dig(:google, :client_secret)
         end
 
+
       end
     end
   end
 end
+
+
+
+
+
+
