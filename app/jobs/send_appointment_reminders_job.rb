@@ -99,7 +99,29 @@ class SendAppointmentRemindersJob < ApplicationJob
     service_name = booking.service.name
     appointment_time = booking.time.strftime("%-I:%M %p")
 
-    "Reminder: your #{service_name} appointment with " \
-      "#{business_name} starts at #{appointment_time}, in approximately one hour."
+    message =
+      "Reminder: your #{service_name} appointment with " \
+        "#{business_name} starts at #{appointment_time}, in approximately one hour."
+
+    remaining_balance = remaining_balance_for(booking)
+
+    if remaining_balance.positive?
+      message +=
+        " The remaining balance for your appointment is " \
+          "#{format_currency(remaining_balance)}."
+    end
+
+    message
+  end
+
+  def remaining_balance_for(booking)
+    service_price = booking.service.price || 0
+    amount_paid = booking.amount_paid || 0
+
+    [service_price - amount_paid, 0].max
+  end
+
+  def format_currency(amount)
+    "£#{format('%.2f', amount)}"
   end
 end

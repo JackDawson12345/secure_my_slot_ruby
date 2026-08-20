@@ -9,4 +9,10 @@ Service: <%= @service.name %>
 Date: <%= @booking.date.strftime("%-d %B %Y") %>
 Time: <%= @booking.time.strftime("%-I:%M %p") %>
 
+<% if @remaining_balance.positive? %>
+  Remaining balance: <%= number_to_currency(@remaining_balance, unit: "£") %>
+
+  You currently have <%= number_to_currency(@remaining_balance, unit: "£") %> remaining to pay for this appointment.
+<% end %>
+
 We look forward to seeing you.

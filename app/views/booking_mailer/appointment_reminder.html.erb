@@ -25,4 +25,17 @@
   <%= @booking.time.strftime("%-I:%M %p") %>
 </p>
 
+<% if @remaining_balance.positive? %>
+  <p>
+    <strong>Remaining balance:</strong>
+    <%= number_to_currency(@remaining_balance, unit: "£") %>
+  </p>
+
+  <p>
+    You currently have
+    <strong><%= number_to_currency(@remaining_balance, unit: "£") %></strong>
+    remaining to pay for this appointment.
+  </p>
+<% end %>
+
 <p>We look forward to seeing you.</p>
