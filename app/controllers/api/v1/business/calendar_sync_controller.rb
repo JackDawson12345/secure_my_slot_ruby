@@ -43,22 +43,14 @@ module Api
           code = params[:code]
           state = params[:state]
 
-
           raise "Missing Google code" unless code.present?
           raise "Missing OAuth state" unless state.present?
 
-
           user = verify_oauth_state(state)
-
-
           token = exchange_google_code(code)
 
-
           business = user.business
-
-
           existing_connection = business.calendar_connection
-
 
           connection = if existing_connection
                          existing_connection.update!(
@@ -67,7 +59,6 @@ module Api
                            refresh_token: token["refresh_token"].presence || existing_connection.refresh_token,
                            expires_at: Time.current + token["expires_in"].seconds
                          )
-
 
                          existing_connection
                        else
@@ -79,22 +70,18 @@ module Api
                          )
                        end
 
-
           GoogleCalendarService.new(connection).sync_details
           GoogleCalendarService.new(connection).sync_events
 
-
-          redirect_to "securemyslot://calendar-connected?success=true"
-
-
+          redirect_to "securemyslot://calendar-connected?success=true", allow_other_host: true
         rescue => e
           Rails.logger.error(
             "Google Calendar connection failed: #{e.class}: #{e.message}"
           )
 
-
-          redirect_to "securemyslot://calendar-connected?success=false"
+          redirect_to "securemyslot://calendar-connected?success=false", allow_other_host: true
         end
+
 
 
 
@@ -221,18 +208,16 @@ module Api
             "google-calendar-oauth"
           )
 
-
-          data = verifier.verify(state)
-
+          data = verifier.verify(state).with_indifferent_access
 
           User.find(data.fetch(:user_id))
         rescue ActiveSupport::MessageVerifier::InvalidSignature,
           ActiveRecord::RecordNotFound,
           KeyError
 
-
           raise "Invalid Google OAuth state"
         end
+
 
 
 
