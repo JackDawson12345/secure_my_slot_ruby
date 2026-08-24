@@ -8,17 +8,21 @@
       <div class="text-center">
 
         <span class="inline-flex rounded-full bg-indigo-50 px-3 py-1.5 text-sm font-semibold text-indigo-700">
-          Secure My Slot Policies
+          Secure My Slot Privacy
         </span>
 
         <h1 class="mt-6 text-4xl font-bold tracking-tight text-slate-950 sm:text-5xl">
-          Platform policies and guidelines
+          Privacy Policy
         </h1>
 
         <p class="mx-auto mt-6 max-w-3xl text-lg leading-8 text-slate-600">
-          These policies explain how Secure My Slot works, the responsibilities
-          of businesses and customers, and the standards we expect from everyone
-          using our platform.
+          This Privacy Policy explains how Secure My Slot collects, uses,
+          stores and protects personal information, including information
+          accessed when users connect their Google Calendar.
+        </p>
+
+        <p class="mt-4 text-sm text-slate-500">
+          Last updated: 24 August 2026
         </p>
 
       </div>
@@ -26,155 +30,243 @@
   </section>
 
 
-  <!-- Policies -->
+  <!-- Privacy Policy -->
   <section class="pb-20">
     <div class="mx-auto max-w-5xl space-y-6 px-4 sm:px-6 lg:px-8">
 
 
       <!-- Introduction -->
       <div class="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+
         <h2 class="text-2xl font-bold text-slate-950">
           Introduction
         </h2>
 
         <p class="mt-4 leading-7 text-slate-600">
-          Secure My Slot helps businesses manage appointments and gives customers
-          a simple way to discover services and make bookings online.
+          Secure My Slot is an online booking platform that helps businesses
+          manage appointments and allows customers to discover services and
+          make bookings online.
         </p>
 
         <p class="mt-4 leading-7 text-slate-600">
-          By creating an account or using Secure My Slot, you agree to use the
-          platform responsibly and follow these policies.
+          We take the privacy and security of our users seriously. This Privacy
+          Policy explains what information we collect, why we collect it, how
+          it is used, how it is protected and the choices available to you.
         </p>
+
+        <p class="mt-4 leading-7 text-slate-600">
+          This policy also explains specifically how Secure My Slot accesses,
+          uses, stores, shares and deletes Google user data when a business
+          chooses to connect a Google Calendar to Secure My Slot.
+        </p>
+
       </div>
 
 
       <% policies = [
+
         {
-          title: "Booking Policy",
+          title: "Information We Collect",
           content: [
-            "Secure My Slot allows customers to browse businesses, view available services and make appointments through the platform.",
-            "<strong>Businesses are responsible for:</strong>",
+            "Depending on how you use Secure My Slot, we may collect information that you provide directly to us or that is required to operate the platform.",
+            "<strong>This may include:</strong>",
             "<ul class='mt-3 list-disc space-y-2 pl-5'>
-              <li>Keeping service information accurate and up to date.</li>
-              <li>Maintaining correct availability, opening hours and booking settings.</li>
-              <li>Honouring confirmed bookings made through Secure My Slot.</li>
-              <li>Providing accurate pricing and service information.</li>
+              <li>Your name.</li>
+              <li>Email address.</li>
+              <li>Telephone number.</li>
+              <li>Account and login information.</li>
+              <li>Business information.</li>
+              <li>Booking and appointment information.</li>
+              <li>Service, availability and opening-hour information.</li>
+              <li>Information required to process or manage payments.</li>
+              <li>Technical and security information relating to your use of the platform.</li>
+            </ul>"
+          ]
+        },
+
+        {
+          title: "How We Use Personal Information",
+          content: [
+            "We use personal information only where it is necessary to operate, provide, maintain and improve Secure My Slot and the services requested by our users.",
+            "<strong>This may include using information to:</strong>",
+            "<ul class='mt-3 list-disc space-y-2 pl-5'>
+              <li>Create and manage user accounts.</li>
+              <li>Process and manage bookings.</li>
+              <li>Display appointment availability.</li>
+              <li>Send booking confirmations, reminders and service-related communications.</li>
+              <li>Provide customer support.</li>
+              <li>Maintain the security and reliability of the platform.</li>
+              <li>Diagnose technical problems and improve user-facing platform functionality.</li>
+              <li>Meet applicable legal and regulatory obligations.</li>
+            </ul>"
+          ]
+        },
+
+        {
+          title: "Google Calendar Integration",
+          content: [
+            "Secure My Slot allows business users to connect their Google Calendar to help manage appointment availability and reduce the risk of double bookings.",
+            "Connecting a Google Account is optional. Secure My Slot will only request access to Google user data that is necessary to provide the calendar synchronisation functionality selected by the user.",
+            "Access to Google user data is only granted after the user explicitly authorises Secure My Slot through Google's OAuth consent process."
+          ]
+        },
+
+        {
+          title: "Google User Data We Access",
+          content: [
+            "When you connect Google Calendar to Secure My Slot, we may access Google Calendar information that you have authorised us to access through Google's OAuth service.",
+            "<strong>Depending on the permissions granted, this may include:</strong>",
+            "<ul class='mt-3 list-disc space-y-2 pl-5'>
+              <li>Information about calendars associated with your Google Account, such as calendar identifiers, names and calendar details.</li>
+              <li>Calendar availability information.</li>
+              <li>Appointment or event timing information, such as start and end times, where access to this information has been authorised.</li>
+              <li>Information required to identify periods when you are unavailable for bookings.</li>
             </ul>",
-            "<strong class='block mt-5'>Customers are responsible for:</strong>",
-            "<ul class='mt-3 list-disc space-y-2 pl-5'>
-              <li>Providing accurate booking information.</li>
-              <li>Arriving on time for appointments.</li>
-              <li>Following individual business booking requirements.</li>
-              <li>Cancelling or rescheduling when unable to attend.</li>
-            </ul>"
+            "Secure My Slot does not request or access your Google Account password."
           ]
         },
 
         {
-          title: "Cancellation Policy",
+          title: "How We Use Google User Data",
           content: [
-            "Cancellation requirements may vary depending on the business you are booking with.",
-            "<strong>Businesses can set their own cancellation terms, including:</strong>",
+            "Google user data accessed by Secure My Slot is used solely to provide and improve the Google Calendar synchronisation features requested by the user.",
+            "<strong>Google Calendar information is used to:</strong>",
             "<ul class='mt-3 list-disc space-y-2 pl-5'>
-              <li>Cancellation notice periods.</li>
-              <li>Refund eligibility.</li>
-              <li>Deposits or payment requirements.</li>
+              <li>Identify times when a connected business is already unavailable.</li>
+              <li>Prevent customers from booking Secure My Slot appointments during unavailable periods.</li>
+              <li>Synchronise relevant calendar availability with the business's Secure My Slot booking availability.</li>
+              <li>Maintain and improve the user-facing calendar synchronisation functionality.</li>
             </ul>",
-            "Any disputes relating to cancellations, refunds or service delivery should first be resolved directly between the customer and the business."
+            "Google user data is not used for advertising, personalised advertising, retargeting, determining creditworthiness, lending purposes, data brokerage or any purpose unrelated to providing or improving Secure My Slot's user-facing functionality.",
+            "Google Workspace API data is not used to develop, improve or train generalised or non-personalised artificial intelligence or machine learning models."
           ]
         },
 
         {
-          title: "Payment Policy",
+          title: "Sharing and Disclosure of Google User Data",
           content: [
-            "Some businesses may require payment during booking, while others may allow payment directly at the appointment.",
+            "Secure My Slot does not sell Google user data.",
+            "We do not transfer, disclose or share Google user data with third parties for advertising, marketing, data brokerage or other unrelated purposes.",
+            "Google user data may only be processed by service providers where this is necessary to operate, secure or provide the Secure My Slot functionality requested by the user. Where service providers process data on our behalf, they are only permitted to process that information for the services they provide to Secure My Slot and must protect it appropriately.",
+            "We may also disclose information where we are legally required to do so, such as in response to a lawful court order or other binding legal obligation.",
+            "We do not permit third parties to use Google user data for their own independent purposes."
+          ]
+        },
+
+        {
+          title: "Google API Services User Data Policy",
+          content: [
+            "Secure My Slot's use and transfer to any other application of information received from Google APIs will adhere to the Google API Services User Data Policy, including its Limited Use requirements.",
+            "Google user data is only accessed, used and processed for functionality that is visible and relevant to the user who connected their Google Account."
+          ]
+        },
+
+        {
+          title: "Storage of Google User Data",
+          content: [
+            "Secure My Slot only stores Google user data where it is necessary to provide calendar synchronisation and booking availability functionality.",
+            "Where calendar information is stored, we aim to minimise the amount of Google user data retained. Secure My Slot primarily requires calendar availability and timing information necessary to determine when bookings should or should not be available.",
+            "OAuth access credentials required to maintain the authorised Google Calendar connection may also be securely stored while the integration remains connected."
+          ]
+        },
+
+        {
+          title: "Data Security",
+          content: [
+            "We use appropriate technical and organisational safeguards designed to protect personal information and Google user data against unauthorised access, disclosure, alteration or loss.",
+            "<strong>Our safeguards include measures such as:</strong>",
             "<ul class='mt-3 list-disc space-y-2 pl-5'>
-              <li>Payment details are handled securely through payment providers.</li>
-              <li>Businesses are responsible for pricing and refund policies.</li>
-              <li>Customers must ensure payment details are accurate.</li>
-            </ul>"
+              <li>Encrypted HTTPS connections when information is transmitted between users and Secure My Slot.</li>
+              <li>Access controls designed to restrict access to personal information.</li>
+              <li>Secure authentication procedures.</li>
+              <li>Controlled access to production systems and stored data.</li>
+              <li>Security procedures intended to protect the confidentiality and integrity of sensitive information.</li>
+            </ul>",
+            "Access tokens, refresh tokens and other credentials associated with connected services are treated as sensitive information and access to them is restricted to the systems and processes that require them to provide the relevant functionality."
           ]
         },
 
         {
-          title: "Business Responsibilities",
+          title: "Data Retention",
           content: [
-            "<ul class='list-disc space-y-2 pl-5'>
-              <li>Provide genuine and accurate business information.</li>
-              <li>Deliver services professionally and safely.</li>
-              <li>Maintain suitable customer communication.</li>
-              <li>Protect customer information.</li>
-              <li>Follow relevant laws and regulations.</li>
-            </ul>"
+            "We retain personal information only for as long as reasonably necessary to provide Secure My Slot, fulfil the purposes described in this Privacy Policy and meet applicable legal, accounting, security or regulatory requirements.",
+            "Google user data is retained only for as long as necessary to provide the connected Google Calendar functionality.",
+            "When Google Calendar information is no longer required for the purpose for which it was collected, it will be deleted or securely removed in accordance with our data retention procedures."
           ]
         },
 
         {
-          title: "Customer Responsibilities",
+          title: "Disconnecting Google Calendar and Deleting Google User Data",
           content: [
-            "<ul class='list-disc space-y-2 pl-5'>
-              <li>Provide accurate personal information.</li>
-              <li>Use Secure My Slot only for genuine bookings.</li>
-              <li>Avoid creating false appointments.</li>
-              <li>Treat businesses and staff respectfully.</li>
-              <li>Keep account details secure.</li>
-            </ul>"
+            "Businesses can disconnect their Google Calendar from Secure My Slot. Once the connection is removed, Secure My Slot will no longer use the connection to access new Google Calendar data.",
+            "Data and authentication credentials associated with the Google Calendar connection that are no longer required will be deleted or securely removed, subject to any information that we are legally required to retain.",
+            "Users may also revoke Secure My Slot's access to their Google Account through their Google Account permissions.",
+            "If you would like us to delete Google user data associated with your Secure My Slot account, you can contact us at <a href='mailto:support@securemyslot.co.uk' class='font-semibold text-indigo-600 hover:text-indigo-500'>support@securemyslot.co.uk</a>."
           ]
         },
 
         {
-          title: "Account Policy",
+          title: "Account and Personal Data Deletion",
           content: [
-            "Users are responsible for keeping their account information secure.",
+            "Users may request deletion of their Secure My Slot account and associated personal information by contacting us.",
+            "Following a valid deletion request, personal information that is no longer required will be deleted or anonymised, subject to any legal or regulatory retention requirements that apply.",
+            "Requests can be sent to <a href='mailto:support@securemyslot.co.uk' class='font-semibold text-indigo-600 hover:text-indigo-500'>support@securemyslot.co.uk</a>."
+          ]
+        },
+
+        {
+          title: "Payment Information",
+          content: [
+            "Where payments are available through Secure My Slot, payment transactions may be processed by third-party payment providers.",
+            "Payment providers may collect and process information required to complete transactions in accordance with their own privacy policies and legal obligations.",
+            "Google Calendar data is not shared with payment providers for payment processing."
+          ]
+        },
+
+        {
+          title: "Service Providers",
+          content: [
+            "We may use trusted service providers to help host, maintain, secure and operate Secure My Slot.",
+            "These providers may only process personal information where necessary to provide services to Secure My Slot and must handle information in accordance with applicable data protection requirements and their contractual obligations.",
+            "We do not permit service providers to sell Google user data or use Google user data for advertising or unrelated purposes."
+          ]
+        },
+
+        {
+          title: "Your Data Protection Rights",
+          content: [
+            "Depending on the circumstances and applicable data protection law, you may have rights relating to your personal information.",
+            "<strong>These may include the right to:</strong>",
             "<ul class='mt-3 list-disc space-y-2 pl-5'>
-              <li>Use a secure password.</li>
-              <li>Keep login details confidential.</li>
-              <li>Notify us if your account may have been accessed without permission.</li>
-            </ul>"
+              <li>Request access to personal information we hold about you.</li>
+              <li>Request correction of inaccurate information.</li>
+              <li>Request deletion of your personal information.</li>
+              <li>Request restriction of certain processing.</li>
+              <li>Object to certain processing.</li>
+              <li>Request a copy of certain information in a portable format where applicable.</li>
+              <li>Withdraw consent where processing is based on consent.</li>
+            </ul>",
+            "To make a privacy or data deletion request, contact us at <a href='mailto:support@securemyslot.co.uk' class='font-semibold text-indigo-600 hover:text-indigo-500'>support@securemyslot.co.uk</a>."
           ]
         },
 
         {
-          title: "Reviews and Feedback Policy",
+          title: "Children's Privacy",
           content: [
-            "Reviews should be honest and based on genuine experiences.",
-            "<ul class='mt-3 list-disc space-y-2 pl-5'>
-              <li>No false or misleading information.</li>
-              <li>No offensive or abusive content.</li>
-              <li>No personal information about individuals.</li>
-              <li>No content intended to unfairly damage a business.</li>
-            </ul>"
+            "Secure My Slot is not intended to knowingly collect personal information from children where doing so would be prohibited by applicable law.",
+            "If you believe information relating to a child has been provided to us improperly, please contact us so that we can review and, where appropriate, remove the information."
           ]
         },
 
         {
-          title: "Privacy Policy",
+          title: "Changes to This Privacy Policy",
           content: [
-            "Personal information is handled in accordance with applicable data protection laws, including UK GDPR requirements.",
-            "<ul class='mt-3 list-disc space-y-2 pl-5'>
-              <li>Providing booking services.</li>
-              <li>Managing user accounts.</li>
-              <li>Sending booking updates.</li>
-              <li>Improving platform functionality.</li>
-              <li>Maintaining security.</li>
-            </ul>"
-          ]
-        },
-
-        {
-          title: "Platform Availability",
-          content: [
-            "We aim to keep Secure My Slot available and reliable, however interruptions may occur due to maintenance, updates, third-party services or circumstances outside our control."
-          ]
-        },
-
-        {
-          title: "Changes To These Policies",
-          content: [
-            "We may update these policies from time to time to reflect changes to our platform, services or legal requirements."
+            "We may update this Privacy Policy when our services, legal requirements or data handling practices change.",
+            "Where changes materially affect how we access, use, store or share Google user data, we will update this policy accordingly.",
+            "The date at the top of this page indicates when this Privacy Policy was last updated."
           ]
         }
+
       ] %>
 
 
@@ -205,11 +297,13 @@
         </h2>
 
         <p class="mt-4 text-slate-300">
-          If you have any questions about these policies or need support,
-          please contact us.
+          If you have questions about this Privacy Policy, how your information
+          is handled, or would like to request access to or deletion of your
+          personal information or Google user data, please contact us.
         </p>
 
         <div class="mt-5">
+
           <p class="font-semibold">
             Secure My Slot
           </p>
@@ -218,6 +312,7 @@
              class="mt-2 inline-block text-indigo-300 hover:text-indigo-200">
             support@securemyslot.co.uk
           </a>
+
         </div>
 
       </div>
