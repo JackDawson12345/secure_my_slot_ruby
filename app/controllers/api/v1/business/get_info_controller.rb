@@ -129,38 +129,6 @@ module Api
           }, status: :ok
         end
 
-        def get_business_website_settings
-          business = ::Business.find_by(id: params[:id])
-
-          unless business
-            return render json: {
-              error: "Business not found."
-            }, status: :not_found
-          end
-
-          website_setting = business.business_website
-
-          unless website_setting
-            return render json: {
-              error: "Website settings not found."
-            }, status: :not_found
-          end
-
-          render json: {
-            settings: {
-              id: website_setting.id,
-              business_id: website_setting.business_id,
-              colour: website_setting.colour,
-              hero: website_setting.hero,
-              services: website_setting.services,
-              about_us: website_setting.about_us,
-              visit: website_setting.visit,
-              created_at: website_setting.created_at,
-              updated_at: website_setting.updated_at
-            }
-          }, status: :ok
-        end
-
         def get_dashboard_details
           @business = ::Business.find(params[:id])
 

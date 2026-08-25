@@ -56,8 +56,6 @@ Rails.application.routes.draw do
 
         get "/:id/business-settings",
             to: "get_info#get_business_settings"
-        get "/:id/website-settings",
-            to: "get_info#get_business_website_settings"
 
         get "/:id/bookings",
             to: "bookings#get_bookings"
@@ -123,6 +121,14 @@ Rails.application.routes.draw do
         get "/:id/payments/stripe-refresh",
             to: "payments#stripe_refresh",
             as: :payments_stripe_refresh
+
+
+
+        get ":id/website-settings",
+            to: "website_settings#show"
+        patch ":id/website-settings",
+              to: "website_settings#update"
+
       end
 
       namespace :customer do
