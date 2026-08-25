@@ -28,19 +28,21 @@ class BookingsController < ApplicationController
   def create
     service = Service.find(booking_params[:service_id])
     business = service.business
-    user = find_or_create_user
+    user, new_customer_account = find_or_create_user
 
     if business.stripe_ready? && payment_required_for?(service)
       create_stripe_booking_hold(
         business: business,
         service: service,
-        user: user
+        user: user,
+        new_customer_account: new_customer_account
       )
     else
       create_booking_without_payment(
         business: business,
         service: service,
-        user: user
+        user: user,
+        new_customer_account: new_customer_account
       )
     end
 
@@ -135,7 +137,12 @@ class BookingsController < ApplicationController
 
   private
 
-  def create_stripe_booking_hold(business:, service:, user:)
+  def create_stripe_booking_hold(
+    business:,
+    service:,
+    user:,
+    new_customer_account:
+  )
     booking_hold = BookingHold.create!(
       user: user,
       business: business,
@@ -149,7 +156,8 @@ class BookingsController < ApplicationController
     redirect_to_stripe_checkout(
       booking_hold: booking_hold,
       business: business,
-      service: service
+      service: service,
+      new_customer_account: new_customer_account
     )
 
   rescue Stripe::StripeError
@@ -157,7 +165,12 @@ class BookingsController < ApplicationController
     raise
   end
 
-  def create_booking_without_payment(business:, service:, user:)
+  def create_booking_without_payment(
+    business:,
+    service:,
+    user:,
+    new_customer_account:
+  )
     booking = Booking.new(
       user: user,
       business: business,
@@ -177,6 +190,12 @@ class BookingsController < ApplicationController
       end
 
     booking.save!
+
+    if new_customer_account
+      CustomerAccountMailer
+        .welcome_with_password_setup(user)
+        .deliver_later
+    end
 
     SendBookingConfirmationSmsJob.perform_later(
       booking.id
@@ -203,13 +222,15 @@ class BookingsController < ApplicationController
       email: email
     )
 
+    new_customer_account = user.new_record?
+
     user.assign_attributes(
       first_name: booking_params[:first_name],
       last_name: booking_params[:last_name],
       phone_number: booking_params[:phone_number]
     )
 
-    if user.new_record?
+    if new_customer_account
       user.assign_attributes(
         password: SecureRandom.hex(16),
         role: :customer,
@@ -219,7 +240,7 @@ class BookingsController < ApplicationController
 
     user.save!
 
-    user
+    [user, new_customer_account]
   end
 
   def payment_required_for?(service)
@@ -236,7 +257,8 @@ class BookingsController < ApplicationController
   def redirect_to_stripe_checkout(
     booking_hold:,
     business:,
-    service:
+    service:,
+    new_customer_account:
   )
     success_url = payment_success_booking_hold_url(
       booking_hold,
@@ -288,7 +310,8 @@ class BookingsController < ApplicationController
         metadata: {
           booking_hold_id: booking_hold.id.to_s,
           business_id: business.id.to_s,
-          service_id: service.id.to_s
+          service_id: service.id.to_s,
+          new_customer_account: new_customer_account.to_s
         },
 
         payment_intent_data: {
@@ -376,6 +399,12 @@ class BookingsController < ApplicationController
     end
 
     if booking_created
+      if checkout_session.metadata.new_customer_account == "true"
+        CustomerAccountMailer
+          .welcome_with_password_setup(booking.user)
+          .deliver_later
+      end
+
       SendBookingConfirmationSmsJob.perform_later(
         booking.id
       )
