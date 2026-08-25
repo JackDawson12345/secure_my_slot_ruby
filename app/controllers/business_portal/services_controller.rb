@@ -3,12 +3,33 @@ class BusinessPortal::ServicesController < BusinessPortal::BaseController
   before_action :set_service, only: %i[show edit update destroy]
 
   def index
-    @services = @business.services.order(created_at: :desc)
+    services_scope = @business.services
 
-    @total_services = @services.count
-    @active_services_count = @services.active.count
-    @inactive_services_count = @services.inactive.count
-    @average_price = @services.active.average(:price) || 0
+    # ----------------------------------------
+    # Statistics
+    # Always based on all services
+    # ----------------------------------------
+
+    @total_services = services_scope.count
+    @active_services_count = services_scope.active.count
+    @inactive_services_count = services_scope.inactive.count
+    @average_price = services_scope.active.average(:price) || 0
+
+    # ----------------------------------------
+    # Search
+    # Searches name and description
+    # ----------------------------------------
+
+    if params[:q].present?
+      search = "%#{ActiveRecord::Base.sanitize_sql_like(params[:q].strip)}%"
+
+      services_scope = services_scope.where(
+        "name ILIKE :search OR description ILIKE :search",
+        search: search
+      )
+    end
+
+    @services = services_scope.order(created_at: :desc)
   end
 
   def show
