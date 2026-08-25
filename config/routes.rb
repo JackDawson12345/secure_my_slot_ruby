@@ -115,6 +115,11 @@ Rails.application.routes.draw do
         post "/:id/payments/refresh",
              to: "payments#refresh",
              as: :payments_refresh
+
+        delete "payments/disconnect",
+               to: "payments#disconnect",
+               as: :payments_disconnect
+
         get "/:id/payments/stripe-return",
             to: "payments#stripe_return",
             as: :payments_stripe_return

@@ -21,6 +21,30 @@ module BusinessPortal
                   alert: "Stripe could not be connected: #{e.message}"
     end
 
+    def disconnect
+      unless @business.stripe_connected?
+        return redirect_to business_payments_path,
+                           alert: "Stripe is not connected."
+      end
+
+      Stripe::Account.delete(
+        @business.stripe_account_id
+      )
+
+      @business.update!(
+        stripe_account_id: nil,
+        stripe_details_submitted: false,
+        stripe_charges_enabled: false,
+        stripe_payouts_enabled: false
+      )
+
+      redirect_to business_payments_path,
+                  notice: "Stripe has been disconnected successfully."
+    rescue Stripe::StripeError => e
+      redirect_to business_payments_path,
+                  alert: "Stripe could not be disconnected: #{e.message}"
+    end
+
     def stripe_return
       refresh_stripe_status
 
