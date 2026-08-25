@@ -15,12 +15,25 @@ module BusinessPortal
 
     def connect
       account = find_or_create_stripe_account
+
+      Rails.logger.info "Stripe account found/created: #{account.id}"
+
       account_link = create_account_link(account.id)
+
+      Rails.logger.info "Stripe account link created: #{account_link.url}"
 
       redirect_to account_link.url,
                   allow_other_host: true,
                   status: :see_other
     rescue Stripe::StripeError => e
+      Rails.logger.error "=========================================="
+      Rails.logger.error "STRIPE CONNECT ERROR"
+      Rails.logger.error "Business ID: #{@business&.id}"
+      Rails.logger.error "Stripe account ID: #{@business&.stripe_account_id}"
+      Rails.logger.error "Error class: #{e.class}"
+      Rails.logger.error "Error message: #{e.message}"
+      Rails.logger.error "=========================================="
+
       redirect_to business_payments_path,
                   alert: "Stripe could not be connected: #{e.message}"
     end
