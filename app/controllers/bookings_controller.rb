@@ -1,5 +1,6 @@
 class BookingsController < ApplicationController
-  layout 'business_site'
+  layout "business_site"
+
   def slots
     business = Business.find(params[:business_id])
     service = business.services.find(params[:service_id])
@@ -12,12 +13,16 @@ class BookingsController < ApplicationController
     ).call
 
     render json: slots
+
   rescue ActiveRecord::RecordNotFound
-    render json: { error: "Business or service not found." },
-           status: :not_found
+    render json: {
+      error: "Business or service not found."
+    }, status: :not_found
+
   rescue Date::Error
-    render json: { error: "Invalid date." },
-           status: :unprocessable_entity
+    render json: {
+      error: "Invalid date."
+    }, status: :unprocessable_entity
   end
 
   def create
@@ -25,6 +30,122 @@ class BookingsController < ApplicationController
     business = service.business
     user = find_or_create_user
 
+    if business.stripe_ready?
+      create_stripe_booking_hold(
+        business: business,
+        service: service,
+        user: user
+      )
+    else
+      create_booking_without_payment(
+        business: business,
+        service: service,
+        user: user
+      )
+    end
+
+  rescue ActiveRecord::RecordNotFound
+    redirect_back(
+      fallback_location: root_path,
+      alert: "The selected service could not be found."
+    )
+
+  rescue ActiveRecord::RecordInvalid => e
+    redirect_back(
+      fallback_location: root_path,
+      alert: e.record.errors.full_messages.join(", ")
+    )
+
+  rescue Stripe::StripeError => e
+    Rails.logger.error(
+      "Stripe Checkout error: #{e.class} - #{e.message}"
+    )
+
+
+    redirect_to(
+      business_site_url(
+        subdomain: business.page_address
+      ),
+      alert: "We couldn't start your payment. Please try again.",
+      allow_other_host: true
+    )
+  end
+
+  def payment_success
+    booking_hold = BookingHold.find(params[:id])
+
+    if booking_hold.booking.present?
+      @booking = booking_hold.booking
+      return render :payment_success
+    end
+
+    unless valid_payment_session?(
+      booking_hold,
+      params[:session_id]
+    )
+      return redirect_to(
+        business_site_url(
+          subdomain: booking_hold.business.page_address
+        ),
+        alert: "We couldn't confirm your payment.",
+        allow_other_host: true
+      )
+    end
+
+    checkout_session = retrieve_checkout_session(
+      booking_hold,
+      params[:session_id]
+    )
+
+    @booking = complete_paid_booking!(
+      booking_hold: booking_hold,
+      checkout_session: checkout_session
+    )
+
+    render :payment_success
+
+  rescue ActiveRecord::RecordNotFound
+    redirect_to(
+      root_path,
+      alert: "The payment session could not be found."
+    )
+
+  rescue Stripe::StripeError => e
+    Rails.logger.error(
+      "Stripe payment success error: #{e.class} - #{e.message}"
+    )
+
+    redirect_to(
+      root_path,
+      alert: "We couldn't confirm your payment."
+    )
+  end
+
+  private
+
+  def create_stripe_booking_hold(business:, service:, user:)
+    booking_hold = BookingHold.create!(
+      user: user,
+      business: business,
+      service: service,
+      date: booking_params[:date],
+      time: booking_params[:time],
+      notes: booking_params[:notes],
+      expires_at: 30.minutes.from_now
+    )
+
+    redirect_to_stripe_checkout(
+      booking_hold: booking_hold,
+      business: business,
+      service: service
+    )
+
+  rescue Stripe::StripeError
+    booking_hold&.destroy
+    raise
+  end
+
+  def create_booking_without_payment(business:, service:, user:)
     booking = Booking.new(
       user: user,
       business: business,
@@ -32,124 +153,36 @@ class BookingsController < ApplicationController
       date: booking_params[:date],
       time: booking_params[:time],
       notes: booking_params[:notes],
-      payment_status: business.stripe_ready? ? "awaiting_payment" : "not_required"
+      payment_status: "not_required"
     )
 
-    if business.business_setting.automatically_confirm_bookings == true
-      booking.status = 'confirmed'
-    else
-      booking.status = 'pending'
-    end
-
-    if booking.save
-      if business.stripe_ready?
-        redirect_to_stripe_checkout(
-          booking: booking,
-          business: business,
-          service: service
-        )
+    booking.status =
+      if business.business_setting.automatically_confirm_bookings?
+        "confirmed"
       else
-        SendBookingConfirmationSmsJob.perform_later(booking.id)
-        SendBusinessBookingConfirmationSmsJob.perform_later(booking.id)
-
-        redirect_to(
-          business_site_url(
-            subdomain: business.page_address
-          ),
-          notice: "Your booking has been requested.",
-          allow_other_host: true
-        )
+        "pending"
       end
-    else
-      redirect_back(
-        fallback_location: business_site_url(
-          subdomain: business.page_address
-        ),
-        alert: booking.errors.full_messages.join(", ")
-      )
-    end
-  rescue ActiveRecord::RecordNotFound
-    redirect_back(
-      fallback_location: root_path,
-      alert: "The selected service could not be found."
-    )
-  rescue ActiveRecord::RecordInvalid => e
-    redirect_back(
-      fallback_location: root_path,
-      alert: e.record.errors.full_messages.join(", ")
-    )
-  rescue Stripe::StripeError => e
-    Rails.logger.error(
-      "Stripe Checkout error: #{e.class} - #{e.message}"
-    )
 
-    booking&.update(payment_status: "payment_failed")
+    booking.save!
+
+    SendBookingConfirmationSmsJob.perform_later(booking.id)
+    SendBusinessBookingConfirmationSmsJob.perform_later(booking.id)
 
     redirect_to(
       business_site_url(
         subdomain: business.page_address
       ),
-      alert: "Your booking was created, but Stripe payment could not be started.",
+      notice: "Your booking has been requested.",
       allow_other_host: true
     )
   end
-
-  def payment_success
-    @booking = Booking.find(params[:id])
-
-    unless valid_payment_session?(@booking)
-      redirect_to(
-        business_site_url(
-          subdomain: @booking.business.page_address
-        ),
-        alert: "We couldn't confirm your payment.",
-        allow_other_host: true
-      )
-
-      return
-    end
-
-    checkout_session = retrieve_checkout_session(
-      @booking,
-      params[:session_id]
-    )
-
-    sms_already_sent = @booking.payment_status == "paid"
-
-    @booking.update!(
-      stripe_payment_intent_id: checkout_session.payment_intent,
-      payment_status: "paid",
-      amount_paid: amount_from_stripe(checkout_session.amount_total)
-    )
-
-    unless sms_already_sent
-      SendBookingConfirmationSmsJob.perform_later(@booking.id)
-    end
-
-    render :payment_success
-  rescue ActiveRecord::RecordNotFound
-    redirect_to root_path,
-                alert: "The booking could not be found."
-  rescue Stripe::StripeError => e
-    Rails.logger.error(
-      "Stripe payment success error: #{e.class} - #{e.message}"
-    )
-
-    redirect_to(
-      business_site_url(
-        subdomain: @booking.business.page_address
-      ),
-      alert: "We couldn't confirm your payment.",
-      allow_other_host: true
-    )
-  end
-
-  private
 
   def find_or_create_user
     email = booking_params[:email].to_s.downcase.strip
 
-    user = User.find_or_initialize_by(email: email)
+    user = User.find_or_initialize_by(
+      email: email
+    )
 
     user.assign_attributes(
       first_name: booking_params[:first_name],
@@ -166,28 +199,27 @@ class BookingsController < ApplicationController
     end
 
     user.save!
+
     user
   end
 
-  def redirect_to_stripe_checkout(booking:, business:, service:)
-    success_url = payment_success_booking_url(
-      booking,
+  def redirect_to_stripe_checkout(booking_hold:, business:, service:)
+    success_url = payment_success_booking_hold_url(
+      booking_hold,
       host: request.host,
       port: request.optional_port,
       protocol: request.protocol
     )
 
-    if service.deposit_enabled == true
+    success_url += "?session_id={CHECKOUT_SESSION_ID}"
+
+    if service.deposit_enabled?
       price = service.deposit
-      service_name = service.name + ' (Deposit)'
+      service_name = "#{service.name} (Deposit)"
     else
       price = service.price
       service_name = service.name
     end
-
-    # Stripe replaces this placeholder with the real Checkout Session ID.
-    # It must be appended manually so Rails does not encode the braces.
-    success_url += "?session_id={CHECKOUT_SESSION_ID}"
 
     cancel_url = business_site_url(
       subdomain: business.page_address,
@@ -198,7 +230,7 @@ class BookingsController < ApplicationController
       {
         mode: "payment",
 
-        customer_email: booking.user.email,
+        customer_email: booking_hold.user.email,
 
         line_items: [
           {
@@ -207,7 +239,9 @@ class BookingsController < ApplicationController
 
               product_data: {
                 name: service_name,
-                description: booking_description(booking)
+                description: booking_hold_description(
+                  booking_hold
+                )
               },
 
               unit_amount: price_in_pence(price)
@@ -218,56 +252,140 @@ class BookingsController < ApplicationController
         ],
 
         metadata: {
-          booking_id: booking.id.to_s,
+          booking_hold_id: booking_hold.id.to_s,
           business_id: business.id.to_s,
           service_id: service.id.to_s
         },
 
         payment_intent_data: {
           metadata: {
-            booking_id: booking.id.to_s,
+            booking_hold_id: booking_hold.id.to_s,
             business_id: business.id.to_s
           }
         },
 
         success_url: success_url,
-        cancel_url: cancel_url
+        cancel_url: cancel_url,
+
+        expires_at: 30.minutes.from_now.to_i
       },
       {
         stripe_account: business.stripe_account_id,
-        idempotency_key: "booking-#{booking.id}-checkout"
+
+        idempotency_key:
+          "booking-hold-#{booking_hold.id}-checkout"
       }
     )
 
-    booking.update!(
+    booking_hold.update!(
       stripe_checkout_session_id: checkout_session.id
     )
 
-    redirect_to checkout_session.url,
-                allow_other_host: true,
-                status: :see_other
+    redirect_to(
+      checkout_session.url,
+      allow_other_host: true,
+      status: :see_other
+    )
   end
 
-  def valid_payment_session?(booking)
-    session_id = params[:session_id].to_s
+  def complete_paid_booking!(booking_hold:, checkout_session:)
+    booking = nil
+    booking_created = false
+
+    BookingHold.transaction do
+      booking_hold.lock!
+
+      # Another request, such as the Stripe webhook,
+      # may already have created the booking.
+      if booking_hold.booking.present?
+        booking = booking_hold.booking
+        next
+      end
+
+      unless checkout_session.payment_status == "paid"
+        raise Stripe::StripeError,
+              "Checkout Session has not been paid."
+      end
+
+      status =
+        if booking_hold.business
+                       .business_setting
+                       .automatically_confirm_bookings?
+          "confirmed"
+        else
+          "pending"
+        end
+
+      booking = Booking.create!(
+        user: booking_hold.user,
+        business: booking_hold.business,
+        service: booking_hold.service,
+        date: booking_hold.date,
+        time: booking_hold.time,
+        notes: booking_hold.notes,
+        status: status,
+        payment_status: "paid",
+        stripe_checkout_session_id: checkout_session.id,
+        stripe_payment_intent_id: checkout_session.payment_intent,
+        amount_paid: amount_from_stripe(
+          checkout_session.amount_total
+        )
+      )
+
+      booking_hold.update!(
+        booking: booking,
+        completed_at: Time.current
+      )
+
+      booking_created = true
+    end
+
+    if booking_created
+      SendBookingConfirmationSmsJob.perform_later(
+        booking.id
+      )
+
+      SendBusinessBookingConfirmationSmsJob.perform_later(
+        booking.id
+      )
+    end
+
+    booking
+  end
+
+  def valid_payment_session?(booking_hold, session_id)
+    session_id = session_id.to_s
 
     return false if session_id.blank?
-    return false if booking.stripe_checkout_session_id.blank?
-    return false unless session_id == booking.stripe_checkout_session_id
+
+    return false if booking_hold
+                      .stripe_checkout_session_id
+                      .blank?
+
+    return false unless ActiveSupport::SecurityUtils.secure_compare(
+      session_id,
+      booking_hold.stripe_checkout_session_id
+    )
 
     checkout_session = retrieve_checkout_session(
-      booking,
+      booking_hold,
       session_id
     )
 
-    checkout_session.payment_status == "paid"
+    return false unless checkout_session.payment_status == "paid"
+
+    booking_hold_id =
+      checkout_session.metadata.booking_hold_id.to_s
+
+    booking_hold_id == booking_hold.id.to_s
   end
 
-  def retrieve_checkout_session(booking, session_id)
+  def retrieve_checkout_session(booking_hold, session_id)
     Stripe::Checkout::Session.retrieve(
       session_id,
       {
-        stripe_account: booking.business.stripe_account_id
+        stripe_account:
+          booking_hold.business.stripe_account_id
       }
     )
   end
@@ -276,9 +394,9 @@ class BookingsController < ApplicationController
     (BigDecimal(price.to_s) * 100).round.to_i
   end
 
-  def booking_description(booking)
-    date = booking.date.strftime("%d %B %Y")
-    time = booking.time.strftime("%I:%M %p")
+  def booking_hold_description(booking_hold)
+    date = booking_hold.date.strftime("%d %B %Y")
+    time = booking_hold.time.strftime("%I:%M %p")
 
     "#{date} at #{time}"
   end

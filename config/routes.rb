@@ -196,13 +196,17 @@ Rails.application.routes.draw do
   # Example:
   # riverboat-canyon-expensive.ngrok-free.dev
   root "pages/website#home"
-  resources :bookings, only: [:create] do
-    member do
-      get :payment_success
-    end
-  end
+  resources :bookings, only: [:create]
 
-  get "/booking_slots", to: "bookings#slots"
+  get "/booking_slots",
+      to: "bookings#slots"
+
+  get "/booking-holds/:id/payment-success",
+      to: "bookings#payment_success",
+      as: :payment_success_booking_hold
+
+  post "/stripe/webhook",
+       to: "stripe_webhooks#create"
 
 
   # Public website pages

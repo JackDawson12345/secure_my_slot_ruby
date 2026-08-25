@@ -1,0 +1,25 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  business: one
+  service: one
+  user: one
+  booking: one
+  date: 2026-08-25
+  time: 2026-08-25 14:12:00
+  notes: MyText
+  stripe_checkout_session_id: MyString
+  expires_at: 2026-08-25 14:12:00
+  completed_at: 2026-08-25 14:12:00
+
+two:
+  business: two
+  service: two
+  user: two
+  booking: two
+  date: 2026-08-25
+  time: 2026-08-25 14:12:00
+  notes: MyText
+  stripe_checkout_session_id: MyString
+  expires_at: 2026-08-25 14:12:00
+  completed_at: 2026-08-25 14:12:00

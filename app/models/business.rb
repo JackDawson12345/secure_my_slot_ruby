@@ -6,6 +6,8 @@ class Business < ApplicationRecord
   has_one :calendar_connection, dependent: :destroy
   has_many :calendar_blocked_times, dependent: :destroy
 
+  has_many :booking_holds, dependent: :destroy
+
   store_accessor :address,
                  :line_1,
                  :line_2,

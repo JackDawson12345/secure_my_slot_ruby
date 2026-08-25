@@ -1,5 +1,6 @@
 class Service < ApplicationRecord
   belongs_to :business
+  has_many :booking_holds, dependent: :destroy
 
   after_initialize :set_default_icon, if: :new_record?
 

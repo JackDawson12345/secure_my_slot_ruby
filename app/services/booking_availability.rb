@@ -17,7 +17,8 @@ class BookingAvailability
     current = time_on_date(opening_hour.opens_at)
     finish = time_on_date(opening_hour.closes_at)
 
-    earliest_booking_time = Time.current + minimum_notice_minutes.minutes
+    earliest_booking_time =
+      Time.current + minimum_notice_minutes.minutes
 
     if earliest_booking_time > current
       current = round_to_interval(
@@ -29,12 +30,15 @@ class BookingAvailability
     slots = []
 
     while current + service_duration.minutes <= finish
-      slot_end = current + service_duration.minutes
+      slot_end =
+        current + service_duration.minutes
 
-      slots << current.strftime("%H:%M") unless unavailable?(
+      unless unavailable?(
         current,
         slot_end
       )
+        slots << current.strftime("%H:%M")
+      end
 
       current += booking_interval_minutes.minutes
     end
@@ -86,17 +90,22 @@ class BookingAvailability
   end
 
   def round_to_interval(time, interval)
-    raise ArgumentError, "Booking interval must be greater than zero" if interval <= 0
+    if interval <= 0
+      raise ArgumentError,
+            "Booking interval must be greater than zero"
+    end
 
     interval_seconds = interval.minutes
 
     Time.at(
-      (time.to_f / interval_seconds).ceil * interval_seconds
+      (time.to_f / interval_seconds).ceil *
+      interval_seconds
     ).in_time_zone
   end
 
   def unavailable?(start_time, end_time)
     booked?(start_time, end_time) ||
+      held?(start_time, end_time) ||
       blocked?(start_time, end_time)
   end
 
@@ -105,7 +114,8 @@ class BookingAvailability
       end_time + buffer_minutes.minutes
 
     bookings_for_date.any? do |booking|
-      booking_start = time_on_date(booking.time)
+      booking_start =
+        time_on_date(booking.time)
 
       booking_end_with_buffer =
         booking_start +
@@ -117,6 +127,28 @@ class BookingAvailability
         proposed_end_with_buffer,
         booking_start,
         booking_end_with_buffer
+      )
+    end
+  end
+
+  def held?(start_time, end_time)
+    proposed_end_with_buffer =
+      end_time + buffer_minutes.minutes
+
+    booking_holds_for_date.any? do |booking_hold|
+      hold_start =
+        time_on_date(booking_hold.time)
+
+      hold_end_with_buffer =
+        hold_start +
+        booking_hold.service.minutes_duration.minutes +
+        buffer_minutes.minutes
+
+      overlaps?(
+        start_time,
+        proposed_end_with_buffer,
+        hold_start,
+        hold_end_with_buffer
       )
     end
   end
@@ -133,28 +165,40 @@ class BookingAvailability
   end
 
   def bookings_for_date
-    @bookings_for_date ||= @business.bookings
-                                    .includes(:service)
-                                    .where(date: @date)
-                                    .where.not(status: "cancelled")
-                                    .to_a
+    @bookings_for_date ||=
+      @business.bookings
+               .includes(:service)
+               .where(date: @date)
+               .where.not(status: "cancelled")
+               .to_a
+  end
+
+  def booking_holds_for_date
+    @booking_holds_for_date ||=
+      @business.booking_holds
+               .includes(:service)
+               .active
+               .where(date: @date)
+               .to_a
   end
 
   def blocked_times_for_date
     @blocked_times_for_date ||= begin
-                                  business_blocks = @business.business_blocked_times
-                                                             .where(
-                                                               "starts_at < ? AND ends_at > ?",
-                                                               day_end,
-                                                               day_start
-                                                             )
+                                  business_blocks =
+                                    @business.business_blocked_times
+                                             .where(
+                                               "starts_at < ? AND ends_at > ?",
+                                               day_end,
+                                               day_start
+                                             )
 
-                                  calendar_blocks = @business.calendar_blocked_times
-                                                             .where(
-                                                               "starts_at < ? AND ends_at > ?",
-                                                               day_end,
-                                                               day_start
-                                                             )
+                                  calendar_blocks =
+                                    @business.calendar_blocked_times
+                                             .where(
+                                               "starts_at < ? AND ends_at > ?",
+                                               day_end,
+                                               day_start
+                                             )
 
                                   (business_blocks + calendar_blocks).to_a
                                 end
@@ -171,10 +215,12 @@ class BookingAvailability
   end
 
   def day_start
-    @day_start ||= @date.in_time_zone.beginning_of_day
+    @day_start ||=
+      @date.in_time_zone.beginning_of_day
   end
 
   def day_end
-    @day_end ||= @date.in_time_zone.end_of_day
+    @day_end ||=
+      @date.in_time_zone.end_of_day
   end
 end
