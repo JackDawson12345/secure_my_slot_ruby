@@ -171,8 +171,8 @@
 
         <% elsif @business.stripe_account_id.present? %>
 
-          <%= button_to business_payments_connect_path,
-                        method: :post,
+          <%= button_to business_payments_stripe_path,
+                        method: :get,
                         class: "inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-indigo-700" do %>
 
             Continue Stripe setup
@@ -184,8 +184,8 @@
 
         <% else %>
 
-          <%= button_to business_payments_connect_path,
-                        method: :post,
+          <%= button_to business_payments_stripe_path,
+                        method: :get,
                         class: "inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-indigo-700" do %>
 
             Connect Stripe
