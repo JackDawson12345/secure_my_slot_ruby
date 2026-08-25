@@ -157,7 +157,20 @@
       <div>
         <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <p class="text-sm text-slate-500">
-            <span class="font-semibold text-slate-900"><%= @total_count %> businesses</span> found near <%= current_user.customer_setting.address_line_1 %>, <%= current_user.customer_setting.town_or_city %>, <%= current_user.customer_setting.postcode %>
+  <span class="font-semibold text-slate-900">
+    <%= @total_count %> businesses
+  </span>
+
+            <% if current_user.customer_setting&.postcode.present? %>
+              found near
+              <%= [
+                    current_user.customer_setting.address_line_1,
+                    current_user.customer_setting.town_or_city,
+                    current_user.customer_setting.postcode
+                  ].compact_blank.join(", ") %>
+            <% else %>
+              found
+            <% end %>
           </p>
 
           <div class="flex items-center gap-2">
