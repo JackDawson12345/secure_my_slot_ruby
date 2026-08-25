@@ -268,25 +268,44 @@
         <% end %>
       </div>
     <% else %>
-      <!-- Empty state -->
       <div class="px-5 py-16 text-center sm:px-6">
+
         <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-indigo-50 text-indigo-600">
           <i data-lucide="briefcase-business" class="h-6 w-6"></i>
         </div>
 
-        <h3 class="mt-4 text-lg font-bold text-slate-900">
-          No services yet
-        </h3>
+        <% if params[:q].present? %>
 
-        <p class="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-500">
-          Add your first service so customers can see what you offer and begin making bookings.
-        </p>
+          <h3 class="mt-4 text-lg font-bold text-slate-900">
+            No services found
+          </h3>
 
-        <%= link_to new_business_service_path,
-                    class: "mt-6 inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700" do %>
-          <i data-lucide="plus" class="h-4 w-4"></i>
-          Add your first service
+          <p class="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-500">
+            No services match "<%= params[:q] %>". Try another search term.
+          </p>
+
+          <%= link_to "Clear search",
+                      business_services_path,
+                      class: "mt-6 inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50" %>
+
+        <% else %>
+
+          <h3 class="mt-4 text-lg font-bold text-slate-900">
+            No services yet
+          </h3>
+
+          <p class="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-500">
+            Add your first service so customers can see what you offer and begin making bookings.
+          </p>
+
+          <%= link_to new_business_service_path,
+                      class: "mt-6 inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700" do %>
+            <i data-lucide="plus" class="h-4 w-4"></i>
+            Add your first service
+          <% end %>
+
         <% end %>
+
       </div>
     <% end %>
   </section>
