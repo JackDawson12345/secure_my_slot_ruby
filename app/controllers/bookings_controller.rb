@@ -30,7 +30,7 @@ class BookingsController < ApplicationController
     business = service.business
     user = find_or_create_user
 
-    if business.stripe_ready?
+    if business.stripe_ready? && payment_required_for?(service)
       create_stripe_booking_hold(
         business: business,
         service: service,
@@ -61,7 +61,6 @@ class BookingsController < ApplicationController
       "Stripe Checkout error: #{e.class} - #{e.message}"
     )
 
-
     redirect_to(
       business_site_url(
         subdomain: business.page_address
@@ -71,11 +70,24 @@ class BookingsController < ApplicationController
     )
   end
 
+  def confirmation
+    @booking = Booking.find(params[:id])
+
+    render :payment_success
+
+  rescue ActiveRecord::RecordNotFound
+    redirect_to(
+      root_path,
+      alert: "The booking could not be found."
+    )
+  end
+
   def payment_success
     booking_hold = BookingHold.find(params[:id])
 
     if booking_hold.booking.present?
       @booking = booking_hold.booking
+
       return render :payment_success
     end
 
@@ -153,7 +165,8 @@ class BookingsController < ApplicationController
       date: booking_params[:date],
       time: booking_params[:time],
       notes: booking_params[:notes],
-      payment_status: "not_required"
+      payment_status: "not_required",
+      amount_paid: 0
     )
 
     booking.status =
@@ -165,15 +178,21 @@ class BookingsController < ApplicationController
 
     booking.save!
 
-    SendBookingConfirmationSmsJob.perform_later(booking.id)
-    SendBusinessBookingConfirmationSmsJob.perform_later(booking.id)
+    SendBookingConfirmationSmsJob.perform_later(
+      booking.id
+    )
+
+    SendBusinessBookingConfirmationSmsJob.perform_later(
+      booking.id
+    )
 
     redirect_to(
-      business_site_url(
+      booking_confirmation_url(
+        booking,
         subdomain: business.page_address
       ),
-      notice: "Your booking has been requested.",
-      allow_other_host: true
+      allow_other_host: true,
+      status: :see_other
     )
   end
 
@@ -203,7 +222,22 @@ class BookingsController < ApplicationController
     user
   end
 
-  def redirect_to_stripe_checkout(booking_hold:, business:, service:)
+  def payment_required_for?(service)
+    amount_due =
+      if service.deposit_enabled?
+        service.deposit.to_d
+      else
+        service.price.to_d
+      end
+
+    amount_due.positive?
+  end
+
+  def redirect_to_stripe_checkout(
+    booking_hold:,
+    business:,
+    service:
+  )
     success_url = payment_success_booking_hold_url(
       booking_hold,
       host: request.host,
@@ -288,15 +322,16 @@ class BookingsController < ApplicationController
     )
   end
 
-  def complete_paid_booking!(booking_hold:, checkout_session:)
+  def complete_paid_booking!(
+    booking_hold:,
+    checkout_session:
+  )
     booking = nil
     booking_created = false
 
     BookingHold.transaction do
       booking_hold.lock!
 
-      # Another request, such as the Stripe webhook,
-      # may already have created the booking.
       if booking_hold.booking.present?
         booking = booking_hold.booking
         next

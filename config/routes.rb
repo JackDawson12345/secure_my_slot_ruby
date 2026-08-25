@@ -201,6 +201,11 @@ Rails.application.routes.draw do
   get "/booking_slots",
       to: "bookings#slots"
 
+  # Normal/free booking confirmation
+  get "/bookings/:id/confirmation",
+      to: "bookings#confirmation",
+      as: :booking_confirmation
+
   get "/booking-holds/:id/payment-success",
       to: "bookings#payment_success",
       as: :payment_success_booking_hold
