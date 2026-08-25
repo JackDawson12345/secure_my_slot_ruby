@@ -1,0 +1,485 @@
+<%
+  service = @booking.service
+  business = @booking.business
+  settings = business.business_setting
+
+  booking_end_time = @booking.time + service.minutes_duration.minutes
+
+  status_classes =
+    case @booking.status
+    when "confirmed"
+      {
+        badge: "bg-emerald-100 text-emerald-700",
+        dot: "bg-emerald-500",
+        icon_bg: "bg-emerald-50",
+        icon_text: "text-emerald-600",
+        icon: "circle-check-big"
+      }
+    when "pending"
+      {
+        badge: "bg-amber-100 text-amber-700",
+        dot: "bg-amber-500",
+        icon_bg: "bg-amber-50",
+        icon_text: "text-amber-600",
+        icon: "clock-3"
+      }
+    when "cancelled"
+      {
+        badge: "bg-rose-100 text-rose-700",
+        dot: "bg-rose-500",
+        icon_bg: "bg-rose-50",
+        icon_text: "text-rose-600",
+        icon: "calendar-x"
+      }
+    when "completed"
+      {
+        badge: "bg-indigo-100 text-indigo-700",
+        dot: "bg-indigo-500",
+        icon_bg: "bg-indigo-50",
+        icon_text: "text-indigo-600",
+        icon: "badge-check"
+      }
+    else
+      {
+        badge: "bg-slate-100 text-slate-700",
+        dot: "bg-slate-500",
+        icon_bg: "bg-slate-100",
+        icon_text: "text-slate-600",
+        icon: "calendar"
+      }
+    end
+
+  payment_label =
+    case @booking.payment_status
+    when "not_required"
+      "No payment required"
+    when "paid"
+      "Paid"
+    when "awaiting_payment"
+      "Awaiting payment"
+    else
+      @booking.payment_status.to_s.humanize
+    end
+
+  address_parts = [
+    settings&.address_line_1,
+    settings&.address_line_2,
+    settings&.town_or_city,
+    settings&.postcode
+  ].compact_blank
+%>
+
+<%
+  appointment_time = Time.zone.local(
+    @booking.date.year,
+    @booking.date.month,
+    @booking.date.day,
+    @booking.time.hour,
+    @booking.time.min
+  )
+
+  cancellation_notice_hours =
+    settings&.cancellation_notice_hours.to_i
+
+  cancellation_cutoff =
+    appointment_time - cancellation_notice_hours.hours
+
+  cancellation_allowed =
+    settings&.allow_customer_cancellations? &&
+    Time.current < cancellation_cutoff
+%>
+
+<main class="p-4 sm:p-6 lg:p-8">
+
+  <!-- Back -->
+  <div class="mb-6">
+    <%= link_to account_bookings_path,
+                class: "inline-flex items-center gap-2 text-sm font-semibold text-slate-500 transition hover:text-indigo-600" do %>
+      <i data-lucide="arrow-left" class="h-4 w-4"></i>
+      Back to bookings
+    <% end %>
+  </div>
+
+  <!-- Heading -->
+  <section class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+    <div>
+      <div class="flex flex-wrap items-center gap-3">
+        <h2 class="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+          Booking details
+        </h2>
+
+        <span class="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold capitalize <%= status_classes[:badge] %>">
+          <span class="h-2 w-2 rounded-full <%= status_classes[:dot] %>"></span>
+          <%= @booking.status %>
+        </span>
+      </div>
+
+      <p class="mt-2 text-sm text-slate-500">
+        Booking #<%= @booking.id %>
+      </p>
+    </div>
+  </section>
+
+  <div class="mt-8 grid gap-6 xl:grid-cols-[minmax(0,1fr)_380px]">
+
+    <!-- Main column -->
+    <div class="space-y-6">
+
+      <!-- Appointment summary -->
+      <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+
+        <div class="border-b border-slate-200 bg-slate-50 px-5 py-5 sm:px-6">
+          <div class="flex items-center gap-3">
+            <div class="rounded-xl <%= status_classes[:icon_bg] %> p-3 <%= status_classes[:icon_text] %>">
+              <i data-lucide="<%= status_classes[:icon] %>" class="h-5 w-5"></i>
+            </div>
+
+            <div>
+              <h3 class="text-lg font-bold text-slate-900">
+                <%= service.name %>
+              </h3>
+
+              <p class="mt-1 text-sm text-slate-500">
+                <%= business.business_name %>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="p-5 sm:p-6">
+          <div class="flex flex-col gap-6 sm:flex-row">
+
+            <!-- Date tile -->
+            <div class="flex h-24 w-24 shrink-0 flex-col items-center justify-center rounded-2xl bg-indigo-600 text-white">
+              <span class="text-xs font-semibold uppercase tracking-wider">
+                <%= @booking.date.strftime("%b") %>
+              </span>
+
+              <span class="text-3xl font-bold leading-none">
+                <%= @booking.date.day %>
+              </span>
+
+              <span class="mt-1 text-xs font-medium text-indigo-100">
+                <%= @booking.date.strftime("%Y") %>
+              </span>
+            </div>
+
+            <div class="flex-1">
+              <p class="text-lg font-bold text-slate-900">
+                <%= @booking.date.strftime("%A, %-d %B %Y") %>
+              </p>
+
+              <div class="mt-5 grid gap-4 sm:grid-cols-2">
+
+                <div class="flex items-start gap-3">
+                  <div class="rounded-lg bg-slate-100 p-2 text-slate-500">
+                    <i data-lucide="clock-3" class="h-4 w-4"></i>
+                  </div>
+
+                  <div>
+                    <p class="text-xs font-medium uppercase tracking-wide text-slate-400">
+                      Time
+                    </p>
+
+                    <p class="mt-1 text-sm font-semibold text-slate-900">
+                      <%= @booking.time.strftime("%-I:%M %p") %>
+                      to
+                      <%= booking_end_time.strftime("%-I:%M %p") %>
+                    </p>
+                  </div>
+                </div>
+
+                <div class="flex items-start gap-3">
+                  <div class="rounded-lg bg-slate-100 p-2 text-slate-500">
+                    <i data-lucide="hourglass" class="h-4 w-4"></i>
+                  </div>
+
+                  <div>
+                    <p class="text-xs font-medium uppercase tracking-wide text-slate-400">
+                      Duration
+                    </p>
+
+                    <p class="mt-1 text-sm font-semibold text-slate-900">
+                      <%= service.minutes_duration %> minutes
+                    </p>
+                  </div>
+                </div>
+
+                <div class="flex items-start gap-3">
+                  <div class="rounded-lg bg-slate-100 p-2 text-slate-500">
+                    <i data-lucide="badge-pound-sterling" class="h-4 w-4"></i>
+                  </div>
+
+                  <div>
+                    <p class="text-xs font-medium uppercase tracking-wide text-slate-400">
+                      Service price
+                    </p>
+
+                    <p class="mt-1 text-sm font-semibold text-slate-900">
+                      <%= number_to_currency(service.price, unit: "£") %>
+                    </p>
+                  </div>
+                </div>
+
+                <div class="flex items-start gap-3">
+                  <div class="rounded-lg bg-slate-100 p-2 text-slate-500">
+                    <i data-lucide="hash" class="h-4 w-4"></i>
+                  </div>
+
+                  <div>
+                    <p class="text-xs font-medium uppercase tracking-wide text-slate-400">
+                      Booking reference
+                    </p>
+
+                    <p class="mt-1 text-sm font-semibold text-slate-900">
+                      #<%= @booking.id %>
+                    </p>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- Service -->
+      <section class="rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <div class="border-b border-slate-200 px-5 py-4 sm:px-6">
+          <h3 class="font-bold text-slate-900">
+            Service details
+          </h3>
+        </div>
+
+        <div class="p-5 sm:p-6">
+          <div class="flex items-start gap-4">
+            <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
+              <i data-lucide="<%= service.icon.presence || "sparkles" %>" class="h-5 w-5"></i>
+            </div>
+
+            <div>
+              <h4 class="font-bold text-slate-900">
+                <%= service.name %>
+              </h4>
+
+              <% if service.description.present? %>
+                <p class="mt-2 whitespace-pre-line text-sm leading-6 text-slate-600">
+                  <%= service.description %>
+                </p>
+              <% end %>
+
+              <div class="mt-4 flex flex-wrap gap-2">
+                <span class="rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-600">
+                  <%= service.minutes_duration %> minutes
+                </span>
+
+                <span class="rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-600">
+                  <%= number_to_currency(service.price, unit: "£") %>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Notes -->
+      <% if @booking.notes.present? %>
+        <section class="rounded-2xl border border-slate-200 bg-white shadow-sm">
+          <div class="border-b border-slate-200 px-5 py-4 sm:px-6">
+            <div class="flex items-center gap-2">
+              <i data-lucide="notebook-pen" class="h-4 w-4 text-slate-400"></i>
+
+              <h3 class="font-bold text-slate-900">
+                Your notes
+              </h3>
+            </div>
+          </div>
+
+          <div class="p-5 sm:p-6">
+            <p class="whitespace-pre-line text-sm leading-6 text-slate-600">
+              <%= @booking.notes %>
+            </p>
+          </div>
+        </section>
+      <% end %>
+
+    </div>
+
+    <!-- Sidebar -->
+    <aside class="space-y-6">
+
+      <!-- Business details -->
+      <section class="rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <div class="border-b border-slate-200 px-5 py-4">
+          <h3 class="font-bold text-slate-900">
+            Business details
+          </h3>
+        </div>
+
+        <div class="p-5">
+          <div class="flex items-center gap-3">
+            <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
+              <i data-lucide="store" class="h-5 w-5"></i>
+            </div>
+
+            <div>
+              <p class="font-bold text-slate-900">
+                <%= business.business_name %>
+              </p>
+
+              <% if settings&.business_category.present? %>
+                <p class="mt-1 text-xs text-slate-500">
+                  <%= settings.business_category %>
+                </p>
+              <% elsif business.category.present? %>
+                <p class="mt-1 text-xs text-slate-500">
+                  <%= business.category %>
+                </p>
+              <% end %>
+            </div>
+          </div>
+
+          <div class="mt-5 space-y-4">
+
+            <% if address_parts.any? %>
+              <div class="flex items-start gap-3">
+                <i data-lucide="map-pin" class="mt-0.5 h-4 w-4 shrink-0 text-slate-400"></i>
+
+                <p class="text-sm leading-6 text-slate-600">
+                  <%= safe_join(address_parts, tag.br) %>
+                </p>
+              </div>
+            <% end %>
+
+            <% if settings&.phone_number.present? || business.phone_number.present? %>
+              <div class="flex items-center gap-3">
+                <i data-lucide="phone" class="h-4 w-4 shrink-0 text-slate-400"></i>
+
+                <%= link_to "tel:#{settings&.phone_number.presence || business.phone_number}",
+                            class: "text-sm font-medium text-slate-600 transition hover:text-indigo-600" do %>
+                  <%= settings&.phone_number.presence || business.phone_number %>
+                <% end %>
+              </div>
+            <% end %>
+
+            <% if settings&.business_email.present? %>
+              <div class="flex items-center gap-3">
+                <i data-lucide="mail" class="h-4 w-4 shrink-0 text-slate-400"></i>
+
+                <%= mail_to settings.business_email,
+                            settings.business_email,
+                            class: "break-all text-sm font-medium text-slate-600 transition hover:text-indigo-600" %>
+              </div>
+            <% end %>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- Payment -->
+      <section class="rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <div class="border-b border-slate-200 px-5 py-4">
+          <h3 class="font-bold text-slate-900">
+            Payment
+          </h3>
+        </div>
+
+        <div class="p-5">
+          <div class="flex items-center justify-between gap-4">
+            <span class="text-sm text-slate-500">
+              Service price
+            </span>
+
+            <span class="text-sm font-bold text-slate-900">
+              <%= number_to_currency(service.price, unit: "£") %>
+            </span>
+          </div>
+
+          <% if service.deposit_enabled? && service.deposit.present? %>
+            <div class="mt-3 flex items-center justify-between gap-4">
+              <span class="text-sm text-slate-500">
+                Deposit
+              </span>
+
+              <span class="text-sm font-semibold text-slate-900">
+                <%= number_to_currency(service.deposit, unit: "£") %>
+              </span>
+            </div>
+          <% end %>
+
+          <div class="mt-4 border-t border-slate-100 pt-4">
+            <div class="flex items-center justify-between gap-4">
+              <span class="text-sm text-slate-500">
+                Amount paid
+              </span>
+
+              <span class="text-sm font-bold text-slate-900">
+                <%= number_to_currency(@booking.amount_paid || 0, unit: "£") %>
+              </span>
+            </div>
+
+            <div class="mt-3 flex items-center justify-between gap-4">
+              <span class="text-sm text-slate-500">
+                Payment status
+              </span>
+
+              <span class="text-right text-xs font-semibold text-slate-700">
+                <%= payment_label %>
+              </span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Actions -->
+      <% unless ["cancelled", "completed"].include?(@booking.status) %>
+        <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+          <h3 class="font-bold text-slate-900">
+            Manage booking
+          </h3>
+
+          <p class="mt-1 text-sm leading-6 text-slate-500">
+            Need to make a change to your appointment?
+          </p>
+
+          <div class="mt-5 space-y-3">
+            <%= link_to account_reschedule_booking_path(@booking),
+                        class: "inline-flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50" do %>
+              <i data-lucide="calendar-cog" class="h-4 w-4"></i>
+              Reschedule booking
+            <% end %>
+
+            <% if cancellation_allowed %>
+              <%= button_to account_cancel_booking_path(@booking),
+                            method: :patch,
+                            form: {
+                              data: {
+                                turbo_confirm: "Are you sure you want to cancel this appointment?"
+                              }
+                            },
+                            class: "inline-flex w-full items-center justify-center gap-2 rounded-xl border border-rose-200 px-4 py-2.5 text-sm font-semibold text-rose-600 transition hover:bg-rose-50" do %>
+                <i data-lucide="calendar-x" class="h-4 w-4"></i>
+                Cancel booking
+              <% end %>
+            <% elsif settings&.allow_customer_cancellations? %>
+              <div class="rounded-xl border border-slate-200 bg-slate-50 p-4">
+                <div class="flex items-start gap-3">
+                  <i data-lucide="clock-alert" class="mt-0.5 h-4 w-4 shrink-0 text-slate-400"></i>
+
+                  <p class="text-xs leading-5 text-slate-500">
+                    This appointment can no longer be cancelled online.
+                    Cancellations require at least
+                    <%= pluralize(cancellation_notice_hours, "hour") %>
+                    notice.
+                  </p>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </section>
+      <% end %>
+
+    </aside>
+  </div>
+</main>

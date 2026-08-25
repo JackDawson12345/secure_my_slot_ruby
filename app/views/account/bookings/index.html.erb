@@ -582,7 +582,7 @@
                 <%= number_to_currency(booking.service.price, unit: "£") %>
               </p>
 
-              <%= link_to '/',
+              <%= link_to account_show_booking_path(booking),
                           class: "inline-flex items-center gap-1 text-sm font-semibold text-indigo-600" do %>
                 View booking
                 <i data-lucide="arrow-right" class="h-4 w-4"></i>

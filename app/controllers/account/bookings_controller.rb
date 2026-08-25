@@ -88,4 +88,116 @@ class Account::BookingsController < Account::BaseController
   def show
     @booking = Booking.find(params[:id])
   end
+
+  def reschedule
+    @booking = current_user.bookings
+                           .includes(
+                             :service,
+                             business: :business_setting
+                           )
+                           .find(params[:id])
+  end
+
+  def reschedule_slots
+    booking = current_user.bookings
+                          .includes(:service, :business)
+                          .find(params[:id])
+
+    date = Date.parse(params[:date])
+
+    slots = BookingAvailability.new(
+      booking.business,
+      booking.service,
+      date
+    ).call
+
+    render json: {
+      slots: slots
+    }
+  rescue ArgumentError
+    render json: {
+      slots: [],
+      error: "Invalid date"
+    }, status: :unprocessable_entity
+  end
+
+  def update_reschedule
+    @booking = current_user.bookings.find(params[:id])
+
+    date = Date.parse(params[:date])
+    time = params[:time]
+
+    available_slots = BookingAvailability.new(
+      @booking.business,
+      @booking.service,
+      date
+    ).call
+
+    unless available_slots.include?(time)
+      redirect_to account_reschedule_booking_path(@booking),
+                  alert: "That appointment time is no longer available."
+      return
+    end
+
+    @booking.update!(
+      date: date,
+      time: Time.zone.parse(time)
+    )
+
+    redirect_to account_show_booking_path(@booking),
+                notice: "Your booking has been rescheduled successfully."
+  rescue ArgumentError
+    redirect_to account_reschedule_booking_path(@booking),
+                alert: "Please select a valid date and time."
+  end
+
+  def cancel
+    @booking = current_user.bookings
+                           .includes(business: :business_setting)
+                           .find(params[:id])
+
+    settings = @booking.business.business_setting
+
+    unless settings&.allow_customer_cancellations?
+      redirect_to account_show_booking_path(@booking),
+                  alert: "This business does not allow customer cancellations."
+      return
+    end
+
+    if @booking.status == "cancelled"
+      redirect_to account_show_booking_path(@booking),
+                  alert: "This booking has already been cancelled."
+      return
+    end
+
+    if @booking.status == "completed"
+      redirect_to account_show_booking_path(@booking),
+                  alert: "Completed bookings cannot be cancelled."
+      return
+    end
+
+    appointment_time = Time.zone.local(
+      @booking.date.year,
+      @booking.date.month,
+      @booking.date.day,
+      @booking.time.hour,
+      @booking.time.min
+    )
+
+    notice_hours = settings.cancellation_notice_hours.to_i
+    cancellation_cutoff = appointment_time - notice_hours.hours
+
+    if Time.current >= cancellation_cutoff
+      redirect_to account_show_booking_path(@booking),
+                  alert: "This booking can no longer be cancelled because it is within the #{notice_hours}-hour cancellation period."
+      return
+    end
+
+    @booking.update!(
+      status: "cancelled"
+    )
+
+    redirect_to account_show_booking_path(@booking),
+                notice: "Your booking has been cancelled."
+  end
 end

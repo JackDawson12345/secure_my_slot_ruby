@@ -245,6 +245,19 @@ Rails.application.routes.draw do
         to: "bookings#show",
         as: :show_booking
 
+    get "dashboard/bookings/:id/reschedule",
+        to: "bookings#reschedule",
+        as: :reschedule_booking
+    get "dashboard/bookings/:id/reschedule/slots",
+        to: "bookings#reschedule_slots",
+        as: :reschedule_booking_slots
+    patch "dashboardbookings/:id/cancel",
+          to: "bookings#cancel",
+          as: :cancel_booking
+    patch "/dashboard/bookings/:id/reschedule",
+          to: "bookings#update_reschedule",
+          as: :update_reschedule_booking
+
     get "dashboard/booking-history",
         to: "booking_history#index",
         as: :booking_history
