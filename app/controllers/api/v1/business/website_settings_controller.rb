@@ -23,34 +23,10 @@ module Api
           end
 
           render json: {
-            settings: {
-              id: website_setting.id,
-              business_id: website_setting.business_id,
-              colour: website_setting.colour,
-              hero: normalise_jsonb(website_setting.hero),
-              services: normalise_jsonb(website_setting.services),
-              about_us: normalise_jsonb(website_setting.about_us),
-              visit: normalise_jsonb(website_setting.visit),
-              created_at: website_setting.created_at,
-              updated_at: website_setting.updated_at
-            }
+            settings: website_settings_json(website_setting)
           }, status: :ok
         end
 
-        private
-
-        def normalise_jsonb(value)
-          return value unless value.is_a?(String)
-
-          JSON.parse(value)
-        rescue JSON::ParserError
-          begin
-            parsed = value.gsub("=>", ":")
-            JSON.parse(parsed)
-          rescue JSON::ParserError
-            value
-          end
-        end
 
         def update
           business = ::Business.find_by(id: params[:id])
@@ -73,17 +49,7 @@ module Api
 
           render json: {
             message: "Website settings updated successfully",
-            settings: {
-              id: website_setting.id,
-              business_id: website_setting.business_id,
-              colour: website_setting.colour,
-              hero: website_setting.hero,
-              services: website_setting.services,
-              about_us: website_setting.about_us,
-              visit: website_setting.visit,
-              created_at: website_setting.created_at,
-              updated_at: website_setting.updated_at
-            }
+            settings: website_settings_json(website_setting)
           }, status: :ok
 
         rescue ActiveRecord::RecordInvalid => e
@@ -91,6 +57,7 @@ module Api
             errors: e.record.errors.full_messages
           }, status: :unprocessable_entity
         end
+
 
         private
 
@@ -126,6 +93,34 @@ module Api
               :sentence
             ]
           )
+        end
+
+
+        def website_settings_json(website_setting)
+          {
+            id: website_setting.id,
+            business_id: website_setting.business_id,
+            colour: website_setting.colour,
+            hero: normalise_jsonb(website_setting.hero),
+            services: normalise_jsonb(website_setting.services),
+            about_us: normalise_jsonb(website_setting.about_us),
+            visit: normalise_jsonb(website_setting.visit),
+            created_at: website_setting.created_at,
+            updated_at: website_setting.updated_at
+          }
+        end
+
+
+        def normalise_jsonb(value)
+          return value unless value.is_a?(String)
+
+          JSON.parse(value)
+        rescue JSON::ParserError
+          begin
+            JSON.parse(value.gsub("=>", ":"))
+          rescue JSON::ParserError
+            value
+          end
         end
 
       end
