@@ -3,28 +3,21 @@
 class BusinessPortal::BookingsController < BusinessPortal::BaseController
   def index
     business = current_user.business
-    bookings = business.bookings
+    bookings = business.bookings.includes(:user, :service)
 
     today = Date.current
     current_time = Time.current
 
-    # Upcoming bookings list
-    @bookings = bookings
-                  .where(
-                    "date > :today OR (date = :today AND time >= :current_time)",
-                    today: today,
-                    current_time: current_time
-                  )
-                  .order(date: :asc, time: :asc)
+    # ----------------------------------------
+    # Booking statistics
+    # ----------------------------------------
 
-    # Today
     todays_bookings = bookings.where(date: today)
 
     @today_count = todays_bookings.count
     @today_confirmed_count = todays_bookings.where(status: :confirmed).count
     @today_pending_count = todays_bookings.where(status: :pending).count
 
-    # Upcoming over the next 7 days
     @upcoming_count = bookings
                         .where(date: today..(today + 7.days))
                         .where(
@@ -34,17 +27,62 @@ class BusinessPortal::BookingsController < BusinessPortal::BaseController
                         )
                         .count
 
-    # Completed this month
     @completed_count = bookings
                          .where(status: :completed)
                          .where(date: today.beginning_of_month..today.end_of_month)
                          .count
 
-    # Cancelled this month
     @cancelled_count = bookings
                          .where(status: :cancelled)
                          .where(date: today.beginning_of_month..today.end_of_month)
                          .count
+
+    # ----------------------------------------
+    # Upcoming bookings list
+    # ----------------------------------------
+
+    bookings_scope = bookings
+                       .where(
+                         "date > :today OR (date = :today AND time >= :current_time)",
+                         today: today,
+                         current_time: current_time
+                       )
+                       .order(date: :asc, time: :asc)
+
+    # ----------------------------------------
+    # Pagination
+    # ----------------------------------------
+
+    @per_page = 10
+    @current_page = params[:page].to_i
+    @current_page = 1 if @current_page < 1
+
+    @total_bookings = bookings_scope.count
+
+    @total_pages =
+      if @total_bookings.positive?
+        (@total_bookings.to_f / @per_page).ceil
+      else
+        1
+      end
+
+    @current_page = @total_pages if @current_page > @total_pages
+
+    @bookings = bookings_scope
+                  .offset((@current_page - 1) * @per_page)
+                  .limit(@per_page)
+
+    @booking_start =
+      if @total_bookings.zero?
+        0
+      else
+        ((@current_page - 1) * @per_page) + 1
+      end
+
+    @booking_end = [
+      @current_page * @per_page,
+      @total_bookings
+    ].min
   end
 
   def add_booking

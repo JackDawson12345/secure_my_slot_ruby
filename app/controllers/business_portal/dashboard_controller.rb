@@ -1,5 +1,6 @@
 class BusinessPortal::DashboardController < BusinessPortal::BaseController
   def index
+
     @business = current_user.business
 
     @bookings = Booking
