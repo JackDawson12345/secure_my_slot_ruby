@@ -4,6 +4,10 @@ module BusinessPortal
     before_action :set_business
 
     def index
+
+    end
+
+    def stripe
       refresh_stripe_status if @business.stripe_connected?
     rescue Stripe::StripeError => e
       flash.now[:alert] = "Stripe status could not be checked: #{e.message}"

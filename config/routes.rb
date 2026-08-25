@@ -380,19 +380,23 @@ Rails.application.routes.draw do
         to: "payments#index",
         as: :payments
 
-    post "dashboard/settings/payments/connect",
+    get "dashboard/settings/payments/stripe",
+        to: "payments#stripe",
+        as: :payments_stripe
+
+    post "dashboard/settings/payments/stripe/connect",
          to: "payments#connect",
          as: :payments_connect
 
-    get "dashboard/settings/payments/return",
+    get "dashboard/settings/payments/stripe/return",
         to: "payments#stripe_return",
         as: :payments_return
 
-    get "dashboard/settings/payments/refresh",
+    get "dashboard/settings/payments/stripe/refresh",
         to: "payments#stripe_refresh",
         as: :payments_refresh
 
-    delete "payments/disconnect",
+    delete "dashboard/settings/payments/stripe/disconnect",
            to: "payments#disconnect",
            as: :payments_disconnect
 
