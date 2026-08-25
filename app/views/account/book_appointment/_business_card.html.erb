@@ -32,18 +32,66 @@
         </div>
         <p class="mt-1 text-sm text-slate-500"><%= business.business_setting.business_category %></p>
 
-        <div class="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-slate-500">
-          <span class="inline-flex items-center gap-1">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="-0.5 -0.5 16 16" fill="none" stroke="#64748b" stroke-linecap="round" stroke-linejoin="round" class="feather feather-map-pin" id="Map-Pin--Streamline-Feather" height="16" width="16">
-  <desc>
-    Map Pin Streamline Icon: https://streamlinehq.com
-  </desc>
-  <path d="M13.125 6.25c0 4.375 -5.625 8.125 -5.625 8.125s-5.625 -3.75 -5.625 -8.125a5.625 5.625 0 0 1 11.25 0z" stroke-width="1"></path>
-  <path d="M5.625 6.25a1.875 1.875 0 1 0 3.75 0 1.875 1.875 0 1 0 -3.75 0" stroke-width="1"></path>
-</svg>
-            <%= business.distance_to_customer(current_user) %> mi &middot; <%= business.business_setting.address_line_1 %>, <%= business.business_setting.town_or_city %>, <span class="uppercase"><%= business.business_setting.postcode %></span>
+        <%
+          customer_has_address = current_user.customer_setting&.postcode.present?
+
+          business_address = [
+            business.business_setting&.address_line_1,
+            business.business_setting&.town_or_city,
+            business.business_setting&.postcode
+          ].compact_blank
+        %>
+
+        <% if business_address.any? %>
+          <div class="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-slate-500">
+    <span class="inline-flex items-center gap-1">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="-0.5 -0.5 16 16"
+        fill="none"
+        stroke="#64748b"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="feather feather-map-pin"
+        height="16"
+        width="16"
+      >
+        <path
+          d="M13.125 6.25c0 4.375 -5.625 8.125 -5.625 8.125s-5.625 -3.75 -5.625 -8.125a5.625 5.625 0 0 1 11.25 0z"
+          stroke-width="1"
+        ></path>
+
+        <path
+          d="M5.625 6.25a1.875 1.875 0 1 0 3.75 0 1.875 1.875 0 1 0 -3.75 0"
+          stroke-width="1"
+        ></path>
+      </svg>
+
+      <% if customer_has_address %>
+        <span>
+          <%= business.distance_to_customer(current_user) %> mi
+          <span class="mx-1">&middot;</span>
+        </span>
+      <% end %>
+
+      <span>
+        <%= business.business_setting&.address_line_1 %>
+
+        <% if business.business_setting&.address_line_1.present? && business.business_setting&.town_or_city.present? %>
+          ,
+        <% end %>
+
+        <%= business.business_setting&.town_or_city %>
+
+        <% if business.business_setting&.postcode.present? %>
+          <span class="uppercase">
+            <%= business.business_setting.postcode %>
           </span>
-        </div>
+        <% end %>
+      </span>
+    </span>
+          </div>
+        <% end %>
       </div>
     </div>
 
