@@ -48,6 +48,12 @@
             Connected
           </span>
 
+        <% elsif @business.stripe_account_id.present? %>
+
+          <span class="rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700">
+            Setup incomplete
+          </span>
+
         <% else %>
 
           <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
@@ -70,17 +76,19 @@
         </p>
 
 
+        <!-- Stripe connected -->
         <% if @business.stripe_ready? %>
 
           <div class="mt-4 rounded-xl bg-slate-50 p-4">
 
             <div class="flex items-center gap-3">
 
-              <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-green-50 text-green-600">
+              <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-green-50 text-green-600">
                 <i data-lucide="circle-check" class="h-5 w-5"></i>
               </div>
 
               <div>
+
                 <p class="text-sm font-medium text-slate-700">
                   Stripe account connected
                 </p>
@@ -88,30 +96,35 @@
                 <p class="mt-1 text-sm text-slate-500">
                   Your account is ready to accept payments.
                 </p>
+
               </div>
 
             </div>
 
           </div>
 
+
+          <!-- Stripe onboarding started but incomplete -->
         <% elsif @business.stripe_account_id.present? %>
 
           <div class="mt-4 rounded-xl bg-amber-50 p-4">
 
             <div class="flex items-center gap-3">
 
-              <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-100 text-amber-600">
+              <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-100 text-amber-600">
                 <i data-lucide="circle-alert" class="h-5 w-5"></i>
               </div>
 
               <div>
+
                 <p class="text-sm font-medium text-amber-800">
-                  Setup incomplete
+                  Stripe setup incomplete
                 </p>
 
                 <p class="mt-1 text-sm text-amber-700">
-                  Complete your Stripe account setup before accepting payments.
+                  Complete your Stripe account setup before accepting online payments.
                 </p>
+
               </div>
 
             </div>
@@ -123,6 +136,7 @@
       </div>
 
 
+      <!-- Stripe actions -->
       <div class="mt-auto pt-6">
 
         <% if @business.stripe_ready? %>
@@ -157,7 +171,7 @@
 
         <% elsif @business.stripe_account_id.present? %>
 
-          <%= link_to business_stripe_connect_path,
+          <%= link_to business_payments_stripe_path,
                       class: "inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-indigo-700" do %>
 
             Continue Stripe setup
@@ -185,7 +199,6 @@
     </div>
 
 
-
     <!-- PayPal -->
     <div
       class="group flex flex-col rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
@@ -198,8 +211,8 @@
         </div>
 
         <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
-      Coming soon
-    </span>
+          Coming soon
+        </span>
 
       </div>
 
@@ -220,18 +233,20 @@
       <div class="mt-auto pt-6">
 
         <button
+          type="button"
           disabled
           class="inline-flex cursor-not-allowed items-center gap-2 rounded-xl bg-slate-100 px-5 py-3 text-sm font-semibold text-slate-400"
         >
+
           Coming soon
 
           <i data-lucide="clock" class="h-4 w-4"></i>
+
         </button>
 
       </div>
 
     </div>
-
 
   </section>
 
@@ -248,7 +263,7 @@
         </div>
 
 
-        <div>
+        <div class="flex-1">
 
           <h3 class="text-lg font-bold text-slate-900">
             Secure online payments
@@ -259,13 +274,19 @@
           </p>
 
 
-          <div class="mt-5 grid gap-4 sm:grid-cols-3">
+          <div class="mt-5 grid gap-5 sm:grid-cols-3">
 
+
+            <!-- Secure checkout -->
             <div class="flex items-start gap-3">
 
-              <i data-lucide="lock-keyhole" class="mt-0.5 h-5 w-5 shrink-0 text-indigo-600"></i>
+              <i
+                data-lucide="lock-keyhole"
+                class="mt-0.5 h-5 w-5 shrink-0 text-indigo-600"
+              ></i>
 
               <div>
+
                 <p class="text-sm font-semibold text-slate-800">
                   Secure checkout
                 </p>
@@ -273,40 +294,53 @@
                 <p class="mt-1 text-xs leading-5 text-slate-500">
                   Payment information is handled securely by the payment provider.
                 </p>
+
               </div>
 
             </div>
 
 
+            <!-- Direct payouts -->
             <div class="flex items-start gap-3">
 
-              <i data-lucide="banknote" class="mt-0.5 h-5 w-5 shrink-0 text-indigo-600"></i>
+              <i
+                data-lucide="banknote"
+                class="mt-0.5 h-5 w-5 shrink-0 text-indigo-600"
+              ></i>
 
               <div>
+
                 <p class="text-sm font-semibold text-slate-800">
                   Direct payouts
                 </p>
 
                 <p class="mt-1 text-xs leading-5 text-slate-500">
-                  Funds are paid into the account linked to your payment provider.
+                  Funds are paid directly into the account linked to your payment provider.
                 </p>
+
               </div>
 
             </div>
 
 
+            <!-- Control -->
             <div class="flex items-start gap-3">
 
-              <i data-lucide="settings-2" class="mt-0.5 h-5 w-5 shrink-0 text-indigo-600"></i>
+              <i
+                data-lucide="settings-2"
+                class="mt-0.5 h-5 w-5 shrink-0 text-indigo-600"
+              ></i>
 
               <div>
+
                 <p class="text-sm font-semibold text-slate-800">
                   You're in control
                 </p>
 
                 <p class="mt-1 text-xs leading-5 text-slate-500">
-                  Connect or disconnect payment providers whenever you need to.
+                  Manage your payment connection at any time from your business account.
                 </p>
+
               </div>
 
             </div>
