@@ -168,9 +168,11 @@ Rails.application.routes.draw do
 
       post "customer/:id/business/:business_id/create-booking",
            to: "businesses#create_customer_booking"
-      get "customer/:id/bookings/:booking_id/payment-success",
+
+      get "customer/:id/booking-holds/:booking_hold_id/payment-success",
           to: "businesses#customer_payment_success"
-      get "customer/:id/bookings/:booking_id/payment-cancelled",
+
+      get "customer/:id/booking-holds/:booking_hold_id/payment-cancelled",
           to: "businesses#customer_payment_cancelled"
 
 

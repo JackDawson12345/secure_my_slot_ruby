@@ -200,8 +200,6 @@ class BookingsController < ApplicationController
 
     user_settings = user.customer_setting
 
-    byebug
-
     if user_settings.booking_confirmations
       SendBookingConfirmationSmsJob.perform_later(
         booking.id

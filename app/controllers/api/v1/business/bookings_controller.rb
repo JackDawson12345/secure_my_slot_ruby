@@ -151,6 +151,10 @@ module Api
 
             if user.customer_setting&.booking_changes == true
               SendBookingStatusChangeSmsJob.perform_later(booking.id)
+              BookingMailer
+                .with(booking: booking)
+                .status_changed
+                .deliver_now
             end
           else
             render json: {
