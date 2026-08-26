@@ -34,6 +34,11 @@ class BusinessPortal::SignUpController < ApplicationController
 
     sign_in(@user)
 
+    SignUpMailer
+      .with(business: @business)
+      .business_sign_up
+      .deliver_now
+
     redirect_to business_dashboard_path,
                 notice: "Your business account has been created."
   rescue ActiveRecord::RecordInvalid

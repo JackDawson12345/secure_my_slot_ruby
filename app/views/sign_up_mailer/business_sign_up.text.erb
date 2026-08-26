@@ -1,0 +1,51 @@
+NEW BUSINESS REGISTRATION
+
+A new business has registered with SecureMySlot.
+
+
+BUSINESS DETAILS
+
+Business name: <%= @business.business_name %>
+Category: <%= @business.category.to_s.humanize %>
+Phone number: <%= @business.phone_number.presence || "Not provided" %>
+Page address: <%= @business.page_address %>.securemyslot.co.uk
+
+
+ADDRESS
+
+<% if @business.address.present? %>
+  <%= @business.address["line_1"] %>
+  <% if @business.address["line_2"].present? %>
+    <%= @business.address["line_2"] %>
+  <% end %>
+  <%= @business.address["city"] %>
+  <%= @business.address["postcode"] %>
+  <%= @business.address["country"] %>
+<% else %>
+  No address provided.
+<% end %>
+
+
+ACCOUNT STATUS
+
+Business ID: <%= @business.id %>
+User ID: <%= @business.user_id %>
+Subscription: <%= @business.subscribed? ? "Subscribed" : "Not subscribed" %>
+Stripe connected: <%= @business.stripe_account_id.present? ? "Yes" : "No" %>
+Stripe details submitted: <%= @business.stripe_details_submitted? ? "Yes" : "No" %>
+Stripe charges enabled: <%= @business.stripe_charges_enabled? ? "Yes" : "No" %>
+Stripe payouts enabled: <%= @business.stripe_payouts_enabled? ? "Yes" : "No" %>
+Registered: <%= @business.created_at.in_time_zone("London").strftime("%d %B %Y at %H:%M") %>
+
+
+<% if @business.respond_to?(:user) && @business.user.present? %>
+  ACCOUNT HOLDER
+
+  <% if @business.user.respond_to?(:first_name) %>
+    Name: <%= [@business.user.first_name, @business.user.last_name].compact.join(" ") %>
+  <% end %>
+  Email: <%= @business.user.email %>
+<% end %>
+
+
+This is an automated notification from SecureMySlot.

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<body style="margin: 0; padding: 0; background-color: #f8fafc; font-family: Arial, sans-serif; color: #0f172a;">
+<table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f8fafc; padding: 40px 20px;">
+  <tr>
+    <td align="center">
+
+      <table width="600" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; width: 100%; background-color: #ffffff; border-radius: 12px; overflow: hidden;">
+
+        <tr>
+          <td style="padding: 32px;">
+
+            <h1 style="margin: 0 0 16px; font-size: 26px; line-height: 1.3;">
+              New business registration
+            </h1>
+
+            <p style="margin: 0 0 24px; font-size: 16px; line-height: 1.6; color: #475569;">
+              A new business has registered with SecureMySlot.
+            </p>
+
+            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f8fafc; border-radius: 10px; margin-bottom: 24px;">
+              <tr>
+                <td style="padding: 24px;">
+
+                  <h2 style="margin: 0 0 18px; font-size: 18px;">
+                    Business details
+                  </h2>
+
+                  <p style="margin: 0 0 10px; font-size: 15px; color: #475569;">
+                    <strong>Business name:</strong>
+                    <%= @business.business_name %>
+                  </p>
+
+                  <p style="margin: 0 0 10px; font-size: 15px; color: #475569;">
+                    <strong>Category:</strong>
+                    <%= @business.category.to_s.humanize %>
+                  </p>
+
+                  <p style="margin: 0 0 10px; font-size: 15px; color: #475569;">
+                    <strong>Phone number:</strong>
+                    <%= @business.phone_number.presence || "Not provided" %>
+                  </p>
+
+                  <p style="margin: 0; font-size: 15px; color: #475569;">
+                    <strong>Page address:</strong>
+                    <%= @business.page_address %>.securemyslot.co.uk
+                  </p>
+
+                </td>
+              </tr>
+            </table>
+
+            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f8fafc; border-radius: 10px; margin-bottom: 24px;">
+              <tr>
+                <td style="padding: 24px;">
+
+                  <h2 style="margin: 0 0 18px; font-size: 18px;">
+                    Address
+                  </h2>
+
+                  <% if @business.address.present? %>
+                    <p style="margin: 0; font-size: 15px; line-height: 1.7; color: #475569;">
+                      <%= @business.address["line_1"] %><br>
+
+                      <% if @business.address["line_2"].present? %>
+                        <%= @business.address["line_2"] %><br>
+                      <% end %>
+
+                      <%= @business.address["city"] %><br>
+                      <%= @business.address["postcode"] %><br>
+                      <%= @business.address["country"] %>
+                    </p>
+                  <% else %>
+                    <p style="margin: 0; font-size: 15px; color: #475569;">
+                      No address provided.
+                    </p>
+                  <% end %>
+
+                </td>
+              </tr>
+            </table>
+
+            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f8fafc; border-radius: 10px; margin-bottom: 24px;">
+              <tr>
+                <td style="padding: 24px;">
+
+                  <h2 style="margin: 0 0 18px; font-size: 18px;">
+                    Account status
+                  </h2>
+
+                  <p style="margin: 0 0 10px; font-size: 15px; color: #475569;">
+                    <strong>Business ID:</strong>
+                    <%= @business.id %>
+                  </p>
+
+                  <p style="margin: 0 0 10px; font-size: 15px; color: #475569;">
+                    <strong>User ID:</strong>
+                    <%= @business.user_id %>
+                  </p>
+
+                  <p style="margin: 0 0 10px; font-size: 15px; color: #475569;">
+                    <strong>Subscription:</strong>
+                    <%= @business.subscribed? ? "Subscribed" : "Not subscribed" %>
+                  </p>
+
+                  <p style="margin: 0 0 10px; font-size: 15px; color: #475569;">
+                    <strong>Stripe connected:</strong>
+                    <%= @business.stripe_account_id.present? ? "Yes" : "No" %>
+                  </p>
+
+                  <p style="margin: 0 0 10px; font-size: 15px; color: #475569;">
+                    <strong>Stripe details submitted:</strong>
+                    <%= @business.stripe_details_submitted? ? "Yes" : "No" %>
+                  </p>
+
+                  <p style="margin: 0 0 10px; font-size: 15px; color: #475569;">
+                    <strong>Stripe charges enabled:</strong>
+                    <%= @business.stripe_charges_enabled? ? "Yes" : "No" %>
+                  </p>
+
+                  <p style="margin: 0 0 10px; font-size: 15px; color: #475569;">
+                    <strong>Stripe payouts enabled:</strong>
+                    <%= @business.stripe_payouts_enabled? ? "Yes" : "No" %>
+                  </p>
+
+                  <p style="margin: 0; font-size: 15px; color: #475569;">
+                    <strong>Registered:</strong>
+                    <%= @business.created_at.in_time_zone("London").strftime("%d %B %Y at %H:%M") %>
+                  </p>
+
+                </td>
+              </tr>
+            </table>
+
+            <% if @business.respond_to?(:user) && @business.user.present? %>
+              <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f8fafc; border-radius: 10px; margin-bottom: 24px;">
+                <tr>
+                  <td style="padding: 24px;">
+
+                    <h2 style="margin: 0 0 18px; font-size: 18px;">
+                      Account holder
+                    </h2>
+
+                    <% if @business.user.respond_to?(:first_name) %>
+                      <p style="margin: 0 0 10px; font-size: 15px; color: #475569;">
+                        <strong>Name:</strong>
+                        <%= [@business.user.first_name, @business.user.last_name].compact.join(" ") %>
+                      </p>
+                    <% end %>
+
+                    <p style="margin: 0; font-size: 15px; color: #475569;">
+                      <strong>Email:</strong>
+                      <%= @business.user.email %>
+                    </p>
+
+                  </td>
+                </tr>
+              </table>
+            <% end %>
+
+            <p style="margin: 0; font-size: 16px; line-height: 1.6; color: #475569;">
+              This is an automated notification from SecureMySlot.
+            </p>
+
+          </td>
+        </tr>
+
+      </table>
+
+    </td>
+  </tr>
+</table>
+</body>
+</html>
