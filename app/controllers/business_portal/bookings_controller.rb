@@ -152,6 +152,50 @@ class BusinessPortal::BookingsController < BusinessPortal::BaseController
     @booking = @business.bookings.find(params[:id])
   end
 
+  def update_status
+    @business = current_user.business
+    @booking = @business.bookings.find(params[:id])
+
+    new_status = params[:status]
+
+    allowed_transitions = {
+      "pending"   => ["confirmed"],
+      "confirmed" => ["completed"],
+      "completed" => ["confirmed"]
+    }
+
+    unless allowed_transitions.fetch(@booking.status, []).include?(new_status)
+      redirect_to business_booking_path(@booking),
+                  alert: "That booking status change is not allowed."
+      return
+    end
+
+    if @booking.update(status: new_status)
+      message =
+        case new_status
+        when "confirmed"
+          "Booking marked as confirmed."
+        when "completed"
+          "Booking marked as completed."
+        else
+          "Booking status updated."
+        end
+
+      if @booking.user.customer_setting.booking_changes
+        BookingMailer
+          .with(booking: @booking)
+          .status_changed
+          .deliver_now
+        SendBookingStatusChangeSmsJob.perform_later(@booking.id)
+      end
+
+      redirect_to business_booking_path(@booking), notice: message
+    else
+      redirect_to business_booking_path(@booking),
+                  alert: "Could not update the booking status."
+    end
+  end
+
   def create
     @business = current_user.business
 

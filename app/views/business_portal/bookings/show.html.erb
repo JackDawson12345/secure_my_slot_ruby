@@ -141,6 +141,50 @@
           <%= @booking.status.titleize %>
         </span>
 
+        <div class="mt-6 space-y-3">
+
+          <% if @booking.status == "pending" %>
+            <%= button_to business_booking_status_path(@booking),
+                          method: :patch,
+                          params: { status: "confirmed" },
+                          class: "flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-emerald-700" do %>
+              <i data-lucide="check" class="h-4 w-4"></i>
+              Confirm booking
+            <% end %>
+          <% end %>
+
+          <% if @booking.status == "confirmed" %>
+            <%= button_to business_booking_status_path(@booking),
+                          method: :patch,
+                          params: { status: "completed" },
+                          class: "flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-indigo-700",
+                          form: {
+                            data: {
+                              turbo_confirm: "Are you sure you want to mark this booking as completed?"
+                            }
+                          } do %>
+              <i data-lucide="circle-check-big" class="h-4 w-4"></i>
+              Mark as completed
+            <% end %>
+          <% end %>
+
+          <% if @booking.status == "completed" %>
+            <%= button_to business_booking_status_path(@booking),
+                          method: :patch,
+                          params: { status: "confirmed" },
+                          class: "flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50",
+                          form: {
+                            data: {
+                              turbo_confirm: "Put this booking back to confirmed?"
+                            }
+                          } do %>
+              <i data-lucide="rotate-ccw" class="h-4 w-4"></i>
+              Move back to confirmed
+            <% end %>
+          <% end %>
+
+        </div>
+
         <div class="mt-6 space-y-3 border-t border-slate-100 pt-5 text-sm">
           <div class="flex justify-between">
             <span class="text-slate-500">Booking ID</span>

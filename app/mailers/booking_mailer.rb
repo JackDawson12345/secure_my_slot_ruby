@@ -77,4 +77,21 @@ class BookingMailer < ApplicationMailer
       subject: "Your appointments for #{@date.strftime('%A %-d %B')}"
     )
   end
+
+  def status_changed
+    @booking = params[:booking]
+    @business = @booking.business
+    @service = @booking.service
+    @user = @booking.user
+
+    service_price = @service.price || 0
+    amount_paid = @booking.amount_paid || 0
+
+    @remaining_balance = [service_price - amount_paid, 0].max
+
+    mail(
+      to: @user.email,
+      subject: "Booking updated - #{@booking.status.to_s.humanize}"
+    )
+  end
 end

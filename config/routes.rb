@@ -322,6 +322,10 @@ Rails.application.routes.draw do
         to: "bookings#show",
         as: :booking
 
+    patch "dashboard/bookings/:id/status",
+          to: "bookings#update_status",
+          as: :booking_status
+
     get "dashboard/customers",
         to: "customers#index",
         as: :customers

@@ -1,0 +1,34 @@
+Your booking has been updated
+
+Your booking with <%= @business.business_name %> has been updated.
+
+Booking status:
+<%= @booking.status.to_s.humanize %>
+
+BOOKING DETAILS
+
+Business: <%= @business.business_name %>
+Service: <%= @service.name %>
+Date: <%= @booking.date.strftime("%A, %d %B %Y") %>
+Time: <%= @booking.time.strftime("%H:%M") %>
+Service price: £<%= number_with_precision(@service.price || 0, precision: 2) %>
+
+<% if (@booking.amount_paid || 0) > 0 && @booking.status.to_s != "completed" %>
+  Amount paid: £<%= number_with_precision(@booking.amount_paid, precision: 2) %>
+<% end %>
+
+<% if @remaining_balance > 0 && @booking.status.to_s != "completed" %>
+  Remaining balance: £<%= number_with_precision(@remaining_balance, precision: 2) %>
+<% end %>
+
+<% if @booking.status.to_s == "confirmed" %>
+  Your appointment has been confirmed and is scheduled to go ahead at the date and time shown above.
+<% elsif @booking.status.to_s == "cancelled" %>
+  Your appointment has been cancelled and will no longer take place.
+<% elsif @booking.status.to_s == "completed" %>
+  Your appointment has been marked as completed.
+<% else %>
+  The status of your appointment has changed. Please review the booking details above.
+<% end %>
+
+You can view your booking and appointment details from your SecureMySlot account.
