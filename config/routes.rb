@@ -226,11 +226,12 @@ Rails.application.routes.draw do
   get "businesses",
       to: "pages/website#businesses"
 
-  get "categories",
-      to: "pages/website#categories"
+  get "about-us",
+      to: "pages/website#about_us"
 
-  get "businesses/:id",
-      to: "pages/business_website#index"
+  get "contact-us",
+      to: "pages/website#contact_us"
+  post "/contact", to: "pages/website#create"
 
   get "privacy-policy",
       to: "pages/website#privacy_policy"

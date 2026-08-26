@@ -1,0 +1,28 @@
+<%# app/views/contact_mailer/contact_enquiry.text.erb %>
+
+New SecureMySlot enquiry
+
+A new message has been submitted through the SecureMySlot contact form.
+
+Name:
+<%= @first_name %> <%= @last_name %>
+
+Email:
+<%= @email %>
+
+<% if @business_name.present? %>
+  Business:
+  <%= @business_name %>
+<% end %>
+
+Enquiry type:
+<%= @enquiry_type.to_s.humanize %>
+
+Subject:
+<%= @subject %>
+
+Message:
+<%= @message %>
+
+Reply directly to:
+<%= @email %>
