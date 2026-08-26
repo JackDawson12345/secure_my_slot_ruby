@@ -240,20 +240,23 @@
 
                   <%= f.select :business_category,
                                [
-                                 ["Barber", "Barber"],
-                                 ["Hairdresser", "Hairdresser"],
-                                 ["Beauty and Nails", "Beauty and Nails"],
-                                 ["Personal Trainer", "Personal Trainer"],
-                                 ["Coach", "Coach"],
-                                 ["Tutor", "Tutor"],
-                                 ["Consultant", "Consultant"],
-                                 ["Therapist", "Therapist"],
-                                 ["Photographer", "Photographer"],
-                                 ["Cleaner", "Cleaner"],
-                                 ["Tradesperson", "Tradesperson"],
-                                 ["Other", "Other"]
+                                 ["Barber", "barber"],
+                                 ["Hairdresser", "hairdresser"],
+                                 ["Beauty and Nails", "beauty_and_nails"],
+                                 ["Personal Trainer", "personal_trainer"],
+                                 ["Coach", "coach"],
+                                 ["Tutor", "tutor"],
+                                 ["Consultant", "consultant"],
+                                 ["Therapist", "therapist"],
+                                 ["Massage Professional", "massage_professional"],
+                                 ["Photographer", "photographer"],
+                                 ["Cleaner", "cleaner"],
+                                 ["Tradesperson", "tradesperson"],
+                                 ["Mobile Service", "mobile_service"],
+                                 ["Repair Service", "repair_service"],
+                                 ["Other", "other"]
                                ],
-                               {},
+                               { selected: current_user.business.business_setting.business_category },
                                id: "businessCategory",
                                class: "w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" %>
                 </div>

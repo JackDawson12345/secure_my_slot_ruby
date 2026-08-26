@@ -13,9 +13,8 @@
   <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
   <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
 
-  <link rel="icon" href="/icon.png" type="image/png">
-  <link rel="icon" href="/icon.svg" type="image/svg+xml">
-  <link rel="apple-touch-icon" href="/icon.png">
+  <%= favicon_link_tag "secure-fav-icon.png", type: "image/png" %>
+  <%= favicon_link_tag "secure-fav-icon.png", rel: "apple-touch-icon" %>
 
   <%# Includes all stylesheet files in app/assets/stylesheets %>
   <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
@@ -45,13 +44,7 @@
         class="flex h-20 items-center justify-between border-b border-white/10 px-6"
       >
         <div>
-          <p class="text-xl font-bold tracking-tight">
-            SecureMySlot
-          </p>
-
-          <p class="mt-0.5 text-xs text-slate-400">
-            Customer dashboard
-          </p>
+          <%= image_tag 'secure-white-logo.png.png', class: 'h-14 py-2' %>
         </div>
 
         <button

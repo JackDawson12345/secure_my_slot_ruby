@@ -1,7 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title><%= content_for(:title) || "Secure My Slot" %></title>
+  <title><%= @business.business_name %> | Book an Appointment Online</title>
+  <meta
+    name="description"
+    content="Book an appointment online with <%= @business.business_name %>. View available services, choose a suitable date and time, and manage your booking with SecureMySlot."
+  >
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
@@ -13,9 +17,8 @@
   <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
   <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
 
-  <link rel="icon" href="/icon.png" type="image/png">
-  <link rel="icon" href="/icon.svg" type="image/svg+xml">
-  <link rel="apple-touch-icon" href="/icon.png">
+  <%= favicon_link_tag "secure-fav-icon.png", type: "image/png" %>
+  <%= favicon_link_tag "secure-fav-icon.png", rel: "apple-touch-icon" %>
 
   <%# Includes all stylesheet files in app/assets/stylesheets %>
   <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>

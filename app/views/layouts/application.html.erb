@@ -2,6 +2,10 @@
 <html>
   <head>
     <title>SecureMySlot | Online Booking Software for Businesses</title>
+    <meta
+      name="description"
+      content="SecureMySlot makes online bookings simple for businesses and customers, with easy scheduling, secure payments and appointment management in one place."
+    >
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
@@ -13,9 +17,8 @@
     <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
     <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
 
-    <link rel="icon" href="/icon.png" type="image/png">
-    <link rel="icon" href="/icon.svg" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="/icon.png">
+    <%= favicon_link_tag "secure-fav-icon.png", type: "image/png" %>
+    <%= favicon_link_tag "secure-fav-icon.png", rel: "apple-touch-icon" %>
 
     <%# Includes all stylesheet files in app/assets/stylesheets %>
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
@@ -52,21 +55,7 @@
       >
         <!-- Logo -->
         <a href="/" class="flex items-center gap-3">
-            <span
-              class="flex h-11 w-11 items-center justify-center rounded-2xl bg-indigo-600 text-white shadow-sm"
-            >
-              <i data-lucide="calendar-check-2" class="h-6 w-6"></i>
-            </span>
-
-          <span>
-              <span class="block text-lg font-bold tracking-tight text-slate-950">
-                SecureMySlot
-              </span>
-
-              <span class="block text-[11px] font-medium text-slate-500">
-                Bookings made simple
-              </span>
-            </span>
+            <%= image_tag 'secure-black-logo.png', class: 'h-14' %>
         </a>
 
         <!-- Desktop navigation -->

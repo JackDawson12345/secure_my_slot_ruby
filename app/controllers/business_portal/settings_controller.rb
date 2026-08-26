@@ -25,7 +25,13 @@ class BusinessPortal::SettingsController < BusinessPortal::BaseController
       @user.update!(user_params) if user_params.present?
     end
 
-    redirect_to business_settings_path,
+    category = params[:business_setting][:business_category]
+    phone_number = params[:business_setting][:phone_number]
+
+    @user.business.update!(category: category, phone_number: phone_number)
+    @user.update!(phone_number: phone_number)
+
+    redirect_to business_general_settings_path,
                 notice: "Settings updated successfully."
   end
 
