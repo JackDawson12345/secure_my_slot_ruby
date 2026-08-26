@@ -189,6 +189,82 @@ module Api
           end
         end
 
+        def cancel
+          customer = ::User.find_by(id: params[:id])
+
+          unless customer
+            return render json: {
+              error: "Customer not found."
+            }, status: :not_found
+          end
+
+          booking = ::Booking.find_by(
+            id: params[:booking_id],
+            user_id: customer.id
+          )
+
+          unless booking
+            return render json: {
+              error: "Booking not found."
+            }, status: :not_found
+          end
+
+          if booking.status == "cancelled"
+            return render json: {
+              error: "This booking has already been cancelled."
+            }, status: :unprocessable_entity
+          end
+
+          business = ::Business.find(booking.business_id)
+          business_setting = business.business_setting
+
+          cancellation_notice_hours =
+            business_setting&.cancellation_notice_hours.to_i
+
+          appointment_time = Time.zone.local(
+            booking.date.year,
+            booking.date.month,
+            booking.date.day,
+            booking.time.hour,
+            booking.time.min
+          )
+
+          cancellation_deadline =
+            appointment_time - cancellation_notice_hours.hours
+
+          if appointment_time <= Time.current
+            return render json: {
+              error: "Past bookings cannot be cancelled."
+            }, status: :unprocessable_entity
+          end
+
+          if Time.current >= cancellation_deadline
+            return render json: {
+              error: "This booking can no longer be cancelled.",
+              cancellation_notice_hours: cancellation_notice_hours,
+              cancellation_deadline: cancellation_deadline
+            }, status: :unprocessable_entity
+          end
+
+          if booking.update(status: "cancelled")
+            render json: {
+              message: "Booking cancelled successfully.",
+              booking: {
+                id: booking.id,
+                date: booking.date,
+                time: booking.time,
+                status: booking.status,
+                updated_at: booking.updated_at
+              }
+            }, status: :ok
+          else
+            render json: {
+              error: "Unable to cancel booking.",
+              errors: booking.errors.full_messages
+            }, status: :unprocessable_entity
+          end
+        end
+
 
         private
 

@@ -148,6 +148,9 @@ Rails.application.routes.draw do
         patch ":id/bookings/:booking_id/reschedule",
               to: "bookings#reschedule"
 
+        patch ":id/bookings/:booking_id/cancel",
+              to: "bookings#cancel"
+
         get "/:id/settings",
             to: "settings#show"
 
