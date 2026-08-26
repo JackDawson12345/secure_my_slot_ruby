@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<body style="margin: 0; padding: 0; background-color: #f8fafc; font-family: Arial, sans-serif; color: #0f172a;">
+<table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f8fafc; padding: 40px 20px;">
+  <tr>
+    <td align="center">
+      <table width="600" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; width: 100%; background-color: #ffffff; border-radius: 12px; overflow: hidden;">
+        <tr>
+          <td style="padding: 32px;">
+            <h1 style="margin: 0 0 16px; font-size: 26px; line-height: 1.3;">
+              You have a new booking
+            </h1>
+
+            <p style="margin: 0 0 24px; font-size: 16px; line-height: 1.6; color: #475569;">
+              A new booking has been made with <strong><%= @business.business_name %></strong>.
+            </p>
+
+            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f8fafc; border-radius: 10px; margin-bottom: 20px;">
+              <tr>
+                <td style="padding: 24px;">
+                  <h2 style="margin: 0 0 18px; font-size: 18px;">
+                    Customer details
+                  </h2>
+
+                  <p style="margin: 0 0 10px; font-size: 15px; color: #475569;">
+                    <strong>Name:</strong>
+                    <%= [@user.first_name, @user.last_name].compact.join(" ") %>
+                  </p>
+
+                  <p style="margin: 0 0 10px; font-size: 15px; color: #475569;">
+                    <strong>Email:</strong>
+                    <%= @user.email %>
+                  </p>
+
+                  <% if @user.phone_number.present? %>
+                    <p style="margin: 0; font-size: 15px; color: #475569;">
+                      <strong>Phone:</strong>
+                      <%= @user.phone_number %>
+                    </p>
+                  <% end %>
+                </td>
+              </tr>
+            </table>
+
+            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f8fafc; border-radius: 10px; margin-bottom: 24px;">
+              <tr>
+                <td style="padding: 24px;">
+                  <h2 style="margin: 0 0 18px; font-size: 18px;">
+                    Booking details
+                  </h2>
+
+                  <p style="margin: 0 0 10px; font-size: 15px; color: #475569;">
+                    <strong>Service:</strong>
+                    <%= @service.name %>
+                  </p>
+
+                  <p style="margin: 0 0 10px; font-size: 15px; color: #475569;">
+                    <strong>Date:</strong>
+                    <%= @booking.date.strftime("%A, %d %B %Y") %>
+                  </p>
+
+                  <p style="margin: 0 0 10px; font-size: 15px; color: #475569;">
+                    <strong>Time:</strong>
+                    <%= @booking.time.strftime("%H:%M") %>
+                  </p>
+
+                  <p style="margin: 0 0 10px; font-size: 15px; color: #475569;">
+                    <strong>Service price:</strong>
+                    £<%= number_with_precision(@service.price || 0, precision: 2) %>
+                  </p>
+
+                  <% if (@booking.amount_paid || 0) > 0 %>
+                    <p style="margin: 0 0 10px; font-size: 15px; color: #475569;">
+                      <strong>Amount paid:</strong>
+                      £<%= number_with_precision(@booking.amount_paid, precision: 2) %>
+                    </p>
+                  <% end %>
+
+                  <% if @remaining_balance > 0 %>
+                    <p style="margin: 0; font-size: 15px; color: #475569;">
+                      <strong>Remaining balance:</strong>
+                      £<%= number_with_precision(@remaining_balance, precision: 2) %>
+                    </p>
+                  <% end %>
+                </td>
+              </tr>
+            </table>
+
+            <p style="margin: 0; font-size: 16px; line-height: 1.6; color: #475569;">
+              You can view and manage this booking from your SecureMySlot business dashboard.
+            </p>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+</body>
+</html>

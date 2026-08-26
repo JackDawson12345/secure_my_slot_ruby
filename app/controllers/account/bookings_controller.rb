@@ -197,6 +197,14 @@ class Account::BookingsController < Account::BaseController
       status: "cancelled"
     )
 
+    if @booking.business.business_setting.cancellation_notifications
+      BookingMailer
+        .with(booking: @booking)
+        .booking_cancelled
+        .deliver_later
+    end
+
+
     redirect_to account_show_booking_path(@booking),
                 notice: "Your booking has been cancelled."
   end

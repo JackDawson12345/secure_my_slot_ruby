@@ -19,6 +19,9 @@ production:
   google_calendar_sync:
     class: SyncGoogleCalendarsJob
     schedule: every 10 minutes
+  daily_appointment_summaries:
+    class: SendDailyAppointmentSummariesJob
+    schedule: every day at 6am
 
 development:
   send_appointment_reminders:

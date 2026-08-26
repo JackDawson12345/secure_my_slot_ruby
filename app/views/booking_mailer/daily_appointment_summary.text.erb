@@ -1,0 +1,32 @@
+Today's appointments
+
+Good morning,
+
+You have <%= @bookings.count %> <%= "appointment".pluralize(@bookings.count) %> booked with <%= @business.business_name %> for <%= @date.strftime("%A, %d %B %Y") %>.
+
+<% @bookings.each do |booking| %>
+  <% user = booking.user %>
+  <% service = booking.service %>
+  <% service_price = service.price || 0 %>
+  <% amount_paid = booking.amount_paid || 0 %>
+  <% remaining_balance = [service_price - amount_paid, 0].max %>
+
+  <%= booking.time.strftime("%H:%M") %> - <%= service.name %>
+
+  Customer: <%= [user.first_name, user.last_name].compact.join(" ") %>
+  Email: <%= user.email %>
+  <% if user.phone_number.present? %>
+    Phone: <%= user.phone_number %>
+  <% end %>
+  Service: <%= service.name %>
+  Time: <%= booking.time.strftime("%H:%M") %>
+  Service price: £<%= number_with_precision(service_price, precision: 2) %>
+  <% if amount_paid > 0 %>
+    Amount paid: £<%= number_with_precision(amount_paid, precision: 2) %>
+  <% end %>
+  <% if remaining_balance > 0 %>
+    Remaining balance: £<%= number_with_precision(remaining_balance, precision: 2) %>
+  <% end %>
+
+<% end %>
+You can view and manage today's bookings from your SecureMySlot business dashboard.

@@ -44,6 +44,7 @@ class BookingsController < ApplicationController
         user: user,
         new_customer_account: new_customer_account
       )
+
     end
 
   rescue ActiveRecord::RecordNotFound
@@ -197,13 +198,28 @@ class BookingsController < ApplicationController
         .deliver_later
     end
 
-    SendBookingConfirmationSmsJob.perform_later(
-      booking.id
-    )
+    user_settings = user.customer_setting
 
-    SendBusinessBookingConfirmationSmsJob.perform_later(
-      booking.id
-    )
+    byebug
+
+    if user_settings.booking_confirmations
+      SendBookingConfirmationSmsJob.perform_later(
+        booking.id
+      )
+      BookingMailer
+        .with(booking: booking)
+        .customer_booking_confirmation
+        .deliver_later
+    end
+    if business.business_setting.new_booking_notifications
+      SendBusinessBookingConfirmationSmsJob.perform_later(
+        booking.id
+      )
+      BookingMailer
+        .with(booking: booking)
+        .business_booking_notification
+        .deliver_later
+    end
 
     redirect_to(
       booking_confirmation_url(
@@ -239,6 +255,12 @@ class BookingsController < ApplicationController
     end
 
     user.save!
+
+    if new_customer_account
+      CustomerSetting.create!(
+        user: user
+      )
+    end
 
     [user, new_customer_account]
   end
@@ -405,13 +427,26 @@ class BookingsController < ApplicationController
           .deliver_later
       end
 
-      SendBookingConfirmationSmsJob.perform_later(
-        booking.id
-      )
+      if user_settings.booking_confirmations
+        SendBookingConfirmationSmsJob.perform_later(
+          booking.id
+        )
+        BookingMailer
+          .with(booking: booking)
+          .customer_booking_confirmation
+          .deliver_later
+      end
+      if business.business_setting.new_booking_notifications
+        SendBusinessBookingConfirmationSmsJob.perform_later(
+          booking.id
+        )
+        BookingMailer
+          .with(booking: booking)
+          .business_booking_notification
+          .deliver_later
+      end
 
-      SendBusinessBookingConfirmationSmsJob.perform_later(
-        booking.id
-      )
+
     end
 
     booking

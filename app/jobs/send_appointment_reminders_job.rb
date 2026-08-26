@@ -3,6 +3,16 @@
 class SendAppointmentRemindersJob < ApplicationJob
   queue_as :default
 
+  REMINDER_TIMINGS = {
+    "1 hour before" => 1.hour,
+    "2 hours before" => 2.hours,
+    "24 hours before" => 24.hours,
+    "48 hours before" => 48.hours
+  }.freeze
+
+  DEFAULT_REMINDER_TIMING = "1 hour before"
+  DEFAULT_REMINDER_METHOD = "Email only"
+
   def perform
     Booking
       .includes(:user, :business, :service)
@@ -22,18 +32,16 @@ class SendAppointmentRemindersJob < ApplicationJob
   private
 
   def relevant_dates
-    [
-      Time.zone.today,
-      Time.zone.tomorrow
-    ]
+    Time.zone.today..2.days.from_now.to_date
   end
 
   def reminder_due?(booking)
     appointment_time = appointment_time_for(booking)
+    reminder_time = appointment_time - reminder_duration_for(booking)
 
-    appointment_time.between?(
-      55.minutes.from_now,
-      65.minutes.from_now
+    reminder_time.between?(
+      5.minutes.ago,
+      5.minutes.from_now
     )
   end
 
@@ -47,12 +55,39 @@ class SendAppointmentRemindersJob < ApplicationJob
     )
   end
 
+  def reminder_duration_for(booking)
+    REMINDER_TIMINGS.fetch(
+      reminder_timing_for(booking),
+      1.hour
+    )
+  end
+
+  def reminder_timing_for(booking)
+    booking.user.customer_settings&.reminder_timing.presence ||
+      DEFAULT_REMINDER_TIMING
+  end
+
+  def reminder_method_for(booking)
+    booking.user.customer_settings&.reminder_method.presence ||
+      DEFAULT_REMINDER_METHOD
+  end
+
   def send_reminders(booking)
     booking.with_lock do
       booking.reload
 
-      send_email_reminder(booking)
-      send_sms_reminder(booking)
+      case reminder_method_for(booking)
+      when "Email and SMS"
+        send_email_reminder(booking)
+        send_sms_reminder(booking)
+
+      when "SMS only"
+        send_sms_reminder(booking)
+
+      else
+        # Also acts as the fallback for nil/invalid values
+        send_email_reminder(booking)
+      end
     end
   end
 
@@ -101,7 +136,7 @@ class SendAppointmentRemindersJob < ApplicationJob
 
     message =
       "Reminder: your #{service_name} appointment with " \
-        "#{business_name} starts at #{appointment_time}, in approximately one hour."
+        "#{business_name} is at #{appointment_time}."
 
     remaining_balance = remaining_balance_for(booking)
 

@@ -22,6 +22,7 @@ module SecureMySlot
     # in config/environments, which are processed later.
     #
     config.time_zone = "London"
+    config.active_record.default_timezone = :utc
     # config.eager_load_paths << Rails.root.join("extras")
   end
 end

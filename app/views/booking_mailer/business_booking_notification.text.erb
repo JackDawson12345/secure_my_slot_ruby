@@ -1,0 +1,26 @@
+You have a new booking
+
+A new booking has been made with <%= @business.business_name %>.
+
+Customer details
+
+Name: <%= [@user.first_name, @user.last_name].compact.join(" ") %>
+Email: <%= @user.email %>
+<% if @user.phone_number.present? %>
+  Phone: <%= @user.phone_number %>
+<% end %>
+
+Booking details
+
+Service: <%= @service.name %>
+Date: <%= @booking.date.strftime("%A, %d %B %Y") %>
+Time: <%= @booking.time.strftime("%H:%M") %>
+Service price: £<%= number_with_precision(@service.price || 0, precision: 2) %>
+<% if (@booking.amount_paid || 0) > 0 %>
+  Amount paid: £<%= number_with_precision(@booking.amount_paid, precision: 2) %>
+<% end %>
+<% if @remaining_balance > 0 %>
+  Remaining balance: £<%= number_with_precision(@remaining_balance, precision: 2) %>
+<% end %>
+
+You can view and manage this booking from your SecureMySlot business dashboard.

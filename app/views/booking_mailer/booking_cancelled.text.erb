@@ -1,0 +1,26 @@
+A booking has been cancelled
+
+A customer has cancelled their booking with <%= @business.business_name %>.
+
+CUSTOMER DETAILS
+
+Name: <%= [@user.first_name, @user.last_name].compact.join(" ") %>
+Email: <%= @user.email %>
+<% if @user.phone_number.present? %>
+  Phone: <%= @user.phone_number %>
+<% end %>
+
+CANCELLED BOOKING DETAILS
+
+Service: <%= @service.name %>
+Date: <%= @booking.date.strftime("%A, %d %B %Y") %>
+Time: <%= @booking.time.strftime("%H:%M") %>
+Service price: £<%= number_with_precision(@service.price || 0, precision: 2) %>
+<% if (@booking.amount_paid || 0) > 0 %>
+  Amount paid: £<%= number_with_precision(@booking.amount_paid, precision: 2) %>
+<% end %>
+<% if @remaining_balance > 0 %>
+  Remaining balance: £<%= number_with_precision(@remaining_balance, precision: 2) %>
+<% end %>
+
+The booking has been marked as cancelled and the appointment slot can now become available for another customer.

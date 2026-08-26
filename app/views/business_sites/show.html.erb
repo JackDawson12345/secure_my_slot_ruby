@@ -1,4 +1,5 @@
 <% if @business.business_setting.booking_page_live == true %>
+
   <%
     hero =
       if @business.business_website.hero.is_a?(String)
@@ -654,7 +655,7 @@
                 <input
                   type="text"
                   name="booking[first_name]"
-                  placeholder="First name"
+                  placeholder="First name *"
                   class="rounded-2xl border border-<%= @business.business_website.colour %>-300 px-4 py-3"
                   required
                 >
@@ -662,7 +663,7 @@
                 <input
                   type="text"
                   name="booking[last_name]"
-                  placeholder="Last name"
+                  placeholder="Last name *"
                   class="rounded-2xl border border-<%= @business.business_website.colour %>-300 px-4 py-3"
                   required
                 >
@@ -670,7 +671,7 @@
                 <input
                   type="email"
                   name="booking[email]"
-                  placeholder="Email"
+                  placeholder="Email *"
                   class="rounded-2xl border border-<%= @business.business_website.colour %>-300 px-4 py-3"
                   required
                 >
@@ -678,9 +679,9 @@
                 <input
                   type="tel"
                   name="booking[phone_number]"
-                  placeholder="Phone number"
+                  placeholder="Phone number<%= " *" if @business.business_setting.require_customer_phone_number? %>"
                   class="rounded-2xl border border-<%= @business.business_website.colour %>-300 px-4 py-3"
-                  required
+                  <%= "required" if @business.business_setting.require_customer_phone_number? %>
                 >
 
                 <textarea
