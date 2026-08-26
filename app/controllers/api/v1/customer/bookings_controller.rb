@@ -141,6 +141,54 @@ module Api
           }, status: :ok
         end
 
+        def reschedule
+          customer = ::User.find_by(id: params[:id])
+
+          unless customer
+            return render json: {
+              error: "Customer not found."
+            }, status: :not_found
+          end
+
+          booking = ::Booking.find_by(
+            id: params[:booking_id],
+            user_id: customer.id
+          )
+
+          unless booking
+            return render json: {
+              error: "Booking not found."
+            }, status: :not_found
+          end
+
+          unless params[:date].present? && params[:time].present?
+            return render json: {
+              error: "Date and time are required."
+            }, status: :unprocessable_entity
+          end
+
+          if booking.update(
+            date: params[:date],
+            time: params[:time]
+          )
+            render json: {
+              message: "Booking rescheduled successfully.",
+              booking: {
+                id: booking.id,
+                date: booking.date,
+                time: booking.time,
+                status: booking.status,
+                updated_at: booking.updated_at
+              }
+            }, status: :ok
+          else
+            render json: {
+              error: "Unable to reschedule booking.",
+              errors: booking.errors.full_messages
+            }, status: :unprocessable_entity
+          end
+        end
+
 
         private
 

@@ -145,6 +145,9 @@ Rails.application.routes.draw do
         get "/:id/bookings",
             to: "bookings#get_bookings"
 
+        patch ":id/bookings/:booking_id/reschedule",
+              to: "bookings#reschedule"
+
         get "/:id/settings",
             to: "settings#show"
 
