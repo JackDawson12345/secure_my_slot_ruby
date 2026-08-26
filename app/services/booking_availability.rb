@@ -7,6 +7,7 @@ class BookingAvailability
 
   def call
     return [] unless valid_booking_date?
+    return [] unless settings
 
     opening_hour = @business.opening_hours.find_by(
       day_of_week: @date.strftime("%A").downcase
@@ -30,13 +31,9 @@ class BookingAvailability
     slots = []
 
     while current + service_duration.minutes <= finish
-      slot_end =
-        current + service_duration.minutes
+      slot_end = current + service_duration.minutes
 
-      unless unavailable?(
-        current,
-        slot_end
-      )
+      unless unavailable?(current, slot_end)
         slots << current.strftime("%H:%M")
       end
 
@@ -56,7 +53,10 @@ class BookingAvailability
     return false unless settings
     return false if @date < Date.current
 
-    @date <= Date.current + advance_booking_days.days
+    latest_booking_date =
+      Date.current + advance_booking_days.days
+
+    @date <= latest_booking_date
   end
 
   def booking_interval_minutes
@@ -110,21 +110,20 @@ class BookingAvailability
   end
 
   def booked?(start_time, end_time)
-    proposed_end_with_buffer =
-      end_time + buffer_minutes.minutes
-
     bookings_for_date.any? do |booking|
       booking_start =
         time_on_date(booking.time)
 
-      booking_end_with_buffer =
+      booking_end =
         booking_start +
-        booking.service.minutes_duration.minutes +
-        buffer_minutes.minutes
+        booking.service.minutes_duration.minutes
+
+      booking_end_with_buffer =
+        booking_end + buffer_minutes.minutes
 
       overlaps?(
         start_time,
-        proposed_end_with_buffer,
+        end_time,
         booking_start,
         booking_end_with_buffer
       )
@@ -132,21 +131,20 @@ class BookingAvailability
   end
 
   def held?(start_time, end_time)
-    proposed_end_with_buffer =
-      end_time + buffer_minutes.minutes
-
     booking_holds_for_date.any? do |booking_hold|
       hold_start =
         time_on_date(booking_hold.time)
 
-      hold_end_with_buffer =
+      hold_end =
         hold_start +
-        booking_hold.service.minutes_duration.minutes +
-        buffer_minutes.minutes
+        booking_hold.service.minutes_duration.minutes
+
+      hold_end_with_buffer =
+        hold_end + buffer_minutes.minutes
 
       overlaps?(
         start_time,
-        proposed_end_with_buffer,
+        end_time,
         hold_start,
         hold_end_with_buffer
       )
