@@ -240,6 +240,19 @@
               <i data-lucide="calendar-cog" class="h-4 w-4"></i>
               Reschedule
             </button>
+            <%
+
+              cancellation_notice_hours =
+                settings&.cancellation_notice_hours.to_i
+
+              cancellation_cutoff =
+                appointment_time - cancellation_notice_hours.hours
+
+              cancellation_allowed =
+                settings&.allow_customer_cancellations? &&
+                Time.current < cancellation_cutoff
+
+            %>
 
             <% if cancellation_allowed %>
               <%= button_to account_cancel_booking_path(@booking),
