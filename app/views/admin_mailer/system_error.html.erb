@@ -1,19 +1,40 @@
 <h2>Application Error</h2>
 
 <h3>Error</h3>
+
 <p>
-  <%= @exception.class %>
+  <strong>Type:</strong>
+  <%= @exception[:class] %>
 </p>
 
 <p>
-  <%= @exception.message %>
+  <strong>Message:</strong>
+  <%= @exception[:message] %>
 </p>
 
 
 <h3>URL</h3>
 
 <p>
-  <%= @request.original_url %>
+  <%= @request[:url] %>
+</p>
+
+
+<h3>Request Details</h3>
+
+<p>
+  <strong>Method:</strong>
+  <%= @request[:method] %>
+</p>
+
+<p>
+  <strong>Request ID:</strong>
+  <%= @request[:request_id] %>
+</p>
+
+<p>
+  <strong>IP:</strong>
+  <%= @request[:ip] %>
 </p>
 
 
@@ -22,9 +43,9 @@
 <% if @user %>
 
   <p>
-    ID: <%= @user.id %><br>
-    Email: <%= @user.email %><br>
-    Role: <%= @user.role %>
+    ID: <%= @user[:id] %><br>
+    Email: <%= @user[:email] %><br>
+    Role: <%= @user[:role] %>
   </p>
 
 <% else %>
@@ -39,5 +60,5 @@
 <h3>Backtrace</h3>
 
 <pre>
-  <%= @exception.backtrace.first(20).join("\n") %>
+  <%= @exception[:backtrace].join("\n") %>
 </pre>
