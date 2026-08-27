@@ -231,15 +231,11 @@
               <i data-lucide="arrow-right" class="h-4 w-4"></i>
             <% end %>
 
-
-
-            <button
-              type="button"
-              class="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
-            >
+            <%= link_to account_reschedule_booking_path(@next_booking),
+                        class: "inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50" do %>
               <i data-lucide="calendar-cog" class="h-4 w-4"></i>
               Reschedule
-            </button>
+            <% end %>
             <%
 
               cancellation_notice_hours =
@@ -255,7 +251,7 @@
             %>
 
             <% if cancellation_allowed %>
-              <%= button_to account_cancel_booking_path(@booking),
+              <%= button_to account_cancel_booking_path(@next_booking),
                             method: :patch,
                             form: {
                               data: {
