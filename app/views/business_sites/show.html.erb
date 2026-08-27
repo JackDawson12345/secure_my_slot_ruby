@@ -598,6 +598,7 @@
                 type="date"
                 name="booking[date]"
                 id="booking-date"
+                min="<%= Date.current %>"
                 class="mt-6 w-full rounded-2xl border border-<%= @business.business_website.colour %>-300 px-4 py-4"
                 required
               >
@@ -1211,6 +1212,10 @@ Every appointment is handled with care, clear communication and attention to det
           const dateInput =
               document.getElementById("booking-date");
 
+          const today = new Date().toISOString().split("T")[0];
+
+          dateInput.min = today;
+
           const timeOptions =
               document.getElementById("time-options");
 
@@ -1539,6 +1544,23 @@ Every appointment is handled with care, clear communication and attention to det
           dateInput.addEventListener(
               "change",
               () => {
+                  if (dateInput.value < today) {
+                      dateInput.value = "";
+
+                      summaryDate.textContent = "Not selected";
+                      summaryTime.textContent = "Not selected";
+
+                      timeOptions.innerHTML = `
+                <div class="rounded-2xl border border-red-200 bg-red-50 px-5 py-6 text-center">
+                    <p class="font-bold text-red-700">
+                        Please choose a future date.
+                    </p>
+                </div>
+            `;
+
+                      return;
+                  }
+
                   if (!dateInput.value) {
                       summaryDate.textContent =
                           "Not selected";
