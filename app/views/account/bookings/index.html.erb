@@ -241,11 +241,11 @@
               booking_settings = @next_booking.business.business_setting
 
               appointment_time = Time.zone.local(
-                booking.date.year,
-                booking.date.month,
-                booking.date.day,
-                booking.time.hour,
-                booking.time.min
+                @next_booking.date.year,
+                @next_booking.date.month,
+                @next_booking.date.day,
+                @next_booking.time.hour,
+                @next_booking.time.min
               )
 
               cancellation_notice_hours =
