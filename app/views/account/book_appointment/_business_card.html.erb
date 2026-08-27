@@ -30,7 +30,9 @@
             </span>
           <% end %>
         </div>
-        <p class="mt-1 text-sm text-slate-500"><%= business.business_setting.business_category %></p>
+        <p class="mt-1 text-sm text-slate-500">
+          <%= business_category_name(business.business_setting.business_category) %>
+        </p>
 
         <%
           customer_has_address = current_user.customer_setting&.postcode.present?
