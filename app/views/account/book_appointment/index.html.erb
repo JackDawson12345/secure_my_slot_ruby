@@ -11,56 +11,98 @@
     </p>
 
     <!-- Search bar -->
-    <form class="mt-6 flex flex-col gap-3 rounded-2xl bg-white p-2 shadow-sm sm:flex-row sm:items-center">
+    <%= form_tag account_book_appointment_path,
+                 method: :get,
+                 data: { turbo_frame: "results-frame" },
+                 class: "mt-6 flex flex-col gap-3 rounded-2xl bg-white p-2 shadow-sm sm:flex-row sm:items-center" do %>
+
       <div class="flex flex-1 items-center gap-3 rounded-xl px-3 py-2.5 sm:border-r sm:border-slate-100">
         <i data-lucide="search" class="h-4 w-4 shrink-0 text-slate-400"></i>
+
         <input
           type="text"
+          name="search"
+          value="<%= params[:search] %>"
           placeholder="Business or service, e.g. &quot;Nails&quot; or &quot;Test Business&quot;"
           class="w-full border-0 bg-transparent text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none"
           />
       </div>
 
+
       <div class="flex flex-1 items-center gap-3 rounded-xl px-3 py-2.5">
         <i data-lucide="map-pin" class="h-4 w-4 shrink-0 text-slate-400"></i>
+
         <input
           type="text"
+          name="location"
+          value="<%= params[:location] %>"
           placeholder="Location or postcode"
           class="w-full border-0 bg-transparent text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none"
           />
       </div>
 
+
       <button
-        type="button"
+        type="submit"
         class="inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-indigo-500"
       >
         <i data-lucide="search" class="h-4 w-4"></i>
         Search
       </button>
-    </form>
 
-    <!-- Quick category chips -->
+    <% end %>
+
     <div class="mt-5 flex flex-wrap gap-2">
-      <button type="button" class="inline-flex items-center gap-1.5 rounded-full bg-white px-3.5 py-1.5 text-xs font-semibold text-slate-900 transition hover:bg-slate-100">
-        <i data-lucide="sparkles" class="h-3.5 w-3.5 text-indigo-600"></i>
-        Beauty &amp; Nails
-      </button>
-      <button type="button" class="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3.5 py-1.5 text-xs font-semibold text-white transition hover:bg-white/20">
-        <i data-lucide="scissors" class="h-3.5 w-3.5"></i>
-        Hair
-      </button>
-      <button type="button" class="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3.5 py-1.5 text-xs font-semibold text-white transition hover:bg-white/20">
-        <i data-lucide="hand" class="h-3.5 w-3.5"></i>
-        Massage &amp; Spa
-      </button>
-      <button type="button" class="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3.5 py-1.5 text-xs font-semibold text-white transition hover:bg-white/20">
-        <i data-lucide="dumbbell" class="h-3.5 w-3.5"></i>
-        Fitness
-      </button>
-      <button type="button" class="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3.5 py-1.5 text-xs font-semibold text-white transition hover:bg-white/20">
-        <i data-lucide="stethoscope" class="h-3.5 w-3.5"></i>
-        Health
-      </button>
+
+      <%
+        quick_categories = [
+          ["Beauty and Nails", "beauty_and_nails", "sparkles"],
+          ["Hairdresser", "hairdresser", "scissors"],
+          ["Therapist", "therapist", "hand"],
+          ["Personal Trainer", "personal_trainer", "dumbbell"],
+          ["Other", "other", "stethoscope"]
+        ]
+      %>
+
+      <% selected_categories = Array(params[:category]) %>
+
+      <% quick_categories.each do |label, value, icon| %>
+
+        <%
+          active = selected_categories.include?(value)
+
+          new_categories =
+            if active
+              selected_categories - [value]
+            else
+              selected_categories + [value]
+            end
+
+          chip_class =
+            if active
+              "bg-white text-slate-900"
+            else
+              "bg-white/10 text-white hover:bg-white/20"
+            end
+        %>
+
+        <%= link_to account_book_appointment_path(
+                      request.query_parameters.merge(
+                        category: new_categories
+                      )
+                    ),
+                    class: "inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold transition #{chip_class}" do %>
+
+          <i data-lucide="<%= icon %>"
+             class="h-3.5 w-3.5 <%= 'text-indigo-600' if active %>">
+          </i>
+
+          <%= label %>
+
+        <% end %>
+
+      <% end %>
+
     </div>
   </section>
 
@@ -76,27 +118,54 @@
                       class: "text-xs font-semibold text-indigo-600 hover:text-indigo-700" %>
         </div>
 
-        <%= form_tag account_book_appointment_path, method: :get,
-                     data: { turbo_frame: "results-frame", controller: "filters" } do %>
+        <%= form_tag account_book_appointment_path,
+                     method: :get,
+                     id: "filters-form",
+                     data: {
+                       turbo_frame: "results-frame",
+                       controller: "filters"
+                     } do %>
 
           <!-- Category -->
           <div class="mt-5 border-t border-slate-100 pt-5">
             <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">Category</p>
-            <div class="mt-3 space-y-2.5">
-              <% categories = [ "Barber", "Hairdresser", "Beauty and Nails", "Personal Trainer", "Coach", "Tutor", "Consultant", "Therapist", "Photographer", "Cleaner", "Tradesperson", "Other" ] %>
+            <div class="mt-3 space-y-1">
+              <%
+              categories = [
+                ["Barber", "barber"],
+                ["Hairdresser", "hairdresser"],
+                ["Beauty and Nails", "beauty_and_nails"],
+                ["Personal Trainer", "personal_trainer"],
+                ["Coach", "coach"],
+                ["Tutor", "tutor"],
+                ["Consultant", "consultant"],
+                ["Therapist", "therapist"],
+                ["Massage Professional", "massage_professional"],
+                ["Photographer", "photographer"],
+                ["Cleaner", "cleaner"],
+                ["Tradesperson", "tradesperson"],
+                ["Mobile Service", "mobile_service"],
+                ["Repair Service", "repair_service"],
+                ["Other", "other"]
+              ]
+            %>
 
-              <% categories.each do |category| %>
-                <label class="flex items-center gap-2.5 text-sm text-slate-700">
-                  <input
-                    type="checkbox"
-                    name="category[]"
-                    value="<%= category %>"
-                    <%= "checked" if params[:category]&.include?(category) %>
-                    data-action="change->filters#submitOnChange"
-                    class="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
-                    />
-                  <%= category %>
-                </label>
+
+              <% categories.each do |label, value| %>
+
+                <div>
+                  <label class="text-sm text-slate-700">
+                    <input
+                      type="checkbox"
+                      name="category[]"
+                      value="<%= value %>"
+                      <%= "checked" if params[:category]&.include?(value) %>
+                    >
+
+                    <%= label %>
+                  </label>
+                </div>
+
               <% end %>
             </div>
           </div>
@@ -197,13 +266,38 @@
           </p>
 
           <div class="flex items-center gap-2">
-            <label class="text-sm text-slate-500">Sort by</label>
-            <select class="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-              <option>Best match</option>
-              <option>Distance</option>
-              <option>Highest rated</option>
-              <option>Soonest availability</option>
+
+            <label class="text-sm text-slate-500">
+              Sort by
+            </label>
+
+
+            <select
+              name="sort"
+              form="filters-form"
+              class="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            >
+
+              <option value="best_match"
+                      <%= "selected" if params[:sort].blank? || params[:sort] == "best_match" %>>
+                Best match
+              </option>
+
+
+              <option value="distance"
+                      <%= "selected" if params[:sort] == "distance" %>>
+                Distance
+              </option>
+
+
+              <option value="soonest"
+                      <%= "selected" if params[:sort] == "soonest" %>>
+                Soonest availability
+              </option>
+
+
             </select>
+
           </div>
         </div>
 
