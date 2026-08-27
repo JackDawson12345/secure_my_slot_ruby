@@ -201,23 +201,57 @@ class BusinessPortal::BookingsController < BusinessPortal::BaseController
 
     begin
       Booking.transaction do
-        @user = find_or_build_user(customer_params)
+        params = permitted_booking_params
+
+        @user = find_or_build_user(params)
+
+        new_user = @user.new_record?
+
         @user.save!
+
+        if new_user
+          @user.create_customer_setting!(
+            phone_number: params[:phone_number],
+            preferred_name: [
+              params[:first_name],
+              params[:last_name]
+            ].compact.join(" "),
+            booking_confirmations: true,
+            appointment_reminders: true,
+            booking_changes: true,
+            offers_and_service_updates: false,
+            reminder_timing: "60",
+            reminder_method: "sms"
+          )
+
+          CustomerAccountMailer
+            .welcome_with_password_setup(@user)
+            .deliver_later
+        end
 
         @booking = @business.bookings.new(
           user: @user,
-          service_id: booking_params[:service_id],
-          date: booking_params[:date],
-          time: booking_params[:time],
+          service_id: params[:service_id],
+          date: params[:date],
+          time: params[:time],
+          notes: params[:notes],
           status: "confirmed"
         )
+
         @booking.save!
       end
 
-      redirect_to business_bookings_path, notice: "Booking added successfully."
-    rescue ActiveRecord::RecordInvalid
-      flash.now[:alert] = "Could not create booking. Please check the details below."
-      render :add_booking, status: :unprocessable_entity
+      redirect_to business_bookings_path,
+                  notice: "Booking added successfully."
+
+    rescue ActiveRecord::RecordInvalid => e
+      Rails.logger.error e.record.errors.full_messages
+
+      flash.now[:alert] =
+        "Could not create booking. Please check the details below."
+
+      render :add_booking,
+             status: :unprocessable_entity
     end
   end
 
@@ -225,23 +259,44 @@ class BusinessPortal::BookingsController < BusinessPortal::BaseController
 
   def find_or_build_user(attrs)
     user = User.find_or_initialize_by(email: attrs[:email])
+
     user.first_name = attrs[:first_name] if attrs[:first_name].present?
-    user.last_name  = attrs[:last_name]  if attrs[:last_name].present?
+    user.last_name = attrs[:last_name] if attrs[:last_name].present?
+    user.phone_number = attrs[:phone_number] if attrs[:phone_number].present?
 
     if user.new_record?
-      random_password = SecureRandom.hex(12)
-      user.password = random_password
-      user.password_confirmation = random_password
+      password = generate_customer_password
+
+      user.password = password
+      user.password_confirmation = password
+      user.role = :customer
+
+      user.terms_accepted = true
+      user.terms_accepted_at = Time.current if user.respond_to?(:terms_accepted_at=)
     end
 
     user
   end
 
-  def booking_params
-    params.require(:booking).permit(:service_id, :date, :time)
+  def generate_customer_password
+    [
+      ("A".."Z").to_a.sample,
+      ("0".."9").to_a.sample,
+      ["!", "@", "#", "$", "%"].sample,
+      SecureRandom.hex(8)
+    ].join
   end
 
-  def customer_params
-    params.require(:booking).permit(:first_name, :last_name, :email)
+  def permitted_booking_params
+    params.require(:booking).permit(
+      :service_id,
+      :date,
+      :time,
+      :first_name,
+      :last_name,
+      :email,
+      :phone_number,
+      :notes
+    )
   end
 end
