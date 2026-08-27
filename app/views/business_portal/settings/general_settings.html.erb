@@ -121,12 +121,18 @@
                 <div
                   class="flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-indigo-100 text-2xl font-bold text-indigo-700"
                 >
-                  <img
-                    data-logo-preview-target="preview"
-                    class="<%= @settings.logo.attached? ? '' : 'hidden' %> h-full w-full object-contain p-2"
-                    src="<%= url_for(@settings.logo) if @settings.logo.attached? %>"
-                    alt="<%= @settings.business_name %> logo preview"
-                  >
+                  <% if @settings.logo.attached? %>
+                    <%= image_tag @settings.logo,
+                                  data: { logo_preview_target: "preview" },
+                                  class: "h-full w-full object-contain p-2",
+                                  alt: "#{@settings.business_name} logo preview" %>
+                  <% else %>
+                    <img
+                      data-logo-preview-target="preview"
+                      class="hidden h-full w-full object-contain p-2"
+                      alt="Logo preview"
+                    >
+                  <% end %>
 
                   <span
                     data-logo-preview-target="initials"
