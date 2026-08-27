@@ -124,7 +124,8 @@
     </div>
   </div>
 
-  <div
+  <% if business.stripe_ready? %>
+    <div
     class="rounded-xl border border-slate-200 bg-slate-50 p-5"
     data-controller="deposit"
   >
@@ -171,6 +172,7 @@
       </p>
     </div>
   </div>
+  <% end %>
 
   <div>
     <%= form.label :status,
