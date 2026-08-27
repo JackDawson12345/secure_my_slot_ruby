@@ -231,6 +231,8 @@
               <i data-lucide="arrow-right" class="h-4 w-4"></i>
             <% end %>
 
+
+
             <button
               type="button"
               class="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
@@ -239,13 +241,19 @@
               Reschedule
             </button>
 
-            <button
-              type="button"
-              class="inline-flex items-center justify-center gap-2 rounded-xl border border-rose-200 px-4 py-2.5 text-sm font-semibold text-rose-600 transition hover:bg-rose-50"
-            >
-              <i data-lucide="calendar-x" class="h-4 w-4"></i>
-              Cancel
-            </button>
+            <% if cancellation_allowed %>
+              <%= button_to account_cancel_booking_path(@booking),
+                            method: :patch,
+                            form: {
+                              data: {
+                                turbo_confirm: "Are you sure you want to cancel this appointment?"
+                              }
+                            },
+                            class: "inline-flex items-center justify-center gap-2 rounded-xl border border-rose-200 px-4 py-2.5 text-sm font-semibold text-rose-600 transition hover:bg-rose-50" do %>
+                <i data-lucide="calendar-x" class="h-4 w-4"></i>
+                Cancel
+              <% end %>
+            <% end %>
           </div>
         </div>
       </div>
