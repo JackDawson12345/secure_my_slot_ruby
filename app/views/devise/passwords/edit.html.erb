@@ -142,7 +142,7 @@
           <div class="flex items-start gap-4">
 
             <span
-              class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-indigo-600 text-white"
+              class="flex h-12 h-12 shrink-0 items-center justify-center rounded-2xl bg-indigo-600 text-white"
             >
               <i data-lucide="lock-keyhole" class="h-6 w-6"></i>
             </span>
@@ -187,12 +187,6 @@
                           "New password",
                           class: "block text-sm font-semibold text-slate-700" %>
 
-              <% if @minimum_password_length %>
-                <span class="text-xs font-medium text-slate-400">
-                  <%= @minimum_password_length %> characters minimum
-                </span>
-              <% end %>
-
             </div>
 
 
@@ -204,6 +198,7 @@
                                    placeholder: "Enter your new password",
                                    required: true,
                                    class: "w-full rounded-xl border border-slate-200 py-3 pl-4 pr-12 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" %>
+
 
               <button
                 type="button"
@@ -234,6 +229,7 @@
                                    required: true,
                                    class: "w-full rounded-xl border border-slate-200 py-3 pl-4 pr-12 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" %>
 
+
               <button
                 type="button"
                 data-password-toggle="user_password_confirmation"
@@ -242,6 +238,57 @@
               >
                 <i data-lucide="eye" class="h-4 w-4"></i>
               </button>
+
+            </div>
+
+          </div>
+          <div class="mt-5 rounded-xl border border-slate-200 bg-slate-50 p-4">
+
+            <p class="text-sm font-semibold text-slate-900">
+              Your password should include:
+            </p>
+
+
+            <div class="mt-3 grid gap-2 text-sm text-slate-500 sm:grid-cols-2">
+
+              <span id="password-rule-length" class="flex items-center gap-2">
+                <i
+                  data-password-icon
+                  data-lucide="circle-x"
+                  class="h-4 w-4 text-rose-500"
+                ></i>
+                At least <%= @minimum_password_length || 8 %> characters
+              </span>
+
+
+              <span id="password-rule-uppercase" class="flex items-center gap-2">
+                <i
+                  data-password-icon
+                  data-lucide="circle-x"
+                  class="h-4 w-4 text-rose-500"
+                ></i>
+                One uppercase letter
+              </span>
+
+
+              <span id="password-rule-number" class="flex items-center gap-2">
+                <i
+                  data-password-icon
+                  data-lucide="circle-x"
+                  class="h-4 w-4 text-rose-500"
+                ></i>
+                One number
+              </span>
+
+
+              <span id="password-rule-special" class="flex items-center gap-2">
+                <i
+                  data-password-icon
+                  data-lucide="circle-x"
+                  class="h-4 w-4 text-rose-500"
+                ></i>
+                One special character
+              </span>
 
             </div>
 
@@ -280,6 +327,7 @@
 
           <% end %>
 
+
         <% end %>
 
       </div>
@@ -291,61 +339,194 @@
 
 
 <script>
+
+    function updatePasswordRule(id, valid) {
+
+        const rule = document.getElementById(id);
+
+        if (!rule) return;
+
+
+        const icon = rule.querySelector("[data-password-icon]");
+
+        if (!icon) return;
+
+
+        if (valid) {
+
+            rule.classList.remove("text-slate-500");
+            rule.classList.add("text-emerald-600");
+
+
+            icon.setAttribute(
+                "data-lucide",
+                "circle-check"
+            );
+
+
+            icon.classList.remove("text-rose-500");
+            icon.classList.add("text-emerald-500");
+
+
+        } else {
+
+            rule.classList.remove("text-emerald-600");
+            rule.classList.add("text-slate-500");
+
+
+            icon.setAttribute(
+                "data-lucide",
+                "circle-x"
+            );
+
+
+            icon.classList.remove("text-emerald-500");
+            icon.classList.add("text-rose-500");
+
+        }
+
+    }
+
+
+
+    function initialisePasswordValidation() {
+
+        const passwordInput =
+            document.getElementById("user_password");
+
+
+        if (!passwordInput) return;
+
+
+        if (passwordInput.dataset.validationInitialised === "true") {
+            return;
+        }
+
+
+        passwordInput.dataset.validationInitialised = "true";
+
+
+        const validatePassword = () => {
+
+            const password = passwordInput.value;
+
+
+            updatePasswordRule(
+                "password-rule-length",
+                password.length >= 8
+            );
+
+
+            updatePasswordRule(
+                "password-rule-uppercase",
+                /[A-Z]/.test(password)
+            );
+
+
+            updatePasswordRule(
+                "password-rule-number",
+                /[0-9]/.test(password)
+            );
+
+
+            updatePasswordRule(
+                "password-rule-special",
+                /[^A-Za-z0-9]/.test(password)
+            );
+
+
+            if (window.lucide) {
+                lucide.createIcons();
+            }
+
+        };
+
+
+        passwordInput.addEventListener(
+            "input",
+            validatePassword
+        );
+
+
+        validatePassword();
+
+    }
+
+
+
     function initialisePasswordChange() {
+
         if (window.lucide) {
             lucide.createIcons();
         }
+
+
+        initialisePasswordValidation();
+
 
         document
             .querySelectorAll("[data-password-toggle]")
             .forEach((button) => {
 
-                if (button.dataset.initialised === "true") return;
+
+                if (button.dataset.initialised === "true") {
+                    return;
+                }
+
 
                 button.dataset.initialised = "true";
 
-                button.addEventListener("click", () => {
 
-                    const inputId =
-                        button.dataset.passwordToggle;
+                button.addEventListener(
+                    "click",
+                    () => {
 
-                    const input =
-                        document.getElementById(inputId);
-
-                    if (!input) return;
+                        const inputId =
+                            button.dataset.passwordToggle;
 
 
-                    const showingPassword =
-                        input.type === "text";
+                        const input =
+                            document.getElementById(inputId);
 
 
-                    input.type =
-                        showingPassword
-                            ? "password"
-                            : "text";
+                        if (!input) return;
 
 
-                    button.setAttribute(
-                        "aria-label",
-                        showingPassword
-                            ? "Show password"
-                            : "Hide password"
-                    );
+                        const showingPassword =
+                            input.type === "text";
 
 
-                    button.innerHTML =
-                        showingPassword
-                            ? '<i data-lucide="eye" class="h-4 w-4"></i>'
-                            : '<i data-lucide="eye-off" class="h-4 w-4"></i>';
+                        input.type =
+                            showingPassword
+                                ? "password"
+                                : "text";
 
 
-                    if (window.lucide) {
-                        lucide.createIcons();
+                        button.setAttribute(
+                            "aria-label",
+                            showingPassword
+                                ? "Show password"
+                                : "Hide password"
+                        );
+
+
+                        button.innerHTML =
+                            showingPassword
+                                ? '<i data-lucide="eye" class="h-4 w-4"></i>'
+                                : '<i data-lucide="eye-off" class="h-4 w-4"></i>';
+
+
+                        if (window.lucide) {
+                            lucide.createIcons();
+                        }
+
                     }
+                );
 
-                });
             });
+
     }
+
 
 
     document.addEventListener(
@@ -353,8 +534,10 @@
         initialisePasswordChange
     );
 
+
     document.addEventListener(
         "turbo:load",
         initialisePasswordChange
     );
+
 </script>
