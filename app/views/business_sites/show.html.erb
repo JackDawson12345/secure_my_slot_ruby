@@ -697,7 +697,7 @@
 
                   <%= form.label :terms_accepted,
                                  class: "text-sm text-gray-700" do %>
-                    I agree to the terms and conditions
+                    I agree to the <a class="text-<%= @business.business_website.colour %>-500" href="https://www.securemyslot.co.uk/privacy-policy">Terms and conditions</a>
                   <% end %>
                 </div>
 
@@ -1507,33 +1507,33 @@ Every appointment is handled with care, clear communication and attention to det
           });
 
           serviceLinks.forEach((link) => {
-              link.addEventListener(
-                  "click",
-                  () => {
-                      const serviceId =
-                          link.dataset.serviceId;
+              link.addEventListener("click", (event) => {
+                  event.preventDefault();
 
-                      const input =
-                          document.getElementById(
-                              `service-${serviceId}`
-                          );
+                  const serviceId = link.dataset.serviceId;
 
-                      if (!input) {
-                          return;
-                      }
+                  const input = document.getElementById(
+                      `service-${serviceId}`
+                  );
 
-                      input.checked = true;
-
-                      input.dispatchEvent(
-                          new Event(
-                              "change",
-                              {
-                                  bubbles: true
-                              }
-                          )
-                      );
+                  if (!input) {
+                      return;
                   }
-              );
+
+                  input.checked = true;
+
+                  input.dispatchEvent(
+                      new Event("change", {
+                          bubbles: true
+                      })
+                  );
+
+                  document
+                      .getElementById("booking")
+                      .scrollIntoView({
+                          behaviour: "smooth"
+                      });
+              });
           });
 
           dateInput.addEventListener(
