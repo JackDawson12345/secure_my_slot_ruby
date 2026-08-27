@@ -238,7 +238,7 @@
             <% end %>
 
             <%
-              booking_settings = booking.business.business_setting
+              booking_settings = @next_booking.business.business_setting
 
               appointment_time = Time.zone.local(
                 booking.date.year,
