@@ -1,9 +1,72 @@
-<div class="cont_principal">
-  <div class="cont_error">
+<main class="min-h-screen bg-slate-50 px-4 py-12 sm:px-6 lg:px-8">
 
-    <h1>Oops</h1>
-    <p>The Page you're looking for isn't here.</p>
-  </div>
-  <div class="cont_aura_1"></div>
-  <div class="cont_aura_2"></div>
-</div>
+  <section class="mx-auto flex min-h-[70vh] max-w-xl items-center justify-center">
+
+    <div class="w-full rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm sm:p-10">
+
+      <div class="mx-auto flex h-20 w-20 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-600">
+        <i data-lucide="search-x" class="h-10 w-10"></i>
+      </div>
+
+
+      <p class="mt-6 text-sm font-semibold uppercase tracking-wide text-indigo-600">
+        Error 404
+      </p>
+
+
+      <h1 class="mt-2 text-4xl font-bold tracking-tight text-slate-900">
+        Page not found
+      </h1>
+
+
+      <p class="mt-4 text-sm leading-6 text-slate-500">
+        Sorry, we couldn't find the page you were looking for.
+        The page may have been moved, removed, or the link may be incorrect.
+      </p>
+
+
+      <div class="mt-8 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-left">
+
+        <div class="flex gap-3">
+
+          <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-indigo-600 shadow-sm">
+            <i data-lucide="navigation" class="h-5 w-5"></i>
+          </div>
+
+
+          <div>
+
+            <h2 class="text-sm font-semibold text-slate-900">
+              Looking for something else?
+            </h2>
+
+            <p class="mt-1 text-sm text-slate-500">
+              Use the button below to return to SecureMySlot and continue managing your bookings.
+            </p>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <%= link_to root_path,
+                  class: "mt-8 inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-indigo-700" do %>
+
+        Return home
+
+        <i data-lucide="arrow-right" class="h-4 w-4"></i>
+
+      <% end %>
+
+
+      <p class="mt-8 text-xs text-slate-400">
+        SecureMySlot · Online booking software for businesses
+      </p>
+
+    </div>
+
+  </section>
+
+</main>
