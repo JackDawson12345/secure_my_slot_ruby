@@ -30,94 +30,9 @@
   <meta name="google-site-verification" content="usAFN4jwbdMrw5QYsFNMPlFpkb7Gj2LzH7v9rL7251g" />
 </head>
 
-<body class="bg-white text-slate-900 antialiased">
+<body>
 
   <%= yield %>
-<script>
-    function initialiseHomepage() {
-        // Render all Lucide icons on the newly loaded page.
-        if (window.lucide) {
-            lucide.createIcons();
-        }
-
-        const mobileMenu = document.getElementById("mobileMenu");
-        const openMobileMenuButton =
-            document.getElementById("openMobileMenu");
-
-        // This page may not contain the homepage navigation.
-        if (mobileMenu && openMobileMenuButton) {
-            const mobileNavigationLinks =
-                document.querySelectorAll(".mobile-nav-link");
-
-            openMobileMenuButton.addEventListener("click", toggleMobileMenu);
-
-            mobileNavigationLinks.forEach((link) => {
-                link.addEventListener("click", closeMobileMenu);
-            });
-
-            function toggleMobileMenu() {
-                const menuIsHidden =
-                    mobileMenu.classList.contains("hidden");
-
-                mobileMenu.classList.toggle("hidden");
-
-                openMobileMenuButton.setAttribute(
-                    "aria-expanded",
-                    menuIsHidden ? "true" : "false",
-                );
-
-                openMobileMenuButton.innerHTML = menuIsHidden
-                    ? '<i data-lucide="x" class="h-5 w-5"></i>'
-                    : '<i data-lucide="menu" class="h-5 w-5"></i>';
-
-                lucide.createIcons();
-            }
-
-            function closeMobileMenu() {
-                mobileMenu.classList.add("hidden");
-
-                openMobileMenuButton.setAttribute(
-                    "aria-expanded",
-                    "false",
-                );
-
-                openMobileMenuButton.innerHTML =
-                    '<i data-lucide="menu" class="h-5 w-5"></i>';
-
-                lucide.createIcons();
-            }
-        }
-
-        const faqButtons = document.querySelectorAll(".faq-button");
-
-        faqButtons.forEach((button) => {
-            button.addEventListener("click", () => {
-                const faqItem = button.closest(".faq-item");
-                const answer = faqItem?.querySelector(".faq-answer");
-                const icon = faqItem?.querySelector(".faq-icon");
-
-                if (!faqItem || !answer || !icon) return;
-
-                const isExpanded =
-                    button.getAttribute("aria-expanded") === "true";
-
-                button.setAttribute(
-                    "aria-expanded",
-                    isExpanded ? "false" : "true",
-                );
-
-                answer.classList.toggle("hidden", isExpanded);
-
-                icon.outerHTML = isExpanded
-                    ? '<i data-lucide="plus" class="faq-icon h-5 w-5 shrink-0 text-slate-400"></i>'
-                    : '<i data-lucide="minus" class="faq-icon h-5 w-5 shrink-0 text-indigo-600"></i>';
-
-                lucide.createIcons();
-            });
-        });
-    }
-
-    document.addEventListener("turbo:load", initialiseHomepage);
-</script>
 </body>
+
 </html>

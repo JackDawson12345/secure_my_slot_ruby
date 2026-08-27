@@ -1,72 +1,192 @@
-<main class="min-h-screen bg-slate-50 px-4 py-12 sm:px-6 lg:px-8">
+<div class="cont_principal">
+  <div class="cont_error">
 
-  <section class="mx-auto flex min-h-[70vh] max-w-xl items-center justify-center">
+    <h1>Oops</h1>
+    <p>The Page you're looking for isn't here.</p>
+  </div>
+  <div class="cont_aura_1"></div>
+  <div class="cont_aura_2"></div>
+</div>
 
-    <div class="w-full rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm sm:p-10">
+<style>
+    * {
+        margin:0px auto;
+        padding: 0px;
+        text-align:center;
+    }
+    body {
+        background-color: #D4D9ED;
+    }
+    .cont_principal {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+    }
+    .cont_error {
+        position: absolute;
+        width: 100%;
+        height: 300px;
+        top: 50%;
+        margin-top:-150px;
+    }
 
-      <div class="mx-auto flex h-20 w-20 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-600">
-        <i data-lucide="search-x" class="h-10 w-10"></i>
-      </div>
-
-
-      <p class="mt-6 text-sm font-semibold uppercase tracking-wide text-indigo-600">
-        Error 404
-      </p>
-
-
-      <h1 class="mt-2 text-4xl font-bold tracking-tight text-slate-900">
-        Page not found
-      </h1>
-
-
-      <p class="mt-4 text-sm leading-6 text-slate-500">
-        Sorry, we couldn't find the page you were looking for.
-        The page may have been moved, removed, or the link may be incorrect.
-      </p>
-
-
-      <div class="mt-8 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-left">
-
-        <div class="flex gap-3">
-
-          <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-indigo-600 shadow-sm">
-            <i data-lucide="navigation" class="h-5 w-5"></i>
-          </div>
-
-
-          <div>
-
-            <h2 class="text-sm font-semibold text-slate-900">
-              Looking for something else?
-            </h2>
-
-            <p class="mt-1 text-sm text-slate-500">
-              Use the button below to return to SecureMySlot and continue managing your bookings.
-            </p>
-
-          </div>
-
-        </div>
-
-      </div>
+    .cont_error > h1  {
+        font-family: 'Lato', sans-serif;
+        font-weight: 400;
+        font-size:150px;
+        color:#fff;
+        position: relative;
+        left:-100%;
+        transition: all 0.5s;
+    }
 
 
-      <%= link_to root_path,
-                  class: "mt-8 inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-indigo-700" do %>
+    .cont_error > p  {
+        font-family: 'Lato', sans-serif;
+        font-weight: 300;
+        font-size:24px;
+        letter-spacing: 5px;
+        color:#9294AE;
+        position: relative;
+        left:100%;
+        transition: all 0.5s;
+        transition-delay: 0.5s;
+        -webkit-transition: all 0.5s;
+        -webkit-transition-delay: 0.5s;
+    }
 
-        Return home
+    .cont_aura_1 {
+        position:absolute;
+        width:300px;
+        height: 120%;
+        top:25px;
+        right: -340px;
+        background-color: #8A65DF;
+        box-shadow: 0px 0px  60px  20px  rgba(137,100,222,0.5);
+        -webkit-transition: all 0.5s;
+        transition: all 0.5s;
+    }
 
-        <i data-lucide="arrow-right" class="h-4 w-4"></i>
+    .cont_aura_2 {
+        position:absolute;
+        width:100%;
+        height: 300px;
+        right:-10%;
+        bottom:-301px;
+        background-color: #8B65E4;
+        box-shadow: 0px 0px 60px 10px rgba(131, 95, 214, 0.5),0px 0px  20px  0px  rgba(0,0,0,0.1);
+        z-index:5;
+        transition: all 0.5s;
+        -webkit-transition: all 0.5s;
+    }
 
-      <% end %>
+    .cont_error_active > .cont_error > h1 {
+        left:0%;
+    }
+    .cont_error_active > .cont_error > p {
+        left:0%;
+    }
+
+    .cont_error_active > .cont_aura_2 {
+        animation-name: animation_error_2;
+        animation-duration: 4s;
+        animation-timing-function: linear;
+        animation-iteration-count: infinite;
+        animation-direction: alternate;
+        transform: rotate(-20deg);
+    }
+    .cont_error_active > .cont_aura_1 {
+        transform: rotate(20deg);
+        right:-170px;
+        animation-name: animation_error_1;
+        animation-duration: 4s;
+        animation-timing-function: linear;
+        animation-iteration-count: infinite;
+        animation-direction: alternate;
+    }
+
+    @-webkit-keyframes animation_error_1 {
+        from {
+            -webkit-transform: rotate(20deg);
+            transform: rotate(20deg);
+        }
+        to {  -webkit-transform: rotate(25deg);
+            transform: rotate(25deg);
+        }
+    }
+    @-o-keyframes animation_error_1 {
+        from {
+            -webkit-transform: rotate(20deg);
+            transform: rotate(20deg);
+        }
+        to {  -webkit-transform: rotate(25deg);
+            transform: rotate(25deg);
+        }
+
+    }
+    @-moz-keyframes animation_error_1 {
+        from {
+            -webkit-transform: rotate(20deg);
+            transform: rotate(20deg);
+        }
+        to {  -webkit-transform: rotate(25deg);
+            transform: rotate(25deg);
+        }
+
+    }
+    @keyframes animation_error_1 {
+        from {
+            -webkit-transform: rotate(20deg);
+            transform: rotate(20deg);
+        }
+        to {  -webkit-transform: rotate(25deg);
+            transform: rotate(25deg);
+        }
+    }
 
 
-      <p class="mt-8 text-xs text-slate-400">
-        SecureMySlot · Online booking software for businesses
-      </p>
 
-    </div>
 
-  </section>
+    @-webkit-keyframes animation_error_2 {
+        from { -webkit-transform: rotate(-15deg);
+            transform: rotate(-15deg);
+        }
+        to { -webkit-transform: rotate(-20deg);
+            transform: rotate(-20deg);
+        }
+    }
+    @-o-keyframes animation_error_2 {
+        from { -webkit-transform: rotate(-15deg);
+            transform: rotate(-15deg);
+        }
+        to { -webkit-transform: rotate(-20deg);
+            transform: rotate(-20deg);
+        }
+    }
+    }
+    @-moz-keyframes animation_error_2 {
+        from { -webkit-transform: rotate(-15deg);
+            transform: rotate(-15deg);
+        }
+        to { -webkit-transform: rotate(-20deg);
+            transform: rotate(-20deg);
+        }
+    }
+    @keyframes animation_error_2 {
+        from { -webkit-transform: rotate(-15deg);
+            transform: rotate(-15deg);
+        }
+        to { -webkit-transform: rotate(-20deg);
+            transform: rotate(-20deg);
+        }
+    }
 
-</main>
+</style>
+
+<script>
+    window.onload = function(){
+        document.querySelector('.cont_principal').className= "cont_principal cont_error_active";
+
+    }
+</script>
