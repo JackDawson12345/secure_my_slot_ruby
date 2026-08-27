@@ -7,6 +7,9 @@ class ErrorsController < ApplicationController
   end
 
   def not_found
+    Rails.logger.info(
+      "404 Not Found: #{request.path} from #{request.remote_ip}"
+    )
     render status: :not_found
   end
 end
