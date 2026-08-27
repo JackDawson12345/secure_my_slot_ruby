@@ -7,6 +7,18 @@ class ApplicationController < ActionController::Base
     business_calendar_sync_path
   end
 
+  rescue_from StandardError do |exception|
+
+    ErrorNotifier.notify(
+      exception,
+      request,
+      current_user
+    )
+
+    raise exception
+
+  end
+
   protected
 
   def configure_permitted_parameters

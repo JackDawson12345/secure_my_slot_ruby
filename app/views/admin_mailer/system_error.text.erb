@@ -1,0 +1,78 @@
+Application Error Detected
+
+An unexpected error has occurred in your Rails application.
+
+==================================================
+ERROR DETAILS
+==================================================
+
+Error Type:
+<%= @exception.class %>
+
+Message:
+<%= @exception.message %>
+
+
+==================================================
+REQUEST DETAILS
+==================================================
+
+URL:
+<%= @request.original_url %>
+
+Method:
+<%= @request.request_method %>
+
+Request ID:
+<%= @request.request_id %>
+
+IP Address:
+<%= @request.remote_ip %>
+
+User Agent:
+<%= @request.user_agent %>
+
+
+==================================================
+USER DETAILS
+==================================================
+
+<% if @user %>
+
+  User ID:
+  <%= @user.id %>
+
+  Email:
+  <%= @user.email %>
+
+  Role:
+  <%= @user.role %>
+
+  Created:
+  <%= @user.created_at %>
+
+<% else %>
+
+  No user was logged in.
+
+  Guest user encountered this error.
+
+<% end %>
+
+
+==================================================
+BACKTRACE
+==================================================
+
+<%= @exception.backtrace.first(30).join("\n") %>
+
+
+==================================================
+END OF ERROR REPORT
+==================================================
+
+Please investigate this error in the application logs.
+
+Heroku command:
+
+heroku logs --tail --app secure-my-slot

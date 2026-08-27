@@ -20,6 +20,10 @@ Rails.application.routes.draw do
   end
 
 
+  match "/500", to: "errors#internal_server_error", via: :all
+  match "/404", to: "errors#not_found", via: :all
+
+
   # API
   namespace :api do
     namespace :v1 do
