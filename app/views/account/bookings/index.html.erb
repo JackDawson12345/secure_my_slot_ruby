@@ -236,18 +236,27 @@
               <i data-lucide="calendar-cog" class="h-4 w-4"></i>
               Reschedule
             <% end %>
+
             <%
+              booking_settings = booking.business.business_setting
+
+              appointment_time = Time.zone.local(
+                booking.date.year,
+                booking.date.month,
+                booking.date.day,
+                booking.time.hour,
+                booking.time.min
+              )
 
               cancellation_notice_hours =
-                settings&.cancellation_notice_hours.to_i
+                booking_settings&.cancellation_notice_hours.to_i
 
               cancellation_cutoff =
                 appointment_time - cancellation_notice_hours.hours
 
               cancellation_allowed =
-                settings&.allow_customer_cancellations? &&
+                booking_settings&.allow_customer_cancellations? &&
                 Time.current < cancellation_cutoff
-
             %>
 
             <% if cancellation_allowed %>
