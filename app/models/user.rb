@@ -24,9 +24,28 @@ class User < ApplicationRecord
             },
             on: :create
 
+  validate :password_complexity, if: :password_required?
+
   before_create :record_terms_acceptance
 
   private
+
+  def password_required?
+    password.present? || password_confirmation.present?
+  end
+
+  def password_complexity
+    rules = {
+      "must contain at least 8 characters" => password.length >= 8,
+      "must contain at least one uppercase letter" => password.match?(/[A-Z]/),
+      "must contain at least one number" => password.match?(/[0-9]/),
+      "must contain at least one special character" => password.match?(/[^A-Za-z0-9]/)
+    }
+
+    rules.each do |message, valid|
+      errors.add(:password, message) unless valid
+    end
+  end
 
   def record_terms_acceptance
     self.terms_accepted_at = Time.current if terms_accepted?
