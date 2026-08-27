@@ -30,6 +30,8 @@ class BookingsController < ApplicationController
     business = service.business
     user, new_customer_account = find_or_create_user
 
+    byebug
+
     if business.stripe_ready? && payment_required_for?(service)
       create_stripe_booking_hold(
         business: business,
@@ -75,6 +77,7 @@ class BookingsController < ApplicationController
 
   def confirmation
     @booking = Booking.find(params[:id])
+    @business = @booking.business
 
     render :payment_success
 
@@ -230,6 +233,9 @@ class BookingsController < ApplicationController
   end
 
   def find_or_create_user
+
+    byebug
+
     email = booking_params[:email].to_s.downcase.strip
 
     user = User.find_or_initialize_by(
@@ -246,7 +252,7 @@ class BookingsController < ApplicationController
 
     if new_customer_account
       user.assign_attributes(
-        password: SecureRandom.hex(16),
+        password: generate_customer_password,
         role: :customer,
         terms_accepted: booking_params[:terms_accepted]
       )
@@ -261,6 +267,15 @@ class BookingsController < ApplicationController
     end
 
     [user, new_customer_account]
+  end
+
+  def generate_customer_password
+    [
+      ("A".."Z").to_a.sample,
+      ("0".."9").to_a.sample,
+      ["!", "@", "#", "$", "%"].sample,
+      SecureRandom.hex(8)
+    ].join
   end
 
   def payment_required_for?(service)
