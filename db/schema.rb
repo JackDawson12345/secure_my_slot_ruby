@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_08_25_131200) do
+ActiveRecord::Schema[8.0].define(version: 2026_08_28_110454) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -411,6 +411,27 @@ ActiveRecord::Schema[8.0].define(version: 2026_08_25_131200) do
     t.index ["role"], name: "index_users_on_role"
   end
 
+  create_table "website_settings_colours", force: :cascade do |t|
+    t.bigint "business_id", null: false
+    t.bigint "business_website_id", null: false
+    t.string "hex_code", null: false
+    t.string "colour_900", null: false
+    t.string "colour_700", null: false
+    t.string "colour_500", null: false
+    t.string "colour_300", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "colour_50"
+    t.string "colour_100"
+    t.string "colour_200"
+    t.string "colour_400"
+    t.string "colour_600"
+    t.string "colour_800"
+    t.string "colour_950"
+    t.index ["business_id"], name: "index_website_settings_colours_on_business_id"
+    t.index ["business_website_id"], name: "index_website_settings_colours_on_business_website_id"
+  end
+
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "booking_holds", "bookings"
@@ -437,4 +458,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_08_25_131200) do
   add_foreign_key "solid_queue_ready_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_recurring_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_scheduled_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
+  add_foreign_key "website_settings_colours", "business_websites"
+  add_foreign_key "website_settings_colours", "businesses"
 end

@@ -407,6 +407,9 @@ Rails.application.routes.draw do
     patch "dashboard/settings/website-settings",
           to: "website_settings#update"
 
+    post "dashboard/settings/website-settings/generate-colours",
+         to: "website_settings#generate_colours"
+
     patch "dashboard/password",
           to: "settings#update_password",
           as: :password

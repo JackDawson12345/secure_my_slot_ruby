@@ -29,8 +29,9 @@
         @business.business_website.visit || {}
       end
   %>
+
   <!-- Header -->
-  <header class="sticky top-0 z-50 border-b border-<%= @business.business_website.colour %>-200/80 bg-white/90 backdrop-blur">
+  <header class="sticky top-0 z-50 border-b <%= website_colour_class("border", 200, 80) %> bg-white/90 backdrop-blur">
     <div class="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 lg:px-8">
 
       <% if @business.business_setting.logo.attached? %>
@@ -39,7 +40,7 @@
                       class: "h-10 rounded-xl object-contain" %>
       <% else %>
         <a href="#top" class="flex items-center gap-3">
-          <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-<%= @business.business_website.colour %>-500 text-white shadow-lg shadow-<%= @business.business_website.colour %>-500/20">
+          <div class="flex h-11 w-11 items-center justify-center rounded-2xl <%= website_colour_class("bg", 500) %> text-white shadow-lg <%= website_colour_class("shadow", 500, 20) %>">
             <svg
               class="h-6 w-6"
               viewBox="0 0 24 24"
@@ -57,11 +58,11 @@
           </div>
 
           <div>
-            <span class="block text-base font-bold leading-tight text-<%= @business.business_website.colour %>-950">
+            <span class="block text-base font-bold leading-tight <%= website_colour_class("text", 950) %>">
               <%= @business.business_name %>
             </span>
 
-            <span class="block text-xs font-medium text-<%= @business.business_website.colour %>-500">
+            <span class="block text-xs font-medium <%= website_colour_class("text", 500) %>">
               Online booking
             </span>
           </div>
@@ -71,28 +72,28 @@
       <nav class="hidden items-center gap-8 md:flex">
         <a
           href="#services"
-          class="text-sm font-semibold text-<%= @business.business_website.colour %>-600 transition hover:text-<%= @business.business_website.colour %>-600"
+          class="text-sm font-semibold <%= website_colour_class("text", 500) %> transition hover:<%= website_colour_class("text", 600) %>"
         >
           Services
         </a>
 
         <a
           href="#about"
-          class="text-sm font-semibold text-<%= @business.business_website.colour %>-600 transition hover:text-<%= @business.business_website.colour %>-600"
+          class="text-sm font-semibold <%= website_colour_class("text", 500) %> transition hover:<%= website_colour_class("text", 600) %>"
         >
           About
         </a>
 
         <a
           href="#location"
-          class="text-sm font-semibold text-<%= @business.business_website.colour %>-600 transition hover:text-<%= @business.business_website.colour %>-600"
+          class="text-sm font-semibold <%= website_colour_class("text", 500) %> transition hover:<%= website_colour_class("text", 600) %>"
         >
           Location
         </a>
 
         <a
           href="#booking"
-          class="rounded-xl bg-<%= @business.business_website.colour %>-500 px-5 py-3 text-sm font-bold text-white shadow-lg shadow-<%= @business.business_website.colour %>-500/20 transition hover:bg-<%= @business.business_website.colour %>-600"
+          class="rounded-xl <%= website_colour_class("bg", 500) %> px-5 py-3 text-sm font-bold text-white shadow-lg <%= website_colour_class("shadow", 500, 20) %> transition hover:<%= website_colour_class("bg", 600) %>"
         >
           Book now
         </a>
@@ -100,7 +101,7 @@
 
       <a
         href="#booking"
-        class="rounded-xl bg-<%= @business.business_website.colour %>-500 px-4 py-2.5 text-sm font-bold text-white md:hidden"
+        class="rounded-xl <%= website_colour_class("bg", 500) %> px-4 py-2.5 text-sm font-bold text-white md:hidden"
       >
         Book
       </a>
@@ -110,7 +111,7 @@
   <main id="top">
 
     <!-- Hero -->
-    <section class="relative overflow-hidden bg-<%= @business.business_website.colour %>-950">
+    <section class="relative overflow-hidden <%= website_colour_class("bg", 950) %>">
       <div class="absolute inset-0">
         <% if @business.business_website.hero_image.attached? %>
           <%= image_tag @business.business_website.hero_image,
@@ -122,7 +123,9 @@
                         class: "h-full w-full object-cover opacity-40" %>
         <% end %>
 
-        <div class="absolute inset-0 bg-gradient-to-r from-<%= @business.business_website.colour %>-950 via-<%= @business.business_website.colour %>-950/30 to-<%= @business.business_website.colour %>-950/30"></div>
+        <div
+          class="absolute inset-0 bg-gradient-to-r <%= website_colour_class("from", 950) %> <%= website_colour_class("via", 950, 30) %> <%= website_colour_class("to", 950, 30) %>"
+        ></div>
 
         <div
           class="absolute inset-0 opacity-20"
@@ -146,11 +149,11 @@
             <%= hero["title"].presence || "Book your next appointment online" %>
           </h1>
 
-          <p class="mt-6 max-w-2xl text-lg leading-8 text-<%= @business.business_website.colour %>-300 sm:text-xl">
+          <p class="mt-6 max-w-2xl text-lg leading-8 <%= website_colour_class("text", 300) %> sm:text-xl">
             <%= hero["sentence"].presence || "Professional services delivered at a time that works for you. Choose your service, select an available appointment and confirm your booking in just a few simple steps." %>
           </p>
 
-          <div class="mt-8 flex flex-wrap gap-3 text-sm font-semibold text-<%= @business.business_website.colour %>-200">
+          <div class="mt-8 flex flex-wrap gap-3 text-sm font-semibold <%= website_colour_class("text", 200) %>">
 
             <div class="flex items-center gap-2 rounded-xl border border-white/10 bg-white/10 px-4 py-3 backdrop-blur">
               <i
@@ -184,7 +187,7 @@
           <div class="mt-10 flex flex-col gap-4 sm:flex-row">
             <a
               href="#booking"
-              class="inline-flex items-center justify-center gap-2 rounded-2xl bg-<%= @business.business_website.colour %>-500 px-7 py-4 text-base font-bold text-white shadow-xl shadow-<%= @business.business_website.colour %>-500/20 transition hover:-translate-y-0.5 hover:bg-<%= @business.business_website.colour %>-600"
+              class="inline-flex items-center justify-center gap-2 rounded-2xl <%= website_colour_class("bg", 500) %> px-7 py-4 text-base font-bold text-white shadow-xl <%= website_colour_class("shadow", 500, 20) %> transition hover:-translate-y-0.5 hover:<%= website_colour_class("bg", 600) %>"
             >
               Book an appointment
 
@@ -208,7 +211,7 @@
               class="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/20 bg-white/10 px-7 py-4 text-base font-bold text-white backdrop-blur transition hover:bg-white/20"
             >
               <svg
-                class="h-5 w-5 text-<%= @business.business_website.colour %>-300"
+                class="h-5 w-5 <%= website_colour_class("text", 300) %>"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
@@ -233,16 +236,16 @@
 
               <div class="flex items-start justify-between gap-4">
                 <div>
-                  <p class="text-sm font-bold uppercase tracking-[0.18em] text-<%= @business.business_website.colour %>-600">
+                  <p class="text-sm font-bold uppercase tracking-[0.18em] <%= website_colour_class("text", 600) %>">
                     Opening hours
                   </p>
 
-                  <h2 class="mt-2 text-2xl font-black text-<%= @business.business_website.colour %>-950">
+                  <h2 class="mt-2 text-2xl font-black <%= website_colour_class("text", 950) %>">
                     Plan your visit
                   </h2>
                 </div>
 
-                <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-<%= @business.business_website.colour %>-50 text-<%= @business.business_website.colour %>-600">
+                <div class="flex h-12 w-12 items-center justify-center rounded-2xl <%= website_colour_class("bg", 50) %> <%= website_colour_class("text", 600) %>">
                   <svg
                     class="h-6 w-6"
                     viewBox="0 0 24 24"
@@ -258,19 +261,19 @@
 
               <div class="mt-6 space-y-3">
                 <% @business.opening_hours.each do |opening_hour| %>
-                  <div class="flex items-center justify-between border-b border-<%= @business.business_website.colour %>-100 pb-3">
+                  <div class="flex items-center justify-between border-b <%= website_colour_class("border", 100) %> pb-3">
 
-                    <span class="font-medium capitalize text-<%= @business.business_website.colour %>-600">
+                    <span class="font-medium capitalize <%= website_colour_class("text", 600) %>">
                       <%= opening_hour.day_of_week %>
                     </span>
 
                     <% if opening_hour.open == true %>
-                      <span class="font-bold text-<%= @business.business_website.colour %>-900">
+                      <span class="font-bold <%= website_colour_class("text", 900) %>">
                         <%= opening_hour.opens_at.strftime("%H:%M") %> –
                         <%= opening_hour.closes_at.strftime("%H:%M") %>
                       </span>
                     <% else %>
-                      <span class="font-bold text-<%= @business.business_website.colour %>-900">
+                      <span class="font-bold <%= website_colour_class("text", 900) %>">
                         Closed
                       </span>
                     <% end %>
@@ -306,11 +309,11 @@
     </section>
 
     <!-- Business Summary -->
-    <section class="border-b border-<%= @business.business_website.colour %>-200 bg-white">
-      <div class="mx-auto grid max-w-7xl divide-y divide-<%= @business.business_website.colour %>-200 px-5 sm:grid-cols-3 sm:divide-x sm:divide-y-0 lg:px-8">
+    <section class="border-b <%= website_colour_class("border", 200) %> bg-white">
+      <div class="mx-auto grid max-w-7xl divide-y <%= website_colour_class("divide", 200) %> px-5 sm:grid-cols-3 sm:divide-x sm:divide-y-0 lg:px-8">
 
         <div class="flex items-center gap-4 py-6 sm:px-6 sm:first:pl-0">
-          <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-<%= @business.business_website.colour %>-50 text-<%= @business.business_website.colour %>-600">
+          <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl <%= website_colour_class("bg", 50) %> <%= website_colour_class("text", 600) %>">
             <svg
               class="h-6 w-6"
               viewBox="0 0 24 24"
@@ -328,11 +331,11 @@
           </div>
 
           <div>
-            <p class="text-sm font-semibold text-<%= @business.business_website.colour %>-500">
+            <p class="text-sm font-semibold <%= website_colour_class("text", 500) %>">
               Location
             </p>
 
-            <p class="font-bold text-<%= @business.business_website.colour %>-900">
+            <p class="font-bold <%= website_colour_class("text", 900) %>">
               <%= @business.business_setting.address_line_1 %>,
               <%= @business.business_setting.town_or_city %>,
               <%= @business.business_setting.postcode %>
@@ -341,7 +344,7 @@
         </div>
 
         <div class="flex items-center gap-4 py-6 sm:px-6">
-          <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-<%= @business.business_website.colour %>-50 text-<%= @business.business_website.colour %>-600">
+          <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl <%= website_colour_class("bg", 50) %> <%= website_colour_class("text", 600) %>">
             <svg
               class="h-6 w-6"
               viewBox="0 0 24 24"
@@ -358,18 +361,18 @@
           </div>
 
           <div>
-            <p class="text-sm font-semibold text-<%= @business.business_website.colour %>-500">
+            <p class="text-sm font-semibold <%= website_colour_class("text", 500) %>">
               Appointments
             </p>
 
-            <p class="font-bold text-<%= @business.business_website.colour %>-900">
+            <p class="font-bold <%= website_colour_class("text", 900) %>">
               Instantly confirmed
             </p>
           </div>
         </div>
 
         <div class="flex items-center gap-4 py-6 sm:px-6 sm:last:pr-0">
-          <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-<%= @business.business_website.colour %>-50 text-<%= @business.business_website.colour %>-600">
+          <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl <%= website_colour_class("bg", 50) %> <%= website_colour_class("text", 600) %>">
             <svg
               class="h-6 w-6"
               viewBox="0 0 24 24"
@@ -390,11 +393,11 @@
           </div>
 
           <div>
-            <p class="text-sm font-semibold text-<%= @business.business_website.colour %>-500">
+            <p class="text-sm font-semibold <%= website_colour_class("text", 500) %>">
               Booking
             </p>
 
-            <p class="font-bold text-<%= @business.business_website.colour %>-900">
+            <p class="font-bold <%= website_colour_class("text", 900) %>">
               Available 24 hours a day
             </p>
           </div>
@@ -408,15 +411,15 @@
       <div class="mx-auto max-w-7xl px-5 lg:px-8">
 
         <div class="mx-auto max-w-2xl text-center">
-          <p class="text-sm font-bold uppercase tracking-[0.2em] text-<%= @business.business_website.colour %>-600">
+          <p class="text-sm font-bold uppercase tracking-[0.2em] <%= website_colour_class("text", 600) %>">
             Our services
           </p>
 
-          <h2 class="mt-3 text-3xl font-black tracking-tight text-<%= @business.business_website.colour %>-950 sm:text-5xl">
+          <h2 class="mt-3 text-3xl font-black tracking-tight <%= website_colour_class("text", 950) %> sm:text-5xl">
             <%= services_content["title"].presence || "Choose the right service" %>
           </h2>
 
-          <p class="mt-5 text-lg leading-8 text-<%= @business.business_website.colour %>-600">
+          <p class="mt-5 text-lg leading-8 <%= website_colour_class("text", 600) %>">
             <%= services_content["sentence"].presence || "Browse our available services and select the option that best matches your requirements. Full details, appointment lengths and prices are shown before you book." %>
           </p>
         </div>
@@ -424,41 +427,41 @@
         <div class="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           <% @business.services.where(status: 'active').each do |service| %>
 
-            <article class="group rounded-3xl border border-<%= @business.business_website.colour %>-200 bg-white p-6 shadow-card transition hover:-translate-y-1 hover:border-<%= @business.business_website.colour %>-200 hover:shadow-soft">
+            <article class="group rounded-3xl border <%= website_colour_class("border", 200) %> bg-white p-6 shadow-card transition hover:-translate-y-1 hover:<%= website_colour_class("border", 200) %> hover:shadow-soft">
 
               <div class="flex items-start justify-between gap-4">
-                <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-<%= @business.business_website.colour %>-50 text-<%= @business.business_website.colour %>-600">
+                <div class="flex h-14 w-14 items-center justify-center rounded-2xl <%= website_colour_class("bg", 50) %> <%= website_colour_class("text", 600) %>">
                   <i
                     data-lucide="<%= service.icon.presence || "calendar-check" %>"
                     class="h-6 w-6"
                   ></i>
                 </div>
 
-                <span class="rounded-full bg-<%= @business.business_website.colour %>-100 px-3 py-1.5 text-xs font-bold text-<%= @business.business_website.colour %>-600">
+                <span class="rounded-full <%= website_colour_class("bg", 100) %> px-3 py-1.5 text-xs font-bold <%= website_colour_class("text", 600) %>">
                   <%= service.minutes_duration %> mins
                 </span>
               </div>
 
-              <h3 class="mt-6 text-xl font-black text-<%= @business.business_website.colour %>-950">
+              <h3 class="mt-6 text-xl font-black <%= website_colour_class("text", 950) %>">
                 <%= service.name %>
               </h3>
 
-              <p class="mt-3 leading-7 text-<%= @business.business_website.colour %>-600">
+              <p class="mt-3 leading-7 <%= website_colour_class("text", 600) %>">
                 <%= service.description %>
               </p>
 
               <div class="mt-6 flex items-end justify-between">
                 <div>
-                  <span class="text-sm font-semibold text-<%= @business.business_website.colour %>-400">
+                  <span class="text-sm font-semibold <%= website_colour_class("text", 400) %>">
                     Price
                   </span>
 
-                  <p class="text-2xl font-black text-<%= @business.business_website.colour %>-950">
+                  <p class="text-2xl font-black <%= website_colour_class("text", 950) %>">
                     <%= number_to_currency(service.price, unit: "£") %>
                   </p>
 
                   <% if service.deposit_enabled? && service.deposit.to_d.positive? %>
-                    <p class="mt-1 text-xs font-bold text-<%= @business.business_website.colour %>-600">
+                    <p class="mt-1 text-xs font-bold <%= website_colour_class("text", 600) %>">
                       <%= number_to_currency(service.deposit, unit: "£") %> deposit required
                     </p>
                   <% end %>
@@ -467,7 +470,7 @@
                 <a
                   href="#booking"
                   data-service-id="<%= service.id %>"
-                  class="inline-flex items-center gap-2 text-sm font-bold text-<%= @business.business_website.colour %>-600 transition group-hover:gap-3"
+                  class="inline-flex items-center gap-2 text-sm font-bold <%= website_colour_class("text", 600) %> transition group-hover:gap-3"
                 >
                   Select
 
@@ -496,19 +499,19 @@
     </section>
 
     <!-- Booking Section -->
-    <section id="booking" class="bg-<%= @business.business_website.colour %>-100 py-20 sm:py-24">
+    <section id="booking" class="<%= website_colour_class("bg", 100) %> py-20 sm:py-24">
       <div class="mx-auto max-w-7xl px-5 lg:px-8">
 
         <div class="mb-12 max-w-3xl">
-          <p class="text-sm font-bold uppercase tracking-[0.2em] text-<%= @business.business_website.colour %>-600">
+          <p class="text-sm font-bold uppercase tracking-[0.2em] <%= website_colour_class("text", 600) %>">
             Book online
           </p>
 
-          <h2 class="mt-3 text-3xl font-black tracking-tight text-<%= @business.business_website.colour %>-950 sm:text-5xl">
+          <h2 class="mt-3 text-3xl font-black tracking-tight <%= website_colour_class("text", 950) %> sm:text-5xl">
             Find your next available appointment
           </h2>
 
-          <p class="mt-5 text-lg leading-8 text-<%= @business.business_website.colour %>-600">
+          <p class="mt-5 text-lg leading-8 <%= website_colour_class("text", 600) %>">
             Choose your service, appointment date and preferred time.
           </p>
         </div>
@@ -523,9 +526,9 @@
           <div class="space-y-8">
 
             <!-- Service -->
-            <div class="rounded-3xl border border-<%= @business.business_website.colour %>-200 bg-white p-6 shadow-card sm:p-8">
+            <div class="rounded-3xl border <%= website_colour_class("border", 200) %> bg-white p-6 shadow-card sm:p-8">
 
-              <h3 class="text-xl font-black text-<%= @business.business_website.colour %>-950">
+              <h3 class="text-xl font-black <%= website_colour_class("text", 950) %>">
                 Select a service
               </h3>
 
@@ -549,28 +552,28 @@
 
                     <label
                       for="service-<%= service.id %>"
-                      class="block cursor-pointer rounded-2xl border-2 border-<%= @business.business_website.colour %>-200 p-4 transition hover:border-<%= @business.business_website.colour %>-500 peer-checked:border-<%= @business.business_website.colour %>-500 peer-checked:bg-<%= @business.business_website.colour %>-50"
+                      class="block cursor-pointer rounded-2xl border-2 <%= website_colour_class("border", 200) %> p-4 transition hover:<%= website_colour_class("border", 500) %> peer-checked:<%= website_colour_class("border", 500) %> peer-checked:<%= website_colour_class("bg", 50) %>"
                     >
 
                       <div class="flex justify-between gap-4">
 
                         <div>
-                          <span class="service-name block font-bold text-<%= @business.business_website.colour %>-900">
+                          <span class="service-name block font-bold <%= website_colour_class("text", 900) %>">
                             <%= service.name %>
                           </span>
 
-                          <span class="text-sm text-<%= @business.business_website.colour %>-500">
+                          <span class="text-sm <%= website_colour_class("text", 500) %>">
                             <%= service.minutes_duration %> minutes
                           </span>
                         </div>
 
                         <div class="text-right">
-                          <span class="block font-black text-<%= @business.business_website.colour %>-900">
+                          <span class="block font-black <%= website_colour_class("text", 900) %>">
                             <%= number_to_currency(service.price, unit: "£") %>
                           </span>
 
                           <% if service.deposit_enabled? && service.deposit.to_d.positive? %>
-                            <span class="mt-1 block text-xs font-semibold text-<%= @business.business_website.colour %>-600">
+                            <span class="mt-1 block text-xs font-semibold <%= website_colour_class("text", 600) %>">
                               <%= number_to_currency(service.deposit, unit: "£") %> deposit
                             </span>
                           <% end %>
@@ -588,9 +591,9 @@
             </div>
 
             <!-- Date -->
-            <div class="rounded-3xl border border-<%= @business.business_website.colour %>-200 bg-white p-6 shadow-card sm:p-8">
+            <div class="rounded-3xl border <%= website_colour_class("border", 200) %> bg-white p-6 shadow-card sm:p-8">
 
-              <h3 class="text-xl font-black text-<%= @business.business_website.colour %>-950">
+              <h3 class="text-xl font-black <%= website_colour_class("text", 950) %>">
                 Choose a date
               </h3>
 
@@ -599,11 +602,11 @@
                 name="booking[date]"
                 id="booking-date"
                 min="<%= Date.current %>"
-                class="mt-6 w-full rounded-2xl border border-<%= @business.business_website.colour %>-300 px-4 py-4"
+                class="mt-6 w-full rounded-2xl border <%= website_colour_class("border", 300) %> px-4 py-4"
                 required
               >
 
-              <p class="mt-6 font-bold text-<%= @business.business_website.colour %>-700">
+              <p class="mt-6 font-bold <%= website_colour_class("text", 700) %>">
                 Available times
               </p>
 
@@ -612,9 +615,9 @@
                 class="mt-4"
               >
 
-                <div class="flex flex-col items-center justify-center rounded-2xl border border-dashed border-<%= @business.business_website.colour %>-200 bg-<%= @business.business_website.colour %>-50 px-6 py-10 text-center">
+                <div class="flex flex-col items-center justify-center rounded-2xl border border-dashed <%= website_colour_class("border", 200) %> <%= website_colour_class("bg", 50) %> px-6 py-10 text-center">
 
-                  <div class="flex h-12 w-12 items-center justify-center rounded-full bg-white text-<%= @business.business_website.colour %>-500 shadow-sm">
+                  <div class="flex h-12 w-12 items-center justify-center rounded-full bg-white <%= website_colour_class("text", 500) %> shadow-sm">
                     <svg
                       class="h-6 w-6"
                       viewBox="0 0 24 24"
@@ -630,11 +633,11 @@
                     </svg>
                   </div>
 
-                  <p class="mt-4 text-base font-bold text-<%= @business.business_website.colour %>-900">
+                  <p class="mt-4 text-base font-bold <%= website_colour_class("text", 900) %>">
                     Choose your service and date
                   </p>
 
-                  <p class="mt-2 max-w-sm text-sm leading-6 text-<%= @business.business_website.colour %>-500">
+                  <p class="mt-2 max-w-sm text-sm leading-6 <%= website_colour_class("text", 500) %>">
                     Available appointment times will appear here once you select your preferred service and booking date.
                   </p>
 
@@ -645,9 +648,9 @@
             </div>
 
             <!-- Customer Details -->
-            <div class="rounded-3xl border border-<%= @business.business_website.colour %>-200 bg-white p-6 shadow-card sm:p-8">
+            <div class="rounded-3xl border <%= website_colour_class("border", 200) %> bg-white p-6 shadow-card sm:p-8">
 
-              <h3 class="text-xl font-black text-<%= @business.business_website.colour %>-950">
+              <h3 class="text-xl font-black <%= website_colour_class("text", 950) %>">
                 Your details
               </h3>
 
@@ -657,7 +660,7 @@
                   type="text"
                   name="booking[first_name]"
                   placeholder="First name *"
-                  class="rounded-2xl border border-<%= @business.business_website.colour %>-300 px-4 py-3"
+                  class="rounded-2xl border <%= website_colour_class("border", 300) %> px-4 py-3"
                   required
                 >
 
@@ -665,7 +668,7 @@
                   type="text"
                   name="booking[last_name]"
                   placeholder="Last name *"
-                  class="rounded-2xl border border-<%= @business.business_website.colour %>-300 px-4 py-3"
+                  class="rounded-2xl border <%= website_colour_class("border", 300) %> px-4 py-3"
                   required
                 >
 
@@ -673,7 +676,7 @@
                   type="email"
                   name="booking[email]"
                   placeholder="Email *"
-                  class="rounded-2xl border border-<%= @business.business_website.colour %>-300 px-4 py-3"
+                  class="rounded-2xl border <%= website_colour_class("border", 300) %> px-4 py-3"
                   required
                 >
 
@@ -681,14 +684,14 @@
                   type="tel"
                   name="booking[phone_number]"
                   placeholder="Phone number<%= " *" if @business.business_setting.require_customer_phone_number? %>"
-                  class="rounded-2xl border border-<%= @business.business_website.colour %>-300 px-4 py-3"
+                  class="rounded-2xl border <%= website_colour_class("border", 300) %> px-4 py-3"
                   <%= "required" if @business.business_setting.require_customer_phone_number? %>
                 >
 
                 <textarea
                   name="booking[notes]"
                   placeholder="Additional notes"
-                  class="rounded-2xl border border-<%= @business.business_website.colour %>-300 px-4 py-3 sm:col-span-2"
+                  class="rounded-2xl border <%= website_colour_class("border", 300) %> px-4 py-3 sm:col-span-2"
                 ></textarea>
 
                 <div class="flex items-start gap-3 sm:col-span-2">
@@ -698,7 +701,7 @@
 
                   <%= form.label :terms_accepted,
                                  class: "text-sm text-gray-700" do %>
-                    I agree to the <a class="text-<%= @business.business_website.colour %>-500" href="https://www.securemyslot.co.uk/privacy-policy">Terms and conditions</a>
+                    I agree to the <a class="<%= website_colour_class("text", 500) %>" href="https://www.securemyslot.co.uk/privacy-policy">Terms and conditions</a>
                   <% end %>
                 </div>
 
@@ -710,9 +713,9 @@
 
           <!-- Summary -->
           <aside>
-            <div class="rounded-3xl border border-<%= @business.business_website.colour %>-200 bg-white p-6 shadow-soft lg:sticky lg:top-28">
+            <div class="rounded-3xl border <%= website_colour_class("border", 200) %> bg-white p-6 shadow-soft lg:sticky lg:top-28">
 
-              <h3 class="text-2xl font-black text-<%= @business.business_website.colour %>-950">
+              <h3 class="text-2xl font-black <%= website_colour_class("text", 950) %>">
                 Your appointment
               </h3>
 
@@ -810,19 +813,19 @@
 
                 <div
                   id="summary-due-container"
-                  class="mt-5 rounded-2xl bg-<%= @business.business_website.colour %>-50 p-4"
+                  class="mt-5 rounded-2xl <%= website_colour_class("bg", 50) %> p-4"
                 >
                   <div class="flex items-center justify-between gap-4">
                     <span
                       id="summary-due-label"
-                      class="text-sm font-bold text-<%= @business.business_website.colour %>-700"
+                      class="text-sm font-bold <%= website_colour_class("text", 700) %>"
                     >
                       Amount due
                     </span>
 
                     <span
                       id="summary-due"
-                      class="text-xl font-black text-<%= @business.business_website.colour %>-950"
+                      class="text-xl font-black <%= website_colour_class("text", 950) %>"
                     >
                       £0.00
                     </span>
@@ -833,10 +836,10 @@
 
               <div
                 id="payment-message-container"
-                class="mt-5 flex items-start gap-3 rounded-2xl bg-<%= @business.business_website.colour %>-50 p-4"
+                class="mt-5 flex items-start gap-3 rounded-2xl <%= website_colour_class("bg", 50) %> p-4"
               >
                 <svg
-                  class="mt-0.5 h-5 w-5 shrink-0 text-<%= @business.business_website.colour %>-600"
+                  class="mt-0.5 h-5 w-5 shrink-0 <%= website_colour_class("text", 600) %>"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
@@ -848,7 +851,7 @@
 
                 <p
                   id="payment-message"
-                  class="text-sm leading-6 text-<%= @business.business_website.colour %>-700"
+                  class="text-sm leading-6 <%= website_colour_class("text", 700) %>"
                 >
                   Select a service to see payment details.
                 </p>
@@ -856,7 +859,7 @@
 
               <button
                 type="submit"
-                class="mt-7 w-full rounded-2xl bg-<%= @business.business_website.colour %>-500 px-5 py-4 font-black text-white transition hover:bg-<%= @business.business_website.colour %>-600"
+                class="mt-7 w-full rounded-2xl <%= website_colour_class("bg", 500) %> px-5 py-4 font-black text-white transition hover:<%= website_colour_class("bg", 600) %>"
               >
                 <span id="booking-submit-text">
                   Confirm booking
@@ -892,11 +895,11 @@
         </div>
 
         <div class="pt-6 lg:pt-0">
-          <p class="text-sm font-bold uppercase tracking-[0.2em] text-<%= @business.business_website.colour %>-600">
+          <p class="text-sm font-bold uppercase tracking-[0.2em] <%= website_colour_class("text", 600) %>">
             About us
           </p>
 
-          <h2 class="mt-3 text-3xl font-black tracking-tight text-<%= @business.business_website.colour %>-950 sm:text-5xl">
+          <h2 class="mt-3 text-3xl font-black tracking-tight <%= website_colour_class("text", 950) %> sm:text-5xl">
             <%= about_us["title"].presence || "Professional service with a personal approach" %>
           </h2>
 
@@ -905,7 +908,7 @@
                 "We provide reliable, professional services tailored to the needs of each customer. Our team takes the time to understand your requirements and deliver a service that meets your expectations.
 
 Every appointment is handled with care, clear communication and attention to detail. Our online booking system makes it easy to view availability, choose the right service and secure an appointment at a convenient time.",
-                class: "mt-6 text-lg leading-8 text-#{@business.business_website.colour}-600"
+                class: "mt-6 text-lg leading-8 #{website_colour_class("text", 600)}"
               ) %>
 
           <div class="mt-8 grid gap-4 sm:grid-cols-2">
@@ -918,7 +921,7 @@ Every appointment is handled with care, clear communication and attention to det
                ].each_with_index do |defaults, index| %>
 
               <div class="flex items-start gap-3">
-                <span class="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-<%= @business.business_website.colour %>-100 text-<%= @business.business_website.colour %>-700">
+                <span class="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full <%= website_colour_class("bg", 100) %> <%= website_colour_class("text", 700) %>">
                   <svg
                     class="h-3.5 w-3.5"
                     viewBox="0 0 24 24"
@@ -935,11 +938,11 @@ Every appointment is handled with care, clear communication and attention to det
                 </span>
 
                 <div>
-                  <h3 class="font-bold text-<%= @business.business_website.colour %>-900">
+                  <h3 class="font-bold <%= website_colour_class("text", 900) %>">
                     <%= about_us.dig("icon_boxes", index, "title").presence || defaults[0] %>
                   </h3>
 
-                  <p class="mt-1 text-sm leading-6 text-<%= @business.business_website.colour %>-500">
+                  <p class="mt-1 text-sm leading-6 <%= website_colour_class("text", 500) %>">
                     <%= about_us.dig("icon_boxes", index, "sentence").presence || defaults[1] %>
                   </p>
                 </div>
@@ -951,7 +954,7 @@ Every appointment is handled with care, clear communication and attention to det
 
           <a
             href="#booking"
-            class="mt-9 inline-flex items-center justify-center gap-2 rounded-2xl bg-<%= @business.business_website.colour %>-950 px-6 py-4 font-bold text-white transition hover:bg-<%= @business.business_website.colour %>-600"
+            class="mt-9 inline-flex items-center justify-center gap-2 rounded-2xl <%= website_colour_class("bg", 950) %> px-6 py-4 font-bold text-white transition hover:<%= website_colour_class("bg", 600) %>"
           >
             Book your appointment
 
@@ -975,11 +978,11 @@ Every appointment is handled with care, clear communication and attention to det
     </section>
 
     <!-- Location -->
-    <section id="location" class="bg-<%= @business.business_website.colour %>-950 py-20 text-white sm:py-24">
+    <section id="location" class="<%= website_colour_class("bg", 950) %> py-20 text-white sm:py-24">
       <div class="mx-auto grid max-w-7xl gap-10 px-5 lg:grid-cols-[0.8fr_1.2fr] lg:px-8">
 
         <div>
-          <p class="text-sm font-bold uppercase tracking-[0.2em] text-<%= @business.business_website.colour %>-300">
+          <p class="text-sm font-bold uppercase tracking-[0.2em] <%= website_colour_class("text", 300) %>">
             Visit us
           </p>
 
@@ -987,14 +990,14 @@ Every appointment is handled with care, clear communication and attention to det
             <%= visit["title"].presence || "Find the business" %>
           </h2>
 
-          <p class="mt-5 max-w-xl text-lg leading-8 text-<%= @business.business_website.colour %>-300">
+          <p class="mt-5 max-w-xl text-lg leading-8 <%= website_colour_class("text", 300) %>">
             <%= visit["sentence"].presence || "View our address, telephone number and email address below. Please contact us directly if you need help before making a booking." %>
           </p>
 
           <div class="mt-8 space-y-5">
 
             <div class="flex items-start gap-4">
-              <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/10 text-<%= @business.business_website.colour %>-300">
+              <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/10 <%= website_colour_class("text", 300) %>">
                 <svg
                   class="h-5 w-5"
                   viewBox="0 0 24 24"
@@ -1016,7 +1019,7 @@ Every appointment is handled with care, clear communication and attention to det
                   Address
                 </p>
 
-                <p class="mt-1 leading-7 text-<%= @business.business_website.colour %>-400">
+                <p class="mt-1 leading-7 <%= website_colour_class("text", 400) %>">
                   <%= @business.business_setting.address_line_1 %><br>
 
                   <% if @business.business_setting.address_line_2.present? %>
@@ -1035,7 +1038,7 @@ Every appointment is handled with care, clear communication and attention to det
             </div>
 
             <div class="flex items-start gap-4">
-              <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/10 text-<%= @business.business_website.colour %>-300">
+              <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/10 <%= website_colour_class("text", 300) %>">
                 <svg
                   class="h-5 w-5"
                   viewBox="0 0 24 24"
@@ -1058,7 +1061,7 @@ Every appointment is handled with care, clear communication and attention to det
 
                 <a
                   href="tel:<%= @business.business_setting.phone_number %>"
-                  class="mt-1 block text-<%= @business.business_website.colour %>-400 transition hover:text-<%= @business.business_website.colour %>-300"
+                  class="mt-1 block <%= website_colour_class("text", 400) %> transition hover:<%= website_colour_class("text", 300) %>"
                 >
                   <%= @business.business_setting.phone_number %>
                 </a>
@@ -1066,7 +1069,7 @@ Every appointment is handled with care, clear communication and attention to det
             </div>
 
             <div class="flex items-start gap-4">
-              <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/10 text-<%= @business.business_website.colour %>-300">
+              <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/10 <%= website_colour_class("text", 300) %>">
                 <svg
                   class="h-5 w-5"
                   viewBox="0 0 24 24"
@@ -1094,7 +1097,7 @@ Every appointment is handled with care, clear communication and attention to det
 
                 <a
                   href="mailto:<%= @business.business_setting.business_email %>"
-                  class="mt-1 block text-<%= @business.business_website.colour %>-400 transition hover:text-<%= @business.business_website.colour %>-300"
+                  class="mt-1 block <%= website_colour_class("text", 400) %> transition hover:<%= website_colour_class("text", 300) %>"
                 >
                   <%= @business.business_setting.business_email %>
                 </a>
@@ -1104,7 +1107,7 @@ Every appointment is handled with care, clear communication and attention to det
           </div>
         </div>
 
-        <div class="min-h-[420px] overflow-hidden rounded-[2rem] border border-white/10 bg-<%= @business.business_website.colour %>-900">
+        <div class="min-h-[420px] overflow-hidden rounded-[2rem] border border-white/10 <%= website_colour_class("bg", 900) %>">
           <% if @coordinates %>
             <iframe
               title="<%= @business.business_name %> location"
@@ -1125,7 +1128,7 @@ Every appointment is handled with care, clear communication and attention to det
   </main>
 
   <!-- Footer -->
-  <footer class="bg-<%= @business.business_website.colour %>-950 pb-24 text-white md:pb-0">
+  <footer class="<%= website_colour_class("bg", 950) %> pb-24 text-white md:pb-0">
     <div class="border-t border-white/10">
       <div class="mx-auto flex max-w-7xl flex-col gap-6 px-5 py-8 md:flex-row md:items-center md:justify-between lg:px-8">
 
@@ -1134,14 +1137,14 @@ Every appointment is handled with care, clear communication and attention to det
             <%= @business.business_name %>
           </p>
 
-          <p class="mt-1 text-sm text-<%= @business.business_website.colour %>-500">
+          <p class="mt-1 text-sm <%= website_colour_class("text", 500) %>">
             © <span id="current-year"></span>
             <%= @business.business_name %>.
             All rights reserved.
           </p>
         </div>
 
-        <div class="flex flex-wrap gap-x-6 gap-y-3 text-sm font-semibold text-<%= @business.business_website.colour %>-400">
+        <div class="flex flex-wrap gap-x-6 gap-y-3 text-sm font-semibold <%= website_colour_class("text", 400) %>">
           <a
             href="https://www.securemyslot.co.uk/privacy-policy"
             class="transition hover:text-white"
@@ -1159,7 +1162,7 @@ Every appointment is handled with care, clear communication and attention to det
 
         <a
           href="https://securemyslot.co.uk"
-          class="text-sm font-semibold text-<%= @business.business_website.colour %>-500 transition hover:text-white"
+          class="text-sm font-semibold <%= website_colour_class("text", 500) %> transition hover:text-white"
         >
           Powered by
           <span class="font-black text-white">
@@ -1172,10 +1175,10 @@ Every appointment is handled with care, clear communication and attention to det
   </footer>
 
   <!-- Mobile Booking Bar -->
-  <div class="fixed inset-x-0 bottom-0 z-50 border-t border-<%= @business.business_website.colour %>-200 bg-white/95 p-3 shadow-[0_-10px_30px_rgba(15,23,42,0.08)] backdrop-blur md:hidden">
+  <div class="fixed inset-x-0 bottom-0 z-50 border-t <%= website_colour_class("border", 200) %> bg-white/95 p-3 shadow-[0_-10px_30px_rgba(15,23,42,0.08)] backdrop-blur md:hidden">
     <a
       href="#booking"
-      class="flex w-full items-center justify-center gap-2 rounded-2xl bg-<%= @business.business_website.colour %>-500 px-5 py-4 font-black text-white"
+      class="flex w-full items-center justify-center gap-2 rounded-2xl <%= website_colour_class("bg", 500) %> px-5 py-4 font-black text-white"
     >
       Book an appointment
 
@@ -1609,8 +1612,8 @@ Every appointment is handled with care, clear communication and attention to det
                   "mt-4";
 
               timeOptions.innerHTML = `
-          <div class="rounded-2xl border border-<%= @business.business_website.colour %>-200 bg-<%= @business.business_website.colour %>-50 px-5 py-6 text-center">
-            <p class="font-bold text-<%= @business.business_website.colour %>-900">
+          <div class="rounded-2xl border <%= website_colour_class("border", 200) %> <%= website_colour_class("bg", 50) %> px-5 py-6 text-center">
+            <p class="font-bold <%= website_colour_class("text", 900) %>">
               Loading available times...
             </p>
           </div>
@@ -1681,7 +1684,7 @@ Every appointment is handled with care, clear communication and attention to det
 
                   <label
                     for="${inputId}"
-                    class="block cursor-pointer rounded-xl border-2 border-<%= @business.business_website.colour %>-200 px-3 py-3 text-center font-bold text-<%= @business.business_website.colour %>-700 transition hover:border-<%= @business.business_website.colour %>-500 peer-checked:border-<%= @business.business_website.colour %>-500 peer-checked:bg-<%= @business.business_website.colour %>-50 peer-checked:text-<%= @business.business_website.colour %>-900"
+                    class="block cursor-pointer rounded-xl border-2 <%= website_colour_class("border", 200) %> px-3 py-3 text-center font-bold <%= website_colour_class("text", 700) %> transition hover:<%= website_colour_class("border", 500) %> peer-checked:<%= website_colour_class("border", 500) %> peer-checked:<%= website_colour_class("bg", 50) %> peer-checked:<%= website_colour_class("text", 900) %>"
                   >
                     ${time}
                   </label>
@@ -1740,10 +1743,10 @@ Every appointment is handled with care, clear communication and attention to det
 
 <% else %>
 
-  <section class="flex min-h-screen items-center justify-center bg-<%= @business.business_website.colour %>-950 px-5">
+  <section class="flex min-h-screen items-center justify-center <%= website_colour_class("bg", 950) %> px-5">
     <div class="max-w-xl rounded-3xl bg-white p-10 text-center shadow-2xl">
 
-      <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-<%= @business.business_website.colour %>-100 text-<%= @business.business_website.colour %>-600">
+      <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl <%= website_colour_class("bg", 100) %> <%= website_colour_class("text", 600) %>">
         <svg
           class="h-8 w-8"
           viewBox="0 0 24 24"
@@ -1759,18 +1762,18 @@ Every appointment is handled with care, clear communication and attention to det
         </svg>
       </div>
 
-      <h1 class="mt-6 text-3xl font-black text-<%= @business.business_website.colour %>-950">
+      <h1 class="mt-6 text-3xl font-black <%= website_colour_class("text", 950) %>">
         This booking page is not live
       </h1>
 
-      <p class="mt-4 text-lg leading-8 text-<%= @business.business_website.colour %>-600">
+      <p class="mt-4 text-lg leading-8 <%= website_colour_class("text", 600) %>">
         Online bookings are currently unavailable. Please check back soon or contact us directly to arrange an appointment.
       </p>
 
       <% if @business.business_setting.phone_number.present? %>
         <a
           href="tel:<%= @business.business_setting.phone_number %>"
-          class="mt-8 inline-flex rounded-2xl bg-<%= @business.business_website.colour %>-500 px-7 py-4 font-bold text-white transition hover:bg-<%= @business.business_website.colour %>-600"
+          class="mt-8 inline-flex rounded-2xl <%= website_colour_class("bg", 500) %> px-7 py-4 font-bold text-white transition hover:<%= website_colour_class("bg", 600) %>"
         >
           Contact us
         </a>

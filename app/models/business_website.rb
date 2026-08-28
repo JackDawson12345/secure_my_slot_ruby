@@ -1,25 +1,29 @@
 class BusinessWebsite < ApplicationRecord
   COLOUR_SCHEMES = %w[
-    blue
-    indigo
-    violet
-    purple
-    pink
-    rose
-    red
-    orange
-    amber
-    emerald
-    green
-    teal
-    cyan
-    slate
-  ].freeze
+  custom
+  blue
+  indigo
+  violet
+  purple
+  pink
+  rose
+  red
+  orange
+  amber
+  emerald
+  green
+  teal
+  cyan
+  slate
+].freeze
 
   belongs_to :business
 
   has_one_attached :hero_image
   has_one_attached :about_image
+
+  has_one :website_settings_colour,
+          dependent: :destroy
 
   validates :business_id, uniqueness: true
 

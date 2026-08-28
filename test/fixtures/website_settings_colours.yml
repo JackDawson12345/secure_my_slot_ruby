@@ -1,0 +1,19 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  business: one
+  business_website: one
+  hex_code: MyString
+  colour_900: MyString
+  colour_700: MyString
+  colour_500: MyString
+  colour_300: MyString
+
+two:
+  business: two
+  business_website: two
+  hex_code: MyString
+  colour_900: MyString
+  colour_700: MyString
+  colour_500: MyString
+  colour_300: MyString

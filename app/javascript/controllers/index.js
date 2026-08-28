@@ -9,6 +9,7 @@ import LogoPreviewController from "controllers/logo_preview_controller"
 import FaviconPreviewController from "controllers/favicon_preview_controller"
 import DepositController from "controllers/deposit_controller"
 import ImagePreviewController from "controllers/image_preview_controller"
+import ColourGeneratorController from "controllers/colour_generator_controller"
 
 application.register("opening-hours", OpeningHoursController)
 application.register("nested-form", NestedFormController)
@@ -17,3 +18,4 @@ application.register("logo-preview", LogoPreviewController)
 application.register("favicon-preview", FaviconPreviewController)
 application.register("deposit", DepositController)
 application.register("image-preview", ImagePreviewController)
+application.register("colour-generator", ColourGeneratorController)

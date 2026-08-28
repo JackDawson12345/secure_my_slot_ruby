@@ -2,6 +2,8 @@ class ApplicationController < ActionController::Base
   before_action :configure_permitted_parameters,
                 if: :devise_controller?
 
+  helper WebsiteColourHelper
+
 
   def after_omniauth_failure_path_for(scope)
     business_calendar_sync_path
