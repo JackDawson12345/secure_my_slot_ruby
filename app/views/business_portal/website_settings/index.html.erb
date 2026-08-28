@@ -221,6 +221,9 @@
     </button>
   </section>
 
+  <!-- Flash messages -->
+  <%= render 'business_portal/shared/flash_messages' %>
+
   <!-- Validation errors -->
   <% if @business_website.errors.any? %>
     <div class="mt-6 rounded-2xl border border-rose-200 bg-rose-50 p-5">

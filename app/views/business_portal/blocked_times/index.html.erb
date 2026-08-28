@@ -1,7 +1,7 @@
 <%# app/views/business_portal/blocked_times/index.html.erb %>
 
 <main class="p-4 sm:p-6 lg:p-8">
-  <section class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+  <section class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8">
     <div>
       <h2 class="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
         Blocked Times
@@ -13,6 +13,9 @@
     </div>
 
   </section>
+
+  <!-- Flash messages -->
+  <%= render 'business_portal/shared/flash_messages' %>
 
   <section class="mt-8 flex flex-col gap-4 rounded-2xl border border-indigo-100 bg-indigo-50 p-5 sm:flex-row sm:items-center sm:justify-between">
     <div class="flex items-start gap-3">

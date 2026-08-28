@@ -25,17 +25,8 @@
     </button>
   </section>
 
-  <% if flash[:notice].present? %>
-    <div class="mt-6 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-medium text-emerald-700">
-      <%= flash[:notice] %>
-    </div>
-  <% end %>
-
-  <% if flash[:alert].present? %>
-    <div class="mt-6 rounded-xl border border-rose-200 bg-rose-50 p-4 text-sm font-medium text-rose-700">
-      <%= flash[:alert] %>
-    </div>
-  <% end %>
+  <!-- Flash messages -->
+  <%= render 'business_portal/shared/flash_messages' %>
 
   <% if @business.errors.any? %>
     <section class="mt-6 rounded-xl border border-rose-200 bg-rose-50 p-5">

@@ -46,7 +46,7 @@ class BusinessPortal::ServicesController < BusinessPortal::BaseController
     @service = @business.services.new(service_params)
 
     if @service.save
-      redirect_to business_service_path(@service),
+      redirect_to business_services_path,
                   notice: "Service was created successfully."
     else
       render :new, status: :unprocessable_entity
