@@ -4,8 +4,10 @@ class BusinessSetting < ApplicationRecord
   before_save :clear_coordinates_if_address_changed
 
   has_one_attached :logo
+  has_one_attached :favicon
 
   validate :acceptable_logo
+  validate :acceptable_favicon
 
   private
 
@@ -26,6 +28,27 @@ class BusinessSetting < ApplicationRecord
       errors.add(:logo, "must be smaller than 5 MB")
     end
   end
+
+
+  def acceptable_favicon
+    return unless favicon.attached?
+
+    allowed_types = [
+      "image/png",
+      "image/jpeg",
+      "image/webp",
+      "image/x-icon"
+    ]
+
+    unless allowed_types.include?(favicon.blob.content_type)
+      errors.add(:favicon, "must be a PNG, JPG, WebP or ICO image")
+    end
+
+    if favicon.blob.byte_size > 2.megabytes
+      errors.add(:favicon, "must be smaller than 2 MB")
+    end
+  end
+
 
   def clear_coordinates_if_address_changed
     address_changed = [

@@ -415,6 +415,10 @@ Rails.application.routes.draw do
            to: "settings#destroy_logo",
            as: :settings_logo
 
+    delete "dashboard/settings/favicon",
+           to: "settings#remove_favicon",
+           as: :settings_favicon
+
     get "dashboard/settings/payments",
         to: "payments#index",
         as: :payments

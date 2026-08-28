@@ -83,6 +83,18 @@ class BusinessPortal::SettingsController < BusinessPortal::BaseController
     end
   end
 
+  def remove_favicon
+    if @settings.favicon.attached?
+      @settings.favicon.purge_later
+
+      redirect_to business_general_settings_path,
+                  notice: "Favicon removed successfully."
+    else
+      redirect_to business_general_settings_path,
+                  alert: "No favicon was found."
+    end
+  end
+
 
   private
 
