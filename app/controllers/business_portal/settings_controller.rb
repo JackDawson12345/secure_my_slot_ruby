@@ -39,7 +39,7 @@ class BusinessPortal::SettingsController < BusinessPortal::BaseController
   def update_password
 
     unless @user.valid_password?(params[:current_password])
-      redirect_to business_settings_path,
+      redirect_to business_general_settings_path,
                   alert: "Current password is incorrect."
       return
     end
@@ -47,7 +47,7 @@ class BusinessPortal::SettingsController < BusinessPortal::BaseController
 
     if params[:password] != params[:password_confirmation]
 
-      redirect_to business_settings_path,
+      redirect_to business_general_settings_path,
                   alert: "Passwords do not match."
 
       return
@@ -59,12 +59,12 @@ class BusinessPortal::SettingsController < BusinessPortal::BaseController
       password_confirmation: params[:password_confirmation]
     )
 
-      redirect_to business_settings_path,
+      redirect_to business_general_settings_path,
                   notice: "Password updated successfully."
 
     else
 
-      redirect_to business_settings_path,
+      redirect_to business_general_settings_path,
                   alert: @user.errors.full_messages.to_sentence
 
     end
@@ -75,10 +75,10 @@ class BusinessPortal::SettingsController < BusinessPortal::BaseController
     if @settings.logo.attached?
       @settings.logo.purge_later
 
-      redirect_to business_settings_path,
+      redirect_to business_general_settings_path,
                   notice: "Business logo removed successfully."
     else
-      redirect_to business_settings_path,
+      redirect_to business_general_settings_path,
                   alert: "No business logo was found."
     end
   end
