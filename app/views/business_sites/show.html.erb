@@ -422,7 +422,7 @@
         </div>
 
         <div class="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          <% @business.services.each do |service| %>
+          <% @business.services.where(status: 'active').each do |service| %>
 
             <article class="group rounded-3xl border border-<%= @business.business_website.colour %>-200 bg-white p-6 shadow-card transition hover:-translate-y-1 hover:border-<%= @business.business_website.colour %>-200 hover:shadow-soft">
 
@@ -531,7 +531,7 @@
 
               <div class="mt-7 grid gap-4 sm:grid-cols-2">
 
-                <% @business.services.each do |service| %>
+                <% @business.services.where(status: 'active').each do |service| %>
                   <div>
 
                     <input
