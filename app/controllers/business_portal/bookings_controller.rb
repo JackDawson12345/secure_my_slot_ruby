@@ -255,6 +255,47 @@ class BusinessPortal::BookingsController < BusinessPortal::BaseController
     end
   end
 
+  def calendar
+
+  end
+
+  def find
+    bookings = current_user.business.bookings.where(status: ["pending", "confirmed", "completed"])
+
+    render json: bookings.map { |booking|
+
+      start_time = booking.time.strftime("%H:%M")
+
+      start_datetime = "#{booking.date}T#{start_time}"
+
+      end_datetime = booking.date.to_time +
+                     booking.time.seconds_since_midnight.seconds +
+                     booking.service.minutes_duration.minutes
+
+
+      {
+        id: booking.id,
+
+        title: "#{booking.user.first_name} #{booking.user.last_name}",
+
+        start: start_datetime,
+
+        end: end_datetime.strftime("%Y-%m-%dT%H:%M:%S"),
+
+        backgroundColor: booking.status == "confirmed" ? "#16a34a" : "#f59e0b",
+
+        borderColor: "transparent",
+
+        extendedProps: {
+          service: booking.service.name,
+          status: booking.status,
+          price: booking.service.price
+        }
+      }
+
+    }
+  end
+
   private
 
   def find_or_build_user(attrs)

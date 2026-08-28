@@ -318,6 +318,14 @@ Rails.application.routes.draw do
         to: "bookings#index",
         as: :bookings
 
+    get "dashboard/bookings/calendar",
+        to: "bookings#calendar",
+        as: :bookings_calendar
+
+    get "dashboard/bookings/find",
+        to: "bookings#find",
+        as: :bookings_find
+
     get "dashboard/bookings/add-booking",
         to: "bookings#add_booking",
         as: :add_booking

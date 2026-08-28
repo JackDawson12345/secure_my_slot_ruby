@@ -1,0 +1,251 @@
+<main class="p-4 sm:p-6 lg:p-8">
+
+  <div class="max-w-7xl mx-auto">
+
+    <div id="calendar"></div>
+
+  </div>
+
+</main>
+
+
+<!-- FullCalendar CSS -->
+<link
+  href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.css"
+  rel="stylesheet"
+  />
+
+<!-- FullCalendar JS -->
+<script
+  src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js">
+</script>
+
+
+<script>
+    document.addEventListener('turbo:load', function() {
+
+        const calendarEl = document.getElementById('calendar');
+
+        if (!calendarEl) return;
+
+
+        const calendar = new FullCalendar.Calendar(calendarEl, {
+
+            initialView: 'dayGridMonth',
+
+            height: 750,
+
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridDay'
+            },
+
+            titleFormat: {
+                year: 'numeric',
+                month: 'long'
+            },
+
+            buttonText: {
+                today: 'Today',
+                day: 'Day'
+            },
+
+            events: '/business/dashboard/bookings/find',
+
+            eventClick: function(info) {
+
+                window.location.href = `/business/dashboard/bookings/${info.event.id}`;
+
+            }
+
+        });
+
+
+        calendar.render();
+
+    });
+</script>
+
+
+<style>
+
+    #calendar {
+        background: #ffffff;
+        border-radius: 18px;
+        padding: 24px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    }
+
+
+    /* Toolbar */
+
+    .fc .fc-toolbar {
+        margin-bottom: 25px;
+    }
+
+    .fc .fc-toolbar-title {
+        font-size: 24px;
+        font-weight: 700;
+        color: #0f172a;
+    }
+
+
+    /* Buttons */
+
+    .fc .fc-button {
+        background: #ffffff;
+        color: #334155;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 8px 16px;
+        font-weight: 600;
+        box-shadow: none;
+    }
+
+    .fc .fc-button:hover {
+        background: #f8fafc;
+    }
+
+    .fc .fc-button-primary:not(:disabled).fc-button-active {
+        background: #4f46e5;
+        border-color: #4f46e5;
+        color: white;
+    }
+
+
+    /* Calendar grid */
+
+    .fc-theme-standard td,
+    .fc-theme-standard th {
+        border-color: #e5e7eb;
+    }
+
+
+    .fc .fc-scrollgrid {
+        border-radius: 14px;
+        overflow: hidden;
+    }
+
+
+    /* Week day headings */
+
+    .fc .fc-col-header-cell {
+        background: #f8fafc;
+        padding: 12px 0;
+    }
+
+
+    .fc .fc-col-header-cell-cushion {
+        color: #64748b;
+        font-size: 13px;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+
+    /* Date numbers */
+
+    .fc .fc-daygrid-day-number {
+        color: #334155;
+        font-weight: 600;
+        padding: 10px;
+    }
+
+
+    /* Day cells */
+
+    .fc .fc-daygrid-day {
+        min-height: 130px;
+    }
+
+
+    .fc .fc-daygrid-day-frame {
+        padding: 5px;
+    }
+
+
+    /* Today */
+
+    .fc .fc-day-today {
+        background: #eef2ff !important;
+    }
+
+
+    .fc .fc-day-today .fc-daygrid-day-number {
+        background: #4f46e5;
+        color: white;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+
+    /* Events */
+
+    .fc .fc-daygrid-event {
+        border-radius: 8px;
+        border: none;
+        padding: 5px 8px;
+        margin: 3px 5px;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+
+    .fc .fc-event-title {
+        white-space: normal;
+    }
+
+
+    /* Event hover */
+
+    .fc .fc-daygrid-event:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 10px rgba(0,0,0,.15);
+    }
+
+
+    /* More events button */
+
+    .fc .fc-daygrid-more-link {
+        color: #4f46e5;
+        font-weight: 600;
+    }
+
+
+    /* Remove ugly focus outline */
+
+    .fc a {
+        text-decoration: none;
+    }
+
+    .fc-daygrid-event-harness{
+        background: #4F46E5;
+        text: white
+    }
+
+    .fc-daygrid-event-harness > a{
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        text-align: left;
+        align-items: flex-start;
+    }
+
+    .fc-daygrid-event-harness > .fc-daygrid-event-dot{
+        display: none;
+    }
+
+    .fc-daygrid-event-harness .fc-event-time{
+        color: white !important
+    }
+
+    .fc-daygrid-event-harness .fc-event-title{
+        color: white !important
+    }
+
+</style>
