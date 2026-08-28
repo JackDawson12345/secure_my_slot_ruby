@@ -37,7 +37,7 @@
       <% if @business.business_setting.logo.attached? %>
         <%= image_tag @business.business_setting.logo,
                       alt: "#{@business.business_name} logo",
-                      class: "h-10 rounded-xl object-contain" %>
+                      class: "h-16 rounded-xl object-contain" %>
       <% else %>
         <a href="#top" class="flex items-center gap-3">
           <div class="flex h-11 w-11 items-center justify-center rounded-2xl <%= website_colour_class("bg", 500) %> text-white shadow-lg <%= website_colour_class("shadow", 500, 20) %>">
