@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_09_02_093511) do
+ActiveRecord::Schema[8.0].define(version: 2026_09_02_132043) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -190,6 +190,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_02_093511) do
     t.boolean "stripe_charges_enabled", default: false, null: false
     t.boolean "stripe_payouts_enabled", default: false, null: false
     t.boolean "subscribed", default: false
+    t.integer "subscription_level", default: 0
     t.index "lower((page_address)::text)", name: "index_businesses_on_lower_page_address", unique: true
     t.index ["stripe_account_id"], name: "index_businesses_on_stripe_account_id", unique: true
     t.index ["user_id"], name: "index_businesses_on_user_id"
