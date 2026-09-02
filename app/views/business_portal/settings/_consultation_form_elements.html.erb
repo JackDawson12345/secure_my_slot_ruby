@@ -1,0 +1,116 @@
+<aside class="border-r border-slate-200 bg-white">
+
+  <div class="sticky top-0">
+
+    <div class="border-b border-slate-200 px-5 py-5">
+      <h2 class="text-sm font-semibold text-slate-900">
+        Form elements
+      </h2>
+
+      <p class="mt-1 text-xs leading-5 text-slate-500">
+        Drag an element into your consultation form.
+      </p>
+    </div>
+
+
+    <div class="max-h-[calc(100vh-180px)] overflow-y-auto p-4">
+
+      <div class="mb-7">
+
+        <p class="mb-3 px-1 text-xs font-semibold uppercase tracking-wider text-slate-400">
+          Layout
+        </p>
+
+        <div class="space-y-2">
+
+          <%= render "consultation_form_element",
+                     type: "row",
+                     title: "Row",
+                     description: "Create a new form row",
+                     icon: "row"
+          %>
+
+          <%= render "consultation_form_element",
+                     type: "column",
+                     title: "Column",
+                     description: "Add a column to a row",
+                     icon: "column"
+          %>
+
+        </div>
+
+      </div>
+
+
+      <div class="mb-7">
+
+        <p class="mb-3 px-1 text-xs font-semibold uppercase tracking-wider text-slate-400">
+          Content
+        </p>
+
+        <div class="space-y-2">
+
+          <%= render "consultation_form_element",
+                     type: "label",
+                     title: "Label",
+                     description: "Add text or a heading",
+                     icon: "label"
+          %>
+
+        </div>
+
+      </div>
+
+
+      <div>
+
+        <p class="mb-3 px-1 text-xs font-semibold uppercase tracking-wider text-slate-400">
+          Fields
+        </p>
+
+        <div class="space-y-2">
+
+          <%= render "consultation_form_element",
+                     type: "text",
+                     title: "Input field",
+                     description: "Single line text input",
+                     icon: "text"
+          %>
+
+          <%= render "consultation_form_element",
+                     type: "number",
+                     title: "Number field",
+                     description: "Numbers only",
+                     icon: "number"
+          %>
+
+          <%= render "consultation_form_element",
+                     type: "textarea",
+                     title: "Text area",
+                     description: "Longer written response",
+                     icon: "textarea"
+          %>
+
+          <%= render "consultation_form_element",
+                     type: "select",
+                     title: "Select field",
+                     description: "Dropdown selection",
+                     icon: "select"
+          %>
+
+          <%= render "consultation_form_element",
+                     type: "submit",
+                     title: "Submit button",
+                     description: "Form submission button",
+                     icon: "submit"
+          %>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</aside>

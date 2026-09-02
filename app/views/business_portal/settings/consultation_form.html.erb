@@ -1,0 +1,186 @@
+<div
+  class="min-h-screen bg-slate-100"
+  data-controller="form-builder"
+  data-form-builder-structure-value="<%= @consultation_form.structure.to_json %>"
+>
+
+  <%= form_with(
+        model: @consultation_form,
+        url: business_update_consultation_form_path,
+        method: :patch
+      ) do |form| %>
+
+    <%= form.hidden_field :structure,
+                          data: {
+                            form_builder_target: "structureInput"
+                          }
+    %>
+
+    <div class="border-b border-slate-200 bg-white">
+      <div class="flex items-center justify-between px-6 py-5">
+
+        <div>
+          <h1 class="text-xl font-semibold text-slate-900">
+            Consultation Form
+          </h1>
+
+          <p class="mt-1 text-sm text-slate-500">
+            Build the consultation form your customers complete when making a booking.
+          </p>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <button
+            type="button"
+            data-action="form-builder#preview"
+            class="rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
+          >
+            Preview
+          </button>
+
+          <%= form.submit "Save Form",
+                          class: "cursor-pointer rounded-lg bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800"
+          %>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="grid min-h-[calc(100vh-90px)] grid-cols-[280px_1fr]">
+
+      <%= render "consultation_form_elements" %>
+
+      <main class="p-6 lg:p-8">
+
+        <div class="mx-auto max-w-5xl">
+
+          <div class="mb-5 flex items-center justify-between">
+
+            <div>
+              <h2 class="text-lg font-semibold text-slate-900">
+                Form Builder
+              </h2>
+
+              <p class="mt-1 text-sm text-slate-500">
+                Start with a row, add columns inside it, then drag form fields into the columns.
+              </p>
+            </div>
+
+            <button
+              type="button"
+              data-action="form-builder#clear"
+              class="rounded-lg px-3 py-2 text-sm font-medium text-red-600 transition hover:bg-red-50"
+            >
+              Clear form
+            </button>
+
+          </div>
+
+          <div class="mb-6 rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+
+            <%= form.label :name,
+                           "Form name",
+                           class: "mb-2 block text-sm font-medium text-slate-700"
+            %>
+
+            <%= form.text_field :name,
+                                class: "w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200",
+                                placeholder: "Consultation Form"
+            %>
+
+          </div>
+
+          <div class="mb-4 rounded-xl border border-blue-200 bg-blue-50 px-4 py-3">
+            <div class="flex items-start gap-3">
+
+              <div class="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-blue-100 text-blue-600">
+                <svg
+                  class="h-4 w-4"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 8v4m0 4h.01M10.3 3.6 2.6 17a2 2 0 0 0 1.7 3h15.4a2 2 0 0 0 1.7-3L13.7 3.6a2 2 0 0 0-3.4 0Z"
+                    />
+                </svg>
+              </div>
+
+              <div>
+                <p class="text-sm font-medium text-blue-900">
+                  Build your layout in order
+                </p>
+
+                <p class="mt-0.5 text-xs leading-5 text-blue-700">
+                  Drag a row into the builder first. Then drag columns into the row. Finally, drag labels and fields into each column.
+                </p>
+              </div>
+
+            </div>
+          </div>
+
+          <div
+            data-form-builder-target="canvas"
+            data-action="
+              dragover->form-builder#allowDrop
+              drop->form-builder#dropOnCanvas
+            "
+            class="min-h-[650px] rounded-2xl border-2 border-dashed border-slate-300 bg-white p-5 shadow-sm transition"
+          >
+
+            <% if @consultation_form.structure.blank? %>
+
+              <div class="flex min-h-[600px] items-center justify-center">
+
+                <div class="max-w-sm text-center">
+
+                  <div class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100">
+
+                    <svg
+                      class="h-6 w-6 text-slate-400"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="1.8"
+                        d="M12 4v16m8-8H4"
+                        />
+                    </svg>
+
+                  </div>
+
+                  <h3 class="text-base font-semibold text-slate-800">
+                    Start with a row
+                  </h3>
+
+                  <p class="mt-2 text-sm leading-6 text-slate-500">
+                    Drag a row from the left panel into this area.
+                  </p>
+
+                </div>
+
+              </div>
+
+            <% end %>
+
+          </div>
+
+        </div>
+
+      </main>
+
+    </div>
+
+  <% end %>
+
+  <%= render "consultation_form_preview" %>
+
+</div>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_08_28_110454) do
+ActiveRecord::Schema[8.0].define(version: 2026_09_02_093511) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -79,7 +79,10 @@ ActiveRecord::Schema[8.0].define(version: 2026_08_28_110454) do
     t.datetime "reminder_email_sent_at"
     t.datetime "reminder_sms_sent_at"
     t.decimal "amount_paid", precision: 10, scale: 2, default: "0.0", null: false
+    t.jsonb "consultation_responses", default: {}, null: false
+    t.string "consultation_token"
     t.index ["business_id"], name: "index_bookings_on_business_id"
+    t.index ["consultation_token"], name: "index_bookings_on_consultation_token", unique: true
     t.index ["service_id"], name: "index_bookings_on_service_id"
     t.index ["stripe_checkout_session_id"], name: "index_bookings_on_stripe_checkout_session_id", unique: true
     t.index ["stripe_payment_intent_id"], name: "index_bookings_on_stripe_payment_intent_id", unique: true
@@ -221,6 +224,15 @@ ActiveRecord::Schema[8.0].define(version: 2026_08_28_110454) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["business_id"], name: "index_calendar_connections_on_business_id"
+  end
+
+  create_table "consultation_forms", force: :cascade do |t|
+    t.string "name", null: false
+    t.jsonb "structure", default: [], null: false
+    t.bigint "business_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["business_id"], name: "index_consultation_forms_on_business_id"
   end
 
   create_table "customer_settings", force: :cascade do |t|
@@ -450,6 +462,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_08_28_110454) do
   add_foreign_key "businesses", "users"
   add_foreign_key "calendar_blocked_times", "businesses"
   add_foreign_key "calendar_blocked_times", "calendar_connections"
+  add_foreign_key "consultation_forms", "businesses"
   add_foreign_key "customer_settings", "users"
   add_foreign_key "services", "businesses"
   add_foreign_key "solid_queue_blocked_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade

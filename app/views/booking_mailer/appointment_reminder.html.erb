@@ -38,4 +38,19 @@
   </p>
 <% end %>
 
+<% if @consultation_required %>
+
+  <h2>Complete your consultation form</h2>
+
+  <p>
+    Please complete your consultation form before your appointment.
+  </p>
+
+  <p>
+    <%= link_to "Complete consultation form",
+                @consultation_form_url %>
+  </p>
+
+<% end %>
+
 <p>We look forward to seeing you.</p>

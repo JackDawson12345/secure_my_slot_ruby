@@ -1,5 +1,3 @@
-// app/javascript/controllers/index.js
-
 import { application } from "controllers/application"
 
 import OpeningHoursController from "controllers/opening_hours_controller"
@@ -10,6 +8,7 @@ import FaviconPreviewController from "controllers/favicon_preview_controller"
 import DepositController from "controllers/deposit_controller"
 import ImagePreviewController from "controllers/image_preview_controller"
 import ColourGeneratorController from "controllers/colour_generator_controller"
+import FormBuilderController from "controllers/form_builder_controller"
 
 application.register("opening-hours", OpeningHoursController)
 application.register("nested-form", NestedFormController)
@@ -19,3 +18,4 @@ application.register("favicon-preview", FaviconPreviewController)
 application.register("deposit", DepositController)
 application.register("image-preview", ImagePreviewController)
 application.register("colour-generator", ColourGeneratorController)
+application.register("form-builder", FormBuilderController)

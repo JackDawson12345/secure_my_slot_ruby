@@ -15,4 +15,12 @@ Time: <%= @booking.time.strftime("%-I:%M %p") %>
   You currently have <%= number_to_currency(@remaining_balance, unit: "£") %> remaining to pay for this appointment.
 <% end %>
 
+<% if @consultation_required %>
+  Complete your consultation form
+
+  Please complete your consultation form before your appointment:
+
+  <%= @consultation_form_url %>
+<% end %>
+
 We look forward to seeing you.

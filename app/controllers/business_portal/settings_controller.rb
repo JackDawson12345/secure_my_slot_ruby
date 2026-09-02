@@ -95,8 +95,45 @@ class BusinessPortal::SettingsController < BusinessPortal::BaseController
     end
   end
 
+  def consultation_form
+    @consultation_form =
+      @business.consultation_form ||
+      @business.build_consultation_form(
+        name: "Consultation Form",
+        structure: []
+      )
+  end
+
+  def update_consultation_form
+    @consultation_form =
+      @business.consultation_form ||
+      @business.build_consultation_form
+
+    attributes = consultation_form_params
+
+    if attributes[:structure].present?
+      attributes[:structure] =
+        JSON.parse(attributes[:structure])
+    end
+
+    if @consultation_form.update(attributes)
+      redirect_to business_consultation_form_path,
+                  notice: "Consultation form saved successfully."
+    else
+      render :consultation_form,
+             status: :unprocessable_entity
+    end
+  end
+
 
   private
+
+  def consultation_form_params
+    params.require(:consultation_form).permit(
+      :name,
+      :structure
+    )
+  end
 
 
   def set_business

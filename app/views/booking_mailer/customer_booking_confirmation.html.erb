@@ -1,12 +1,25 @@
 <!DOCTYPE html>
 <html>
 <body style="margin: 0; padding: 0; background-color: #f8fafc; font-family: Arial, sans-serif; color: #0f172a;">
+
 <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f8fafc; padding: 40px 20px;">
+
   <tr>
+
     <td align="center">
-      <table width="600" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; width: 100%; background-color: #ffffff; border-radius: 12px; overflow: hidden;">
+
+      <table
+        width="600"
+        cellpadding="0"
+        cellspacing="0"
+        border="0"
+        style="max-width: 600px; width: 100%; background-color: #ffffff; border-radius: 12px; overflow: hidden;"
+      >
+
         <tr>
+
           <td style="padding: 32px;">
+
             <h1 style="margin: 0 0 16px; font-size: 26px; line-height: 1.3;">
               Your booking is confirmed
             </h1>
@@ -16,12 +29,25 @@
             </p>
 
             <p style="margin: 0 0 24px; font-size: 16px; line-height: 1.6; color: #475569;">
-              Your booking with <strong><%= @business.business_name %></strong> has been confirmed.
+              Your booking with
+              <strong><%= @business.business_name %></strong>
+              has been confirmed.
             </p>
 
-            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f8fafc; border-radius: 10px; margin-bottom: 24px;">
+
+            <!-- Booking details -->
+            <table
+              width="100%"
+              cellpadding="0"
+              cellspacing="0"
+              border="0"
+              style="background-color: #f8fafc; border-radius: 10px; margin-bottom: 24px;"
+            >
+
               <tr>
+
                 <td style="padding: 24px;">
+
                   <h2 style="margin: 0 0 18px; font-size: 18px;">
                     Booking details
                   </h2>
@@ -47,21 +73,85 @@
                   </p>
 
                   <% if (@booking.amount_paid || 0) > 0 %>
+
                     <p style="margin: 0 0 10px; font-size: 15px; color: #475569;">
                       <strong>Amount paid:</strong>
                       £<%= number_with_precision(@booking.amount_paid, precision: 2) %>
                     </p>
+
                   <% end %>
 
                   <% if @remaining_balance > 0 %>
+
                     <p style="margin: 0; font-size: 15px; color: #475569;">
                       <strong>Remaining balance:</strong>
                       £<%= number_with_precision(@remaining_balance, precision: 2) %>
                     </p>
+
                   <% end %>
+
                 </td>
+
               </tr>
+
             </table>
+
+
+            <% if @consultation_required %>
+
+              <!-- Consultation form -->
+              <table
+                width="100%"
+                cellpadding="0"
+                cellspacing="0"
+                border="0"
+                style="background-color: #eff6ff; border-radius: 10px; margin-bottom: 24px;"
+              >
+
+                <tr>
+
+                  <td style="padding: 24px;">
+
+                    <h2 style="margin: 0 0 10px; font-size: 18px;">
+                      Complete your consultation form
+                    </h2>
+
+                    <p style="margin: 0 0 20px; font-size: 15px; line-height: 1.6; color: #475569;">
+                      <%= @business.business_name %> has a consultation form for this appointment.
+                      Please complete it before attending.
+                    </p>
+
+                    <table cellpadding="0" cellspacing="0" border="0">
+
+                      <tr>
+
+                        <td
+                          align="center"
+                          bgcolor="#0f172a"
+                          style="border-radius: 8px;"
+                        >
+
+                          <a
+                            href="<%= @consultation_form_url %>"
+                            style="display: inline-block; padding: 13px 20px; color: #ffffff; text-decoration: none; font-size: 15px; font-weight: bold;"
+                          >
+                            Complete consultation form
+                          </a>
+
+                        </td>
+
+                      </tr>
+
+                    </table>
+
+                  </td>
+
+                </tr>
+
+              </table>
+
+            <% end %>
+
 
             <p style="margin: 0 0 20px; font-size: 16px; line-height: 1.6; color: #475569;">
               You can view and manage your booking from your SecureMySlot account.
@@ -71,11 +161,18 @@
               Thanks,<br>
               SecureMySlot
             </p>
+
           </td>
+
         </tr>
+
       </table>
+
     </td>
+
   </tr>
+
 </table>
+
 </body>
 </html>

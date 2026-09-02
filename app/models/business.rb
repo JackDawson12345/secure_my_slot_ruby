@@ -5,6 +5,7 @@ class Business < ApplicationRecord
            dependent: :destroy
   has_one :calendar_connection, dependent: :destroy
   has_many :calendar_blocked_times, dependent: :destroy
+  has_one :consultation_form, dependent: :destroy
 
   has_many :booking_holds, dependent: :destroy
 

@@ -17,6 +17,14 @@ Rails.application.routes.draw do
   # thisisatest..securemyslot.co.uk
   constraints BusinessSubdomainConstraint do
     root to: "business_sites#show", as: "business_site"
+
+    get "/consultation-form",
+        to: "business_sites#consultation_form",
+        as: :business_site_consultation_form
+
+    post "/consultation-form",
+         to: "business_sites#submit_consultation_form",
+         as: :submit_business_site_consultation_form
   end
 
 
@@ -388,6 +396,14 @@ Rails.application.routes.draw do
     get "dashboard/settings/calendar-sync",
         to: "settings#calendar_sync",
         as: :calendar_sync
+
+    get "dashboard/settings/consultation-form",
+        to: "settings#consultation_form",
+        as: :consultation_form
+
+    patch "dashboard/settings/consultation-form",
+          to: "settings#update_consultation_form",
+          as: :update_consultation_form
 
     get "dashboard/settings/calendar-sync/google",
         to: "calendar_connections#google",

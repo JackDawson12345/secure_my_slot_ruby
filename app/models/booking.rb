@@ -1,4 +1,7 @@
 class Booking < ApplicationRecord
+
+  before_create :set_consultation_token
+
   belongs_to :business
   belongs_to :user
   belongs_to :service
@@ -42,5 +45,11 @@ class Booking < ApplicationRecord
 
     errors.add(:time, "is already booked") if overlapping
 
+  end
+
+  private
+
+  def set_consultation_token
+    self.consultation_token ||= SecureRandom.uuid
   end
 end

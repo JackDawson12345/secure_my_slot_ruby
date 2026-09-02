@@ -1,0 +1,71 @@
+<div
+  data-form-builder-target="previewModal"
+  class="fixed inset-0 z-50 hidden"
+>
+
+  <div
+    class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm"
+    data-action="click->form-builder#closePreview"
+  ></div>
+
+
+  <div class="relative flex min-h-full items-center justify-center p-6">
+
+    <div class="relative w-full max-w-3xl overflow-hidden rounded-2xl bg-white shadow-2xl">
+
+      <div class="flex items-center justify-between border-b border-slate-200 px-6 py-4">
+
+        <div>
+
+          <h2 class="text-lg font-semibold text-slate-900">
+            Consultation Form Preview
+          </h2>
+
+          <p class="mt-1 text-sm text-slate-500">
+            This is how your consultation form will appear to customers.
+          </p>
+
+        </div>
+
+
+        <button
+          type="button"
+          data-action="form-builder#closePreview"
+          class="flex h-9 w-9 items-center justify-center rounded-lg text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
+        >
+
+          <svg
+            class="h-5 w-5"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18 18 6M6 6l12 12"
+              />
+          </svg>
+
+        </button>
+
+      </div>
+
+
+      <div class="max-h-[75vh] overflow-y-auto bg-slate-50 p-6">
+
+        <div
+          data-form-builder-target="previewContent"
+          class="rounded-xl border border-slate-200 bg-white p-6"
+        >
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
