@@ -86,7 +86,31 @@ class Account::BookingsController < Account::BaseController
   end
 
   def show
-    @booking = Booking.find(params[:id])
+    @booking = current_user.bookings
+                           .includes(:service, :business)
+                           .find(params[:id])
+  end
+
+  def consultation_pdf
+    @booking = current_user.bookings
+                           .includes(:service, :business)
+                           .find(params[:id])
+
+    respond_to do |format|
+      format.pdf do
+        render pdf: "consultation-form-#{@booking.id}",
+               template: "account/bookings/consultation_pdf",
+               layout: "pdf",
+               disposition: "attachment",
+               page_size: "A4",
+               margin: {
+                 top: 15,
+                 bottom: 15,
+                 left: 15,
+                 right: 15
+               }
+      end
+    end
   end
 
   def reschedule

@@ -124,6 +124,55 @@
         </div>
       </section>
 
+      <!-- Consultation Form -->
+      <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <div class="flex items-center justify-between border-b border-slate-200 px-5 py-5 sm:px-6">
+          <h2 class="text-lg font-bold">Consultation Form</h2>
+
+          <% if @booking.consultation_responses.present? %>
+            <%= link_to business_booking_consultation_pdf_path(@booking, format: :pdf),
+                        class: "inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50" do %>
+              <i data-lucide="download" class="h-4 w-4"></i>
+              Download PDF
+            <% end %>
+          <% end %>
+        </div>
+
+        <div class="p-5 sm:px-6">
+          <% consultation_responses = @booking.consultation_responses || [] %>
+
+          <% if consultation_responses.any? %>
+            <div class="divide-y divide-slate-100">
+              <% consultation_responses.each do |response| %>
+                <div class="grid gap-1 py-4 first:pt-0 last:pb-0 sm:grid-cols-[220px_1fr] sm:gap-6">
+                  <p class="text-sm font-medium text-slate-500">
+                    <%= response["label"] %>
+                  </p>
+
+                  <p class="text-sm font-semibold text-slate-900 whitespace-pre-wrap break-words">
+                    <%= response["value"].presence || "Not provided" %>
+                  </p>
+                </div>
+              <% end %>
+            </div>
+          <% else %>
+            <div class="flex flex-col items-center justify-center py-8 text-center">
+              <div class="flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-slate-400">
+                <i data-lucide="clipboard-list" class="h-5 w-5"></i>
+              </div>
+
+              <p class="mt-3 font-semibold text-slate-900">
+                No consultation form submitted
+              </p>
+
+              <p class="mt-1 text-sm text-slate-500">
+                This customer has not provided any consultation information.
+              </p>
+            </div>
+          <% end %>
+        </div>
+      </section>
+
     </div>
 
     <!-- Status sidebar -->

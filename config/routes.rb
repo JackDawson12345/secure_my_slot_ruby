@@ -265,6 +265,9 @@ Rails.application.routes.draw do
     get "dashboard/bookings/:id",
         to: "bookings#show",
         as: :show_booking
+    get "dashboard/bookings/:id/consultation-pdf",
+        to: "bookings#consultation_pdf",
+        as: :booking_consultation_pdf
 
     get "dashboard/bookings/:id/reschedule",
         to: "bookings#reschedule",
@@ -344,6 +347,10 @@ Rails.application.routes.draw do
     get "dashboard/bookings/:id",
         to: "bookings#show",
         as: :booking
+
+    get "bookings/:id/consultation-pdf",
+        to: "bookings#consultation_pdf",
+        as: :booking_consultation_pdf
 
     patch "dashboard/bookings/:id/status",
           to: "bookings#update_status",

@@ -259,6 +259,26 @@ class BusinessPortal::BookingsController < BusinessPortal::BaseController
 
   end
 
+  def consultation_pdf
+    @booking = current_user.business.bookings.find(params[:id])
+
+    respond_to do |format|
+      format.pdf do
+        render pdf: "consultation-form-#{@booking.id}",
+               template: "business_portal/bookings/consultation_pdf",
+               layout: "pdf",
+               disposition: "attachment",
+               page_size: "A4",
+               margin: {
+                 top: 15,
+                 bottom: 15,
+                 left: 15,
+                 right: 15
+               }
+      end
+    end
+  end
+
   def find
     bookings = current_user.business.bookings.where(status: ["pending", "confirmed", "completed"])
 

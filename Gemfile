@@ -70,3 +70,6 @@ gem "twilio-ruby"
 gem "omniauth"
 gem "omniauth-google-oauth2"
 gem "aws-sdk-s3", require: false
+
+gem "wicked_pdf"
+gem "wkhtmltopdf-binary"

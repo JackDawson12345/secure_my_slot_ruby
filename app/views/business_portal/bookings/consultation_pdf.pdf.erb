@@ -1,0 +1,62 @@
+<% user = @booking.user %>
+<% customer_name = [user.first_name, user.last_name].compact.join(" ") %>
+<% customer_name = user.email.split("@").first.titleize if customer_name.blank? %>
+
+<h1>Consultation Form</h1>
+
+<p class="muted">
+  Booking #<%= @booking.id %>
+</p>
+
+<h2>Appointment Details</h2>
+
+<table class="details">
+  <tr>
+    <td class="label">Customer</td>
+    <td><%= customer_name %></td>
+  </tr>
+
+  <tr>
+    <td class="label">Email</td>
+    <td><%= user.email %></td>
+  </tr>
+
+  <tr>
+    <td class="label">Service</td>
+    <td><%= @booking.service&.name || "Not provided" %></td>
+  </tr>
+
+  <tr>
+    <td class="label">Date</td>
+    <td><%= @booking.date.strftime("%-d %B %Y") %></td>
+  </tr>
+
+  <tr>
+    <td class="label">Time</td>
+    <td><%= @booking.time.strftime("%-I:%M %P") %></td>
+  </tr>
+</table>
+
+<h2>Consultation Responses</h2>
+
+<% responses = @booking.consultation_responses || [] %>
+
+<% if responses.any? %>
+
+  <% responses.each do |response| %>
+    <div class="response">
+      <div class="response-label">
+        <%= response["label"] %>
+      </div>
+
+      <div class="response-value">
+        <%= response["value"].presence || "Not provided" %>
+      </div>
+    </div>
+  <% end %>
+
+<% else %>
+
+  <p>No consultation responses have been submitted.</p>
+
+<% end %>
