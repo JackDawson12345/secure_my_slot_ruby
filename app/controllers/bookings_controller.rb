@@ -30,8 +30,6 @@ class BookingsController < ApplicationController
     business = service.business
     user, new_customer_account = find_or_create_user
 
-    byebug
-
     if business.stripe_ready? && payment_required_for?(service)
       create_stripe_booking_hold(
         business: business,
@@ -201,7 +199,7 @@ class BookingsController < ApplicationController
         .deliver_later
     end
 
-    user_settings = user.customer_setting
+    user_settings = user.customer_setting || user.create_customer_setting!
 
     if user_settings.booking_confirmations
       SendBookingConfirmationSmsJob.perform_later(
@@ -233,9 +231,6 @@ class BookingsController < ApplicationController
   end
 
   def find_or_create_user
-
-    byebug
-
     email = booking_params[:email].to_s.downcase.strip
 
     user = User.find_or_initialize_by(
@@ -260,11 +255,7 @@ class BookingsController < ApplicationController
 
     user.save!
 
-    if new_customer_account
-      CustomerSetting.create!(
-        user: user
-      )
-    end
+    user.create_customer_setting! unless user.customer_setting
 
     [user, new_customer_account]
   end
@@ -440,26 +431,31 @@ class BookingsController < ApplicationController
           .deliver_later
       end
 
+      user_settings =
+        booking.user.customer_setting ||
+        booking.user.create_customer_setting!
+
       if user_settings.booking_confirmations
         SendBookingConfirmationSmsJob.perform_later(
           booking.id
         )
+
         BookingMailer
           .with(booking: booking)
           .customer_booking_confirmation
           .deliver_later
       end
-      if business.business_setting.new_booking_notifications
+
+      if booking.business.business_setting.new_booking_notifications
         SendBusinessBookingConfirmationSmsJob.perform_later(
           booking.id
         )
+
         BookingMailer
           .with(booking: booking)
           .business_booking_notification
           .deliver_later
       end
-
-
     end
 
     booking
