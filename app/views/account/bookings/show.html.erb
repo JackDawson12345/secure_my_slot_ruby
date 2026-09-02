@@ -347,6 +347,11 @@
               <p class="mt-1 text-sm text-slate-500">
                 This customer has not provided any consultation information.
               </p>
+              <div>
+                <a href="https://<%= @booking.business.page_address %>.securemyslot.co.uk/consultation-form?token=<%= @booking.consultation_token %>">
+                  Complete consultation form
+                </a>
+              </div>
             </div>
           <% end %>
         </div>
