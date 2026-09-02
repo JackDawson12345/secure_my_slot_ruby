@@ -119,8 +119,6 @@
 
     </div>
 
-
-
     <!-- Payments -->
     <div
       class="group flex flex-col rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
@@ -194,8 +192,6 @@
       </div>
 
     </div>
-
-
 
     <!-- Calendar -->
     <div
@@ -295,6 +291,70 @@
 
         </a>
 
+
+      </div>
+
+    </div>
+
+    <!-- Consultation form -->
+    <div
+      class="group flex flex-col rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+    >
+
+      <div class="flex items-start justify-between">
+
+        <div class="rounded-2xl bg-amber-50 p-4 text-amber-600 transition group-hover:bg-amber-100">
+          <i data-lucide="clipboard-list" class="h-7 w-7"></i>
+        </div>
+
+        <% if @business.consultation_form.present? %>
+
+      <span class="rounded-full bg-green-50 px-3 py-1 text-xs font-semibold text-green-700">
+        Created
+      </span>
+
+        <% else %>
+
+      <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
+        Not created
+      </span>
+
+        <% end %>
+
+      </div>
+
+
+      <div class="mt-6">
+
+        <h3 class="text-xl font-bold text-slate-900">
+          Consultation form
+        </h3>
+
+        <p class="mt-2 text-sm leading-6 text-slate-500">
+          <% if @business.consultation_form.present? %>
+            Manage the consultation form customers complete when making a booking.
+          <% else %>
+            Create a custom consultation form to collect important information from customers during the booking process.
+          <% end %>
+        </p>
+
+      </div>
+
+
+      <div class="mt-auto pt-6">
+
+        <a
+          href="<%= business_consultation_form_path %>"
+          class="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-indigo-700"
+        >
+          <% if @business.consultation_form.present? %>
+            Manage form
+          <% else %>
+            Create form
+          <% end %>
+
+          <i data-lucide="arrow-right" class="h-4 w-4"></i>
+        </a>
 
       </div>
 
