@@ -125,8 +125,131 @@ class BusinessPortal::SettingsController < BusinessPortal::BaseController
     end
   end
 
+  def email_templates
+    @email_templates = @business.email_templates
+  end
+
+
+  def update_email_template
+
+    @email_template = @business.email_templates.find_by!(
+      template_type: params[:template_type]
+    )
+
+
+    if @email_template.update(email_template_params)
+
+      redirect_to business_email_templates_path,
+                  notice: "Email template updated successfully."
+
+    else
+
+      render :email_templates_edit,
+             status: :unprocessable_entity
+
+    end
+
+  end
+
+  def email_templates_edit
+    unless EmailTemplate::TEMPLATE_TYPES.include?(params[:template_type])
+      redirect_to business_email_templates_path, alert: "Invalid email template"
+      return
+    end
+
+    @email_template = current_user.business.email_templates.find_or_create_by!(
+      template_type: params[:template_type]
+    ) do |template|
+      template.subject = default_subject(params[:template_type])
+      template.body = default_body(params[:template_type])
+    end
+  end
+
 
   private
+
+  def default_subject(template_type)
+    case template_type
+    when "confirmation"
+      "Your booking has been confirmed"
+    when "reminder"
+      "Reminder: Your upcoming appointment"
+    else
+      "Your appointment details"
+    end
+  end
+
+
+  def default_body(template_type)
+    case template_type
+
+    when "confirmation"
+      <<~TEXT
+      Hi {{customer_name}},
+
+      Your appointment has been confirmed with {{business_name}}.
+
+      Service:
+      {{service_name}}
+
+      Date:
+      {{appointment_date}}
+
+      Time:
+      {{appointment_time}}
+
+      Remaining balance:
+      {{remaining_balance}}
+
+      Consultation form:
+      {{consultation_form_url}}
+
+      We look forward to seeing you.
+
+      Thanks,
+      {{business_name}}
+    TEXT
+
+
+    when "reminder"
+      <<~TEXT
+      Hi {{customer_name}},
+
+      This is a reminder that your appointment with {{business_name}} starts soon.
+
+      Service:
+      {{service_name}}
+
+      Date:
+      {{appointment_date}}
+
+      Time:
+      {{appointment_time}}
+
+      Remaining balance:
+      {{remaining_balance}}
+
+      Consultation form:
+      {{consultation_form_url}}
+
+      We look forward to seeing you.
+
+      Thanks,
+      {{business_name}}
+    TEXT
+
+
+    else
+      ""
+    end
+  end
+
+  def email_template_params
+    params.require(:email_template).permit(
+      :subject,
+      :body
+    )
+  end
 
   def consultation_form_params
     params.require(:consultation_form).permit(

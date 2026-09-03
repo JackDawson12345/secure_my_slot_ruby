@@ -428,6 +428,18 @@ Rails.application.routes.draw do
            to: "calendar_connections#disconnect",
            as: :google_calendar_disconnect
 
+    get "dashboard/settings/email-templates",
+        to: "settings#email_templates",
+        as: :email_templates
+
+    get "dashboard/settings/email-templates/:template_type",
+        to: "settings#email_templates_edit",
+        as: :email_templates_edit
+
+    patch "dashboard/settings/email-templates/:template_type",
+          to: "settings#update_email_template",
+          as: :update_email_template
+
     patch "dashboard/settings",
           to: "settings#update"
 

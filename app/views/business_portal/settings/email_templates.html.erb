@@ -1,0 +1,186 @@
+<main class="p-4 sm:p-6 lg:p-8">
+
+  <!-- Page heading -->
+  <section
+    class="overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-600 to-indigo-700 px-6 py-8 text-white shadow-sm sm:px-8"
+  >
+    <div class="max-w-3xl">
+
+      <div class="flex items-center gap-3">
+
+        <div class="rounded-xl bg-white/10 p-3 backdrop-blur">
+          <i data-lucide="mail" class="h-6 w-6"></i>
+        </div>
+
+        <h2 class="text-2xl font-bold tracking-tight sm:text-3xl">
+          Email templates
+        </h2>
+
+      </div>
+
+
+      <p class="mt-3 text-sm leading-6 text-indigo-100 sm:text-base">
+        Customise the emails your customers receive when they book appointments and receive reminders.
+      </p>
+
+    </div>
+  </section>
+
+
+  <!-- Flash messages -->
+  <%= render 'business_portal/shared/flash_messages' %>
+
+
+  <!-- Email templates -->
+  <section class="mt-8 grid gap-6 lg:grid-cols-2">
+
+
+    <!-- Confirmation template -->
+    <div
+      class="group flex flex-col rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+    >
+
+      <div class="flex items-start justify-between">
+
+        <div class="rounded-2xl bg-green-50 p-4 text-green-600 transition group-hover:bg-green-100">
+          <i data-lucide="badge-check" class="h-7 w-7"></i>
+        </div>
+
+
+        <% if current_user.business.email_templates.exists?(template_type: "confirmation") %>
+
+          <span class="rounded-full bg-green-50 px-3 py-1 text-xs font-semibold text-green-700">
+            Configured
+          </span>
+
+        <% else %>
+
+          <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
+            Default
+          </span>
+
+        <% end %>
+
+      </div>
+
+
+      <div class="mt-6">
+
+        <h3 class="text-xl font-bold text-slate-900">
+          Booking confirmation
+        </h3>
+
+
+        <p class="mt-2 text-sm leading-6 text-slate-500">
+          Edit the email customers receive after successfully booking an appointment.
+        </p>
+
+
+        <div class="mt-4 rounded-xl bg-slate-50 p-4">
+
+          <p class="text-sm font-medium text-slate-700">
+            Includes
+          </p>
+
+          <p class="mt-1 text-sm text-slate-500">
+            Booking details, appointment time and important information for your customer.
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <div class="mt-auto pt-6">
+
+        <%= link_to business_email_templates_edit_path("confirmation"),
+                    class: "inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-indigo-700" do %>
+
+          Edit template
+
+          <i data-lucide="arrow-right" class="h-4 w-4"></i>
+
+        <% end %>
+
+      </div>
+
+    </div>
+
+
+
+    <!-- Reminder template -->
+    <div
+      class="group flex flex-col rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+    >
+
+      <div class="flex items-start justify-between">
+
+        <div class="rounded-2xl bg-blue-50 p-4 text-blue-600 transition group-hover:bg-blue-100">
+          <i data-lucide="bell-ring" class="h-7 w-7"></i>
+        </div>
+
+
+        <% if current_user.business.email_templates.exists?(template_type: "reminder") %>
+
+          <span class="rounded-full bg-green-50 px-3 py-1 text-xs font-semibold text-green-700">
+            Configured
+          </span>
+
+        <% else %>
+
+          <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
+            Default
+          </span>
+
+        <% end %>
+
+      </div>
+
+
+      <div class="mt-6">
+
+        <h3 class="text-xl font-bold text-slate-900">
+          Booking reminder
+        </h3>
+
+
+        <p class="mt-2 text-sm leading-6 text-slate-500">
+          Edit the reminder email customers receive before their upcoming appointment.
+        </p>
+
+
+        <div class="mt-4 rounded-xl bg-slate-50 p-4">
+
+          <p class="text-sm font-medium text-slate-700">
+            Includes
+          </p>
+
+          <p class="mt-1 text-sm text-slate-500">
+            Appointment reminders, preparation details and anything customers need before arriving.
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <div class="mt-auto pt-6">
+
+        <%= link_to business_email_templates_edit_path("reminder"),
+                    class: "inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-indigo-700" do %>
+
+          Edit template
+
+          <i data-lucide="arrow-right" class="h-4 w-4"></i>
+
+        <% end %>
+
+      </div>
+
+    </div>
+
+
+  </section>
+
+
+</main>

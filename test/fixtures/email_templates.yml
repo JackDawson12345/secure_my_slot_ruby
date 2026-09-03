@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  business: one
+  template_type: MyString
+  subject: MyString
+  body: MyText
+
+two:
+  business: two
+  template_type: MyString
+  subject: MyString
+  body: MyText

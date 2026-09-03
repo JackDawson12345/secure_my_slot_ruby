@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_09_02_132043) do
+ActiveRecord::Schema[8.0].define(version: 2026_09_03_085104) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -260,6 +260,16 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_02_132043) do
     t.index ["user_id"], name: "index_customer_settings_on_user_id"
   end
 
+  create_table "email_templates", force: :cascade do |t|
+    t.bigint "business_id", null: false
+    t.string "template_type"
+    t.string "subject"
+    t.text "body"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["business_id"], name: "index_email_templates_on_business_id"
+  end
+
   create_table "jwt_denylists", force: :cascade do |t|
     t.string "jti"
     t.datetime "exp"
@@ -465,6 +475,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_02_132043) do
   add_foreign_key "calendar_blocked_times", "calendar_connections"
   add_foreign_key "consultation_forms", "businesses"
   add_foreign_key "customer_settings", "users"
+  add_foreign_key "email_templates", "businesses"
   add_foreign_key "services", "businesses"
   add_foreign_key "solid_queue_blocked_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_claimed_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade

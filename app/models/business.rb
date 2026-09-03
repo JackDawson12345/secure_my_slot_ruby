@@ -6,6 +6,7 @@ class Business < ApplicationRecord
   has_one :calendar_connection, dependent: :destroy
   has_many :calendar_blocked_times, dependent: :destroy
   has_one :consultation_form, dependent: :destroy
+  has_many :email_templates, dependent: :destroy
 
   has_many :booking_holds, dependent: :destroy
 
@@ -53,6 +54,7 @@ class Business < ApplicationRecord
   accepts_nested_attributes_for :booking_setting
 
   after_create :create_default_availability
+  after_create :create_default_email_templates
 
   def open_today?
     opening_hour = opening_hours.find_by(
@@ -243,5 +245,70 @@ class Business < ApplicationRecord
       advance_booking_days: 30,
       buffer_minutes: 0
     )
+  end
+
+  def create_default_email_templates
+
+    email_templates.create!(
+      template_type: "confirmation",
+      subject: "Your booking has been confirmed",
+      body: <<~TEXT
+      Hi {{customer_name}},
+
+      Your appointment has been confirmed with {{business_name}}.
+
+      Service:
+      {{service_name}}
+
+      Date:
+      {{appointment_date}}
+
+      Time:
+      {{appointment_time}}
+
+      Remaining balance:
+      {{remaining_balance}}
+
+      Consultation form:
+      {{consultation_form_url}}
+
+      We look forward to seeing you.
+
+      Thanks,
+      {{business_name}}
+    TEXT
+    )
+
+
+    email_templates.create!(
+      template_type: "reminder",
+      subject: "Reminder: Your upcoming appointment",
+      body: <<~TEXT
+      Hi {{customer_name}},
+
+      This is a reminder that your appointment with {{business_name}} starts soon.
+
+      Service:
+      {{service_name}}
+
+      Date:
+      {{appointment_date}}
+
+      Time:
+      {{appointment_time}}
+
+      Remaining balance:
+      {{remaining_balance}}
+
+      Consultation form:
+      {{consultation_form_url}}
+
+      We look forward to seeing you.
+
+      Thanks,
+      {{business_name}}
+    TEXT
+    )
+
   end
 end
