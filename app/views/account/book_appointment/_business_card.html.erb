@@ -1,23 +1,44 @@
 <% next_slot = local_assigns.fetch(:next_slot) { BusinessNextAvailableSlot.new(business).call } %>
 
-<article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:shadow-md sm:p-6">
+<article class="<%= if business.subscription_level == 'ultimate'
+                      'relative overflow-visible border-2 border-indigo-500 bg-gradient-to-br from-indigo-50 via-white to-purple-50 shadow-lg shadow-indigo-100 pt-7'
+                    else
+                      'border-slate-200 bg-white shadow-sm'
+                    end %> rounded-2xl border p-5 transition hover:shadow-md sm:p-6">
+  <% if business.subscription_level == 'ultimate' %>
+    <div class="absolute right-5 top-0 -translate-y-1/2">
+    <span class="inline-flex items-center gap-1 rounded-full bg-indigo-600 px-3 py-1 text-xs font-bold uppercase tracking-wide text-white shadow-sm">
+      <i data-lucide="crown" class="h-3.5 w-3.5"></i>
+      Ultimate
+    </span>
+    </div>
+  <% end %>
+
   <div class="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
     <div class="flex items-start gap-4">
       <% if business.business_setting.logo.attached? %>
-        <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-indigo-100 text-lg font-bold text-indigo-700">
+        <div class="<%= business.subscription_level == 'ultimate' ?
+                          'flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-indigo-200 text-lg font-bold text-indigo-700 ring-4 ring-indigo-100' :
+                          'flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-indigo-100 text-lg font-bold text-indigo-700' %>">
           <%= image_tag business.business_setting.logo,
                         alt: "#{business.business_name} logo",
                         class: "h-10 w-10 rounded-xl object-contain" %>
         </div>
       <% else %>
-        <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-indigo-100 text-lg font-bold text-indigo-700">
+        <div class="<%= business.subscription_level == 'ultimate' ?
+                          'flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-indigo-200 text-lg font-bold text-indigo-700 ring-4 ring-indigo-100' :
+                          'flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-indigo-100 text-lg font-bold text-indigo-700' %>">
           <%= business.business_name.first(2) %>
         </div>
       <% end %>
 
       <div>
         <div class="flex flex-wrap items-center gap-2">
-          <h4 class="text-base font-bold text-slate-900"><%= business.business_name %></h4>
+          <h4 class="<%= business.subscription_level == 'ultimate' ?
+                           'text-base font-extrabold text-indigo-950' :
+                           'text-base font-bold text-slate-900' %>">
+            <%= business.business_name %>
+          </h4>
           <% if business.open_today? %>
             <span class="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700">
               <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>

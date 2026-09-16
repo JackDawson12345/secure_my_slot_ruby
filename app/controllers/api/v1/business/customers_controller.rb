@@ -4,6 +4,7 @@ module Api
       class CustomersController < ApplicationController
 
         skip_before_action :verify_authenticity_token
+        before_action :authenticate_api_key!
 
         def get_customers
 
@@ -236,6 +237,25 @@ module Api
             }
           }, status: :ok
 
+        end
+
+        private
+
+        def authenticate_api_key!
+          provided_api_key = request.headers["X-API-Key"]
+          expected_api_key = ENV["SECURE_MY_SLOT_API_KEY"].presence ||
+                             Rails.application.credentials.secure_my_slot_api_key
+
+          unless provided_api_key.present? &&
+                 expected_api_key.present? &&
+                 ActiveSupport::SecurityUtils.secure_compare(
+                   provided_api_key,
+                   expected_api_key
+                 )
+            render json: {
+              error: "Invalid or missing API key"
+            }, status: :unauthorized
+          end
         end
 
       end

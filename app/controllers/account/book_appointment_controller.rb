@@ -140,30 +140,34 @@ class Account::BookAppointmentController < Account::BaseController
 
 
   def sort_businesses(businesses)
-    case params[:sort]
+    businesses.sort_by do |business|
+      subscription_priority =
+        business.subscription_level == "ultimate" ? 0 : 1
 
-    when "distance"
-      businesses.sort_by do |business|
-        @distances[business.id] || Float::INFINITY
-      end
+      secondary_sort =
+        case params[:sort]
+        when "distance"
+          @distances[business.id] || Float::INFINITY
 
+        when "soonest"
+          next_slot = @next_slots[business.id]
 
-    when "soonest"
-      businesses.sort_by do |business|
-        next_slot = @next_slots[business.id]
+          if next_slot
+            Time.zone.parse(
+              "#{next_slot[:date]} #{next_slot[:time]}"
+            )
+          else
+            Time.zone.tomorrow
+          end
 
-        if next_slot
-          Time.zone.parse(
-            "#{next_slot[:date]} #{next_slot[:time]}"
-          )
         else
-          Time.zone.tomorrow
+          0
         end
-      end
 
-
-    else
-      businesses
+      [
+        subscription_priority,
+        secondary_sort
+      ]
     end
   end
 end

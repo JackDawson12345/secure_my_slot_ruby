@@ -17,6 +17,12 @@ class Business < ApplicationRecord
                  :postcode,
                  :country
 
+  enum :subscription_level, {
+    basic: 0,
+    premium: 1,
+    ultimate: 2
+  }
+
   validates :business_name, presence: true
 
   validates :page_address,

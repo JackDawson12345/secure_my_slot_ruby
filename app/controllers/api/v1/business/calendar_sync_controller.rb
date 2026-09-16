@@ -4,6 +4,7 @@ module Api
       class CalendarSyncController < ApplicationController
 
         skip_before_action :verify_authenticity_token
+        before_action :authenticate_api_key!
 
         def show
           connection = current_user.business.calendar_connection
@@ -83,9 +84,6 @@ module Api
         end
 
 
-
-
-
         def sync
           connection = current_user.business.calendar_connection
 
@@ -112,8 +110,6 @@ module Api
         end
 
 
-
-
         def disconnect
           connection = current_user.business.calendar_connection
 
@@ -134,12 +130,7 @@ module Api
         end
 
 
-
-
         private
-
-
-
 
         def google_oauth_url(state)
           params = {
@@ -155,9 +146,6 @@ module Api
 
           "https://accounts.google.com/o/oauth2/v2/auth?#{params.to_query}"
         end
-
-
-
 
         def exchange_google_code(code)
           response = Faraday.post(
@@ -183,9 +171,6 @@ module Api
           body
         end
 
-
-
-
         def generate_oauth_state(user)
           verifier = Rails.application.message_verifier(
             "google-calendar-oauth"
@@ -199,9 +184,6 @@ module Api
             expires_in: 10.minutes
           )
         end
-
-
-
 
         def verify_oauth_state(state)
           verifier = Rails.application.message_verifier(
@@ -218,17 +200,10 @@ module Api
           raise "Invalid Google OAuth state"
         end
 
-
-
-
-
         def google_client_id
           ENV["GOOGLE_CLIENT_ID"] ||
             Rails.application.credentials.dig(:google, :client_id)
         end
-
-
-
 
         def google_client_secret
           ENV["GOOGLE_CLIENT_SECRET"] ||
@@ -236,6 +211,22 @@ module Api
         end
 
 
+        def authenticate_api_key!
+          provided_api_key = request.headers["X-API-Key"]
+          expected_api_key = ENV["SECURE_MY_SLOT_API_KEY"].presence ||
+                             Rails.application.credentials.secure_my_slot_api_key
+
+          unless provided_api_key.present? &&
+                 expected_api_key.present? &&
+                 ActiveSupport::SecurityUtils.secure_compare(
+                   provided_api_key,
+                   expected_api_key
+                 )
+            render json: {
+              error: "Invalid or missing API key"
+            }, status: :unauthorized
+          end
+        end
       end
     end
   end

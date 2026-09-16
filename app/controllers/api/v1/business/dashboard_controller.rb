@@ -4,6 +4,7 @@ module Api
       class DashboardController < Api::V1::BaseController
         before_action :require_business!
 
+
         def show
           render json: {
             message: "Business dashboard loaded.",

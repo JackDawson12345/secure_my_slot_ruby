@@ -301,7 +301,7 @@
           </div>
         </div>
 
-        <div class="mt-5 space-y-4">
+        <div class="mt-5 space-y-5">
           <% @businesses.each do |business| %>
             <%= render 'account/book_appointment/business_card', business: business, next_slot: @next_slots[business.id] %>
           <% end %>

@@ -1,0 +1,244 @@
+<main>
+  <!-- Hero -->
+  <section class="relative overflow-hidden bg-slate-50">
+    <div
+      class="pointer-events-none absolute inset-x-0 top-0 -z-0 h-[520px] bg-gradient-to-b from-indigo-50 via-slate-50 to-transparent"
+    ></div>
+
+    <div
+      class="pointer-events-none absolute -left-40 top-28 h-96 w-96 rounded-full bg-indigo-200/40 blur-3xl"
+    ></div>
+
+    <div
+      class="pointer-events-none absolute -right-40 top-10 h-96 w-96 rounded-full bg-violet-200/40 blur-3xl"
+    ></div>
+
+    <div class="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 sm:py-24 lg:px-8">
+      <div class="mx-auto max-w-4xl text-center">
+
+        <span
+          class="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-white px-3 py-1.5 text-sm font-semibold text-indigo-700 shadow-sm"
+        >
+          <i data-lucide="sparkles" class="h-4 w-4"></i>
+          Powerful Features
+        </span>
+
+        <h1 class="mt-6 text-4xl font-bold tracking-tight text-slate-950 sm:text-5xl lg:text-6xl lg:leading-[1.08]">
+          Everything you need to manage
+          <span class="text-indigo-600">secure bookings</span>
+          in one place.
+        </h1>
+
+        <p class="mx-auto mt-6 max-w-3xl text-lg leading-8 text-slate-600">
+          SecureMySlot gives businesses the tools they need to take bookings,
+          manage availability, reduce missed appointments and provide a
+          smoother experience for customers.
+        </p>
+
+        <div class="mt-10 flex flex-wrap justify-center gap-4">
+
+          <div class="flex items-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-medium text-slate-700 shadow-sm border border-slate-200">
+            <i data-lucide="calendar-check" class="h-5 w-5 text-indigo-600"></i>
+            Smart Booking Management
+          </div>
+
+          <div class="flex items-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-medium text-slate-700 shadow-sm border border-slate-200">
+            <i data-lucide="clock" class="h-5 w-5 text-indigo-600"></i>
+            Real Time Availability
+          </div>
+
+          <div class="flex items-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-medium text-slate-700 shadow-sm border border-slate-200">
+            <i data-lucide="bell" class="h-5 w-5 text-indigo-600"></i>
+            Automated Notifications
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- Comparison Table -->
+  <section class="bg-white py-20">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+
+      <div class="mx-auto max-w-3xl text-center">
+        <h2 class="text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl">
+          Compare SecureMySlot Features
+        </h2>
+
+        <p class="mt-4 text-lg leading-8 text-slate-600">
+          See how SecureMySlot compares and discover the features designed to
+          make managing appointments easier.
+        </p>
+      </div>
+
+
+      <div class="mt-12 rounded-3xl border border-slate-200 bg-white shadow-xl">
+
+        <!-- Plans Header -->
+        <div class="grid grid-cols-4 border-b border-slate-200">
+
+          <div class="flex items-center p-6 text-lg font-semibold text-slate-900">
+            Plans
+          </div>
+
+          <div class="p-6 text-center">
+            <h3 class="text-xl font-bold text-slate-900">
+              Basic
+            </h3>
+            <p class="mt-2 text-sm text-slate-500">
+              Getting started
+            </p>
+          </div>
+
+
+          <div class="relative bg-indigo-50 p-6 text-center">
+
+          <span class="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-indigo-600 px-4 py-1 text-xs font-semibold text-white">
+            Popular
+          </span>
+
+            <h3 class="text-xl font-bold text-indigo-700">
+              Pro
+            </h3>
+
+            <p class="mt-2 text-sm text-slate-600">
+              Growing businesses
+            </p>
+
+          </div>
+
+
+          <div class="p-6 text-center">
+            <h3 class="text-xl font-bold text-slate-900">
+              Pro +
+            </h3>
+
+            <p class="mt-2 text-sm text-slate-500">
+              Full control
+            </p>
+          </div>
+
+        </div>
+
+        <!-- Booking Management -->
+        <div class="bg-slate-50 px-6 py-4">
+          <div class="flex items-center gap-3">
+            <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-100">
+              <i data-lucide="calendar" class="h-5 w-5 text-indigo-600"></i>
+            </div>
+
+            <h3 class="font-semibold text-slate-900">
+              Booking Management
+            </h3>
+          </div>
+        </div>
+        <%= render 'pages/website/features/booking_management' %>
+
+        <!-- Online Booking Website -->
+        <div class="bg-slate-50 px-6 py-4">
+          <div class="flex items-center gap-3">
+            <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-100">
+              <i data-lucide="globe-code" class="h-5 w-5 text-indigo-600"></i>
+            </div>
+
+            <h3 class="font-semibold text-slate-900">
+              Online Booking Website
+            </h3>
+          </div>
+        </div>
+        <%= render 'pages/website/features/online_booking_website' %>
+
+        <!-- Client Management -->
+        <div class="bg-slate-50 px-6 py-4">
+          <div class="flex items-center gap-3">
+            <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-100">
+              <i data-lucide="user-round-group" class="h-5 w-5 text-indigo-600"></i>
+            </div>
+
+            <h3 class="font-semibold text-slate-900">
+              Client Management
+            </h3>
+          </div>
+        </div>
+        <%= render 'pages/website/features/client_management' %>
+
+        <!-- Marketing -->
+        <div class="bg-slate-50 px-6 py-4">
+          <div class="flex items-center gap-3">
+            <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-100">
+              <i data-lucide="circle-pound-sterling" class="h-5 w-5 text-indigo-600"></i>
+            </div>
+
+            <h3 class="font-semibold text-slate-900">
+              Marketing
+            </h3>
+          </div>
+        </div>
+        <%= render 'pages/website/features/marketing' %>
+
+        <!-- Reports -->
+        <div class="bg-slate-50 px-6 py-4">
+          <div class="flex items-center gap-3">
+            <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-100">
+              <i data-lucide="chart-no-axes-combined" class="h-5 w-5 text-indigo-600"></i>
+            </div>
+
+            <h3 class="font-semibold text-slate-900">
+              Reports
+            </h3>
+          </div>
+        </div>
+        <%= render 'pages/website/features/reports' %>
+
+        <!-- Team Management -->
+        <div class="bg-slate-50 px-6 py-4">
+          <div class="flex items-center gap-3">
+            <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-100">
+              <i data-lucide="shield-half" class="h-5 w-5 text-indigo-600"></i>
+            </div>
+
+            <h3 class="font-semibold text-slate-900">
+              Team Management
+            </h3>
+          </div>
+        </div>
+        <%= render 'pages/website/features/team_management' %>
+
+        <!-- Payments -->
+        <div class="bg-slate-50 px-6 py-4">
+          <div class="flex items-center gap-3">
+            <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-100">
+              <i data-lucide="credit-card-check" class="h-5 w-5 text-indigo-600"></i>
+            </div>
+
+            <h3 class="font-semibold text-slate-900">
+              Payments
+            </h3>
+          </div>
+        </div>
+        <%= render 'pages/website/features/payments' %>
+
+        <!-- Support -->
+        <div class="bg-slate-50 px-6 py-4">
+          <div class="flex items-center gap-3">
+            <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-100">
+              <i data-lucide="info" class="h-5 w-5 text-indigo-600"></i>
+            </div>
+
+            <h3 class="font-semibold text-slate-900">
+              Support
+            </h3>
+          </div>
+        </div>
+        <%= render 'pages/website/features/support' %>
+
+
+      </div>
+
+    </div>
+  </section>
+
+</main>

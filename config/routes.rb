@@ -251,6 +251,9 @@ Rails.application.routes.draw do
   get "terms-of-use",
       to: "pages/website#terms_of_use"
 
+  get "features",
+      to: "pages/website#features"
+
 
   # Customer account
   namespace :account do

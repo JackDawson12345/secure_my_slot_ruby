@@ -10,6 +10,10 @@ class Pages::WebsiteController < ApplicationController
 
   end
 
+  def features
+
+  end
+
   def create
     ContactMailer
       .with(
