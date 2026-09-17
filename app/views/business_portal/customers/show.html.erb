@@ -1,0 +1,382 @@
+<%
+  first_name =
+    if @customer.respond_to?(:first_name) && @customer.first_name.present?
+      @customer.first_name
+    else
+      @customer.email.to_s.split("@").first.to_s.titleize
+    end
+
+  last_name =
+    if @customer.respond_to?(:last_name)
+      @customer.last_name.presence
+    end
+
+  full_name = [first_name, last_name].compact.join(" ")
+
+  initials = [first_name, last_name]
+    .compact
+    .filter_map { |name| name.to_s.first }
+    .join
+    .upcase
+
+  phone_number =
+    if @customer.respond_to?(:phone_number)
+      @customer.phone_number
+    end
+
+  bookings = Booking.where(user: @customer, business: current_user.business)
+  total_paid = Booking.where(user: @customer, business: current_user.business).sum(:amount_paid)
+  last_booking = Booking.where(user: @customer, business: current_user.business)
+                        .where("date < ? OR (date = ? AND time <= ?)", Date.current, Date.current, Time.current)
+                        .order(date: :desc, time: :desc)
+                        .first
+  first_booking = Booking.where(user: @customer, business: current_user.business)
+                         .order(created_at: :asc)
+                         .first
+
+  upcoming_booking = Booking.where(user: @customer, business: current_user.business)
+                            .where("date > ? OR (date = ? AND time >= ?)", Date.current, Date.current, Time.current)
+                            .order(date: :asc, time: :asc)
+                            .first
+
+  past_bookings = Booking.where(user: @customer, business: current_user.business)
+                         .where("date < ? OR (date = ? AND time < ?)", Date.current, Date.current, Time.current)
+                         .order(date: :desc, time: :desc)
+%>
+
+<main class="p-4 sm:p-6 lg:p-8">
+
+  <!-- Header -->
+  <section class="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+
+    <div class="flex items-center gap-4">
+
+      <div class="flex h-16 w-16 items-center justify-center rounded-full bg-indigo-100 text-xl font-bold text-indigo-700">
+        <%= initials.presence || "CU" %>
+      </div>
+
+      <div>
+        <h1 class="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+          <%= full_name %><span class="text-xs font-bold text-indigo-700"><% if bookings.count == 1 %> - "NEW CUSTOMER" <% end %></span>
+        </h1>
+
+        <p class="mt-1 text-sm text-slate-500">
+          <%= @customer.email %>
+        </p>
+
+        <div class="mt-2 flex flex-wrap items-center gap-2">
+
+          <span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
+            <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
+            Active
+          </span>
+
+          <span class="rounded-full bg-violet-50 px-3 py-1 text-xs font-semibold text-violet-700">
+            <% if bookings.count > 1 %>
+              Repeat Customer
+            <% end %>
+
+          </span>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- Stats -->
+  <section class="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+
+
+    <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <p class="text-sm font-medium text-slate-500">
+        Total Bookings
+      </p>
+
+      <p class="mt-2 text-3xl font-bold text-slate-900">
+        <%= bookings.count %>
+      </p>
+    </article>
+
+
+    <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <p class="text-sm font-medium text-slate-500">
+        Total Spent
+      </p>
+
+      <p class="mt-2 text-3xl font-bold text-slate-900">
+        £<%= total_paid.to_s %>
+      </p>
+    </article>
+
+
+    <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <p class="text-sm font-medium text-slate-500">
+        Average Booking
+      </p>
+
+      <p class="mt-2 text-3xl font-bold text-slate-900">
+        £<%= (total_paid / bookings.count).round(2).to_s %>
+      </p>
+    </article>
+
+
+    <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <p class="text-sm font-medium text-slate-500">
+        Last Visit
+      </p>
+
+      <p class="mt-2 text-xl font-bold text-slate-900">
+        <%= last_booking ? last_booking.date.strftime("%d %b %Y") : "No visits yet" %>
+      </p>
+    </article>
+
+
+  </section>
+
+
+
+  <div class="mt-8 grid gap-8 xl:grid-cols-3">
+
+
+    <!-- Left -->
+    <div class="space-y-8 xl:col-span-2">
+
+
+      <!-- Customer Details -->
+      <section class="rounded-2xl border border-slate-200 bg-white shadow-sm">
+
+        <div class="border-b border-slate-100 px-6 py-5">
+
+          <h2 class="text-lg font-bold text-slate-900">
+            Customer Details
+          </h2>
+
+        </div>
+
+
+        <div class="grid gap-6 p-6 sm:grid-cols-2">
+
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">
+              Name
+            </p>
+
+            <p class="mt-1 text-sm font-medium text-slate-900">
+              <%= full_name %>
+            </p>
+          </div>
+
+
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">
+              Phone
+            </p>
+
+            <p class="mt-1 text-sm font-medium text-slate-900">
+              <%= phone_number %>
+            </p>
+          </div>
+
+
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">
+              Email
+            </p>
+
+            <p class="mt-1 text-sm font-medium text-slate-900">
+              <%= @customer.email %>
+            </p>
+          </div>
+
+
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">
+              Customer Since
+            </p>
+
+            <p class="mt-1 text-sm font-medium text-slate-900">
+              <%= first_booking ? first_booking.created_at.strftime("%B %Y") : "No bookings yet" %>
+            </p>
+          </div>
+
+
+        </div>
+
+      </section>
+
+
+
+      <!-- Booking History -->
+      <section class="rounded-2xl border border-slate-200 bg-white shadow-sm">
+
+        <div class="border-b border-slate-100 px-6 py-5">
+
+          <h2 class="text-lg font-bold text-slate-900">
+            Booking History
+          </h2>
+
+        </div>
+
+
+        <div class="divide-y divide-slate-100">
+
+          <% if past_bookings.any? %>
+
+            <% past_bookings.each do |booking| %>
+
+              <div class="flex flex-col gap-4 px-6 py-5 sm:flex-row sm:items-center sm:justify-between">
+
+                <div>
+
+                  <p class="font-semibold text-slate-900">
+                    <%= booking.service.name %>
+                  </p>
+
+                  <p class="mt-1 text-sm text-slate-500">
+                    <%= booking.date.strftime("%d %B %Y") %> • <%= booking.time.strftime("%H:%M") %>
+                  </p>
+
+                </div>
+
+
+                <div class="flex items-center gap-4">
+
+            <span class="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
+              <%= booking.status.titleize %>
+            </span>
+
+                  <span class="font-semibold text-slate-900">
+                    £<%= booking.amount_paid %>
+                  </span>
+
+                </div>
+
+              </div>
+
+            <% end %>
+
+          <% else %>
+
+            <div class="px-6 py-5">
+
+              <p class="text-sm text-slate-500">
+                No previous bookings found.
+              </p>
+
+            </div>
+
+          <% end %>
+
+        </div>
+
+      </section>
+
+
+    </div>
+
+
+
+    <!-- Right -->
+    <div class="space-y-8">
+
+
+      <!-- Notes -->
+      <section class="rounded-2xl border border-slate-200 bg-white shadow-sm">
+
+        <div class="flex items-center justify-between border-b border-slate-100 px-6 py-5">
+
+          <h2 class="text-lg font-bold text-slate-900">
+            Notes
+          </h2>
+
+        </div>
+
+        <div class="space-y-5 p-6">
+
+          <% notes = bookings.where.not(notes: [nil, ""]) %>
+
+          <% if notes.any? %>
+
+            <% notes.each do |booking| %>
+
+              <div>
+
+                <p class="text-sm text-slate-700">
+                  <%= booking.notes %>
+                </p>
+
+                <p class="mt-2 text-xs text-slate-400">
+                  Added <%= booking.created_at.strftime("%d %B %Y") %> by <%= booking.business.user.full_name %>
+                </p>
+
+              </div>
+
+            <% end %>
+
+          <% else %>
+
+            <p class="text-sm text-slate-500">
+              No notes found.
+            </p>
+
+          <% end %>
+
+        </div>
+
+      </section>
+
+
+
+      <!-- Upcoming -->
+      <!-- Upcoming -->
+      <section class="rounded-2xl border border-slate-200 bg-white shadow-sm">
+
+        <div class="border-b border-slate-100 px-6 py-5">
+
+          <h2 class="text-lg font-bold text-slate-900">
+            Upcoming Booking
+          </h2>
+
+        </div>
+
+
+        <div class="p-6">
+
+          <% if upcoming_booking %>
+
+            <p class="font-semibold text-slate-900">
+              <%= upcoming_booking.service.name %>
+            </p>
+
+            <p class="mt-1 text-sm text-slate-500">
+              <%= upcoming_booking.date.strftime("%d %B %Y") %> at <%= upcoming_booking.time.strftime("%H:%M") %>
+            </p>
+
+            <span class="mt-4 inline-flex rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
+              <%= upcoming_booking.status.titleize %>
+            </span>
+
+          <% else %>
+
+            <p class="text-sm text-slate-500">
+              No upcoming bookings found.
+            </p>
+
+          <% end %>
+
+        </div>
+
+      </section>
+
+
+    </div>
+
+
+  </div>
+
+
+</main>

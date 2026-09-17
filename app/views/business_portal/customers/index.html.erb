@@ -446,7 +446,7 @@
 
                 <div>
                   <p class="text-sm font-semibold text-slate-900">
-                    <%= full_name %>
+                    <%= full_name %><span class="text-xs font-bold text-indigo-700"><% if customer[:total_bookings] == 1 %> - "NEW CUSTOMER" <% end %></span>
                   </p>
 
                   <% if first_booking.present? %>
@@ -573,13 +573,9 @@
             <!-- Actions -->
             <td class="whitespace-nowrap px-6 py-4 text-right">
 
-              <button
-                type="button"
-                aria-label="Open <%= full_name %> customer options"
-                class="rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
-              >
+              <%= link_to business_customer_show_path(user), class: 'rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700' do %>
                 <i data-lucide="ellipsis" class="h-5 w-5"></i>
-              </button>
+              <% end %>
 
             </td>
 

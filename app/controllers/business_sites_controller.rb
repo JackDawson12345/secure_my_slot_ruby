@@ -6,6 +6,32 @@ class BusinessSitesController < ApplicationController
 
   def show
     @coordinates = geocode_business_address
+
+
+    settings = @business.business_setting
+    check_verify_link = settings.check_verify_link
+
+    if check_verify_link.present?
+      check_verify_slug = URI.parse(check_verify_link).path.split("/").last
+
+      uri = URI("https://www.checkverify.co.uk/api/v1/reviews/user/#{check_verify_slug}")
+
+      response = Net::HTTP.get_response(uri)
+
+      if response.is_a?(Net::HTTPSuccess)
+        data = JSON.parse(response.body)
+
+        recent_reviews = data["reviews"]
+                           .sort_by { |review| Time.parse(review["created_at"]) }
+                           .reverse
+                           .first(10)
+
+        @total_reviews =  data.dig("user", "total_reviews")
+        @average_rating = data.dig("user", "average_rating").to_f.round(2)
+        @reviews = recent_reviews
+      end
+    end
+
   end
 
   def consultation_form

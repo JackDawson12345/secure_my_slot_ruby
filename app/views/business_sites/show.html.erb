@@ -994,6 +994,142 @@ Every appointment is handled with care, clear communication and attention to det
       </div>
     </section>
 
+    <!-- Gallery -->
+    <% if @business.business_website.gallery_images.attached? %>
+
+      <section id="gallery" class="bg-white py-20 sm:py-24">
+
+        <div class="mx-auto max-w-7xl px-5 lg:px-8">
+
+          <div class="mx-auto max-w-3xl text-center">
+
+            <p class="text-sm font-bold uppercase tracking-[0.2em] <%= website_colour_class("text", 600) %>">
+              Gallery
+            </p>
+
+            <h2 class="mt-3 text-3xl font-black tracking-tight <%= website_colour_class("text", 950) %> sm:text-5xl">
+              Our latest work
+            </h2>
+
+            <p class="mt-5 text-lg leading-8 <%= website_colour_class("text", 600) %>">
+              Take a look through some examples of our previous work and recent projects.
+            </p>
+
+          </div>
+
+
+          <div class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+
+            <% @business.business_website.gallery_images.each do |image| %>
+
+              <div class="group overflow-hidden rounded-3xl border <%= website_colour_class("border", 200) %> bg-white shadow-card">
+
+                <%= image_tag image,
+                              alt: "#{@business.business_name} gallery image",
+                              class: "aspect-square w-full object-cover transition duration-500 group-hover:scale-105" %>
+
+              </div>
+
+            <% end %>
+
+          </div>
+
+        </div>
+
+      </section>
+
+    <% end %>
+
+    <% if @reviews.present? %>
+
+      <section id="reviews" class="<%= website_colour_class("bg", 50) %> py-20 sm:py-24">
+        <div class="mx-auto max-w-7xl px-5 lg:px-8">
+
+          <div class="mx-auto max-w-3xl text-center">
+            <p class="text-sm font-bold uppercase tracking-[0.2em] <%= website_colour_class("text", 600) %>">
+              Customer reviews
+            </p>
+
+            <h2 class="mt-3 text-3xl font-black tracking-tight <%= website_colour_class("text", 950) %> sm:text-5xl">
+              Trusted by our customers
+            </h2>
+
+            <p class="mt-5 text-lg leading-8 <%= website_colour_class("text", 600) %>">
+              See what our customers have to say about their experience.
+            </p>
+
+            <div class="mt-6 flex items-center justify-center gap-3">
+          <span class="text-4xl font-black <%= website_colour_class("text", 950) %>">
+            <%= @average_rating %>
+          </span>
+
+              <div class="text-left">
+                <div class="flex text-yellow-500">
+                  <% 5.times do %>
+                    ★
+                  <% end %>
+                </div>
+
+                <p class="text-sm <%= website_colour_class("text", 500) %>">
+                  Based on <%= @total_reviews %> reviews
+                </p>
+              </div>
+            </div>
+
+          </div>
+
+
+          <div class="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+
+            <% @reviews.each do |review| %>
+
+              <article class="rounded-3xl border <%= website_colour_class("border", 200) %> bg-white p-6 shadow-card">
+
+                <div class="flex items-center justify-between gap-4">
+
+                  <div class="flex text-yellow-500">
+                    <% review["rating"].to_i.times do %>
+                      ★
+                    <% end %>
+                  </div>
+
+                  <span class="text-xs font-semibold <%= website_colour_class("text", 500) %>">
+                    <%= Date.parse(review["experience_date"]).strftime("%d %B %Y") rescue nil %>
+                  </span>
+
+                </div>
+
+
+                <h3 class="mt-5 text-lg font-black <%= website_colour_class("text", 950) %>">
+                  <%= review["title"] %>
+                </h3>
+
+
+                <p class="mt-3 leading-7 <%= website_colour_class("text", 600) %>">
+                  <%= review["content"] %>
+                </p>
+
+
+                <div class="mt-6 border-t <%= website_colour_class("border", 100) %> pt-4">
+
+                  <p class="font-bold <%= website_colour_class("text", 900) %>">
+                    <%= review.dig("customer", "first_name") %>
+                    <%= review.dig("customer", "last_name") %>
+                  </p>
+
+                </div>
+
+              </article>
+
+            <% end %>
+
+          </div>
+
+        </div>
+      </section>
+
+    <% end %>
+
     <!-- Location -->
     <section id="location" class="<%= website_colour_class("bg", 950) %> py-20 text-white sm:py-24">
       <div class="mx-auto grid max-w-7xl gap-10 px-5 lg:grid-cols-[0.8fr_1.2fr] lg:px-8">

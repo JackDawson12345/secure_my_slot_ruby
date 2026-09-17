@@ -22,6 +22,8 @@ class BusinessWebsite < ApplicationRecord
   has_one_attached :hero_image
   has_one_attached :about_image
 
+  has_many_attached :gallery_images
+
   has_one :website_settings_colour,
           dependent: :destroy
 
@@ -75,4 +77,6 @@ class BusinessWebsite < ApplicationRecord
       }
     end
   end
+
+
 end

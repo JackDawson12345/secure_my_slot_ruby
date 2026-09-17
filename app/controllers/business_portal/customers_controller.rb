@@ -174,6 +174,20 @@ class BusinessPortal::CustomersController < BusinessPortal::BaseController
     end
   end
 
+  def show
+    customer = current_user.business.bookings
+                           .where(user_id: params[:id])
+                           .first
+                 &.user
+
+    unless customer
+      redirect_to business_portal_customers_path, alert: "Customer not found"
+      return
+    end
+
+    @customer = customer
+  end
+
   private
 
   def customers_csv(customers)

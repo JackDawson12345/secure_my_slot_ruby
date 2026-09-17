@@ -363,6 +363,10 @@ Rails.application.routes.draw do
         to: "customers#index",
         as: :customers
 
+    get "dashboard/customers/:id",
+        to: "customers#show",
+        as: :customer_show
+
 
     resources :services,
               path: "dashboard/services" do
@@ -452,11 +456,27 @@ Rails.application.routes.draw do
         to: "website_settings#index",
         as: :website_settings
 
-    patch "dashboard/settings/website-settings",
-          to: "website_settings#update"
+    patch "dashboard/settings/website-settings/content",
+          to: "website_content_settings#update",
+          as: :website_content_settings
+
+
+    patch "dashboard/settings/website-settings/colour",
+          to: "website_colour_settings#update",
+          as: :website_colour_settings
+
 
     post "dashboard/settings/website-settings/generate-colours",
-         to: "website_settings#generate_colours"
+         to: "website_colour_settings#generate_colours",
+         as: :generate_website_colours
+
+    patch "dashboard/settings/website-settings/gallery",
+          to: "website_gallery_settings#update",
+          as: :website_gallery_settings
+
+    delete "dashboard/settings/website-settings/gallery/:id",
+           to: "website_gallery_settings#destroy",
+           as: :destroy_gallery_image
 
     patch "dashboard/password",
           to: "settings#update_password",
