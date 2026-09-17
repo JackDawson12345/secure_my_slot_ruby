@@ -183,8 +183,42 @@ class BusinessPortal::SettingsController < BusinessPortal::BaseController
     end
   end
 
+  def birthday_reminder
+    @birthday_reminder_message =
+      @business.birthday_reminder_message ||
+      @business.create_birthday_reminder_message(
+        text: "Happy Birthday {{customer_name}}! 🎂 We hope you have a fantastic day. Thank you for being a valued customer and we look forward to seeing you again soon."
+      )
+  end
+
+  def update_birthday_reminder
+
+    @birthday_reminder_message =
+      @business.birthday_reminder_message ||
+      @business.build_birthday_reminder_message
+
+
+    if @birthday_reminder_message.update(birthday_reminder_params)
+
+      redirect_to business_birthday_reminder_path,
+                  notice: "Birthday reminder saved successfully."
+
+    else
+
+      render :birthday_reminder,
+             status: :unprocessable_entity
+
+    end
+
+  end
+
 
   private
+
+  def birthday_reminder_params
+    params.require(:birthday_reminder_message)
+          .permit(:text)
+  end
 
   def default_subject(template_type)
     case template_type
@@ -317,7 +351,8 @@ class BusinessPortal::SettingsController < BusinessPortal::BaseController
 
       :new_booking_notifications,
       :cancellation_notifications,
-      :daily_appointment_summary
+      :daily_appointment_summary,
+      :birthday_reminder
     )
   end
 

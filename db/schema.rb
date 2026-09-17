@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_09_03_085104) do
+ActiveRecord::Schema[8.0].define(version: 2026_09_17_105847) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -40,6 +40,14 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_03_085104) do
     t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "birthday_reminder_messages", force: :cascade do |t|
+    t.bigint "business_id", null: false
+    t.text "text"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["business_id"], name: "index_birthday_reminder_messages_on_business_id"
   end
 
   create_table "booking_holds", force: :cascade do |t|
@@ -161,6 +169,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_03_085104) do
     t.decimal "latitude", precision: 10, scale: 7
     t.decimal "longitude", precision: 10, scale: 7
     t.string "check_verify_link"
+    t.boolean "birthday_reminder", default: false
     t.index ["business_id"], name: "index_business_settings_on_business_id"
   end
 
@@ -457,6 +466,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_03_085104) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "birthday_reminder_messages", "businesses"
   add_foreign_key "booking_holds", "bookings"
   add_foreign_key "booking_holds", "businesses"
   add_foreign_key "booking_holds", "services"

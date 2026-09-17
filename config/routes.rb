@@ -514,7 +514,14 @@ Rails.application.routes.draw do
            to: "payments#disconnect",
            as: :payments_disconnect
 
-    get "/qr-code/download", to: "settings#download", as: :download_qr_code
+    get "dashboard/settings/qr-code/download", to: "settings#download", as: :download_qr_code
+
+    get "dashboard/settings/birthday-reminder",
+        to: "settings#birthday_reminder",
+        as: :birthday_reminder
+    patch "dashboard/settings/birthday-reminder",
+          to: "settings#update_birthday_reminder",
+          as: :update_birthday_reminder
 
   end
 

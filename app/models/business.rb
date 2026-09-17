@@ -8,6 +8,9 @@ class Business < ApplicationRecord
   has_one :consultation_form, dependent: :destroy
   has_many :email_templates, dependent: :destroy
 
+  has_one :birthday_reminder_message,
+          dependent: :destroy
+
   has_many :booking_holds, dependent: :destroy
 
   store_accessor :address,
