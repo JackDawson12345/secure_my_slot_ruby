@@ -104,6 +104,7 @@ GEM
       msgpack (~> 1.2)
     brakeman (8.0.5)
       racc
+    browser (6.2.0)
     builder (3.3.0)
     byebug (13.0.0)
       reline (>= 0.6.0)
@@ -505,6 +506,7 @@ DEPENDENCIES
   aws-sdk-s3
   bootsnap
   brakeman
+  browser
   byebug
   capybara
   debug

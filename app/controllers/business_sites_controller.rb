@@ -119,10 +119,14 @@ class BusinessSitesController < ApplicationController
     end
 
 
+    browser = Browser.new(request.user_agent)
+
     @agreement_status.update!(
       status: "signed",
       signed_at: Time.current,
-      ip_address: request.remote_ip
+      ip_address: request.remote_ip,
+      user_agent: request.user_agent,
+      device: "#{browser.device.name} - #{browser.name} #{browser.version}"
     )
 
 
