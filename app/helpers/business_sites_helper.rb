@@ -45,7 +45,7 @@ module BusinessSitesHelper
 
     image_tag(
       "data:image/png;base64,#{Base64.strict_encode64(signature.download)}",
-      class: "max-w-xs"
+      class: "signature-image"
     )
 
   end
