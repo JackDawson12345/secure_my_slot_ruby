@@ -10,6 +10,7 @@ class Business < ApplicationRecord
 
   has_one :birthday_reminder_message,
           dependent: :destroy
+  has_many :agreements, dependent: :destroy
 
   has_many :booking_holds, dependent: :destroy
 

@@ -1,0 +1,17 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  business: one
+  booking: one
+  agreement: one
+  status: MyString
+  signed_at: 2026-09-17 12:43:47
+  ip_address: MyString
+
+two:
+  business: two
+  booking: two
+  agreement: two
+  status: MyString
+  signed_at: 2026-09-17 12:43:47
+  ip_address: MyString

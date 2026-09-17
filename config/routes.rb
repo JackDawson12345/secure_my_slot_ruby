@@ -1,4 +1,7 @@
 Rails.application.routes.draw do
+  namespace :business_portal do
+    get "agreements/index"
+  end
 
   get "business_sites/show"
 
@@ -25,6 +28,14 @@ Rails.application.routes.draw do
     post "/consultation-form",
          to: "business_sites#submit_consultation_form",
          as: :submit_business_site_consultation_form
+
+    get "/agreement-form",
+        to: "business_sites#agreement_form",
+        as: :business_site_agreement_form
+
+    post "/agreement-form",
+         to: "business_sites#submit_agreement_form",
+         as: :submit_business_site_agreement_form
   end
 
 
@@ -523,6 +534,13 @@ Rails.application.routes.draw do
           to: "settings#update_birthday_reminder",
           as: :update_birthday_reminder
 
+    resources :agreements,
+              path: 'dashboard/settings/agreements',
+              only: [:index, :new, :create, :edit, :update, :destroy]
+
+    patch "dashboard/settings/agreements/send_agreement/:id",
+          to: "agreements#send_agreement",
+          as: :send_agreement
   end
 
   # Admin

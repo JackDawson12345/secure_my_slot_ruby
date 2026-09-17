@@ -1,0 +1,2 @@
+module BusinessPortal::AgreementsHelper
+end

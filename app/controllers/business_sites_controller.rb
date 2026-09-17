@@ -88,6 +88,49 @@ class BusinessSitesController < ApplicationController
                 notice: "Consultation form submitted successfully."
   end
 
+  def agreement_form
+    @agreement_status = AgreementStatus.find_by(token: params[:token])
+
+    return redirect_to root_path unless @agreement_status
+
+    @agreement = @agreement_status.agreement
+  end
+
+  def submit_agreement_form
+
+    @agreement_status = AgreementStatus.find_by(token: params[:token])
+
+    if params[:signature_data].present?
+
+      params[:signature_data].each do |name, signature|
+
+        next if signature.blank?
+
+        image_data = signature.split(",").last
+
+        @agreement_status.signatures.attach(
+          io: StringIO.new(Base64.decode64(image_data)),
+          filename: "#{name}.png",
+          content_type: "image/png"
+        )
+
+      end
+
+    end
+
+
+    @agreement_status.update!(
+      status: "signed",
+      signed_at: Time.current,
+      ip_address: request.remote_ip
+    )
+
+
+    redirect_to business_site_agreement_form_path(token: @agreement_status.token),
+                notice: "Agreement signed successfully."
+
+  end
+
   private
 
   def set_business

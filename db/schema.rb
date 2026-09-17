@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_09_17_105847) do
+ActiveRecord::Schema[8.0].define(version: 2026_09_17_133322) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -40,6 +40,38 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_17_105847) do
     t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "agreement_signatures", force: :cascade do |t|
+    t.bigint "agreement_status_id", null: false
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["agreement_status_id"], name: "index_agreement_signatures_on_agreement_status_id"
+  end
+
+  create_table "agreement_statuses", force: :cascade do |t|
+    t.bigint "business_id", null: false
+    t.bigint "booking_id", null: false
+    t.bigint "agreement_id", null: false
+    t.string "status"
+    t.datetime "signed_at"
+    t.string "ip_address"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "token"
+    t.index ["agreement_id"], name: "index_agreement_statuses_on_agreement_id"
+    t.index ["booking_id"], name: "index_agreement_statuses_on_booking_id"
+    t.index ["business_id"], name: "index_agreement_statuses_on_business_id"
+  end
+
+  create_table "agreements", force: :cascade do |t|
+    t.bigint "business_id", null: false
+    t.string "name"
+    t.text "content"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["business_id"], name: "index_agreements_on_business_id"
   end
 
   create_table "birthday_reminder_messages", force: :cascade do |t|
@@ -466,6 +498,11 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_17_105847) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "agreement_signatures", "agreement_statuses"
+  add_foreign_key "agreement_statuses", "agreements"
+  add_foreign_key "agreement_statuses", "bookings"
+  add_foreign_key "agreement_statuses", "businesses"
+  add_foreign_key "agreements", "businesses"
   add_foreign_key "birthday_reminder_messages", "businesses"
   add_foreign_key "booking_holds", "bookings"
   add_foreign_key "booking_holds", "businesses"

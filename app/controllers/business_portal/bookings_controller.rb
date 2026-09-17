@@ -150,6 +150,7 @@ class BusinessPortal::BookingsController < BusinessPortal::BaseController
   def show
     @business = current_user.business
     @booking = @business.bookings.find(params[:id])
+    @agreements = @business.agreements
   end
 
   def update_status
