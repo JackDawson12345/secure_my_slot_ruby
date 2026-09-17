@@ -143,6 +143,30 @@
 
           </div>
 
+          <div class="flex justify-between">
+
+            <span class="text-slate-500">
+              User Agent
+            </span>
+
+            <span class="font-semibold text-slate-900">
+              <%= @agreement_status.user_agent || "—" %>
+            </span>
+
+          </div>
+
+          <div class="flex justify-between">
+
+            <span class="text-slate-500">
+              Device
+            </span>
+
+            <span class="font-semibold text-slate-900">
+              <%= @agreement_status.device || "—" %>
+            </span>
+
+          </div>
+
 
         </div>
 
