@@ -119,11 +119,11 @@
 
           <div class="flex justify-between">
 
-            <span class="text-slate-500">
+            <span class="text-slate-500 w-2/5">
               Signed
             </span>
 
-            <span class="font-semibold text-slate-900">
+            <span class="font-semibold text-slate-900 w-3/5">
               <%= @agreement_status.signed_at&.strftime("%-d %B %Y") || "—" %>
             </span>
 
@@ -133,11 +133,11 @@
 
           <div class="flex justify-between">
 
-            <span class="text-slate-500">
+            <span class="text-slate-500 w-2/5">
               IP Address
             </span>
 
-            <span class="font-semibold text-slate-900">
+            <span class="font-semibold text-slate-900 w-3/5">
               <%= @agreement_status.ip_address || "—" %>
             </span>
 
@@ -145,11 +145,11 @@
 
           <div class="flex justify-between">
 
-            <span class="text-slate-500">
+            <span class="text-slate-500 w-2/5">
               User Agent
             </span>
 
-            <span class="font-semibold text-slate-900">
+            <span class="font-semibold text-slate-900 w-3/5">
               <%= @agreement_status.user_agent || "—" %>
             </span>
 
@@ -157,11 +157,11 @@
 
           <div class="flex justify-between">
 
-            <span class="text-slate-500">
+            <span class="text-slate-500 w-2/5">
               Device
             </span>
 
-            <span class="font-semibold text-slate-900">
+            <span class="font-semibold text-slate-900 w-3/5">
               <%= @agreement_status.device || "—" %>
             </span>
 
