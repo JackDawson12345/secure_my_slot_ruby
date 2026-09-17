@@ -44,10 +44,7 @@ module BusinessSitesHelper
 
 
     image_tag(
-      Rails.application.routes.url_helpers.rails_blob_url(
-        signature,
-        host: "securemyslot.co.uk"
-      ),
+      "data:image/png;base64,#{Base64.strict_encode64(signature.download)}",
       class: "max-w-xs"
     )
 
