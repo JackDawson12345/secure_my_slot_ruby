@@ -1,0 +1,50 @@
+<h1>
+  <%= @agreement.name %>
+</h1>
+
+
+<p>
+  Signed agreement for
+  <%= @booking.user.first_name %>
+  <%= @booking.user.last_name %>
+</p>
+
+
+<hr>
+
+
+<div>
+
+  <%= render_signed_agreement_content(
+        @agreement.content,
+        @agreement_status
+      )
+  %>
+
+</div>
+
+
+<hr>
+
+
+<h3>
+  Signing Details
+</h3>
+
+
+<p>
+  Status:
+  <%= @agreement_status.status.titleize %>
+</p>
+
+
+<p>
+  Signed:
+  <%= @agreement_status.signed_at.strftime("%d %B %Y %H:%M") %>
+</p>
+
+
+<p>
+  IP Address:
+  <%= @agreement_status.ip_address %>
+</p>

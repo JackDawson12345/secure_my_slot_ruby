@@ -153,6 +153,40 @@ class BusinessPortal::BookingsController < BusinessPortal::BaseController
     @agreements = @business.agreements
   end
 
+  def agreements_show
+    @agreement_status = AgreementStatus.find_by(token: params[:token])
+
+    return redirect_to root_path unless @agreement_status
+
+    @agreement = @agreement_status.agreement
+    @booking = @agreement_status.booking
+  end
+
+  def agreements_pdf
+
+    @agreement_status = AgreementStatus.find_by(token: params[:token])
+
+    return redirect_to root_path unless @agreement_status
+
+    @agreement = @agreement_status.agreement
+    @booking = @agreement_status.booking
+
+
+    respond_to do |format|
+
+      format.pdf do
+
+        render pdf: "#{@agreement.name}",
+               template: "business_portal/bookings/agreement_pdf",
+               layout: "pdf",
+               disposition: "attachment"
+
+      end
+
+    end
+
+  end
+
   def update_status
     @business = current_user.business
     @booking = @business.bookings.find(params[:id])

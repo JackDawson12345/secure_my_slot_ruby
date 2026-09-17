@@ -1,0 +1,169 @@
+<main class="p-4 sm:p-6 lg:p-8">
+
+  <!-- Header -->
+  <div class="mb-8 flex items-center justify-between">
+
+    <div>
+
+      <div class="flex items-center gap-2 text-sm text-slate-500">
+        <%= link_to "Bookings",
+                    business_bookings_path,
+                    class: "hover:text-slate-700" %>
+
+        <i data-lucide="chevron-right" class="h-4 w-4"></i>
+
+        <span class="text-slate-700">
+          Agreement
+        </span>
+      </div>
+
+
+      <h1 class="mt-2 text-2xl font-bold tracking-tight sm:text-3xl">
+        <%= @agreement.name %>
+      </h1>
+
+
+      <p class="mt-1 text-sm text-slate-500">
+        Signed agreement for <%= @booking.user.first_name %> <%= @booking.user.last_name %>
+      </p>
+
+    </div>
+
+
+    <%= link_to business_booking_path(@booking),
+                class: "hidden items-center gap-2 rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 sm:inline-flex" do %>
+
+      <i data-lucide="arrow-left" class="h-4 w-4"></i>
+      Back to booking
+
+    <% end %>
+
+  </div>
+
+
+  <div class="grid gap-6 xl:grid-cols-[1fr_340px]">
+
+
+    <!-- Main -->
+    <div class="space-y-6">
+
+
+      <!-- Agreement -->
+      <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+
+        <div class="border-b border-slate-200 px-5 py-5 sm:px-6">
+
+          <div class="flex items-center gap-2">
+
+            <i data-lucide="file-signature"
+               class="h-5 w-5 text-slate-400"></i>
+
+            <h2 class="text-lg font-bold">
+              Agreement
+            </h2>
+
+          </div>
+
+        </div>
+
+
+        <div class="p-5 sm:px-6">
+
+          <div class="prose max-w-none text-sm text-slate-700">
+
+            <div class="text-slate-700 whitespace-pre-line">
+              <%= render_signed_agreement_content(@agreement.content, @agreement_status) %>
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+
+
+
+    </div>
+
+
+
+    <!-- Sidebar -->
+    <aside>
+
+      <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm xl:sticky xl:top-8">
+
+        <h2 class="text-lg font-bold">
+          Details
+        </h2>
+
+
+        <div class="mt-5 space-y-4 text-sm">
+
+
+          <div class="flex justify-between">
+
+            <span class="text-slate-500">
+              Status
+            </span>
+
+
+            <span class="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
+              <%= @agreement_status.status.titleize %>
+            </span>
+
+          </div>
+
+
+
+          <div class="flex justify-between">
+
+            <span class="text-slate-500">
+              Signed
+            </span>
+
+            <span class="font-semibold text-slate-900">
+              <%= @agreement_status.signed_at&.strftime("%-d %B %Y") || "—" %>
+            </span>
+
+          </div>
+
+
+
+          <div class="flex justify-between">
+
+            <span class="text-slate-500">
+              IP Address
+            </span>
+
+            <span class="font-semibold text-slate-900">
+              <%= @agreement_status.ip_address || "—" %>
+            </span>
+
+          </div>
+
+
+        </div>
+
+      </div>
+
+      <%= link_to business_agreement_pdf_path(
+                    @booking.id,
+                    @agreement_status.token,
+                    format: :pdf
+                  ),
+                  class: "mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-indigo-700" do %>
+
+        <i data-lucide="download" class="h-4 w-4"></i>
+        Download PDF
+
+      <% end %>
+
+    </aside>
+
+
+  </div>
+
+
+</main>

@@ -1,7 +1,4 @@
 Rails.application.routes.draw do
-  namespace :business_portal do
-    get "agreements/index"
-  end
 
   get "business_sites/show"
 
@@ -361,6 +358,14 @@ Rails.application.routes.draw do
     get "dashboard/bookings/:id",
         to: "bookings#show",
         as: :booking
+
+    get "businesses/bookings/:id/agreements/:token",
+        to: "bookings#agreements_show",
+        as: :booking_agreement_show
+
+    get "businesses/bookings/:id/agreements/:token/pdf",
+        to: "bookings#agreements_pdf",
+        as: :agreement_pdf
 
     get "bookings/:id/consultation-pdf",
         to: "bookings#consultation_pdf",

@@ -200,6 +200,19 @@
                         <%= status.status.titleize %>
                       </span>
 
+
+                      <% if status.status == "signed" %>
+
+                        <%= link_to "Show Agreement",
+                                    business_booking_agreement_show_path(
+                                      id: @booking.id,
+                                      token: status.token
+                                    ),
+                                    class: "rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50" %>
+
+                      <% end %>
+
+
                     <% else %>
 
                       <%= link_to "Send Agreement",

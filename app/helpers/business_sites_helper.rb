@@ -18,18 +18,39 @@ module BusinessSitesHelper
       .html_safe
   end
 
+  def render_signed_agreement_content(content, agreement_status)
+    return if content.blank?
+
+    content
+      .gsub(/\n*\s*{{sign\\?_agreement name="([^"]+)"}}\s*\n*/) do
+
+      signed_signature_image(
+        agreement_status,
+        Regexp.last_match(1)
+      )
+
+    end
+      .html_safe
+  end
+
 
   def signed_signature_image(agreement_status, name)
+
     signature = agreement_status.signatures.find do |file|
       file.filename.to_s == "#{name}.png"
     end
 
     return "" unless signature
 
+
     image_tag(
-      signature,
-      class: "max-w-xs rounded-xl border border-slate-200 bg-white p-3 shadow-sm"
+      Rails.application.routes.url_helpers.rails_blob_url(
+        signature,
+        host: "securemyslot.co.uk"
+      ),
+      class: "max-w-xs"
     )
+
   end
 
 
