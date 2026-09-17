@@ -73,3 +73,4 @@ gem "aws-sdk-s3", require: false
 
 gem "wicked_pdf"
 gem "wkhtmltopdf-binary"
+gem "image_processing", "~> 1.2"
