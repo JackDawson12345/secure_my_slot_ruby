@@ -1,3 +1,5 @@
+require "rqrcode"
+
 module ApplicationHelper
   BUSINESS_CATEGORIES = {
     "barber" => "Barber",
@@ -19,5 +21,16 @@ module ApplicationHelper
 
   def business_category_name(category)
     BUSINESS_CATEGORIES[category] || category&.humanize
+  end
+
+  def qr_code_for(url)
+    qrcode = RQRCode::QRCode.new(url)
+
+    qrcode.as_svg(
+      offset: 0,
+      color: "000",
+      fill: "fff",
+      module_size: 6
+    )
   end
 end

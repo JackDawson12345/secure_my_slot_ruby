@@ -15,6 +15,24 @@ class BusinessPortal::SettingsController < BusinessPortal::BaseController
   def general_settings
   end
 
+  def download
+    url = params[:url]
+
+    qrcode = RQRCode::QRCode.new(url)
+
+    send_data(
+      qrcode.as_png(
+        bit_depth: 1,
+        border_modules: 4,
+        colour: "000",
+        fill: "fff",
+        size: 300
+      ).to_s,
+      filename: "qr-code.png",
+      type: "image/png"
+    )
+  end
+
 
   def update
     Rails.logger.info "SETTINGS PARAMS: #{settings_params.inspect}"

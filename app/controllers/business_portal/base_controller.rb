@@ -19,4 +19,6 @@ class BusinessPortal::BaseController < ApplicationController
       redirect_to business_subscription_path, notice: "A member of our marketing team will be in touch."
     end
   end
+
+
 end
