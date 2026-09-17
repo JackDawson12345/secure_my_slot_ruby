@@ -1,0 +1,59 @@
+<div>
+
+  <input
+    class="service-radio peer sr-only"
+    type="radio"
+    name="booking[service_id]"
+    id="service-<%= service.id %>"
+    value="<%= service.id %>"
+    data-duration="<%= service.minutes_duration %>"
+    data-price="<%= service.price %>"
+    data-deposit-enabled="<%= service.deposit_enabled? %>"
+    data-deposit="<%= service.deposit || 0 %>"
+    required
+  >
+
+
+  <label
+    for="service-<%= service.id %>"
+    class="block cursor-pointer rounded-2xl border-2 <%= website_colour_class("border", 200) %> p-4 transition hover:<%= website_colour_class("border", 500) %> peer-checked:<%= website_colour_class("border", 500) %> peer-checked:<%= website_colour_class("bg", 50) %>"
+  >
+
+    <div class="flex justify-between gap-4">
+
+      <div>
+
+        <span class="service-name block font-bold <%= website_colour_class("text", 900) %>">
+          <%= service.name %>
+        </span>
+
+
+        <span class="text-sm <%= website_colour_class("text", 500) %>">
+          <%= service.minutes_duration %> minutes
+        </span>
+
+      </div>
+
+
+      <div class="text-right">
+
+        <span class="block font-black <%= website_colour_class("text", 900) %>">
+          <%= number_to_currency(service.price, unit: "£") %>
+        </span>
+
+
+        <% if service.deposit_enabled? && service.deposit.to_d.positive? %>
+
+          <span class="mt-1 block text-xs font-semibold <%= website_colour_class("text", 600) %>">
+            <%= number_to_currency(service.deposit, unit: "£") %> deposit
+          </span>
+
+        <% end %>
+
+      </div>
+
+    </div>
+
+  </label>
+
+</div>

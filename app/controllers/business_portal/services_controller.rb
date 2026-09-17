@@ -102,7 +102,8 @@ class BusinessPortal::ServicesController < BusinessPortal::BaseController
       :deposit_enabled,
       :deposit,
       :icon,
-      :image
+      :image,
+      :service_category_id
     )
   end
 end

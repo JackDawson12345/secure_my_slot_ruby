@@ -384,6 +384,11 @@ Rails.application.routes.draw do
         as: :customer_show
 
 
+    resources :service_categories,
+              path: "dashboard/services/categories",
+              except: [:show],
+              as: :service_categories
+
     resources :services,
               path: "dashboard/services" do
       delete :remove_image, on: :member

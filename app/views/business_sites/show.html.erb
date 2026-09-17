@@ -467,6 +467,13 @@
                 <%= service.description %>
               </p>
 
+              <% if service.service_category.present? %>
+                <div class="mt-4 inline-flex items-center gap-1.5 rounded-full <%= website_colour_class("bg", 50) %> px-3 py-1.5 text-xs font-semibold <%= website_colour_class("text", 700) %>">
+                  <i data-lucide="folder" class="h-3.5 w-3.5"></i>
+                  <%= service.service_category.name %>
+                </div>
+              <% end %>
+
               <div class="mt-6 flex items-end justify-between">
                 <div>
                   <span class="text-sm font-semibold <%= website_colour_class("text", 400) %>">
@@ -533,6 +540,17 @@
           </p>
         </div>
 
+        <%
+          services = @business.services
+                              .where(status: 'active')
+                              .includes(:service_category)
+
+          grouped_services = services.group_by(&:service_category)
+
+          service_categories = grouped_services.reject { |category, _| category.nil? }
+          other_services = grouped_services[nil] || []
+        %>
+
         <%= form_with model: Booking.new,
                       url: bookings_path,
                       method: :post,
@@ -549,59 +567,58 @@
                 Select a service
               </h3>
 
-              <div class="mt-7 grid gap-4 sm:grid-cols-2">
 
-                <% @business.services.where(status: 'active').each do |service| %>
+              <div class="mt-7 space-y-8">
+
+
+                <% service_categories.each do |category, services| %>
+
                   <div>
 
-                    <input
-                      class="service-radio peer sr-only"
-                      type="radio"
-                      name="booking[service_id]"
-                      id="service-<%= service.id %>"
-                      value="<%= service.id %>"
-                      data-duration="<%= service.minutes_duration %>"
-                      data-price="<%= service.price %>"
-                      data-deposit-enabled="<%= service.deposit_enabled? %>"
-                      data-deposit="<%= service.deposit || 0 %>"
-                      required
-                    >
+                    <h4 class="mb-4 text-sm font-black uppercase tracking-wider <%= website_colour_class("text", 700) %>">
+                      <%= category.name %>
+                    </h4>
 
-                    <label
-                      for="service-<%= service.id %>"
-                      class="block cursor-pointer rounded-2xl border-2 <%= website_colour_class("border", 200) %> p-4 transition hover:<%= website_colour_class("border", 500) %> peer-checked:<%= website_colour_class("border", 500) %> peer-checked:<%= website_colour_class("bg", 50) %>"
-                    >
 
-                      <div class="flex justify-between gap-4">
+                    <div class="grid gap-4 sm:grid-cols-2">
 
-                        <div>
-                          <span class="service-name block font-bold <%= website_colour_class("text", 900) %>">
-                            <%= service.name %>
-                          </span>
+                      <% services.each do |service| %>
 
-                          <span class="text-sm <%= website_colour_class("text", 500) %>">
-                            <%= service.minutes_duration %> minutes
-                          </span>
-                        </div>
+                        <%= render "business_sites/booking_option", service: service %>
 
-                        <div class="text-right">
-                          <span class="block font-black <%= website_colour_class("text", 900) %>">
-                            <%= number_to_currency(service.price, unit: "£") %>
-                          </span>
+                      <% end %>
 
-                          <% if service.deposit_enabled? && service.deposit.to_d.positive? %>
-                            <span class="mt-1 block text-xs font-semibold <%= website_colour_class("text", 600) %>">
-                              <%= number_to_currency(service.deposit, unit: "£") %> deposit
-                            </span>
-                          <% end %>
-                        </div>
-
-                      </div>
-
-                    </label>
+                    </div>
 
                   </div>
+
                 <% end %>
+
+
+
+                <% if other_services.any? %>
+
+                  <div>
+                    <% unless @business.service_categories.count == 0 %>
+                      <h4 class="mb-4 text-sm font-black uppercase tracking-wider <%= website_colour_class("text", 700) %>">
+                        Other Services
+                      </h4>
+                    <% end %>
+
+                    <div class="grid gap-4 sm:grid-cols-2">
+
+                      <% other_services.each do |service| %>
+
+                        <%= render "business_sites/booking_option", service: service %>
+
+                      <% end %>
+
+                    </div>
+
+                  </div>
+
+                <% end %>
+
 
               </div>
 
