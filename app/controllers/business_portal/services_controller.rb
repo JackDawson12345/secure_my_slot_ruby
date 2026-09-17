@@ -1,6 +1,6 @@
 class BusinessPortal::ServicesController < BusinessPortal::BaseController
   before_action :set_business
-  before_action :set_service, only: %i[show edit update destroy]
+  before_action :set_service, only: %i[show edit update destroy remove_image]
 
   def index
     services_scope = @business.services
@@ -73,6 +73,13 @@ class BusinessPortal::ServicesController < BusinessPortal::BaseController
                 status: :see_other
   end
 
+  def remove_image
+    @service.image.purge if @service.image.attached?
+
+    redirect_to edit_business_service_path(@service),
+                notice: "Service image removed successfully."
+  end
+
   private
 
   def set_business
@@ -94,7 +101,8 @@ class BusinessPortal::ServicesController < BusinessPortal::BaseController
       :status,
       :deposit_enabled,
       :deposit,
-      :icon
+      :icon,
+      :image
     )
   end
 end

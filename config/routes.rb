@@ -365,7 +365,9 @@ Rails.application.routes.draw do
 
 
     resources :services,
-              path: "dashboard/services"
+              path: "dashboard/services" do
+      delete :remove_image, on: :member
+    end
 
 
     get "dashboard/opening-hours",

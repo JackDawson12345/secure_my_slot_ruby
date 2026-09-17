@@ -2,7 +2,7 @@
               url: service.persisted? ? business_service_path(service) : business_services_path,
               class: "space-y-6",
               data: {
-                controller: "deposit"
+                controller: "deposit image-preview"
               } do |form| %>
 
   <% if service.errors.any? %>
@@ -74,6 +74,73 @@
     <p class="mt-3 text-xs text-slate-500">
       Hover over an icon to see its meaning.
     </p>
+  </div>
+
+  <div data-controller="image-preview">
+
+    <%= form.label :image,
+                   "Service image",
+                   class: "block text-sm font-semibold text-slate-700" %>
+
+    <p class="mt-1 text-xs text-slate-500">
+      Upload an image that represents this service.
+    </p>
+
+    <div class="mt-4 flex items-start gap-5">
+
+      <div class="relative">
+
+        <% if service.image.attached? %>
+          <%= image_tag service.image.variant(resize_to_fill: [160, 160]),
+                        data: {
+                          image_preview_target: "image"
+                        },
+                        class: "h-40 w-40 rounded-2xl border border-slate-200 object-cover" %>
+        <% else %>
+          <div
+            data-image-preview-target="placeholder"
+            class="flex h-40 w-40 items-center justify-center rounded-2xl border border-dashed border-slate-300 bg-slate-50 text-sm text-slate-400"
+          >
+            No image
+          </div>
+
+          <img
+            data-image-preview-target="image"
+            class="hidden h-40 w-40 rounded-2xl border border-slate-200 object-cover"
+          >
+        <% end %>
+
+      </div>
+
+
+      <div class="flex flex-col gap-3">
+
+        <%= form.file_field :image,
+                            accept: "image/png,image/jpeg,image/webp",
+                            data: {
+                              image_preview_target: "input",
+                              action: "change->image-preview#show"
+                            },
+                            class: "block text-sm text-slate-600 file:mr-4 file:rounded-lg file:border-0 file:bg-indigo-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-indigo-700 hover:file:bg-indigo-100" %>
+
+
+        <% if service.image.attached? %>
+          <%= link_to remove_image_business_service_path(service),
+                      data: {
+                        turbo_method: :delete
+                      },
+                      class: "inline-flex items-center gap-2 text-sm font-semibold text-red-600 hover:text-red-700" do %>
+
+            <i data-lucide="trash-2" class="h-4 w-4"></i>
+            Remove image
+
+          <% end %>
+        <% end %>
+
+      </div>
+
+    </div>
+
   </div>
 
   <div>
