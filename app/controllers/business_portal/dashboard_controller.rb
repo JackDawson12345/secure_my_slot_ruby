@@ -99,11 +99,10 @@ class BusinessPortal::DashboardController < BusinessPortal::BaseController
   end
 
   def confirmed_revenue(date_range)
+
     @bookings
       .where(date: date_range, status: "confirmed")
-      .sum do |booking|
-      booking.service&.price.to_d
-    end
+      .sum(:amount)
   end
 
   def percentage_change(current_value, previous_value)

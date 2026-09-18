@@ -97,6 +97,33 @@
               </p>
             </div>
           </div>
+
+          <div class="flex items-start gap-3">
+            <div class="rounded-lg bg-violet-50 p-2 text-violet-600">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="ticket-percent" aria-hidden="true" class="lucide lucide-ticket-percent h-5 w-5"><path d="M2 9a3 3 0 1 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 1 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"></path><path d="M9 9h.01"></path><path d="m15 9-6 6"></path><path d="M15 15h.01"></path></svg>
+            </div>
+            <div>
+              <p class="text-sm font-medium text-slate-500">Coupon</p>
+              <% coupon = ServiceCoupon.find_by(business_id: current_user.business.id, id: @booking.coupon) %>
+
+              <p class="font-semibold text-slate-900">
+                <%= coupon.present? ? coupon.code : "-" %>
+              </p>
+
+            </div>
+          </div>
+
+          <div class="flex items-start gap-3">
+            <div class="rounded-lg bg-emerald-50 p-2 text-emerald-600">
+              <i data-lucide="wallet-cards" class="h-5 w-5"></i>
+            </div>
+            <div>
+              <p class="text-sm font-medium text-slate-500">Coupon Price</p>
+              <p class="font-semibold text-slate-900">
+                <%= number_to_currency(@booking.amount, unit: "£") %>
+              </p>
+            </div>
+          </div>
         </div>
       </section>
 

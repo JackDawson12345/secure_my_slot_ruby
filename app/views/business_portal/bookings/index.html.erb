@@ -519,7 +519,7 @@
             <!-- Price -->
             <td class="whitespace-nowrap px-6 py-4 text-sm font-semibold text-slate-900">
               <%= number_to_currency(
-                    booking.service&.price || 0,
+                    booking.amount || 0,
                     unit: "£"
                   ) %>
             </td>
