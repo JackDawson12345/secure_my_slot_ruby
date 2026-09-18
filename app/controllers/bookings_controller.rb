@@ -108,6 +108,7 @@ class BookingsController < ApplicationController
 
     if booking_hold.booking.present?
       @booking = booking_hold.booking
+      @business = @booking.business
 
       return render :payment_success
     end
@@ -132,8 +133,10 @@ class BookingsController < ApplicationController
 
     @booking = complete_paid_booking!(
       booking_hold: booking_hold,
-      checkout_session: checkout_session,
+      checkout_session: checkout_session
     )
+
+    @business = @booking.business
 
     render :payment_success
 
