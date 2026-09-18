@@ -88,6 +88,26 @@
         </span>
       </div>
 
+      <% coupon = ServiceCoupon.find_by(
+        id: @booking.coupon,
+        business_id: @booking.business_id
+      ) %>
+
+      <% if coupon.present? %>
+        <div class="flex justify-between gap-4 border-b border-slate-200 py-4">
+    <span class="text-slate-500">
+      Price After Coupon
+    </span>
+
+          <span class="text-right font-bold text-slate-900">
+            <%= number_to_currency(
+                  @booking.amount,
+                  unit: "£"
+                ) %>
+          </span>
+        </div>
+      <% end %>
+
       <% if @booking.payment_status == "paid" %>
         <div class="flex justify-between gap-4 border-b border-slate-200 py-4">
           <span class="text-slate-500">
