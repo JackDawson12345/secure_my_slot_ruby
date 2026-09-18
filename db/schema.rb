@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_09_17_152121) do
+ActiveRecord::Schema[8.0].define(version: 2026_09_18_095815) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -123,6 +123,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_17_152121) do
     t.decimal "amount_paid", precision: 10, scale: 2, default: "0.0", null: false
     t.jsonb "consultation_responses", default: {}, null: false
     t.string "consultation_token"
+    t.string "coupon"
+    t.decimal "amount"
     t.index ["business_id"], name: "index_bookings_on_business_id"
     t.index ["consultation_token"], name: "index_bookings_on_consultation_token", unique: true
     t.index ["service_id"], name: "index_bookings_on_service_id"
@@ -327,6 +329,20 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_17_152121) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["business_id"], name: "index_service_categories_on_business_id"
+  end
+
+  create_table "service_coupons", force: :cascade do |t|
+    t.bigint "business_id", null: false
+    t.string "name"
+    t.string "code"
+    t.string "coupon_type"
+    t.decimal "discount"
+    t.json "services"
+    t.boolean "active"
+    t.datetime "expires_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["business_id"], name: "index_service_coupons_on_business_id"
   end
 
   create_table "services", force: :cascade do |t|
@@ -536,6 +552,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_17_152121) do
   add_foreign_key "customer_settings", "users"
   add_foreign_key "email_templates", "businesses"
   add_foreign_key "service_categories", "businesses"
+  add_foreign_key "service_coupons", "businesses"
   add_foreign_key "services", "businesses"
   add_foreign_key "services", "service_categories"
   add_foreign_key "solid_queue_blocked_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade

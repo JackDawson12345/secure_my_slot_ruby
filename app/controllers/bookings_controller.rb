@@ -26,23 +26,36 @@ class BookingsController < ApplicationController
   end
 
   def create
+
     service = Service.find(booking_params[:service_id])
     business = service.business
     user, new_customer_account = find_or_create_user
+
+    coupon = business.service_coupons.find do |service_coupon|
+      service_coupon.code.strip.casecmp(booking_params['service_coupon'].strip).zero?
+    end
+
+    coupon_works = coupon.active? &&
+      (coupon.expires_at.nil? || coupon.expires_at.future?) &&
+      coupon.services.include?(service.id.to_s)
 
     if business.stripe_ready? && payment_required_for?(service)
       create_stripe_booking_hold(
         business: business,
         service: service,
         user: user,
-        new_customer_account: new_customer_account
+        new_customer_account: new_customer_account,
+        coupon: coupon,
+        coupon_works: coupon_works
       )
     else
       create_booking_without_payment(
         business: business,
         service: service,
         user: user,
-        new_customer_account: new_customer_account
+        new_customer_account: new_customer_account,
+        coupon: coupon,
+        coupon_works: coupon_works
       )
 
     end
@@ -115,7 +128,9 @@ class BookingsController < ApplicationController
 
     @booking = complete_paid_booking!(
       booking_hold: booking_hold,
-      checkout_session: checkout_session
+      checkout_session: checkout_session,
+      amount: booking_hold.amount,
+      coupon: booking_hold.coupon
     )
 
     render :payment_success
@@ -143,8 +158,40 @@ class BookingsController < ApplicationController
     business:,
     service:,
     user:,
-    new_customer_account:
+    new_customer_account:,
+    coupon:,
+    coupon_works:
   )
+
+    if coupon_works == true
+
+      original_price = service.price.to_d
+
+      discounted_price =
+        case coupon.coupon_type
+
+        when "percentage"
+          original_price -
+            (original_price * (coupon.discount / 100))
+
+        when "fixed"
+          original_price - coupon.discount
+
+        else
+          original_price
+        end
+
+      discounted_price = 0 if discounted_price < 0
+      amount = discounted_price
+
+      coupon_code = coupon.id
+
+    else
+      amount = service.price.to_d
+
+      coupon_code = nil
+    end
+
     booking_hold = BookingHold.create!(
       user: user,
       business: business,
@@ -152,7 +199,9 @@ class BookingsController < ApplicationController
       date: booking_params[:date],
       time: booking_params[:time],
       notes: booking_params[:notes],
-      expires_at: 30.minutes.from_now
+      expires_at: 30.minutes.from_now,
+      amount: amount,
+      coupon: coupon_code
     )
 
     redirect_to_stripe_checkout(
@@ -171,8 +220,39 @@ class BookingsController < ApplicationController
     business:,
     service:,
     user:,
-    new_customer_account:
+    new_customer_account:,
+    coupon:,
+    coupon_works:
   )
+    if coupon_works == true
+
+      original_price = service.price.to_d
+
+      discounted_price =
+        case coupon.coupon_type
+
+        when "percentage"
+          original_price -
+            (original_price * (coupon.discount / 100))
+
+        when "fixed"
+          original_price - coupon.discount
+
+        else
+          original_price
+        end
+
+      discounted_price = 0 if discounted_price < 0
+      amount = discounted_price
+
+      coupon_code = coupon.id
+
+    else
+      amount = service.price.to_d
+
+      coupon_code = nil
+    end
+
     booking = Booking.new(
       user: user,
       business: business,
@@ -181,7 +261,9 @@ class BookingsController < ApplicationController
       time: booking_params[:time],
       notes: booking_params[:notes],
       payment_status: "not_required",
-      amount_paid: 0
+      amount: amount,
+      amount_paid: 0,
+      coupon: coupon_code
     )
 
     booking.status =
@@ -284,7 +366,9 @@ class BookingsController < ApplicationController
     booking_hold:,
     business:,
     service:,
-    new_customer_account:
+    new_customer_account:,
+    amount:,
+    coupon:
   )
     success_url = payment_success_booking_hold_url(
       booking_hold,
@@ -299,7 +383,7 @@ class BookingsController < ApplicationController
       price = service.deposit
       service_name = "#{service.name} (Deposit)"
     else
-      price = service.price
+      price = amount
       service_name = service.name
     end
 
@@ -413,7 +497,9 @@ class BookingsController < ApplicationController
         stripe_payment_intent_id: checkout_session.payment_intent,
         amount_paid: amount_from_stripe(
           checkout_session.amount_total
-        )
+        ),
+        amount: booking_hold.amount,
+        coupon: booking_hold.coupon
       )
 
       booking_hold.update!(
@@ -523,7 +609,9 @@ class BookingsController < ApplicationController
       :email,
       :phone_number,
       :notes,
-      :terms_accepted
+      :terms_accepted,
+      :service_coupon,
+      :applied_coupon
     )
   end
 end

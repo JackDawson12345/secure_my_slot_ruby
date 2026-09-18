@@ -162,7 +162,7 @@
                   data-action="click->dropdown#toggle"
                   class="
             flex w-full items-center justify-between gap-3 rounded-xl px-4 py-3 text-sm transition
-            <%= ["services", "service_categories"].include?(controller_name) ?
+            <%= ["services", "service_categories", "service_coupons"].include?(controller_name) ?
                                            "bg-indigo-600 font-semibold text-white shadow-lg shadow-indigo-950/30" :
                                            "font-medium text-slate-300 hover:bg-white/10 hover:text-white" %>
           ">
@@ -183,7 +183,7 @@
           <div data-dropdown-target="menu"
                class="
          mt-2 space-y-1 pl-4
-         <%= ["services", "service_categories"].include?(controller_name) ? "" : "hidden" %>
+         <%= ["services", "service_categories", "service_coupons"].include?(controller_name) ? "" : "hidden" %>
        ">
 
 
@@ -228,6 +228,27 @@
                             "text-slate-400 hover:bg-white/10 hover:text-white"
                         ] do %>
               Add Service Category
+            <% end %>
+
+            <%= link_to business_service_coupons_path,
+                        class: [
+                          "block rounded-lg px-4 py-2 text-sm transition",
+                          controller_name == "service_coupons" && action_name == "index" ?
+                            "bg-white/10 font-semibold text-white" :
+                            "text-slate-400 hover:bg-white/10 hover:text-white"
+                        ] do %>
+              All Service Coupons
+            <% end %>
+
+
+            <%= link_to new_business_service_coupon_path,
+                        class: [
+                          "block rounded-lg px-4 py-2 text-sm transition",
+                          controller_name == "service_coupons" && action_name == "new" ?
+                            "bg-white/10 font-semibold text-white" :
+                            "text-slate-400 hover:bg-white/10 hover:text-white"
+                        ] do %>
+              Add Service Coupon
             <% end %>
 
 

@@ -34,6 +34,91 @@ class BusinessSitesController < ApplicationController
 
   end
 
+  def check_service_coupon
+
+    coupon = @business.service_coupons.find do |service_coupon|
+      service_coupon.code.strip.casecmp(params[:code].strip).zero?
+    end
+
+    unless coupon
+      render json: {
+        success: false,
+        message: "Coupon code not found."
+      }
+      return
+    end
+
+
+    unless coupon.active?
+      render json: {
+        success: false,
+        message: "This coupon is no longer active."
+      }
+      return
+    end
+
+
+    if coupon.expires_at.present? && coupon.expires_at < Time.current
+      render json: {
+        success: false,
+        message: "This coupon has expired."
+      }
+      return
+    end
+
+
+    service_id = params[:service_id].to_s
+
+
+    if coupon.services.present?
+
+      allowed_services =
+        coupon.services.map(&:to_s)
+
+      unless allowed_services.include?(service_id)
+        render json: {
+          success: false,
+          message: "This coupon cannot be used for this service."
+        }
+        return
+      end
+
+    end
+
+
+    service = @business.services.find(service_id)
+
+
+    original_price = service.price.to_d
+
+
+    discounted_price =
+      case coupon.coupon_type
+
+      when "percentage"
+        original_price -
+          (original_price * (coupon.discount / 100))
+
+      when "fixed"
+        original_price - coupon.discount
+
+      else
+        original_price
+      end
+
+
+    discounted_price = 0 if discounted_price < 0
+
+
+    render json: {
+      success: true,
+      message: "Coupon applied successfully.",
+      original_price: original_price.to_f,
+      price: discounted_price.round(2).to_f
+    }
+
+  end
+
   def consultation_form
     @consultation_form = @business.consultation_form
 

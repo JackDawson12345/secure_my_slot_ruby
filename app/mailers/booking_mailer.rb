@@ -83,7 +83,7 @@ class BookingMailer < ApplicationMailer
     @user = @booking.user
 
 
-    service_price = @service.price || 0
+    service_price = @booking.amount || 0
     amount_paid = @booking.amount_paid || 0
 
 

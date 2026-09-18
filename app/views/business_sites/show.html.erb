@@ -891,6 +891,36 @@
                 </p>
               </div>
 
+              <% if @business.service_coupons.present? %>
+                <div id="coupon-container"
+                     class="flex gap-3 mt-6 opacity-50 pointer-events-none">
+
+                  <input
+                    type="text"
+                    id="coupon-input"
+                    name="booking[service_coupon]"
+                    placeholder="Select a service first"
+                    disabled
+                    class="flex-1 rounded-2xl border <%= website_colour_class("border", 300) %> px-4 py-3"
+                  >
+
+                  <button
+                    id="coupon-button"
+                    type="button"
+                    disabled
+                    class="rounded-2xl <%= website_colour_class("bg", 600) %> px-5 py-3 font-semibold text-white opacity-50"
+                  >
+                    Apply
+                  </button>
+
+                </div>
+
+
+                <p id="coupon-message"
+                   class="mt-2 text-sm font-semibold">
+                </p>
+              <% end %>
+
               <button
                 type="submit"
                 class="mt-7 w-full rounded-2xl <%= website_colour_class("bg", 500) %> px-5 py-4 font-black text-white transition hover:<%= website_colour_class("bg", 600) %>"
@@ -1452,10 +1482,23 @@ Every appointment is handled with care, clear communication and attention to det
                   "[data-service-id]"
               );
 
+          const couponContainer =
+              document.getElementById("coupon-container");
+
+          const couponInput =
+              document.querySelector(
+                  'input[name="booking[service_coupon]"]'
+              );
+
+          const couponButton =
+              document.getElementById("coupon-button");
+
           const stripeReady =
               <%= @business.stripe_ready?.to_json %>;
 
           let selectedServiceId = null;
+          let appliedCouponPrice = null;
+          let appliedCouponCode = null;
 
           function formatCurrency(amount) {
               return new Intl.NumberFormat(
@@ -1468,36 +1511,46 @@ Every appointment is handled with care, clear communication and attention to det
           }
 
           function updatePaymentSummary(input) {
-              const price =
+
+              let price =
                   Number.parseFloat(
                       input.dataset.price || "0"
                   );
+
+
+              if (appliedCouponPrice !== null) {
+                  price = appliedCouponPrice;
+              }
+
 
               const deposit =
                   Number.parseFloat(
                       input.dataset.deposit || "0"
                   );
 
+
               const depositEnabled =
                   input.dataset.depositEnabled === "true" &&
                   deposit > 0;
+
 
               const amountDue =
                   depositEnabled
                       ? deposit
                       : price;
 
+
               const paymentRequired =
                   stripeReady &&
                   amountDue > 0;
 
+
               summaryPrice.textContent =
                   formatCurrency(price);
 
-              /*
-               * Deposit booking
-               */
+
               if (depositEnabled) {
+
                   summaryDepositRow.classList.remove(
                       "hidden"
                   );
@@ -1506,8 +1559,10 @@ Every appointment is handled with care, clear communication and attention to det
                       "flex"
                   );
 
+
                   summaryDeposit.textContent =
                       formatCurrency(deposit);
+
 
                   const remaining =
                       Math.max(
@@ -1515,135 +1570,166 @@ Every appointment is handled with care, clear communication and attention to det
                           0
                       );
 
+
                   summaryPaymentNote.textContent =
                       `${formatCurrency(remaining)} remaining after deposit`;
+
 
                   summaryDue.textContent =
                       formatCurrency(deposit);
 
+
                   if (paymentRequired) {
+
                       summaryDueLabel.textContent =
                           "Deposit due today";
 
-                      if (paymentMessage) {
-                          paymentMessage.textContent =
-                              `You will be redirected to Stripe to securely pay the ${formatCurrency(deposit)} deposit.`;
-                      }
 
-                      if (bookingSubmitText) {
-                          bookingSubmitText.textContent =
-                              `Pay ${formatCurrency(deposit)} deposit`;
-                      }
-                  } else {
-                      summaryDueLabel.textContent =
-                          "Deposit required";
+                      paymentMessage.textContent =
+                          `You will be redirected to Stripe to securely pay the ${formatCurrency(deposit)} deposit.`;
 
-                      if (paymentMessage) {
-                          paymentMessage.textContent =
-                              `A ${formatCurrency(deposit)} deposit will be arranged directly with the business.`;
-                      }
 
-                      if (bookingSubmitText) {
-                          bookingSubmitText.textContent =
-                              "Confirm booking";
-                      }
+                      bookingSubmitText.textContent =
+                          `Pay ${formatCurrency(deposit)} deposit`;
+
                   }
 
+
                   return;
+
               }
 
-              /*
-               * No deposit
-               */
+
               summaryDepositRow.classList.add(
                   "hidden"
               );
+
 
               summaryDepositRow.classList.remove(
                   "flex"
               );
 
+
               summaryDeposit.textContent =
                   "£0.00";
 
-              /*
-               * Free service
-               */
+
               if (price <= 0) {
+
                   summaryPaymentNote.textContent =
                       "No payment required";
+
 
                   summaryDueLabel.textContent =
                       "Amount due";
 
+
                   summaryDue.textContent =
                       formatCurrency(0);
 
-                  if (paymentMessage) {
-                      paymentMessage.textContent =
-                          "No payment is required for this appointment.";
-                  }
 
-                  if (bookingSubmitText) {
-                      bookingSubmitText.textContent =
-                          "Confirm booking";
-                  }
+                  paymentMessage.textContent =
+                      "No payment is required for this appointment.";
+
+
+                  bookingSubmitText.textContent =
+                      "Confirm booking";
+
 
                   return;
+
               }
 
-              /*
-               * Paid service with Stripe
-               */
+
               if (paymentRequired) {
+
                   summaryPaymentNote.textContent =
                       "Full payment due today";
+
 
                   summaryDueLabel.textContent =
                       "Amount due today";
 
+
                   summaryDue.textContent =
                       formatCurrency(price);
 
-                  if (paymentMessage) {
-                      paymentMessage.textContent =
-                          "You will be redirected to Stripe to securely pay for this appointment.";
-                  }
 
-                  if (bookingSubmitText) {
-                      bookingSubmitText.textContent =
-                          "Continue to secure payment";
-                  }
+                  paymentMessage.textContent =
+                      "You will be redirected to Stripe to securely pay for this appointment.";
+
+
+                  bookingSubmitText.textContent =
+                      "Continue to secure payment";
+
 
                   return;
+
               }
 
-              /*
-               * Paid service without Stripe
-               */
+
               summaryPaymentNote.textContent =
                   "Payment arranged with the business";
+
 
               summaryDueLabel.textContent =
                   "Service price";
 
+
               summaryDue.textContent =
                   formatCurrency(price);
 
-              if (paymentMessage) {
-                  paymentMessage.textContent =
-                      "Payment will be arranged directly with the business.";
-              }
 
-              if (bookingSubmitText) {
-                  bookingSubmitText.textContent =
-                      "Confirm booking";
-              }
+              paymentMessage.textContent =
+                  "Payment will be arranged directly with the business.";
+
+
+              bookingSubmitText.textContent =
+                  "Confirm booking";
+
           }
 
           function selectService(input) {
+
               selectedServiceId =
                   input.value;
+
+
+              // Reset coupon when changing service
+              appliedCouponPrice = null;
+              appliedCouponCode = null;
+
+
+              if (couponInput) {
+                  couponInput.value = "";
+              }
+
+
+              const couponMessage =
+                  document.getElementById(
+                      "coupon-message"
+                  );
+
+
+              if (couponMessage) {
+                  couponMessage.textContent = "";
+              }
+
+              if (couponContainer) {
+                  couponContainer.classList.remove(
+                      "opacity-50",
+                      "pointer-events-none"
+                  );
+              }
+              if (couponInput) {
+                  couponInput.disabled = false;
+                  couponInput.placeholder = "Coupon";
+              }
+
+              if (couponButton) {
+                  couponButton.disabled = false;
+                  couponButton.classList.remove("opacity-50");
+              }
 
               const label =
                   document.querySelector(
@@ -1907,6 +1993,128 @@ Every appointment is handled with care, clear communication and attention to det
               selectService(
                   checkedService
               );
+          }
+
+          if (couponButton) {
+
+              couponButton.addEventListener(
+                  "click",
+                  () => {
+
+                      const code =
+                          couponInput.value.trim();
+
+
+                      if (!code || !selectedServiceId) {
+                          return;
+                      }
+
+
+                      couponButton.disabled = true;
+
+
+                      fetch(
+                          "/check-service-coupon",
+                          {
+                              method: "POST",
+                              headers: {
+                                  "Content-Type": "application/json",
+                                  "X-CSRF-Token":
+                                  document.querySelector(
+                                      "[name='csrf-token']"
+                                  ).content
+                              },
+                              body: JSON.stringify({
+                                  code: code,
+                                  service_id: selectedServiceId
+                              })
+                          }
+                      )
+                          .then(response => response.json())
+                          .then(data => {
+
+
+                              const message =
+                                  document.getElementById(
+                                      "coupon-message"
+                                  );
+
+
+                              couponButton.disabled = false;
+
+
+                              if (!data.success) {
+
+
+                                  appliedCouponPrice = null;
+                                  appliedCouponCode = null;
+
+
+                                  message.textContent =
+                                      data.message;
+
+
+                                  message.className =
+                                      "mt-2 text-sm font-semibold text-red-600";
+
+
+                                  const selected =
+                                      document.querySelector(
+                                          ".service-radio:checked"
+                                      );
+
+
+                                  if (selected) {
+                                      updatePaymentSummary(selected);
+                                  }
+
+
+                                  return;
+
+                              }
+
+
+                              appliedCouponPrice =
+                                  Number(data.price);
+
+
+                              appliedCouponCode =
+                                  code;
+
+
+                              message.textContent =
+                                  data.message;
+
+
+                              message.className =
+                                  "mt-2 text-sm font-semibold text-green-600";
+
+
+                              const selected =
+                                  document.querySelector(
+                                      ".service-radio:checked"
+                                  );
+
+
+                              if (selected) {
+
+                                  updatePaymentSummary(
+                                      selected
+                                  );
+
+                              }
+
+
+                          })
+                          .catch(() => {
+
+                              couponButton.disabled = false;
+
+                          });
+
+                  }
+              );
+
           }
       });
   </script>

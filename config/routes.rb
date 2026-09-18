@@ -33,6 +33,10 @@ Rails.application.routes.draw do
     post "/agreement-form",
          to: "business_sites#submit_agreement_form",
          as: :submit_business_site_agreement_form
+
+    post "/check-service-coupon",
+         to: "business_sites#check_service_coupon",
+         as: :check_service_coupon
   end
 
 
@@ -394,6 +398,11 @@ Rails.application.routes.draw do
               path: "dashboard/services/categories",
               except: [:show],
               as: :service_categories
+
+    resources :service_coupons,
+              path: "dashboard/services/coupons" do
+
+    end
 
     resources :services,
               path: "dashboard/services" do
