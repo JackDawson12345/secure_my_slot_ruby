@@ -32,10 +32,14 @@ class BookingsController < ApplicationController
     user, new_customer_account = find_or_create_user
 
     coupon = business.service_coupons.find do |service_coupon|
-      service_coupon.code.strip.casecmp(booking_params['service_coupon'].strip).zero?
+      service_coupon.code.strip.casecmp(
+        booking_params[:service_coupon].to_s.strip
+      ).zero?
     end
 
-    coupon_works = coupon.active? &&
+    coupon_works =
+      coupon.present? &&
+      coupon.active? &&
       (coupon.expires_at.nil? || coupon.expires_at.future?) &&
       coupon.services.include?(service.id.to_s)
 
