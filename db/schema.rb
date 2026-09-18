@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_09_18_095815) do
+ActiveRecord::Schema[8.0].define(version: 2026_09_18_110444) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -97,6 +97,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_18_095815) do
     t.datetime "completed_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "coupon"
+    t.decimal "amount"
     t.index ["booking_id"], name: "index_booking_holds_on_booking_id"
     t.index ["business_id", "service_id", "date", "time"], name: "index_booking_holds_on_slot"
     t.index ["business_id"], name: "index_booking_holds_on_business_id"
