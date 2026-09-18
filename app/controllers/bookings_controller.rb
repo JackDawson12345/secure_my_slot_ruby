@@ -133,8 +133,6 @@ class BookingsController < ApplicationController
     @booking = complete_paid_booking!(
       booking_hold: booking_hold,
       checkout_session: checkout_session,
-      amount: booking_hold.amount,
-      coupon: booking_hold.coupon
     )
 
     render :payment_success
