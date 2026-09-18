@@ -237,6 +237,45 @@
                   </div>
                 </div>
 
+                <div class="flex items-start gap-3">
+                  <div class="rounded-lg bg-slate-100 p-2 text-slate-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="ticket-percent" aria-hidden="true" class="lucide lucide-ticket-percent h-4 w-4"><path d="M2 9a3 3 0 1 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 1 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"></path><path d="M9 9h.01"></path><path d="m15 9-6 6"></path><path d="M15 15h.01"></path></svg>
+                  </div>
+
+                  <div>
+                    <p class="text-xs font-medium uppercase tracking-wide text-slate-400">
+                      Coupon
+                    </p>
+
+                    <p class="mt-1 text-sm font-semibold text-slate-900">
+                      <% coupon = ServiceCoupon.find_by(business_id: @booking.business_id, id: @booking.coupon) %>
+
+                      <% if coupon.present? %>
+                      <%= coupon.code %>
+                      <% else %>
+                      -
+                      <% end %>
+
+                    </p>
+                  </div>
+                </div>
+
+                <div class="flex items-start gap-3">
+                  <div class="rounded-lg bg-slate-100 p-2 text-slate-500">
+                    <i data-lucide="badge-pound-sterling" class="h-4 w-4"></i>
+                  </div>
+
+                  <div>
+                    <p class="text-xs font-medium uppercase tracking-wide text-slate-400">
+                      Coupon Price
+                    </p>
+
+                    <p class="mt-1 text-sm font-semibold text-slate-900">
+                      -<%= number_to_currency(service.price - @booking.amount, unit: "£") %>
+                    </p>
+                  </div>
+                </div>
+
               </div>
             </div>
 
@@ -599,6 +638,30 @@
               <%= number_to_currency(service.price, unit: "£") %>
             </span>
           </div>
+
+          <% coupon = ServiceCoupon.find_by(business_id: @booking.business_id, id: @booking.coupon) %>
+
+          <% if coupon.present? %>
+            <div class="flex items-center justify-between gap-4 mt-2">
+            <span class="text-sm text-slate-500">
+              Coupon
+            </span>
+
+              <span class="text-sm font-bold text-slate-900">
+                -<%= number_to_currency(service.price - @booking.amount, unit: "£") %>
+              </span>
+            </div>
+
+            <div class="flex items-center justify-between gap-4 mt-2">
+            <span class="text-sm text-slate-500">
+              Total
+            </span>
+
+              <span class="text-sm font-bold text-slate-900">
+                <%= number_to_currency(@booking.amount, unit: "£") %>
+              </span>
+            </div>
+          <% end %>
 
           <% if service.deposit_enabled? && service.deposit.present? %>
             <div class="mt-3 flex items-center justify-between gap-4">

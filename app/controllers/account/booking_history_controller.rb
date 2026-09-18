@@ -28,7 +28,7 @@ class Account::BookingHistoryController < Account::BaseController
     @total_spent = past_scope
                      .joins(:service)
                      .where(status: "completed")
-                     .sum("services.price")
+                     .sum("amount")
 
     @first_booking = past_scope.reorder(date: :asc, time: :asc).first
 

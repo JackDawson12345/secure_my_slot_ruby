@@ -363,7 +363,7 @@
 
               <td class="whitespace-nowrap px-6 py-5">
                 <p class="text-sm font-semibold text-slate-900">
-                  <%= number_to_currency(booking.service.price, unit: "£") %>
+                  <%= number_to_currency(booking.amount, unit: "£") %>
                 </p>
               </td>
 
@@ -518,7 +518,7 @@
                 </p>
 
                 <p class="mt-1 text-sm font-semibold text-slate-900">
-                  <%= number_to_currency(booking.service.price, unit: "£") %>
+                  <%= number_to_currency(booking.amount, unit: "£") %>
                 </p>
               </div>
             </div>

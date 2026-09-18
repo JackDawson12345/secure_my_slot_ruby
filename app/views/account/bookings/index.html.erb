@@ -202,7 +202,7 @@
                     data-lucide="badge-pound-sterling"
                     class="h-4 w-4 text-slate-400"
                   ></i>
-                  <%= number_to_currency(@next_booking.service.price, unit: "£") %>
+                  <%= number_to_currency(@next_booking.amount, unit: "£") %>
                 </span>
 
                 <span class="inline-flex items-center gap-2">
@@ -510,7 +510,7 @@
 
               <td class="whitespace-nowrap px-6 py-5">
                 <p class="text-sm font-semibold text-slate-900">
-                  <%= number_to_currency(booking.service.price, unit: "£") %>
+                  <%= number_to_currency(booking.amount, unit: "£") %>
                 </p>
               </td>
 
@@ -605,7 +605,7 @@
               class="mt-4 flex items-center justify-between border-t border-slate-100 pt-4"
             >
               <p class="text-sm font-semibold text-slate-900">
-                <%= number_to_currency(booking.service.price, unit: "£") %>
+                <%= number_to_currency(booking.amount, unit: "£") %>
               </p>
 
               <%= link_to account_show_booking_path(booking),
