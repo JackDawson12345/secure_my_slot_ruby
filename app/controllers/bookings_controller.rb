@@ -366,9 +366,7 @@ class BookingsController < ApplicationController
     booking_hold:,
     business:,
     service:,
-    new_customer_account:,
-    amount:,
-    coupon:
+    new_customer_account:
   )
     success_url = payment_success_booking_hold_url(
       booking_hold,
@@ -383,7 +381,7 @@ class BookingsController < ApplicationController
       price = service.deposit
       service_name = "#{service.name} (Deposit)"
     else
-      price = amount
+      price = booking_hold.amount
       service_name = service.name
     end
 
