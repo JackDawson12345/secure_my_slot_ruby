@@ -12,6 +12,8 @@ import FormBuilderController from "controllers/form_builder_controller"
 import BirthdayPreviewController from "controllers/birthday_preview_controller"
 import SignatureController from "controllers/signature_controller"
 import SignatureFormController from "controllers/signature_form_controller"
+import ImageLightboxController from "controllers/image_lightbox_controller"
+import DropdownController from "controllers/dropdown_controller"
 
 application.register("opening-hours", OpeningHoursController)
 application.register("nested-form", NestedFormController)
@@ -25,3 +27,5 @@ application.register("form-builder", FormBuilderController)
 application.register("birthday-preview", BirthdayPreviewController)
 application.register("signature", SignatureController)
 application.register("signature-form", SignatureFormController)
+application.register("image-lightbox", ImageLightboxController)
+application.register("dropdown", DropdownController)

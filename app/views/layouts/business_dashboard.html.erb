@@ -37,7 +37,7 @@
     <!-- Sidebar -->
     <aside
       id="sidebar"
-      class="fixed inset-y-0 left-0 z-50 flex w-72 -translate-x-full flex-col bg-slate-950 text-white transition-transform duration-300 lg:translate-x-0"
+      class="fixed inset-y-0 left-0 z-50 flex w-72 min-h-0 -translate-x-full flex-col bg-slate-950 text-white transition-transform duration-300 lg:translate-x-0"
     >
       <!-- Logo -->
       <div
@@ -58,7 +58,7 @@
       </div>
 
       <!-- Navigation -->
-      <nav class="flex-1 space-y-2 px-4 py-6">
+      <nav class="min-h-0 flex-1 overflow-y-auto space-y-2 px-4 py-6">
         <%= link_to business_dashboard_path,
                     class: [
                       "flex items-center gap-3 rounded-xl px-4 py-3 text-sm transition",
@@ -70,16 +70,79 @@
           <span>Dashboard</span>
         <% end %>
 
-        <%= link_to business_bookings_path,
-                    class: [
-                      "flex items-center gap-3 rounded-xl px-4 py-3 text-sm transition",
-                      controller_name == "bookings" ?
-                        "bg-indigo-600 font-semibold text-white shadow-lg shadow-indigo-950/30" :
-                        "font-medium text-slate-300 hover:bg-white/10 hover:text-white"
-                    ] do %>
-          <i data-lucide="calendar-days" class="h-5 w-5"></i>
-          <span>Bookings</span>
-        <% end %>
+        <!-- Bookings -->
+        <div data-controller="dropdown">
+
+          <button type="button"
+                  data-action="click->dropdown#toggle"
+                  class="
+            flex w-full items-center justify-between gap-3 rounded-xl px-4 py-3 text-sm transition
+            <%= controller_name == "bookings" ?
+                                           "bg-indigo-600 font-semibold text-white shadow-lg shadow-indigo-950/30" :
+                                           "font-medium text-slate-300 hover:bg-white/10 hover:text-white" %>
+          ">
+
+            <div class="flex items-center gap-3">
+              <i data-lucide="calendar-days" class="h-5 w-5"></i>
+              <span>Bookings</span>
+            </div>
+
+            <i data-dropdown-target="icon"
+               data-lucide="chevron-down"
+               class="h-4 w-4 transition-transform">
+            </i>
+
+          </button>
+
+
+          <div data-dropdown-target="menu"
+               class="mt-2 space-y-1 pl-4 <%= controller_name == "bookings" ? "" : "hidden" %>">
+
+            <%= link_to business_bookings_path,
+                        class: [
+                          "block rounded-lg px-4 py-2 text-sm transition",
+                          controller_name == "bookings" && action_name == "index" && params[:status].blank? ?
+                            "bg-white/10 font-semibold text-white" :
+                            "text-slate-400 hover:bg-white/10 hover:text-white"
+                        ] do %>
+              All Bookings
+            <% end %>
+
+            <%= link_to business_bookings_path(status: "confirmed"),
+                        class: [
+                          "block rounded-lg px-4 py-2 text-sm transition",
+                          params[:status] == "confirmed" ?
+                            "bg-white/10 font-semibold text-white" :
+                            "text-slate-400 hover:bg-white/10 hover:text-white"
+                        ] do %>
+              Confirmed Bookings
+            <% end %>
+
+
+            <%= link_to business_bookings_path(status: "pending"),
+                        class: [
+                          "block rounded-lg px-4 py-2 text-sm transition",
+                          params[:status] == "pending" ?
+                            "bg-white/10 font-semibold text-white" :
+                            "text-slate-400 hover:bg-white/10 hover:text-white"
+                        ] do %>
+              Pending Bookings
+            <% end %>
+
+
+            <%= link_to business_add_booking_path,
+                        class: [
+                          "block rounded-lg px-4 py-2 text-sm transition",
+                          action_name == "add_booking" ?
+                            "bg-white/10 font-semibold text-white" :
+                            "text-slate-400 hover:bg-white/10 hover:text-white"
+                        ] do %>
+              Add New Booking
+            <% end %>
+
+          </div>
+
+        </div>
 
         <%= link_to business_customers_path,
                     class: [
@@ -92,39 +155,266 @@
           <span>Customers</span>
         <% end %>
 
-        <%= link_to business_services_path,
-                    class: [
-                      "flex items-center gap-3 rounded-xl px-4 py-3 text-sm transition",
-                      controller_name == "services" || controller_name == "service_categories" ?
-                        "bg-indigo-600 font-semibold text-white shadow-lg shadow-indigo-950/30" :
-                        "font-medium text-slate-300 hover:bg-white/10 hover:text-white"
-                    ] do %>
-          <i data-lucide="briefcase-business" class="h-5 w-5"></i>
-          <span>Services</span>
-        <% end %>
+        <!-- Services -->
+        <div data-controller="dropdown">
 
-        <%= link_to business_opening_hours_path,
-                    class: [
-                      "flex items-center gap-3 rounded-xl px-4 py-3 text-sm transition",
-                      controller_name == "opening_hours" ||
-                      controller_name == "blocked_times" ?
-                        "bg-indigo-600 font-semibold text-white shadow-lg shadow-indigo-950/30" :
-                        "font-medium text-slate-300 hover:bg-white/10 hover:text-white"
-                    ] do %>
-          <i data-lucide="clock-3" class="h-5 w-5"></i>
-          <span>Opening Hours</span>
-        <% end %>
+          <button type="button"
+                  data-action="click->dropdown#toggle"
+                  class="
+            flex w-full items-center justify-between gap-3 rounded-xl px-4 py-3 text-sm transition
+            <%= ["services", "service_categories"].include?(controller_name) ?
+                                           "bg-indigo-600 font-semibold text-white shadow-lg shadow-indigo-950/30" :
+                                           "font-medium text-slate-300 hover:bg-white/10 hover:text-white" %>
+          ">
 
-        <%= link_to business_settings_path,
-                    class: [
-                      "flex items-center gap-3 rounded-xl px-4 py-3 text-sm transition",
-                      controller_name == "settings" || controller_name == "website_settings" || controller_name == "payments" || controller_name == "agreements" ?
-                        "bg-indigo-600 font-semibold text-white shadow-lg shadow-indigo-950/30" :
-                        "font-medium text-slate-300 hover:bg-white/10 hover:text-white"
-                    ] do %>
-          <i data-lucide="settings" class="h-5 w-5"></i>
-          <span>Settings</span>
-        <% end %>
+            <div class="flex items-center gap-3">
+              <i data-lucide="briefcase-business" class="h-5 w-5"></i>
+              <span>Services</span>
+            </div>
+
+            <i data-dropdown-target="icon"
+               data-lucide="chevron-down"
+               class="h-4 w-4 transition-transform">
+            </i>
+
+          </button>
+
+
+          <div data-dropdown-target="menu"
+               class="
+         mt-2 space-y-1 pl-4
+         <%= ["services", "service_categories"].include?(controller_name) ? "" : "hidden" %>
+       ">
+
+
+            <%= link_to business_services_path,
+                        class: [
+                          "block rounded-lg px-4 py-2 text-sm transition",
+                          controller_name == "services" && action_name == "index" ?
+                            "bg-white/10 font-semibold text-white" :
+                            "text-slate-400 hover:bg-white/10 hover:text-white"
+                        ] do %>
+              All Services
+            <% end %>
+
+
+            <%= link_to new_business_service_path,
+                        class: [
+                          "block rounded-lg px-4 py-2 text-sm transition",
+                          controller_name == "services" && action_name == "new" ?
+                            "bg-white/10 font-semibold text-white" :
+                            "text-slate-400 hover:bg-white/10 hover:text-white"
+                        ] do %>
+              Add New Service
+            <% end %>
+
+
+            <%= link_to business_service_categories_path,
+                        class: [
+                          "block rounded-lg px-4 py-2 text-sm transition",
+                          controller_name == "service_categories" && action_name == "index" ?
+                            "bg-white/10 font-semibold text-white" :
+                            "text-slate-400 hover:bg-white/10 hover:text-white"
+                        ] do %>
+              All Service Categories
+            <% end %>
+
+
+            <%= link_to new_business_service_category_path,
+                        class: [
+                          "block rounded-lg px-4 py-2 text-sm transition",
+                          controller_name == "service_categories" && action_name == "new" ?
+                            "bg-white/10 font-semibold text-white" :
+                            "text-slate-400 hover:bg-white/10 hover:text-white"
+                        ] do %>
+              Add Service Category
+            <% end %>
+
+
+          </div>
+
+        </div>
+
+        <!-- Opening Hours -->
+        <div data-controller="dropdown">
+
+          <button type="button"
+                  data-action="click->dropdown#toggle"
+                  class="
+            flex w-full items-center justify-between gap-3 rounded-xl px-4 py-3 text-sm transition
+            <%= ["opening_hours", "blocked_times"].include?(controller_name) ?
+                                           "bg-indigo-600 font-semibold text-white shadow-lg shadow-indigo-950/30" :
+                                           "font-medium text-slate-300 hover:bg-white/10 hover:text-white" %>
+          ">
+
+            <div class="flex items-center gap-3">
+              <i data-lucide="clock-3" class="h-5 w-5"></i>
+              <span>Opening Hours</span>
+            </div>
+
+            <i data-dropdown-target="icon"
+               data-lucide="chevron-down"
+               class="h-4 w-4 transition-transform">
+            </i>
+
+          </button>
+
+
+          <div data-dropdown-target="menu"
+               class="
+         mt-2 space-y-1 pl-4
+         <%= ["opening_hours", "blocked_times"].include?(controller_name) ? "" : "hidden" %>
+       ">
+
+
+            <%= link_to business_opening_hours_path,
+                        class: [
+                          "block rounded-lg px-4 py-2 text-sm transition",
+                          controller_name == "opening_hours" ?
+                            "bg-white/10 font-semibold text-white" :
+                            "text-slate-400 hover:bg-white/10 hover:text-white"
+                        ] do %>
+              Edit Opening Hours
+            <% end %>
+
+
+            <%= link_to business_blocked_times_path,
+                        class: [
+                          "block rounded-lg px-4 py-2 text-sm transition",
+                          controller_name == "blocked_times" && action_name == "index" ?
+                            "bg-white/10 font-semibold text-white" :
+                            "text-slate-400 hover:bg-white/10 hover:text-white"
+                        ] do %>
+              Add Blocked Time
+            <% end %>
+
+
+          </div>
+
+        </div>
+
+        <!-- Settings -->
+        <div data-controller="dropdown">
+
+          <button type="button"
+                  data-action="click->dropdown#toggle"
+                  class="
+            flex w-full items-center justify-between gap-3 rounded-xl px-4 py-3 text-sm transition
+            <%= ["settings", "website_settings", "payments", "calendar_sync", "consultation_forms", "email_templates", "agreements"].include?(controller_name) ?
+                                           "bg-indigo-600 font-semibold text-white shadow-lg shadow-indigo-950/30" :
+                                           "font-medium text-slate-300 hover:bg-white/10 hover:text-white" %>
+          ">
+
+            <div class="flex items-center gap-3">
+              <i data-lucide="settings" class="h-5 w-5"></i>
+              <span>Settings</span>
+            </div>
+
+            <i data-dropdown-target="icon"
+               data-lucide="chevron-down"
+               class="h-4 w-4 transition-transform">
+            </i>
+
+          </button>
+
+
+          <div data-dropdown-target="menu"
+               class="
+         mt-2 space-y-1 pl-4
+         <%= ["settings", "website_settings", "payments", "calendar_sync", "consultation_forms", "email_templates", "agreements"].include?(controller_name) ? "" : "hidden" %>
+       ">
+
+
+            <%= link_to business_settings_path,
+                        class: [
+                          "block rounded-lg px-4 py-2 text-sm transition",
+                          controller_name == "settings" && action_name == "index" ?
+                            "bg-white/10 font-semibold text-white" :
+                            "text-slate-400 hover:bg-white/10 hover:text-white"
+                        ] do %>
+              All Settings
+            <% end %>
+
+            <%= link_to business_general_settings_path,
+                        class: [
+                          "block rounded-lg px-4 py-2 text-sm transition",
+                          controller_name == "settings" && action_name == "general_settings" ?
+                            "bg-white/10 font-semibold text-white" :
+                            "text-slate-400 hover:bg-white/10 hover:text-white"
+                        ] do %>
+              General Settings
+            <% end %>
+
+
+            <%= link_to business_website_settings_path,
+                        class: [
+                          "block rounded-lg px-4 py-2 text-sm transition",
+                          controller_name == "website_settings" ?
+                            "bg-white/10 font-semibold text-white" :
+                            "text-slate-400 hover:bg-white/10 hover:text-white"
+                        ] do %>
+              Website Settings
+            <% end %>
+
+
+            <%= link_to business_payments_path,
+                        class: [
+                          "block rounded-lg px-4 py-2 text-sm transition",
+                          controller_name == "payments" ?
+                            "bg-white/10 font-semibold text-white" :
+                            "text-slate-400 hover:bg-white/10 hover:text-white"
+                        ] do %>
+              Payments
+            <% end %>
+
+
+            <%= link_to business_calendar_sync_path,
+                        class: [
+                          "block rounded-lg px-4 py-2 text-sm transition",
+                          controller_name == "settings" && action_name == "calendar_sync" ?
+                            "bg-white/10 font-semibold text-white" :
+                            "text-slate-400 hover:bg-white/10 hover:text-white"
+                        ] do %>
+              Calendar Sync
+            <% end %>
+
+
+            <%= link_to business_consultation_form_path,
+                        class: [
+                          "block rounded-lg px-4 py-2 text-sm transition",
+                          controller_name == "settings" && action_name == "consultation_form" ?
+                            "bg-white/10 font-semibold text-white" :
+                            "text-slate-400 hover:bg-white/10 hover:text-white"
+                        ] do %>
+              Consultation Forms
+            <% end %>
+
+
+            <%= link_to business_email_templates_path,
+                        class: [
+                          "block rounded-lg px-4 py-2 text-sm transition",
+                          controller_name == "settings" && action_name == "email_templates" ?
+                            "bg-white/10 font-semibold text-white" :
+                            "text-slate-400 hover:bg-white/10 hover:text-white"
+                        ] do %>
+              Email Templates
+            <% end %>
+
+
+            <%= link_to business_agreements_path,
+                        class: [
+                          "block rounded-lg px-4 py-2 text-sm transition",
+                          controller_name == "agreements" ?
+                            "bg-white/10 font-semibold text-white" :
+                            "text-slate-400 hover:bg-white/10 hover:text-white"
+                        ] do %>
+              Agreements
+            <% end %>
+
+
+          </div>
+
+        </div>
       </nav>
 
       <!-- Sidebar user -->

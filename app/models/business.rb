@@ -24,8 +24,8 @@ class Business < ApplicationRecord
 
   enum :subscription_level, {
     basic: 0,
-    premium: 1,
-    ultimate: 2
+    pro: 1,
+    pro_plus: 2
   }
 
   validates :business_name, presence: true

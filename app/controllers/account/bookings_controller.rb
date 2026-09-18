@@ -113,6 +113,40 @@ class Account::BookingsController < Account::BaseController
     end
   end
 
+  def upload_images
+
+    @booking = current_user.bookings.find(params[:id])
+
+    if params[:images].present?
+
+      if @booking.images.count + params[:images].count > 10
+        redirect_to account_booking_path(@booking),
+                    alert: "You can upload a maximum of 10 images."
+        return
+      end
+
+      @booking.images.attach(params[:images])
+
+    end
+
+    redirect_to account_show_booking_path(@booking),
+                notice: "Images uploaded successfully."
+
+  end
+
+  def remove_image
+
+    @booking = current_user.bookings.find(params[:id])
+
+    image = @booking.images.find(params[:image_id])
+
+    image.purge
+
+    redirect_to account_show_booking_path(@booking),
+                notice: "Image removed successfully."
+
+  end
+
   def reschedule
     @booking = current_user.bookings
                            .includes(

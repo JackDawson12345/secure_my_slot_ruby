@@ -6,6 +6,10 @@ class Booking < ApplicationRecord
   belongs_to :user
   belongs_to :service
 
+  has_many_attached :images
+
+  validate :maximum_images
+
   validate :time_available
 
   enum :payment_status, {
@@ -51,5 +55,11 @@ class Booking < ApplicationRecord
 
   def set_consultation_token
     self.consultation_token ||= SecureRandom.uuid
+  end
+
+  def maximum_images
+    if images.attachments.size > 10
+      errors.add(:images, "You can upload a maximum of 10 images")
+    end
   end
 end

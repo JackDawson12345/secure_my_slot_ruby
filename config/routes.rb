@@ -279,6 +279,12 @@ Rails.application.routes.draw do
     get "dashboard/bookings/:id/consultation-pdf",
         to: "bookings#consultation_pdf",
         as: :booking_consultation_pdf
+    patch "dashboard/bookings/:id/upload-images",
+          to: "bookings#upload_images",
+          as: :upload_booking_images
+    patch "dashboard/bookings/:id/remove-image/:image_id",
+          to: "bookings#remove_image",
+          as: :remove_booking_image
 
     get "dashboard/bookings/:id/reschedule",
         to: "bookings#reschedule",
