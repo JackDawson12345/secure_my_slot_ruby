@@ -14,6 +14,11 @@ class Pages::WebsiteController < ApplicationController
 
   end
 
+  def payments_success
+    @booking = Booking.find(params[:id])
+    @business = @booking.business
+  end
+
   def create
     ContactMailer
       .with(

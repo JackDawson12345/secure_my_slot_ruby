@@ -1,0 +1,389 @@
+<main class="p-4 sm:p-6 lg:p-8">
+
+
+  <!-- Header -->
+  <section class="mb-8 rounded-2xl bg-gradient-to-r from-blue-600 to-cyan-600 p-6 text-white shadow-lg shadow-blue-200 sm:p-8">
+
+    <div class="flex flex-col justify-between gap-6 sm:flex-row sm:items-center">
+
+      <div>
+
+        <p class="mb-2 text-sm font-medium text-blue-100">
+          Reports / Service reports
+        </p>
+
+        <h1 class="text-2xl font-bold sm:text-3xl">
+          Service performance
+        </h1>
+
+        <p class="mt-2 max-w-xl text-sm leading-6 text-blue-100 sm:text-base">
+          Understand which services perform best, generate revenue and attract customers.
+        </p>
+
+      </div>
+
+
+      <div class="rounded-xl bg-white/10 p-4">
+        <i data-lucide="briefcase-business" class="h-8 w-8"></i>
+      </div>
+
+
+    </div>
+
+  </section>
+
+
+
+
+
+  <!-- Summary -->
+  <section class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+
+
+    <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+
+      <div class="flex justify-between">
+
+        <div>
+
+          <p class="text-sm font-medium text-slate-500">
+            Total services
+          </p>
+
+          <p class="mt-3 text-3xl font-bold">
+            <%= @services.count %>
+          </p>
+
+        </div>
+
+
+        <div class="rounded-xl bg-blue-50 p-3 text-blue-600">
+          <i data-lucide="briefcase" class="h-5 w-5"></i>
+        </div>
+
+      </div>
+
+    </article>
+
+
+
+    <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+
+      <div class="flex justify-between">
+
+        <div>
+
+          <p class="text-sm font-medium text-slate-500">
+            Most booked service
+          </p>
+
+          <p class="mt-3 text-xl font-bold">
+            <%= @most_booked_service.name %>
+          </p>
+
+        </div>
+
+
+        <div class="rounded-xl bg-emerald-50 p-3 text-emerald-600">
+          <i data-lucide="star" class="h-5 w-5"></i>
+        </div>
+
+      </div>
+
+    </article>
+
+
+
+    <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+
+      <div class="flex justify-between">
+
+        <div>
+
+          <p class="text-sm font-medium text-slate-500">
+            Average price
+          </p>
+
+          <p class="mt-3 text-3xl font-bold">
+            <%= number_to_currency(@average_service_cost, unit: "£", precision: 2) %>
+          </p>
+
+        </div>
+
+
+        <div class="rounded-xl bg-violet-50 p-3 text-violet-600">
+          <i data-lucide="badge-pound-sterling" class="h-5 w-5"></i>
+        </div>
+
+      </div>
+
+    </article>
+
+
+
+    <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+
+      <div class="flex justify-between">
+
+        <div>
+
+          <p class="text-sm font-medium text-slate-500">
+            Average duration
+          </p>
+
+          <p class="mt-3 text-3xl font-bold">
+            <%= @average_service_duration.round(2) %> <span class="text-xs"> Minutes</span>
+          </p>
+
+        </div>
+
+
+        <div class="rounded-xl bg-amber-50 p-3 text-amber-600">
+          <i data-lucide="clock" class="h-5 w-5"></i>
+        </div>
+
+      </div>
+
+    </article>
+
+
+  </section>
+
+
+
+
+
+
+  <!-- Charts -->
+  <section class="mt-8 grid gap-8 xl:grid-cols-2">
+
+
+    <!-- Service bookings -->
+    <article class="rounded-2xl border border-slate-200 bg-white shadow-sm">
+
+
+      <div class="border-b border-slate-200 px-6 py-5">
+
+        <h2 class="text-lg font-bold">
+          Service bookings
+        </h2>
+
+        <p class="mt-1 text-sm text-slate-500">
+          Compare booking volumes by service.
+        </p>
+
+      </div>
+
+
+      <div class="p-6">
+
+        <div class="h-72">
+
+          <canvas id="serviceBookingsChart"></canvas>
+
+        </div>
+
+      </div>
+
+
+    </article>
+
+
+
+
+
+    <!-- Revenue by service -->
+    <article class="rounded-2xl border border-slate-200 bg-white shadow-sm">
+
+      <div class="border-b border-slate-200 px-6 py-5">
+        <h2 class="text-lg font-bold">
+          Revenue by service
+        </h2>
+
+        <p class="mt-1 text-sm text-slate-500">
+          Services generating the most revenue.
+        </p>
+      </div>
+
+      <div class="space-y-5 p-6">
+
+        <% @service_revenue.each do |item| %>
+
+          <div>
+
+            <div class="mb-2 flex justify-between text-sm">
+
+              <div>
+            <span class="font-medium text-slate-700">
+              <%= item[:service].name %>
+            </span>
+
+                <span class="ml-2 text-xs text-slate-400">
+                  <%= pluralize(item[:booking_count], "booking") %>
+                </span>
+              </div>
+
+              <span class="font-medium text-slate-600">
+                <%= number_to_currency(
+                      item[:revenue],
+                      unit: "£",
+                      precision: 2
+                    ) %>
+              </span>
+
+            </div>
+
+            <div class="h-3 rounded-full bg-slate-100">
+
+              <div
+                class="h-full rounded-full bg-blue-500"
+                style="width: <%= item[:percentage] %>%">
+              </div>
+
+            </div>
+
+          </div>
+
+        <% end %>
+
+      </div>
+
+    </article>
+
+
+  </section>
+
+
+
+
+
+
+
+  <!-- Service table -->
+  <section class="mt-8 rounded-2xl border border-slate-200 bg-white shadow-sm">
+
+    <div class="border-b border-slate-200 px-6 py-5">
+
+      <h2 class="text-lg font-bold">
+        Service performance
+      </h2>
+
+      <p class="mt-1 text-sm text-slate-500">
+        Detailed breakdown of each service.
+      </p>
+
+    </div>
+
+    <div class="overflow-x-auto">
+
+      <table class="w-full text-left">
+
+        <thead class="bg-slate-50 text-sm text-slate-500">
+
+        <tr>
+
+          <th class="px-6 py-4 font-medium">
+            Service
+          </th>
+
+          <th class="px-6 py-4 font-medium">
+            Bookings
+          </th>
+
+          <th class="px-6 py-4 font-medium">
+            Revenue
+          </th>
+
+          <th class="px-6 py-4 font-medium">
+            Duration
+          </th>
+
+        </tr>
+
+        </thead>
+
+        <tbody class="divide-y divide-slate-100">
+
+        <% @services.each do |service| %>
+
+          <tr>
+
+            <td class="px-6 py-4 font-semibold">
+              <%= service.name %>
+            </td>
+
+            <td class="px-6 py-4 text-slate-600">
+              <%= @service_booking_counts.fetch(service.id, 0) %>
+            </td>
+
+            <td class="px-6 py-4 text-slate-600">
+              <%= number_to_currency(
+                    @service_revenue_totals.fetch(service.id, 0),
+                    unit: "£",
+                    precision: 2
+                  ) %>
+            </td>
+
+            <td class="px-6 py-4 text-slate-600">
+              <%= service.minutes_duration %> mins
+            </td>
+
+          </tr>
+
+        <% end %>
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </section>
+
+
+
+</main>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const ctx = document.getElementById("serviceBookingsChart");
+
+        if (!ctx) return;
+
+        new Chart(ctx, {
+            type: "bar",
+
+            data: {
+                labels: <%= raw @service_booking_labels.to_json %>,
+
+                datasets: [
+                    {
+                        label: "Bookings",
+                        data: <%= raw @service_booking_data.to_json %>,
+                        borderRadius: 8
+                    }
+                ]
+            },
+
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            precision: 0
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>

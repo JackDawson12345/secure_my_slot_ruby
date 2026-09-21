@@ -1,0 +1,2 @@
+module BusinessPortal::ReportsHelper
+end

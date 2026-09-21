@@ -15,6 +15,7 @@ class Business < ApplicationRecord
   has_many :booking_holds, dependent: :destroy
   has_many :service_categories, dependent: :destroy
   has_many :service_coupons, dependent: :destroy
+  has_many :page_views, as: :pageable, dependent: :destroy
 
   store_accessor :address,
                  :line_1,

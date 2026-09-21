@@ -1,0 +1,17 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  pageable: one
+  pageable_type: Pageable
+  visitor_id: MyString
+  ip_address: MyString
+  user_agent: MyText
+  referrer: MyString
+
+two:
+  pageable: two
+  pageable_type: Pageable
+  visitor_id: MyString
+  ip_address: MyString
+  user_agent: MyText
+  referrer: MyString

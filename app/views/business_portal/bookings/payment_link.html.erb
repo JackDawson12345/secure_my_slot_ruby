@@ -1,0 +1,258 @@
+<main class="p-4 sm:p-6 lg:p-8">
+
+  <!-- Header -->
+  <section class="mb-8 overflow-hidden rounded-2xl bg-gradient-to-r from-cyan-600 to-blue-600 p-6 text-white shadow-lg shadow-cyan-200 sm:p-8">
+
+    <div class="flex flex-col justify-between gap-6 sm:flex-row sm:items-center">
+
+      <div>
+        <p class="mb-2 text-sm font-medium text-cyan-100">
+          Payments / Payment link
+        </p>
+
+        <h1 class="text-2xl font-bold sm:text-3xl">
+          Create Payment Link
+        </h1>
+
+        <p class="mt-2 max-w-xl text-sm leading-6 text-cyan-100 sm:text-base">
+          Share a secure payment link with your customer so they can pay for their booking online.
+        </p>
+      </div>
+
+      <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/10">
+        <i data-lucide="link" class="h-7 w-7"></i>
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <div class="">
+
+    <!-- Payment Summary -->
+    <section class="mb-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+
+      <div class="flex flex-col justify-between gap-5 sm:flex-row sm:items-center">
+
+        <div>
+          <p class="text-sm font-medium text-slate-500">
+            Payment requested
+          </p>
+
+          <p class="mt-1 text-3xl font-bold text-slate-900">
+            <%= number_to_currency(@booking.amount - @booking.amount_paid, unit: "£") %>
+          </p>
+
+          <p class="mt-2 text-sm text-slate-500">
+            Hair Colour Appointment
+          </p>
+        </div>
+
+        <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-50">
+          <i data-lucide="credit-card" class="h-7 w-7 text-emerald-600"></i>
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- Payment Link -->
+    <section class="rounded-2xl border border-slate-200 bg-white shadow-sm">
+
+      <div class="border-b border-slate-200 px-6 py-5">
+
+        <div class="flex items-start gap-4">
+
+          <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-cyan-50">
+            <i data-lucide="link-2" class="h-5 w-5 text-cyan-600"></i>
+          </div>
+
+          <div>
+            <h2 class="text-lg font-bold text-slate-900">
+              Your payment link is ready
+            </h2>
+
+            <p class="mt-1 text-sm leading-6 text-slate-500">
+              Copy the link below or send it directly to your customer.
+            </p>
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="p-6">
+
+        <!-- Link -->
+        <!-- Link -->
+        <div>
+          <label class="mb-2 block text-sm font-semibold text-slate-700">
+            Payment link
+          </label>
+
+          <div class="flex flex-col gap-2 sm:flex-row">
+
+            <div class="flex min-w-0 flex-1 items-center rounded-xl border border-slate-200 bg-slate-50 px-4">
+              <i data-lucide="lock" class="mr-3 h-4 w-4 shrink-0 text-slate-400"></i>
+
+              <input
+                id="payment-link"
+                type="text"
+                readonly
+                value="<%= @booking.stripe_payment_link %>"
+                class="min-w-0 flex-1 bg-transparent py-3 text-sm text-slate-700 outline-none"
+              >
+            </div>
+
+            <button
+              type="button"
+              id="copy-payment-link"
+              class="inline-flex items-center justify-center gap-2 rounded-xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800"
+            >
+              <i data-lucide="copy" class="h-4 w-4"></i>
+
+              <span id="copy-payment-link-text">
+        Copy Link
+      </span>
+            </button>
+
+          </div>
+        </div>
+
+        <script>
+            document.addEventListener("turbo:load", () => {
+                const copyButton = document.getElementById("copy-payment-link");
+                const paymentLink = document.getElementById("payment-link");
+                const buttonText = document.getElementById("copy-payment-link-text");
+
+                if (!copyButton || !paymentLink) return;
+
+                copyButton.addEventListener("click", async () => {
+                    try {
+                        await navigator.clipboard.writeText(paymentLink.value);
+
+                        buttonText.textContent = "Copied!";
+
+                        setTimeout(() => {
+                            buttonText.textContent = "Copy Link";
+                        }, 2000);
+                    } catch (error) {
+                        console.error("Failed to copy payment link:", error);
+                    }
+                });
+            });
+        </script>
+
+
+        <!-- Divider -->
+        <div class="my-7 flex items-center gap-4">
+          <div class="h-px flex-1 bg-slate-200"></div>
+
+          <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">
+            Or send directly
+          </span>
+
+          <div class="h-px flex-1 bg-slate-200"></div>
+        </div>
+
+
+        <!-- Send Options -->
+        <div class="grid gap-4 sm:grid-cols-2">
+
+          <!-- Email -->
+          <button
+            type="button"
+            class="group flex items-center gap-4 rounded-2xl border border-slate-200 p-5 text-left transition hover:border-cyan-300 hover:bg-cyan-50/50"
+          >
+
+            <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-cyan-50 transition group-hover:bg-cyan-100">
+              <i data-lucide="mail" class="h-5 w-5 text-cyan-600"></i>
+            </div>
+
+            <div class="min-w-0 flex-1">
+              <p class="font-semibold text-slate-900">
+                Send via Email
+              </p>
+
+              <p class="mt-1 text-sm text-slate-500">
+                Send the payment link to their email address.
+              </p>
+            </div>
+
+            <i data-lucide="chevron-right" class="h-5 w-5 shrink-0 text-slate-400"></i>
+
+          </button>
+
+
+          <!-- SMS -->
+          <button
+            type="button"
+            class="group flex items-center gap-4 rounded-2xl border border-slate-200 p-5 text-left transition hover:border-violet-300 hover:bg-violet-50/50"
+          >
+
+            <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-violet-50 transition group-hover:bg-violet-100">
+              <i data-lucide="message-square-text" class="h-5 w-5 text-violet-600"></i>
+            </div>
+
+            <div class="min-w-0 flex-1">
+              <p class="font-semibold text-slate-900">
+                Send via SMS
+              </p>
+
+              <p class="mt-1 text-sm text-slate-500">
+                Text the payment link directly to their mobile.
+              </p>
+            </div>
+
+            <i data-lucide="chevron-right" class="h-5 w-5 shrink-0 text-slate-400"></i>
+
+          </button>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- Information -->
+    <section class="mt-6 rounded-2xl border border-blue-100 bg-blue-50 p-5">
+
+      <div class="flex gap-3">
+
+        <i data-lucide="info" class="mt-0.5 h-5 w-5 shrink-0 text-blue-600"></i>
+
+        <div>
+          <p class="text-sm font-semibold text-blue-900">
+            What happens next?
+          </p>
+
+          <p class="mt-1 text-sm leading-6 text-blue-700">
+            Your customer can open the link and securely complete their payment online. Once payment is received, the booking payment status will be updated.
+          </p>
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- Back -->
+    <div class="mt-6">
+
+      <a
+        href="#"
+        class="inline-flex items-center gap-2 text-sm font-semibold text-slate-600 transition hover:text-slate-900"
+      >
+        <i data-lucide="arrow-left" class="h-4 w-4"></i>
+        Back to booking
+      </a>
+
+    </div>
+
+  </div>
+
+</main>

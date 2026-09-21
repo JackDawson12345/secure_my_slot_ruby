@@ -230,6 +230,14 @@ Rails.application.routes.draw do
   root "pages/website#home"
   resources :bookings, only: [:create]
 
+  post "stripe/webhook",
+       to: "stripe_webhooks#create",
+       as: :stripe_webhook
+
+  get "payment-success/:id",
+      to: "pages/website#payments_success",
+      as: :payment_success
+
   get "/booking_slots",
       to: "bookings#slots"
 
@@ -384,6 +392,18 @@ Rails.application.routes.draw do
     patch "dashboard/bookings/:id/status",
           to: "bookings#update_status",
           as: :booking_status
+
+    patch "dashboard/bookings/:id/create-payment-link",
+        to: "bookings#create_payment_link",
+        as: :create_payment_link
+
+    get "dashboard/bookings/:id/payment-link",
+          to: "bookings#payment_link",
+          as: :payment_link
+
+    patch "dashboard/bookings/:id/mark-as-paid",
+        to: "bookings#mark_as_paid",
+        as: :mark_as_paid
 
     get "dashboard/customers",
         to: "customers#index",
@@ -566,6 +586,34 @@ Rails.application.routes.draw do
     patch "dashboard/settings/agreements/send_agreement/:id",
           to: "agreements#send_agreement",
           as: :send_agreement
+
+    get "/dashboard/reports",
+        to: "reports#index",
+        as: :reports
+
+    get "/dashboard/reports/booking-reports",
+        to: "reports#booking",
+        as: :booking_reports
+
+    get "/dashboard/reports/revenue-reports",
+        to: "reports#revenue",
+        as: :revenue_reports
+
+    get "/dashboard/reports/customer-reports",
+        to: "reports#customer",
+        as: :customer_reports
+
+    get "/dashboard/reports/service-reports",
+        to: "reports#service",
+        as: :service_reports
+
+    get "/dashboard/reports/staff-reports",
+        to: "reports#staff",
+        as: :staff_reports
+
+    get "/dashboard/reports/website-reports",
+        to: "reports#website",
+        as: :website_reports
   end
 
   # Admin

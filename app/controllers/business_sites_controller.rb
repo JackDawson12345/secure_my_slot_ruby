@@ -5,6 +5,8 @@ class BusinessSitesController < ApplicationController
   layout "business_site"
 
   def show
+    track_page_view(@business)
+
     @coordinates = geocode_business_address
 
 

@@ -87,7 +87,7 @@
           </div>
 
           <div class="flex items-start gap-3">
-            <div class="rounded-lg bg-emerald-50 p-2 text-emerald-600">
+            <div class="rounded-lg bg-violet-50 p-2 text-violet-600">
               <i data-lucide="wallet-cards" class="h-5 w-5"></i>
             </div>
             <div>
@@ -99,7 +99,7 @@
           </div>
 
           <div class="flex items-start gap-3">
-            <div class="rounded-lg bg-violet-50 p-2 text-violet-600">
+            <div class="rounded-lg bg-emerald-50 p-2 text-emerald-600">
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="ticket-percent" aria-hidden="true" class="lucide lucide-ticket-percent h-5 w-5"><path d="M2 9a3 3 0 1 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 1 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"></path><path d="M9 9h.01"></path><path d="m15 9-6 6"></path><path d="M15 15h.01"></path></svg>
             </div>
             <div>
@@ -121,6 +121,30 @@
               <p class="text-sm font-medium text-slate-500">Coupon Price</p>
               <p class="font-semibold text-slate-900">
                 <%= number_to_currency(@booking.amount, unit: "£") %>
+              </p>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-3">
+            <div class="rounded-lg bg-orange-50 p-2 text-orange-600">
+              <i data-lucide="wallet-cards" class="h-5 w-5"></i>
+            </div>
+            <div>
+              <p class="text-sm font-medium text-slate-500">Amount Paid</p>
+              <p class="font-semibold text-slate-900">
+                <%= number_to_currency(@booking.amount_paid, unit: "£") %>
+              </p>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-3">
+            <div class="rounded-lg bg-orange-50 p-2 text-orange-600">
+              <i data-lucide="wallet-cards" class="h-5 w-5"></i>
+            </div>
+            <div>
+              <p class="text-sm font-medium text-slate-500">Amount Outstanding</p>
+              <p class="font-semibold text-slate-900">
+                <%= number_to_currency((@booking.amount - @booking.amount_paid), unit: "£") %>
               </p>
             </div>
           </div>
@@ -451,90 +475,172 @@
 
     <!-- Status sidebar -->
     <aside class="space-y-6">
-      <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm xl:sticky xl:top-8">
-        <h2 class="text-lg font-bold">Status</h2>
+      <div class="xl:sticky xl:top-8">
+        <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+          <h2 class="text-lg font-bold">Status</h2>
 
-        <% status_classes =
-             case @booking.status
-             when "confirmed" then "bg-emerald-50 text-emerald-700"
-             when "pending" then "bg-amber-50 text-amber-700"
-             when "canceled", "cancelled" then "bg-rose-50 text-rose-700"
-             else "bg-slate-100 text-slate-600"
-             end
-        %>
+          <% status_classes =
+               case @booking.status
+               when "confirmed" then "bg-emerald-50 text-emerald-700"
+               when "pending" then "bg-amber-50 text-amber-700"
+               when "canceled", "cancelled" then "bg-rose-50 text-rose-700"
+               else "bg-slate-100 text-slate-600"
+               end
+          %>
 
-        <span class="mt-4 inline-flex rounded-full px-3 py-1.5 text-sm font-semibold <%= status_classes %>">
-          <%= @booking.status.titleize %>
-        </span>
+          <span class="mt-4 inline-flex rounded-full px-3 py-1.5 text-sm font-semibold <%= status_classes %>">
+            <%= @booking.status.titleize %>
+          </span>
 
-        <div class="mt-6 space-y-3">
+          <div class="mt-6 space-y-3">
 
-          <% if @booking.status == "pending" %>
-            <%= button_to business_booking_status_path(@booking),
-                          method: :patch,
-                          params: { status: "confirmed" },
-                          class: "flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-emerald-700" do %>
-              <i data-lucide="check" class="h-4 w-4"></i>
-              Confirm booking
+            <% if @booking.status == "pending" %>
+              <%= button_to business_booking_status_path(@booking),
+                            method: :patch,
+                            params: { status: "confirmed" },
+                            class: "flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-emerald-700" do %>
+                <i data-lucide="check" class="h-4 w-4"></i>
+                Confirm booking
+              <% end %>
             <% end %>
+
+            <% if @booking.status == "confirmed" %>
+              <%= button_to business_booking_status_path(@booking),
+                            method: :patch,
+                            params: { status: "completed" },
+                            class: "flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-indigo-700",
+                            form: {
+                              data: {
+                                turbo_confirm: "Are you sure you want to mark this booking as completed?"
+                              }
+                            } do %>
+                <i data-lucide="circle-check-big" class="h-4 w-4"></i>
+                Mark as completed
+              <% end %>
+            <% end %>
+
+            <% if @booking.status == "completed" %>
+              <%= button_to business_booking_status_path(@booking),
+                            method: :patch,
+                            params: { status: "confirmed" },
+                            class: "flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50",
+                            form: {
+                              data: {
+                                turbo_confirm: "Put this booking back to confirmed?"
+                              }
+                            } do %>
+                <i data-lucide="rotate-ccw" class="h-4 w-4"></i>
+                Move back to confirmed
+              <% end %>
+            <% end %>
+
+          </div>
+
+          <div class="mt-6 space-y-3 border-t border-slate-100 pt-5 text-sm">
+            <div class="flex justify-between">
+              <span class="text-slate-500">Booking ID</span>
+              <span class="font-semibold text-slate-900">#<%= @booking.id %></span>
+            </div>
+
+            <div class="flex justify-between">
+              <span class="text-slate-500">Created</span>
+              <span class="font-semibold text-slate-900"><%= @booking.created_at.strftime("%-d %b %Y") %></span>
+            </div>
+          </div>
+
+          <%= link_to business_bookings_path,
+                      class: "mt-6 flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-600 transition hover:bg-slate-50" do %>
+            <i data-lucide="arrow-left" class="h-4 w-4"></i>
+            Back to bookings
           <% end %>
 
-          <% if @booking.status == "confirmed" %>
-            <%= button_to business_booking_status_path(@booking),
-                          method: :patch,
-                          params: { status: "completed" },
-                          class: "flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-indigo-700",
-                          form: {
-                            data: {
-                              turbo_confirm: "Are you sure you want to mark this booking as completed?"
-                            }
-                          } do %>
-              <i data-lucide="circle-check-big" class="h-4 w-4"></i>
-              Mark as completed
-            <% end %>
-          <% end %>
-
-          <% if @booking.status == "completed" %>
-            <%= button_to business_booking_status_path(@booking),
-                          method: :patch,
-                          params: { status: "confirmed" },
-                          class: "flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50",
-                          form: {
-                            data: {
-                              turbo_confirm: "Put this booking back to confirmed?"
-                            }
-                          } do %>
-              <i data-lucide="rotate-ccw" class="h-4 w-4"></i>
-              Move back to confirmed
-            <% end %>
-          <% end %>
+          <%= link_to "Add to Google Calendar",
+                      google_calendar_url,
+                      target: "_blank",
+                      rel: "noopener",
+                      class: "flex items-center justify-center rounded-lg bg-blue-600 px-4 py-2 font-semibold w-full mt-4 text-white hover:bg-blue-700" %>
 
         </div>
 
-        <div class="mt-6 space-y-3 border-t border-slate-100 pt-5 text-sm">
-          <div class="flex justify-between">
-            <span class="text-slate-500">Booking ID</span>
-            <span class="font-semibold text-slate-900">#<%= @booking.id %></span>
+        <div class="mt-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+
+          <div class="flex flex-col gap-4">
+
+            <div>
+              <h2 class="text-lg font-bold text-slate-900">
+                Payments
+              </h2>
+
+              <p class="mt-1 text-sm text-slate-500">
+                Manage payment for this booking.
+              </p>
+            </div>
+
+
+            <div class="flex flex-col gap-3">
+
+              <% if (@booking.amount.to_d - @booking.amount_paid.to_d).zero? %>
+
+                <!-- Fully Paid -->
+                <div class="rounded-xl border border-emerald-200 bg-emerald-50 p-4">
+
+                  <div class="flex items-start gap-3">
+
+                    <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-100">
+                      <i data-lucide="circle-check" class="h-5 w-5 text-emerald-600"></i>
+                    </div>
+
+                    <div>
+                      <p class="text-sm font-semibold text-emerald-900">
+                        Payment Complete
+                      </p>
+
+                      <p class="mt-1 text-sm text-emerald-700">
+                        This booking has been paid in full.
+                      </p>
+
+                      <p class="mt-2 text-lg font-bold text-emerald-900">
+                        <%= number_to_currency(@booking.amount_paid, unit: "£") %>
+                      </p>
+                    </div>
+
+                  </div>
+
+                </div>
+
+              <% else %>
+
+                <!-- Mark as Paid -->
+                <%= button_to business_mark_as_paid_path(@booking),
+                              method: :patch,
+                              data: {
+                                turbo_confirm: "Are you sure you want to mark this booking as paid?"
+                              },
+                              class: "w-full inline-flex items-center justify-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-sm font-semibold text-emerald-700 transition hover:bg-emerald-100" do %>
+
+                  <i data-lucide="circle-check" class="h-4 w-4"></i>
+                  Mark as Paid
+
+                <% end %>
+
+
+                <!-- Create Payment Link -->
+                <%= link_to business_create_payment_link_path(@booking),
+                            data: { turbo_method: :patch },
+                            class: "inline-flex items-center justify-center gap-2 rounded-xl bg-cyan-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-cyan-700" do %>
+
+                  <i data-lucide="link" class="h-4 w-4"></i>
+                  Create Payment Link
+
+                <% end %>
+
+              <% end %>
+
+            </div>
+
           </div>
 
-          <div class="flex justify-between">
-            <span class="text-slate-500">Created</span>
-            <span class="font-semibold text-slate-900"><%= @booking.created_at.strftime("%-d %b %Y") %></span>
-          </div>
         </div>
-
-        <%= link_to business_bookings_path,
-                    class: "mt-6 flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-600 transition hover:bg-slate-50" do %>
-          <i data-lucide="arrow-left" class="h-4 w-4"></i>
-          Back to bookings
-        <% end %>
-
-        <%= link_to "Add to Google Calendar",
-                    google_calendar_url,
-                    target: "_blank",
-                    rel: "noopener",
-                    class: "flex items-center justify-center rounded-lg bg-blue-600 px-4 py-2 font-semibold w-full mt-4 text-white hover:bg-blue-700" %>
-
       </div>
     </aside>
 

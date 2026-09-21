@@ -1,0 +1,609 @@
+<main class="p-4 sm:p-6 lg:p-8">
+
+  <!-- Header -->
+  <section class="mb-8 overflow-hidden rounded-2xl bg-gradient-to-r from-cyan-600 to-blue-600 p-6 text-white shadow-lg shadow-cyan-200 sm:p-8">
+
+    <div class="flex flex-col justify-between gap-6 sm:flex-row sm:items-center">
+
+      <div>
+
+        <p class="mb-2 text-sm font-medium text-cyan-100">
+          Reports / Website reports
+        </p>
+
+        <h1 class="text-2xl font-bold sm:text-3xl">
+          Website performance
+        </h1>
+
+        <p class="mt-2 max-w-xl text-sm leading-6 text-cyan-100 sm:text-base">
+          Monitor website visitors, traffic sources and booking activity.
+        </p>
+
+      </div>
+
+      <div class="rounded-xl bg-white/10 p-4">
+        <i data-lucide="globe-2" class="h-8 w-8"></i>
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- Website overview -->
+  <section class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+
+    <!-- Visitors -->
+    <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+
+      <div class="flex justify-between">
+
+        <div>
+
+          <p class="text-sm font-medium text-slate-500">
+            Website visitors
+          </p>
+
+          <!-- Website visitors -->
+          <p class="mt-3 text-3xl font-bold">
+            <%= number_with_delimiter(@unique_visitors) %>
+          </p>
+
+          <p class="mt-2 text-xs text-slate-400">
+            Unique visitors
+          </p>
+
+        </div>
+
+        <div class="rounded-xl bg-cyan-50 p-3 text-cyan-600">
+          <i data-lucide="users" class="h-5 w-5"></i>
+        </div>
+
+      </div>
+
+    </article>
+
+
+    <!-- Page views -->
+    <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+
+      <div class="flex justify-between">
+
+        <div>
+
+          <p class="text-sm font-medium text-slate-500">
+            Page views
+          </p>
+
+          <!-- Page views -->
+          <p class="mt-3 text-3xl font-bold">
+            <%= number_with_delimiter(@total_page_views) %>
+          </p>
+
+          <p class="mt-2 text-xs text-slate-400">
+            Total website views
+          </p>
+
+        </div>
+
+        <div class="rounded-xl bg-blue-50 p-3 text-blue-600">
+          <i data-lucide="eye" class="h-5 w-5"></i>
+        </div>
+
+      </div>
+
+    </article>
+
+
+    <!-- Conversion rate -->
+    <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+
+      <div class="flex justify-between">
+
+        <div>
+
+          <p class="text-sm font-medium text-slate-500">
+            Booking conversion
+          </p>
+
+          <!-- Booking conversion -->
+          <p class="mt-3 text-3xl font-bold">
+            <%= @booking_conversion %>%
+          </p>
+
+          <p class="mt-2 text-xs text-slate-400">
+            Visitors who booked
+          </p>
+
+        </div>
+
+        <div class="rounded-xl bg-emerald-50 p-3 text-emerald-600">
+          <i data-lucide="target" class="h-5 w-5"></i>
+        </div>
+
+      </div>
+
+    </article>
+
+
+    <!-- Average views -->
+    <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+
+      <div class="flex justify-between">
+
+        <div>
+
+          <p class="text-sm font-medium text-slate-500">
+            Views per visitor
+          </p>
+
+          <!-- Views per visitor -->
+          <p class="mt-3 text-3xl font-bold">
+            <%= @views_per_visitor %>
+          </p>
+
+          <p class="mt-2 text-xs text-slate-400">
+            Average visitor activity
+          </p>
+
+        </div>
+
+        <div class="rounded-xl bg-violet-50 p-3 text-violet-600">
+          <i data-lucide="activity" class="h-5 w-5"></i>
+        </div>
+
+      </div>
+
+    </article>
+
+  </section>
+
+
+  <!-- Traffic -->
+  <section class="mt-8 grid gap-8 xl:grid-cols-[1.5fr_1fr]">
+
+    <!-- Traffic chart -->
+    <article class="rounded-2xl border border-slate-200 bg-white shadow-sm">
+
+      <div class="border-b border-slate-200 px-6 py-5">
+
+        <h2 class="text-lg font-bold">
+          Website traffic
+        </h2>
+
+        <p class="mt-1 text-sm text-slate-500">
+          Visitor activity over the last 6 months.
+        </p>
+
+      </div>
+
+      <div class="p-6">
+
+        <div class="h-72">
+          <canvas id="websiteTrafficChart"></canvas>
+        </div>
+
+      </div>
+
+    </article>
+
+
+    <!-- Traffic sources -->
+    <article class="rounded-2xl border border-slate-200 bg-white shadow-sm">
+
+      <div class="border-b border-slate-200 px-6 py-5">
+
+        <h2 class="text-lg font-bold">
+          Traffic sources
+        </h2>
+
+        <p class="mt-1 text-sm text-slate-500">
+          Where visitors are coming from.
+        </p>
+
+      </div>
+
+      <div class="space-y-5 p-6">
+
+        <!-- Google -->
+        <div>
+
+          <div class="mb-2 flex justify-between text-sm">
+
+            <span class="font-medium text-slate-700">
+              Google Search
+            </span>
+
+            <span class="text-slate-500">
+              <%= @google_visits %> (<%= @google_percentage %>%)
+            </span>
+
+          </div>
+
+          <div class="h-2 rounded-full bg-slate-100">
+            <div
+              class="h-full rounded-full bg-cyan-500"
+              style="width: <%= @google_percentage %>%">
+            </div>
+          </div>
+
+        </div>
+
+
+        <!-- Direct -->
+        <div>
+
+          <div class="mb-2 flex justify-between text-sm">
+
+            <span class="font-medium text-slate-700">
+              Direct visits
+            </span>
+
+            <span class="text-slate-500">
+              <%= @direct_visits %> (<%= @direct_percentage %>%)
+            </span>
+
+          </div>
+
+          <div class="h-2 rounded-full bg-slate-100">
+            <div
+              class="h-full rounded-full bg-cyan-500"
+              style="width: <%= @direct_percentage %>%">
+            </div>
+          </div>
+
+        </div>
+
+
+        <!-- Social -->
+        <div>
+
+          <div class="mb-2 flex justify-between text-sm">
+
+            <span class="font-medium text-slate-700">
+              Social media
+            </span>
+
+            <span class="text-slate-500">
+              <%= @social_visits %> (<%= @social_percentage %>%)
+            </span>
+
+          </div>
+
+          <div class="h-2 rounded-full bg-slate-100">
+            <div
+              class="h-full rounded-full bg-cyan-500"
+              style="width: <%= @social_percentage %>%">
+            </div>
+          </div>
+
+        </div>
+
+
+        <!-- Referrals -->
+        <div>
+
+          <div class="mb-2 flex justify-between text-sm">
+
+            <span class="font-medium text-slate-700">
+              Referrals
+            </span>
+
+            <span class="text-slate-500">
+              <%= @referral_visits %> (<%= @referral_percentage %>%)
+            </span>
+
+          </div>
+
+          <div class="h-2 rounded-full bg-slate-100">
+            <div
+              class="h-full rounded-full bg-cyan-500"
+              style="width: <%= @referral_percentage %>%">
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </article>
+
+  </section>
+
+
+  <!-- Visitor insights -->
+  <section class="mt-8 grid gap-8 lg:grid-cols-2">
+
+    <!-- Device breakdown -->
+    <article class="rounded-2xl border border-slate-200 bg-white shadow-sm">
+
+      <div class="border-b border-slate-200 px-6 py-5">
+
+        <h2 class="text-lg font-bold">
+          Device breakdown
+        </h2>
+
+        <p class="mt-1 text-sm text-slate-500">
+          Devices used to access your website.
+        </p>
+
+      </div>
+
+      <div class="space-y-6 p-6">
+
+        <!-- Mobile -->
+        <div class="flex items-center justify-between">
+
+          <div class="flex items-center gap-3">
+
+            <div class="rounded-lg bg-slate-50 p-2">
+              <i data-lucide="smartphone" class="h-5 w-5 text-slate-500"></i>
+            </div>
+
+            <div>
+
+              <p class="font-medium">
+                Mobile
+              </p>
+
+              <p class="text-xs text-slate-400">
+                Phones and mobile devices
+              </p>
+
+            </div>
+
+          </div>
+
+          <!-- Mobile -->
+          <span class="text-lg font-bold">
+            <%= @mobile_views %>
+          </span>
+
+        </div>
+
+
+        <!-- Desktop -->
+        <div class="flex items-center justify-between">
+
+          <div class="flex items-center gap-3">
+
+            <div class="rounded-lg bg-slate-50 p-2">
+              <i data-lucide="monitor" class="h-5 w-5 text-slate-500"></i>
+            </div>
+
+            <div>
+
+              <p class="font-medium">
+                Desktop
+              </p>
+
+              <p class="text-xs text-slate-400">
+                Computers and laptops
+              </p>
+
+            </div>
+
+          </div>
+
+          <!-- Desktop -->
+          <span class="text-lg font-bold">
+            <%= @desktop_views %>
+          </span>
+
+        </div>
+
+
+        <!-- Tablet -->
+        <div class="flex items-center justify-between">
+
+          <div class="flex items-center gap-3">
+
+            <div class="rounded-lg bg-slate-50 p-2">
+              <i data-lucide="tablet" class="h-5 w-5 text-slate-500"></i>
+            </div>
+
+            <div>
+
+              <p class="font-medium">
+                Tablet
+              </p>
+
+              <p class="text-xs text-slate-400">
+                Tablets and larger mobile devices
+              </p>
+
+            </div>
+
+          </div>
+
+          <!-- Tablet -->
+          <span class="text-lg font-bold">
+            <%= @tablet_views %>
+          </span>
+
+        </div>
+
+      </div>
+
+    </article>
+
+
+    <!-- Visitor activity -->
+    <article class="rounded-2xl border border-slate-200 bg-white shadow-sm">
+
+      <div class="border-b border-slate-200 px-6 py-5">
+
+        <h2 class="text-lg font-bold">
+          Visitor activity
+        </h2>
+
+        <p class="mt-1 text-sm text-slate-500">
+          Understand how visitors interact with your booking website.
+        </p>
+
+      </div>
+
+      <div class="space-y-6 p-6">
+
+        <!-- New visitors -->
+        <div>
+
+          <div class="mb-2 flex items-center justify-between">
+
+            <div>
+
+              <p class="font-medium">
+                New visitors
+              </p>
+
+              <p class="text-xs text-slate-400">
+                First time website visitors
+              </p>
+
+            </div>
+
+            <span class="font-bold">
+              <%= @new_visitors %> (<%= @new_visitor_percentage %>%)
+            </span>
+
+          </div>
+
+          <div class="h-2 rounded-full bg-slate-100">
+            <div
+              class="h-full rounded-full bg-cyan-500"
+              style="width: <%= @new_visitor_percentage %>%">
+            </div>
+          </div>
+
+        </div>
+
+
+        <!-- Returning visitors -->
+        <div>
+
+          <div class="mb-2 flex items-center justify-between">
+
+            <div>
+
+              <p class="font-medium">
+                Returning visitors
+              </p>
+
+              <p class="text-xs text-slate-400">
+                Visitors who came back
+              </p>
+
+            </div>
+
+            <span class="font-bold">
+              <%= @returning_visitors %> (<%= @returning_visitor_percentage %>%)
+            </span>
+
+          </div>
+
+          <div class="h-2 rounded-full bg-slate-100">
+            <div
+              class="h-full rounded-full bg-blue-500"
+              style="width: <%= @returning_visitor_percentage %>%">
+            </div>
+          </div>
+
+        </div>
+
+
+        <!-- Bookings -->
+        <div class="rounded-xl bg-slate-50 p-4">
+
+          <div class="flex items-center justify-between">
+
+            <div>
+
+              <p class="text-sm font-medium text-slate-500">
+                Bookings generated
+              </p>
+
+              <p class="mt-1 text-2xl font-bold">
+                <%= @booking_count %>
+              </p>
+
+            </div>
+
+            <div class="rounded-lg bg-white p-3 text-emerald-600 shadow-sm">
+              <i data-lucide="calendar-check" class="h-5 w-5"></i>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </article>
+
+  </section>
+
+</main>
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+
+        const ctx = document.getElementById("websiteTrafficChart");
+
+        if (!ctx) return;
+
+        new Chart(ctx, {
+            type: "line",
+
+            data: {
+                labels: <%= raw @traffic_labels.to_json %>,
+
+                datasets: [
+                    {
+                        label: "Visitors",
+
+                        data: <%= raw @traffic_data.to_json %>,
+
+                        tension: 0.4,
+                        fill: true,
+                        borderWidth: 2
+                    }
+                ]
+            },
+
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+
+                interaction: {
+                    intersect: false,
+                    mode: "index"
+                },
+
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            precision: 0
+                        }
+                    },
+
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                },
+
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+
+    });
+</script>

@@ -1,0 +1,456 @@
+<main class="p-4 sm:p-6 lg:p-8">
+
+
+  <!-- Header -->
+  <section class="mb-8 rounded-2xl bg-slate-950 p-6 text-white shadow-lg sm:p-8">
+
+    <div class="flex flex-col justify-between gap-6 lg:flex-row lg:items-center">
+
+      <div>
+
+        <p class="mb-2 text-sm font-medium text-slate-400">
+          Reports / Revenue reports
+        </p>
+
+        <h1 class="text-2xl font-bold sm:text-3xl">
+          Revenue overview
+        </h1>
+
+        <p class="mt-2 max-w-xl text-sm leading-6 text-slate-400">
+          Track income, payments and service performance to understand your business revenue.
+        </p>
+
+      </div>
+
+
+      <div class="flex gap-3">
+
+        <button class="rounded-xl bg-white/10 px-4 py-2 text-sm font-semibold transition hover:bg-white/20">
+          This month
+        </button>
+
+        <button class="rounded-xl bg-white px-4 py-2 text-sm font-semibold text-slate-900">
+          Filter
+        </button>
+
+      </div>
+
+
+    </div>
+
+
+  </section>
+
+
+
+  <!-- Main revenue card -->
+  <section class="grid gap-6 lg:grid-cols-[1.5fr_1fr]">
+
+
+    <article class="rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 p-6 text-white shadow-lg">
+
+      <div class="flex items-start justify-between">
+
+        <div>
+
+          <p class="text-sm font-medium text-emerald-100">
+            Total revenue
+          </p>
+
+          <h2 class="mt-4 text-5xl font-black">
+            £-
+          </h2>
+
+          <p class="mt-3 text-sm text-emerald-100">
+            Compared with previous period
+          </p>
+
+        </div>
+
+
+        <div class="rounded-xl bg-white/20 p-3">
+          <i data-lucide="banknote" class="h-7 w-7"></i>
+        </div>
+
+
+      </div>
+
+
+
+      <div class="mt-8 grid grid-cols-2 gap-4">
+
+
+        <div class="rounded-xl bg-white/10 p-4">
+
+          <p class="text-xs text-emerald-100">
+            Average booking value
+          </p>
+
+          <p class="mt-2 text-xl font-bold">
+            £-
+          </p>
+
+        </div>
+
+
+        <div class="rounded-xl bg-white/10 p-4">
+
+          <p class="text-xs text-emerald-100">
+            Payments received
+          </p>
+
+          <p class="mt-2 text-xl font-bold">
+            -
+          </p>
+
+        </div>
+
+
+      </div>
+
+
+    </article>
+
+
+
+
+    <!-- Revenue summary -->
+    <article class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+
+      <h2 class="text-lg font-bold">
+        Revenue breakdown
+      </h2>
+
+      <p class="mt-1 text-sm text-slate-500">
+        Current period summary.
+      </p>
+
+
+      <div class="mt-6 space-y-5">
+
+
+        <div class="flex items-center justify-between">
+          <span class="text-sm text-slate-600">
+            Completed bookings
+          </span>
+
+          <span class="font-bold">
+            £-
+          </span>
+        </div>
+
+
+        <div class="flex items-center justify-between">
+          <span class="text-sm text-slate-600">
+            Deposits
+          </span>
+
+          <span class="font-bold">
+            £-
+          </span>
+        </div>
+
+
+        <div class="flex items-center justify-between">
+          <span class="text-sm text-slate-600">
+            Refunds
+          </span>
+
+          <span class="font-bold text-rose-600">
+            £-
+          </span>
+        </div>
+
+
+        <div class="border-t border-slate-200 pt-4 flex items-center justify-between">
+          <span class="font-semibold">
+            Net revenue
+          </span>
+
+          <span class="text-xl font-black">
+            £-
+          </span>
+        </div>
+
+
+      </div>
+
+
+    </article>
+
+
+  </section>
+
+
+
+
+
+  <!-- Revenue charts -->
+  <section class="mt-8 grid gap-8 xl:grid-cols-2">
+
+
+    <!-- Revenue chart -->
+    <article class="rounded-2xl border border-slate-200 bg-white shadow-sm">
+
+
+      <div class="border-b border-slate-200 px-6 py-5">
+
+        <h2 class="text-lg font-bold">
+          Revenue growth
+        </h2>
+
+        <p class="mt-1 text-sm text-slate-500">
+          Monthly revenue performance.
+        </p>
+
+      </div>
+
+
+      <div class="p-6">
+
+        <div class="h-72">
+          <canvas id="revenueChart"></canvas>
+        </div>
+
+      </div>
+
+
+    </article>
+
+
+
+
+    <!-- Revenue by service -->
+    <article class="rounded-2xl border border-slate-200 bg-white shadow-sm">
+
+
+      <div class="border-b border-slate-200 px-6 py-5">
+
+        <h2 class="text-lg font-bold">
+          Revenue by service
+        </h2>
+
+        <p class="mt-1 text-sm text-slate-500">
+          Which services generate the most income.
+        </p>
+
+      </div>
+
+
+
+      <div class="space-y-5 p-6">
+
+
+        <% [
+             ["Service one", "80%"],
+             ["Service two", "60%"],
+             ["Service three", "35%"]
+           ].each do |service, value| %>
+
+
+          <div>
+
+            <div class="mb-2 flex justify-between text-sm">
+
+              <span class="font-medium text-slate-700">
+                <%= service %>
+              </span>
+
+              <span class="text-slate-500">
+                £-
+              </span>
+
+            </div>
+
+
+            <div class="h-3 rounded-full bg-slate-100">
+
+              <div class="h-full rounded-full bg-emerald-500"
+                   style="width:<%= value %>">
+              </div>
+
+            </div>
+
+
+          </div>
+
+
+        <% end %>
+
+
+      </div>
+
+
+    </article>
+
+
+  </section>
+
+
+
+
+
+  <!-- Transactions -->
+  <section class="mt-8 rounded-2xl border border-slate-200 bg-white shadow-sm">
+
+
+    <div class="flex items-center justify-between border-b border-slate-200 px-6 py-5">
+
+      <div>
+
+        <h2 class="text-lg font-bold">
+          Recent payments
+        </h2>
+
+        <p class="mt-1 text-sm text-slate-500">
+          Latest revenue activity.
+        </p>
+
+      </div>
+
+
+      <button class="text-sm font-semibold text-indigo-600">
+        View all
+      </button>
+
+
+    </div>
+
+
+
+    <div class="divide-y divide-slate-100">
+
+
+      <% 5.times do %>
+
+        <div class="flex items-center justify-between px-6 py-4">
+
+
+          <div>
+
+            <p class="font-semibold">
+              Customer name
+            </p>
+
+            <p class="text-sm text-slate-500">
+              Service name
+            </p>
+
+          </div>
+
+
+          <div class="text-right">
+
+            <p class="font-bold">
+              £-
+            </p>
+
+            <p class="text-xs text-emerald-600">
+              Paid
+            </p>
+
+          </div>
+
+
+        </div>
+
+      <% end %>
+
+
+    </div>
+
+
+  </section>
+
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+
+        const ctx = document.getElementById("revenueChart");
+
+        if (!ctx) return;
+
+
+        new Chart(ctx, {
+
+            type: "bar",
+
+            data: {
+
+                labels: [
+                    "Jan",
+                    "Feb",
+                    "Mar",
+                    "Apr",
+                    "May",
+                    "Jun",
+                    "Jul"
+                ],
+
+                datasets: [
+                    {
+                        label: "Revenue",
+
+                        data: [
+                            2500,
+                            3200,
+                            2800,
+                            4500,
+                            3900,
+                            5200,
+                            6100
+                        ],
+
+                        borderRadius: 8,
+
+                    }
+
+                ]
+
+            },
+
+
+            options: {
+
+                responsive: true,
+
+                maintainAspectRatio: false,
+
+
+                plugins: {
+
+                    legend: {
+                        display: false
+                    }
+
+                },
+
+
+                scales: {
+
+                    y: {
+
+                        beginAtZero: true,
+
+                        ticks: {
+
+                            callback: function(value) {
+                                return "£" + value;
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        });
+
+
+    });
+</script>

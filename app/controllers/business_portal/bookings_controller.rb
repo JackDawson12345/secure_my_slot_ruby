@@ -351,6 +351,89 @@ class BusinessPortal::BookingsController < BusinessPortal::BaseController
     }
   end
 
+  def create_payment_link
+
+    business = current_user.business
+    booking = business.bookings.find(params[:id])
+
+    unless business.stripe_connected?
+      redirect_to business_booking_path(booking),
+                  alert: "Payment system not available."
+      return
+    end
+
+    outstanding_amount = booking.amount.to_d - booking.amount_paid.to_d
+
+    if outstanding_amount <= 0
+      redirect_to business_booking_path(booking),
+                  alert: "This booking has already been paid."
+      return
+    end
+
+    stripe_amount = (outstanding_amount * 100).round.to_i
+
+    session = Stripe::Checkout::Session.create(
+      {
+        mode: "payment",
+
+        customer_email: booking.user.email,
+
+        line_items: [
+          {
+            price_data: {
+              currency: "gbp",
+              product_data: {
+                name: "#{booking.service.name} - Booking ##{booking.id}"
+              },
+              unit_amount: stripe_amount
+            },
+            quantity: 1
+          }
+        ],
+
+        metadata: {
+          booking_id: booking.id,
+          payment_type: "payment_link"
+        },
+
+        success_url: payment_success_url(booking),
+        cancel_url: root_url
+      },
+      {
+        stripe_account: business.stripe_account_id
+      }
+    )
+
+    booking.update!(
+      payment_link_checkout_session_id: session.id,
+      stripe_payment_link: session.url
+    )
+
+    redirect_to business_payment_link_path(booking)
+  end
+
+  def payment_link
+    @business = current_user.business
+    @booking = @business.bookings.find(params[:id])
+
+    unless @booking.stripe_payment_link.present?
+      redirect_to business_booking_path(@booking),
+                  alert: "No payment link has been created for this booking."
+    end
+  end
+
+  def mark_as_paid
+    booking = current_user.business.bookings.find(params[:id])
+
+    booking.update!(
+      amount_paid: booking.amount,
+      payment_status: "paid"
+    )
+
+    redirect_to business_booking_path(booking),
+                notice: "Booking marked as paid."
+  end
+
   private
 
   def find_or_build_user(attrs)

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_09_18_110444) do
+ActiveRecord::Schema[8.0].define(version: 2026_09_21_114632) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -127,6 +127,9 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_18_110444) do
     t.string "consultation_token"
     t.string "coupon"
     t.decimal "amount"
+    t.string "stripe_payment_link"
+    t.string "payment_link_checkout_session_id"
+    t.string "payment_link_payment_intent_id"
     t.index ["business_id"], name: "index_bookings_on_business_id"
     t.index ["consultation_token"], name: "index_bookings_on_consultation_token", unique: true
     t.index ["service_id"], name: "index_bookings_on_service_id"
@@ -323,6 +326,20 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_18_110444) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["jti"], name: "index_jwt_denylists_on_jti"
+  end
+
+  create_table "page_views", force: :cascade do |t|
+    t.string "pageable_type", null: false
+    t.bigint "pageable_id", null: false
+    t.string "visitor_id"
+    t.string "ip_address"
+    t.text "user_agent"
+    t.string "referrer"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "device_type"
+    t.string "traffic_source"
+    t.index ["pageable_type", "pageable_id"], name: "index_page_views_on_pageable"
   end
 
   create_table "service_categories", force: :cascade do |t|
