@@ -608,6 +608,36 @@
 
                 </div>
 
+              <% elsif @booking.no_show_fee.present? %>
+
+                <!-- No Show Fee Charged -->
+                <div class="rounded-xl border border-rose-200 bg-rose-50 p-4">
+
+                  <div class="flex items-start gap-3">
+
+                    <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-rose-100">
+                      <i data-lucide="user-x" class="h-5 w-5 text-rose-600"></i>
+                    </div>
+
+                    <div class="min-w-0 flex-1">
+
+                      <p class="text-sm font-semibold text-rose-900">
+                        No Show Fee Charged
+                      </p>
+
+                      <p class="mt-1 text-sm text-rose-700">
+                        A no show fee has been charged for this booking.
+                      </p>
+
+                      <p class="mt-2 text-lg font-bold text-rose-900">
+                        <%= number_to_currency(@booking.no_show_fee, unit: "£") %>
+                      </p>
+
+                    </div>
+
+                  </div>
+
+                </div>
               <% else %>
 
                 <!-- Mark as Paid -->
@@ -631,6 +661,16 @@
 
                   <i data-lucide="link" class="h-4 w-4"></i>
                   Create Payment Link
+
+                <% end %>
+
+                <!-- Create Payment Link -->
+                <%= link_to business_no_show_path(@booking),
+                            data: { turbo_method: :get },
+                            class: "inline-flex items-center justify-center gap-2 rounded-xl bg-rose-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-rose-700" do %>
+
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="user-x" aria-hidden="true" class="lucide lucide-user-x h-4 w-4 text-rose-600"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><line x1="17" x2="22" y1="8" y2="13"></line><line x1="22" x2="17" y1="8" y2="13"></line></svg>
+                  Charge No Show Fee
 
                 <% end %>
 
