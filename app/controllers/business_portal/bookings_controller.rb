@@ -406,7 +406,8 @@ class BusinessPortal::BookingsController < BusinessPortal::BaseController
 
     booking.update!(
       payment_link_checkout_session_id: session.id,
-      stripe_payment_link: session.url
+      stripe_payment_link: session.url,
+      payment_link_amount: outstanding_amount
     )
 
     redirect_to business_payment_link_path(booking)
