@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_09_21_130129) do
+ActiveRecord::Schema[8.0].define(version: 2026_09_21_135522) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -131,6 +131,9 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_21_130129) do
     t.string "payment_link_checkout_session_id"
     t.string "payment_link_payment_intent_id"
     t.decimal "payment_link_amount", precision: 10, scale: 2
+    t.decimal "no_show_fee"
+    t.string "no_show_payment_intent_id"
+    t.datetime "no_show_fee_charged_at"
     t.index ["business_id"], name: "index_bookings_on_business_id"
     t.index ["consultation_token"], name: "index_bookings_on_consultation_token", unique: true
     t.index ["service_id"], name: "index_bookings_on_service_id"
@@ -164,6 +167,17 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_21_130129) do
     t.datetime "updated_at", null: false
     t.index ["business_id"], name: "index_business_booking_settings_on_business", unique: true
     t.index ["business_id"], name: "index_business_booking_settings_on_business_id"
+  end
+
+  create_table "business_customers", force: :cascade do |t|
+    t.bigint "business_id", null: false
+    t.bigint "user_id", null: false
+    t.string "stripe_customer_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["business_id", "user_id"], name: "index_business_customers_on_business_id_and_user_id", unique: true
+    t.index ["business_id"], name: "index_business_customers_on_business_id"
+    t.index ["user_id"], name: "index_business_customers_on_user_id"
   end
 
   create_table "business_opening_hour_breaks", force: :cascade do |t|
@@ -561,6 +575,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_21_130129) do
   add_foreign_key "bookings", "users"
   add_foreign_key "business_blocked_times", "businesses"
   add_foreign_key "business_booking_settings", "businesses"
+  add_foreign_key "business_customers", "businesses"
+  add_foreign_key "business_customers", "users"
   add_foreign_key "business_opening_hour_breaks", "business_opening_hours"
   add_foreign_key "business_opening_hours", "businesses"
   add_foreign_key "business_settings", "businesses"

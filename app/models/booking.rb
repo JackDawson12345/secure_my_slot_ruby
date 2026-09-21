@@ -26,7 +26,7 @@ class Booking < ApplicationRecord
     overlapping = business.bookings
                           .where(date: date)
                           .where.not(id: id)
-                          .where.not(status: "cancelled")
+                          .where.not(status: ["cancelled", "no_show"])
                           .any? do |booking|
 
       booking_start = booking.time

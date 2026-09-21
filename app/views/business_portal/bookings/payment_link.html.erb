@@ -163,10 +163,9 @@
         <div class="grid gap-4 sm:grid-cols-2">
 
           <!-- Email -->
-          <button
-            type="button"
-            class="group flex items-center gap-4 rounded-2xl border border-slate-200 p-5 text-left transition hover:border-cyan-300 hover:bg-cyan-50/50"
-          >
+          <%= button_to business_payment_link_send_email_path(@booking),
+                        method: :patch,
+                        class: "group flex w-full items-center gap-4 rounded-2xl border border-slate-200 p-5 text-left transition hover:border-cyan-300 hover:bg-cyan-50/50" do %>
 
             <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-cyan-50 transition group-hover:bg-cyan-100">
               <i data-lucide="mail" class="h-5 w-5 text-cyan-600"></i>
@@ -184,14 +183,13 @@
 
             <i data-lucide="chevron-right" class="h-5 w-5 shrink-0 text-slate-400"></i>
 
-          </button>
+          <% end %>
 
 
           <!-- SMS -->
-          <button
-            type="button"
-            class="group flex items-center gap-4 rounded-2xl border border-slate-200 p-5 text-left transition hover:border-violet-300 hover:bg-violet-50/50"
-          >
+          <%= button_to business_payment_link_send_sms_path(@booking),
+                        method: :patch,
+                        class: "group flex w-full items-center gap-4 rounded-2xl border border-slate-200 p-5 text-left transition hover:border-violet-300 hover:bg-violet-50/50" do %>
 
             <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-violet-50 transition group-hover:bg-violet-100">
               <i data-lucide="message-square-text" class="h-5 w-5 text-violet-600"></i>
@@ -209,7 +207,7 @@
 
             <i data-lucide="chevron-right" class="h-5 w-5 shrink-0 text-slate-400"></i>
 
-          </button>
+          <% end %>
 
         </div>
 

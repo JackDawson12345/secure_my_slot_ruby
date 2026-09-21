@@ -352,9 +352,14 @@ class BusinessPortal::BookingsController < BusinessPortal::BaseController
   end
 
   def create_payment_link
-
     business = current_user.business
     booking = business.bookings.find(params[:id])
+
+    # Redirect if a payment link already exists
+    if booking.stripe_payment_link.present?
+      redirect_to business_payment_link_path(booking)
+      return
+    end
 
     unless business.stripe_connected?
       redirect_to business_booking_path(booking),
@@ -411,6 +416,179 @@ class BusinessPortal::BookingsController < BusinessPortal::BaseController
     )
 
     redirect_to business_payment_link_path(booking)
+  end
+
+  def send_payment_link_email
+
+    business = current_user.business
+    booking = business.bookings.find(params[:id])
+
+    PaymentLinksMailer
+      .send_customer_payment_link(
+        booking,
+        booking.stripe_payment_link,
+        booking.payment_link_amount
+      )
+      .deliver_later
+
+    redirect_to business_booking_path(booking),
+                notice: "Payment Link Email Sent."
+
+  end
+
+  def send_payment_link_sms
+    booking = current_user.business.bookings.find(params[:id])
+
+    if booking.user.phone_number.blank?
+      redirect_to business_booking_path(booking),
+                  alert: "This customer does not have a phone number."
+      return
+    end
+
+    if booking.stripe_payment_link.blank?
+      redirect_to business_booking_path(booking),
+                  alert: "No payment link has been created for this booking."
+      return
+    end
+
+    message = <<~SMS
+    Hi #{booking.user.first_name},
+
+    You can make payment for your booking with #{booking.business.business_name} using the link below:
+
+    #{booking.stripe_payment_link}
+
+    Thank you.
+  SMS
+
+    result = SmsService.send_message(
+      to: booking.user.phone_number,
+      body: message
+    )
+
+    if result
+      redirect_to business_booking_path(booking),
+                  notice: "Payment link sent via SMS."
+    else
+      redirect_to business_booking_path(booking),
+                  alert: "Unable to send the payment link via SMS."
+    end
+  end
+
+  def no_show
+    @booking = current_user.business.bookings.find(params[:id])
+
+    @business_customer = BusinessCustomer.find_by(
+      business: current_user.business,
+      user: @booking.user
+    )
+
+    @has_saved_card = @business_customer&.stripe_customer_id.present?
+  end
+
+  def charge_no_show_fee
+
+    booking = current_user.business.bookings.find(params[:id])
+
+    if booking.no_show_fee_charged_at.present? ||
+       booking.no_show_payment_intent_id.present?
+
+      redirect_to business_booking_path(booking),
+                  alert: "A no show fee has already been charged for this booking."
+      return
+    end
+
+    no_show_fee = BigDecimal(params[:no_show_fee].to_s)
+
+    if no_show_fee <= 0
+      redirect_to business_no_show_path(booking),
+                  alert: "Please enter a valid no show fee."
+      return
+    end
+
+    business_customer = BusinessCustomer.find_by(
+      business: current_user.business,
+      user: booking.user
+    )
+
+    unless business_customer&.stripe_customer_id.present?
+      redirect_to business_no_show_path(booking),
+                  alert: "This customer doesn't have a saved payment method."
+      return
+    end
+
+    payment_methods = Stripe::PaymentMethod.list(
+      {
+        customer: business_customer.stripe_customer_id,
+        type: "card"
+      },
+      {
+        stripe_account: current_user.business.stripe_account_id
+      }
+    )
+
+    payment_method = payment_methods.data.first
+
+    unless payment_method
+      redirect_to business_no_show_path(booking),
+                  alert: "This customer doesn't have a saved payment method."
+      return
+    end
+
+    payment_intent = Stripe::PaymentIntent.create(
+      {
+        amount: (no_show_fee * 100).round.to_i,
+        currency: "gbp",
+
+        customer: business_customer.stripe_customer_id,
+        payment_method: payment_method.id,
+
+        off_session: true,
+        confirm: true,
+
+        description: "No show fee for Booking ##{booking.id}",
+
+        metadata: {
+          booking_id: booking.id.to_s,
+          business_id: current_user.business.id.to_s,
+          payment_type: "no_show_fee"
+        }
+      },
+      {
+        stripe_account: current_user.business.stripe_account_id,
+        idempotency_key: "booking-#{booking.id}-no-show"
+      }
+    )
+
+    booking.update!(
+      status: "no_show",
+      no_show_fee: no_show_fee,
+      no_show_payment_intent_id: payment_intent.id,
+      no_show_fee_charged_at: Time.current
+    )
+
+    redirect_to business_booking_path(booking),
+                notice: "The £#{format('%.2f', no_show_fee)} no show fee was charged successfully."
+
+  rescue ArgumentError
+    redirect_to business_no_show_path(params[:id]),
+                alert: "Please enter a valid no show fee."
+
+  rescue Stripe::CardError => e
+    Rails.logger.warn(
+      "No show charge declined for booking #{params[:id]}: #{e.message}"
+    )
+
+    redirect_to business_no_show_path(params[:id]),
+                alert: "The no show fee couldn't be charged. #{e.message}"
+
+  rescue Stripe::StripeError => e
+    Rails.logger.error(
+      "Stripe no show charge error for booking #{params[:id]}: #{e.class} - #{e.message}"
+    )
+
+    redirect_to business_no_show_path(params[:id]),
+                alert: "The no show fee couldn't be charged. Please try again."
   end
 
   def payment_link

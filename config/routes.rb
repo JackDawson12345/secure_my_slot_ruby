@@ -401,6 +401,22 @@ Rails.application.routes.draw do
           to: "bookings#payment_link",
           as: :payment_link
 
+    patch "dashboard/bookings/:id/payment-link/send_email",
+        to: "bookings#send_payment_link_email",
+        as: :payment_link_send_email
+
+    patch "dashboard/bookings/:id/payment-link/send_sms",
+          to: "bookings#send_payment_link_sms",
+          as: :payment_link_send_sms
+
+    get "dashboard/bookings/:id/no-show-fee",
+          to: "bookings#no_show",
+          as: :no_show
+
+    post "dashboard/bookings/:id/no-show-fee",
+         to: "bookings#charge_no_show_fee",
+         as: :charge_no_show_fee
+
     patch "dashboard/bookings/:id/mark-as-paid",
         to: "bookings#mark_as_paid",
         as: :mark_as_paid

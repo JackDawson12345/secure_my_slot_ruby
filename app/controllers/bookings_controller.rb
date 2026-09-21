@@ -373,6 +373,12 @@ class BookingsController < ApplicationController
     service:,
     new_customer_account:
   )
+
+    business_customer = find_or_create_stripe_customer(
+      business: business,
+      user: booking_hold.user
+    )
+
     success_url = payment_success_booking_hold_url(
       booking_hold,
       host: request.host,
@@ -399,7 +405,7 @@ class BookingsController < ApplicationController
       {
         mode: "payment",
 
-        customer_email: booking_hold.user.email,
+        customer: business_customer.stripe_customer_id,
 
         line_items: [
           {
@@ -428,6 +434,8 @@ class BookingsController < ApplicationController
         },
 
         payment_intent_data: {
+          setup_future_usage: "off_session",
+
           metadata: {
             booking_hold_id: booking_hold.id.to_s,
             business_id: business.id.to_s
@@ -616,5 +624,35 @@ class BookingsController < ApplicationController
       :service_coupon,
       :applied_coupon
     )
+  end
+
+  def find_or_create_stripe_customer(business:, user:)
+    business_customer = BusinessCustomer.find_or_create_by!(
+      business: business,
+      user: user
+    )
+
+    return business_customer if business_customer.stripe_customer_id.present?
+
+    stripe_customer = Stripe::Customer.create(
+      {
+        email: user.email,
+        name: [user.first_name, user.last_name].compact.join(" "),
+        phone: user.phone_number,
+        metadata: {
+          user_id: user.id.to_s,
+          business_id: business.id.to_s
+        }
+      },
+      {
+        stripe_account: business.stripe_account_id
+      }
+    )
+
+    business_customer.update!(
+      stripe_customer_id: stripe_customer.id
+    )
+
+    business_customer
   end
 end

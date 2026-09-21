@@ -17,6 +17,11 @@ class User < ApplicationRecord
   has_many :bookings, dependent: :destroy
   has_one :customer_setting, dependent: :destroy
 
+  has_many :business_customers, dependent: :destroy
+
+  has_many :businesses,
+           through: :business_customers
+
   validates :terms_accepted,
             acceptance: {
               accept: true,

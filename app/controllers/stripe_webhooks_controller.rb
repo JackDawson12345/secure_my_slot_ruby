@@ -70,6 +70,14 @@ class StripeWebhooksController < ApplicationController
       payment_link_payment_intent_id: session.payment_intent
     )
 
+    PaymentLinksMailer
+      .customer_payment_link_received(booking, booking.payment_link_amount)
+      .deliver_later
+
+    PaymentLinksMailer
+      .business_payment_link_received(booking, booking.payment_link_amount)
+      .deliver_later
+
     Rails.logger.info(
       "Booking #{booking.id} payment updated. " \
         "Paid £#{payment_amount}. " \
