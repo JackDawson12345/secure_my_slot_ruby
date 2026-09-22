@@ -1,0 +1,278 @@
+<!-- New Social Media Post -->
+<main class="p-4 sm:p-6 lg:p-8">
+
+  <!-- Page heading -->
+  <section class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+
+    <div>
+      <div class="mb-2 flex items-center gap-2 text-sm text-slate-500">
+        <span>Social Media</span>
+        <i data-lucide="chevron-right" class="h-4 w-4"></i>
+        <span class="font-medium text-slate-700">Create Post</span>
+      </div>
+
+      <h2 class="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+        Create a Social Post
+      </h2>
+
+      <p class="mt-1 text-sm text-slate-500">
+        Choose a design to start creating your social media post.
+      </p>
+    </div>
+
+    <button
+      type="button"
+      class="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 sm:w-auto"
+    >
+      <i data-lucide="arrow-left" class="h-4 w-4"></i>
+      Back to posts
+    </button>
+
+  </section>
+
+
+  <!-- Steps -->
+  <section class="mt-8 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+
+    <div class="flex items-center">
+
+      <!-- Step 1 -->
+      <div class="flex items-center gap-3">
+
+        <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-indigo-600 text-sm font-bold text-white">
+          1
+        </div>
+
+        <div class="hidden sm:block">
+          <p class="text-sm font-semibold text-slate-900">
+            Choose a design
+          </p>
+
+          <p class="text-xs text-slate-500">
+            Select a post template
+          </p>
+        </div>
+
+      </div>
+
+
+      <div class="mx-4 h-px flex-1 bg-slate-200 sm:mx-6"></div>
+
+
+      <!-- Step 2 -->
+      <div class="flex items-center gap-3">
+
+        <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-slate-100 text-sm font-bold text-slate-400">
+          2
+        </div>
+
+        <div class="hidden sm:block">
+          <p class="text-sm font-semibold text-slate-400">
+            Edit your post
+          </p>
+
+          <p class="text-xs text-slate-400">
+            Personalise the content
+          </p>
+        </div>
+
+      </div>
+
+
+      <div class="mx-4 h-px flex-1 bg-slate-200 sm:mx-6"></div>
+
+
+      <!-- Step 3 -->
+      <div class="flex items-center gap-3">
+
+        <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-slate-100 text-sm font-bold text-slate-400">
+          3
+        </div>
+
+        <div class="hidden sm:block">
+          <p class="text-sm font-semibold text-slate-400">
+            Finish
+          </p>
+
+          <p class="text-xs text-slate-400">
+            Save your post
+          </p>
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- Templates Panel -->
+  <section class="mt-8 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+
+    <!-- Toolbar -->
+    <div class="border-b border-slate-200 p-5 sm:p-6">
+
+      <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+
+        <div>
+          <h3 class="text-lg font-bold text-slate-900">
+            Choose a Design
+          </h3>
+
+          <p class="mt-1 text-sm text-slate-500">
+            Select a template below to start creating your post.
+          </p>
+        </div>
+
+
+        <div class="flex flex-col gap-3 sm:flex-row">
+
+          <!-- Search -->
+          <div class="relative min-w-0 sm:w-64">
+
+            <i
+              data-lucide="search"
+              class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
+            ></i>
+
+            <input
+              type="search"
+              placeholder="Search designs..."
+              class="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-10 pr-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+            >
+
+          </div>
+
+
+          <!-- Category -->
+          <button
+            type="button"
+            class="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+          >
+            <i data-lucide="list-filter" class="h-4 w-4 text-slate-400"></i>
+            All designs
+            <i data-lucide="chevron-down" class="h-4 w-4 text-slate-400"></i>
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- Category Tabs -->
+    <div class="border-b border-slate-200 px-5 sm:px-6">
+
+      <div class="flex gap-6 overflow-x-auto">
+
+        <button
+          type="button"
+          class="whitespace-nowrap border-b-2 border-indigo-600 py-4 text-sm font-semibold text-indigo-600"
+        >
+          All
+        </button>
+
+        <button
+          type="button"
+          class="whitespace-nowrap border-b-2 border-transparent py-4 text-sm font-medium text-slate-500 transition hover:text-slate-900"
+        >
+          Appointments
+        </button>
+
+        <button
+          type="button"
+          class="whitespace-nowrap border-b-2 border-transparent py-4 text-sm font-medium text-slate-500 transition hover:text-slate-900"
+        >
+          Offers
+        </button>
+
+        <button
+          type="button"
+          class="whitespace-nowrap border-b-2 border-transparent py-4 text-sm font-medium text-slate-500 transition hover:text-slate-900"
+        >
+          Services
+        </button>
+
+        <button
+          type="button"
+          class="whitespace-nowrap border-b-2 border-transparent py-4 text-sm font-medium text-slate-500 transition hover:text-slate-900"
+        >
+          Reviews
+        </button>
+
+        <button
+          type="button"
+          class="whitespace-nowrap border-b-2 border-transparent py-4 text-sm font-medium text-slate-500 transition hover:text-slate-900"
+        >
+          General
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <!-- Template Grid -->
+    <div class="grid gap-6 p-5 sm:grid-cols-2 sm:p-6 lg:grid-cols-3 2xl:grid-cols-4">
+
+      <% templates.each do |template| %>
+
+        <%= link_to business_new_social_media_post_path(template_id: template.id),
+                    class: "group block overflow-hidden rounded-2xl border border-slate-200 bg-white text-left transition hover:-translate-y-0.5 hover:border-indigo-300 hover:shadow-lg" do %>
+
+          <!-- Template Preview -->
+          <div class="relative overflow-hidden bg-slate-100">
+            <%= render "business_portal/social_media/templates/#{template.template_key}",
+                       post: OpenStruct.new(
+                         content: template.fields.transform_values { |field| field["default"] },
+                         settings: template.settings
+                       ) %>
+
+
+            <!-- Hover Overlay -->
+            <div class="absolute inset-0 flex items-center justify-center bg-slate-900/60 opacity-0 transition group-hover:opacity-100">
+
+              <span class="inline-flex items-center gap-2 rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-slate-900 shadow-lg">
+                Use this design
+                <i data-lucide="arrow-right" class="h-4 w-4"></i>
+              </span>
+
+            </div>
+
+          </div>
+
+
+          <!-- Template Details -->
+          <div class="p-4">
+
+            <div class="flex items-start justify-between gap-3">
+
+              <div>
+                <p class="font-bold text-slate-900">
+                  <%= template.name %>
+                </p>
+
+                <p class="mt-1 text-xs capitalize text-slate-500">
+                  <%= template.category %>
+                </p>
+              </div>
+
+
+              <div class="rounded-lg bg-indigo-50 p-2 text-indigo-600">
+                <i data-lucide="layout-template" class="h-4 w-4"></i>
+              </div>
+
+            </div>
+
+          </div>
+
+        <% end %>
+
+      <% end %>
+
+    </div>
+
+  </section>
+
+</main>

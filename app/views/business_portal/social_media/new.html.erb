@@ -1,0 +1,12 @@
+<% if @social_post_template.present? %>
+
+  <%= render "editor",
+             social_post: @social_post,
+             template: @social_post_template %>
+
+<% else %>
+
+  <%= render "template_selector",
+             templates: @social_post_templates %>
+
+<% end %>

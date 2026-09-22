@@ -1,0 +1,19 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  business: one
+  social_post_template: one
+  title: MyString
+  status: MyString
+  content: 
+  settings: 
+  caption: MyText
+
+two:
+  business: two
+  social_post_template: two
+  title: MyString
+  status: MyString
+  content: 
+  settings: 
+  caption: MyText

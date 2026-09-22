@@ -12,6 +12,8 @@ class Business < ApplicationRecord
            through: :business_customers,
            source: :user
 
+  has_many :social_posts, dependent: :destroy
+
   has_one :birthday_reminder_message,
           dependent: :destroy
   has_many :agreements, dependent: :destroy

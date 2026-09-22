@@ -14,6 +14,10 @@ import SignatureController from "controllers/signature_controller"
 import SignatureFormController from "controllers/signature_form_controller"
 import ImageLightboxController from "controllers/image_lightbox_controller"
 import DropdownController from "controllers/dropdown_controller"
+import SocialPostEditorController from "controllers/social_post_editor_controller"
+import SocialPostTabsController from "controllers/social_post_tabs_controller"
+import SocialCaptionController from "controllers/social_caption_controller"
+import SocialDownloadController from "controllers/social_download_controller"
 
 application.register("opening-hours", OpeningHoursController)
 application.register("nested-form", NestedFormController)
@@ -29,3 +33,7 @@ application.register("signature", SignatureController)
 application.register("signature-form", SignatureFormController)
 application.register("image-lightbox", ImageLightboxController)
 application.register("dropdown", DropdownController)
+application.register("social-post-editor", SocialPostEditorController)
+application.register("social-post-tabs", SocialPostTabsController)
+application.register("social-caption", SocialCaptionController)
+application.register("social-download", SocialDownloadController)

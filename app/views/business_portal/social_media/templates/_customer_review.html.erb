@@ -1,0 +1,259 @@
+<%
+  content = post.content || {}
+  settings = post.settings || {}
+
+  business_name = content["business_name"].presence || "YOUR BUSINESS"
+  small_heading = content["small_heading"].presence || "CUSTOMER REVIEW"
+  review = content["review"].presence || "Fantastic service from start to finish. I couldn't be happier with the experience."
+  customer_name = content["customer_name"].presence || "Happy Customer"
+  star_rating = (content["star_rating"].presence || 5).to_i
+  website = content["website"].presence || "yourbusiness.co.uk"
+
+  primary_colour = settings["primary_colour"].presence || "#f59e0b"
+  background_colour = settings["background_colour"].presence || "#fffbeb"
+%>
+
+<!--
+  Social Post Template
+  Customer Review
+
+  Always rendered as a square.
+-->
+<div
+  class="relative aspect-square w-full overflow-hidden [container-type:inline-size]"
+  style="background-color: <%= background_colour %>;"
+>
+
+  <!-- ========================================= -->
+  <!-- BACKGROUND DECORATION -->
+  <!-- ========================================= -->
+
+  <!-- Top right circle -->
+  <div
+    class="pointer-events-none absolute -right-[15%] -top-[15%] h-[42%] w-[42%] rounded-full opacity-[0.08]"
+    style="background-color: <%= primary_colour %>;"
+  ></div>
+
+  <!-- Bottom left circle -->
+  <div
+    class="pointer-events-none absolute -bottom-[18%] -left-[18%] h-[45%] w-[45%] rounded-full opacity-[0.08]"
+    style="background-color: <%= primary_colour %>;"
+  ></div>
+
+  <!-- Decorative quote -->
+  <div
+    class="pointer-events-none absolute right-[6%] top-[22%] font-black leading-none opacity-[0.08]"
+    style="
+    color: <%= primary_colour %>;
+      font-size: 30cqw;
+    "
+  >
+    “
+  </div>
+
+
+  <!-- ========================================= -->
+  <!-- CONTENT -->
+  <!-- ========================================= -->
+
+  <div class="relative flex h-full flex-col p-[7.5%]">
+
+
+    <!-- ========================================= -->
+    <!-- HEADER -->
+    <!-- ========================================= -->
+
+    <div class="flex items-center justify-between gap-[4%]">
+
+      <!-- Business -->
+      <div class="flex min-w-0 items-center gap-[3cqw]">
+
+        <!-- Logo -->
+        <div
+          class="flex aspect-square w-[9.5cqw] shrink-0 items-center justify-center overflow-hidden rounded-[2cqw] text-white"
+          style="background-color: <%= primary_colour %>;"
+        >
+
+          <% if post.respond_to?(:logo) && post.logo.attached? %>
+
+            <%= image_tag post.logo,
+                          class: "h-full w-full object-contain p-[14%]",
+                          alt: business_name %>
+
+          <% else %>
+
+            <i
+              data-lucide="message-square-quote"
+              class="h-[4.5cqw] w-[4.5cqw]"
+            ></i>
+
+          <% end %>
+
+        </div>
+
+
+        <div class="min-w-0">
+
+          <p
+            class="truncate font-bold uppercase leading-none tracking-[0.12em] text-slate-900"
+            style="font-size: 3cqw;"
+          >
+            <%= business_name %>
+          </p>
+
+          <p
+            class="mt-[0.7cqw] font-medium text-slate-500"
+            style="font-size: 2.2cqw;"
+          >
+            Customer feedback
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <!-- Review Badge -->
+      <div
+        class="shrink-0 rounded-full px-[2.7cqw] py-[1.4cqw] font-bold uppercase tracking-[0.12em]"
+        style="
+        background-color: <%= primary_colour %>15;
+          color: <%= primary_colour %>;
+          font-size: 1.8cqw;
+        "
+      >
+        Review
+      </div>
+
+    </div>
+
+
+
+    <!-- ========================================= -->
+    <!-- REVIEW -->
+    <!-- ========================================= -->
+
+    <div class="my-auto">
+
+      <!-- Small heading -->
+      <div class="flex items-center gap-[2.5%]">
+
+        <span
+          class="block h-[0.5cqw] w-[7%] rounded-full"
+          style="background-color: <%= primary_colour %>;"
+        ></span>
+
+        <p
+          class="font-extrabold uppercase leading-none tracking-[0.2em]"
+          style="
+          color: <%= primary_colour %>;
+            font-size: 2.25cqw;
+          "
+        >
+          <%= small_heading %>
+        </p>
+
+      </div>
+
+
+      <!-- Stars -->
+      <div class="mt-[5%] flex items-center gap-[1.1cqw]">
+
+        <% 5.times do |index| %>
+
+          <svg
+            viewBox="0 0 24 24"
+            class="h-[4.2cqw] w-[4.2cqw]"
+            style="
+            fill: <%= index < star_rating ? primary_colour : '#e2e8f0' %>;
+              color: <%= index < star_rating ? primary_colour : '#e2e8f0' %>;
+            "
+            aria-hidden="true"
+          >
+            <path
+              d="M12 2.5l2.92 5.92 6.53.95-4.72 4.6 1.11 6.5L12 17.4l-5.84 3.07 1.11-6.5-4.72-4.6 6.53-.95L12 2.5z"
+              />
+          </svg>
+
+        <% end %>
+
+      </div>
+
+
+      <!-- Review text -->
+      <blockquote
+        class="mt-[5%] max-w-[86%] font-bold leading-[1.28] tracking-[-0.035em] text-slate-900"
+        style="font-size: 5.6cqw;"
+      >
+        “<%= review %>”
+      </blockquote>
+
+    </div>
+
+
+
+    <!-- ========================================= -->
+    <!-- FOOTER -->
+    <!-- ========================================= -->
+
+    <div class="flex items-end justify-between gap-[5%]">
+
+      <!-- Customer -->
+      <div class="flex min-w-0 items-center gap-[2.5cqw]">
+
+        <div
+          class="flex aspect-square w-[8cqw] shrink-0 items-center justify-center rounded-full font-extrabold text-white"
+          style="
+          background-color: <%= primary_colour %>;
+            font-size: 2.6cqw;
+          "
+        >
+          <%= customer_name.first&.upcase %>
+        </div>
+
+
+        <div class="min-w-0">
+
+          <p
+            class="truncate font-bold text-slate-900"
+            style="font-size: 2.7cqw;"
+          >
+            <%= customer_name %>
+          </p>
+
+          <p
+            class="mt-[0.4cqw] font-medium text-slate-500"
+            style="font-size: 2cqw;"
+          >
+            Verified customer
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <!-- Website -->
+      <div class="min-w-0 max-w-[38%] text-right">
+
+        <p
+          class="uppercase tracking-[0.14em] text-slate-400"
+          style="font-size: 1.6cqw;"
+        >
+          Find us online
+        </p>
+
+        <p
+          class="mt-[0.5cqw] truncate font-bold text-slate-900"
+          style="font-size: 2.2cqw;"
+        >
+          <%= website %>
+        </p>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

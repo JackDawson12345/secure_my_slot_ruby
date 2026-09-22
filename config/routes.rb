@@ -630,6 +630,46 @@ Rails.application.routes.draw do
     get "/dashboard/reports/website-reports",
         to: "reports#website",
         as: :website_reports
+
+    get "/dashboard/social-media",
+        to: "social_media#index",
+        as: :social_media
+
+    get "/dashboard/social-media/new",
+        to: "social_media#new",
+        as: :new_social_media_post
+
+    post "/dashboard/social-media",
+         to: "social_media#create",
+         as: :create_social_media_post
+
+    get "/dashboard/social-media/:id/edit",
+        to: "social_media#edit",
+        as: :edit_social_media_post
+
+    get "/dashboard/social-media/:id",
+        to: "social_media#show",
+        as: :show_social_media_post
+
+    post "/dashboard/social-media/:id/generate-caption",
+         to: "social_media#generate_caption",
+         as: :generate_social_media_caption
+
+    post "/dashboard/social-media/:id/generate-hashtags",
+         to: "social_media#generate_hashtags",
+         as: :generate_social_media_hashtags
+
+    patch "/dashboard/social-media/:id",
+          to: "social_media#update",
+          as: :update_social_media_post
+
+    patch "/dashboard/social-media/:id/duplicate",
+          to: "social_media#duplicate",
+          as: :duplicate_social_media_post
+
+
+
+
   end
 
   # Admin
