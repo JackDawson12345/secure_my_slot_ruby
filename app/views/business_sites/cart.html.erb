@@ -1,0 +1,331 @@
+<%= render 'business_sites/navbar' %>
+
+
+<main id="top">
+
+  <!-- Cart Header -->
+  <section class="<%= website_colour_class("bg", 50) %> py-20 sm:py-24">
+
+    <div class="mx-auto max-w-7xl px-5 lg:px-8">
+
+      <div class="max-w-3xl">
+
+        <p class="text-sm font-bold uppercase tracking-[0.2em] <%= website_colour_class("text", 600) %>">
+          Shopping basket
+        </p>
+
+        <h1 class="mt-3 text-4xl font-black tracking-tight <%= website_colour_class("text", 950) %> sm:text-6xl">
+          Your cart
+        </h1>
+
+        <p class="mt-5 text-lg leading-8 <%= website_colour_class("text", 600) %>">
+          Review your selected products before continuing to checkout.
+        </p>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+
+  <!-- Cart Content -->
+  <section class="py-16 sm:py-20">
+
+    <div class="mx-auto max-w-7xl px-5 lg:px-8">
+
+
+      <% if @cart_items.any? %>
+
+
+        <div class="grid gap-8 lg:grid-cols-[1fr_380px]">
+
+
+          <!-- Items -->
+          <div class="space-y-6">
+
+
+            <div class="rounded-3xl border <%= website_colour_class("border", 200) %> bg-white p-6 shadow-card sm:p-8">
+
+
+              <h2 class="text-2xl font-black <%= website_colour_class("text", 950) %>">
+                Cart items
+              </h2>
+
+
+              <div class="mt-8 space-y-5">
+
+
+                <%= form_with url: update_cart_path,
+                              method: :patch,
+                              local: true do %>
+
+
+                  <% @cart_items.each do |item| %>
+
+                    <% product = item[:product] %>
+
+
+                    <article class="flex gap-5 rounded-2xl border p-5">
+
+
+                      <div class="h-24 w-24 overflow-hidden rounded-xl">
+
+                        <% if product.featured_image.attached? %>
+
+                          <%= image_tag product.featured_image,
+                                        class:"h-full w-full object-cover" %>
+
+                        <% end %>
+
+                      </div>
+
+
+                      <div class="flex flex-1 justify-between">
+
+
+                        <div>
+
+                          <h3 class="text-lg font-black">
+                            <%= product.name %>
+                          </h3>
+
+
+                          <div data-controller="cart-quantity"
+                               class="mt-3 flex w-fit items-center overflow-hidden rounded-xl border <%= website_colour_class("border", 300) %>">
+
+
+                            <button type="button"
+                                    data-action="click->cart-quantity#decrease"
+                                    class="px-4 py-2 font-bold hover:bg-slate-50">
+                              -
+                            </button>
+
+
+                            <input
+                              type="number"
+                              min="1"
+                              name="quantities[<%= product.id %>]"
+                              value="<%= item[:quantity] %>"
+                              data-cart-quantity-target="input"
+                              class="w-14 border-0 text-center font-bold focus:ring-0 bg-transparent"
+                              />
+
+
+                            <button type="button"
+                                    data-action="click->cart-quantity#increase"
+                                    class="px-4 py-2 font-bold hover:bg-slate-50">
+                              +
+                            </button>
+
+
+                          </div>
+
+
+                        </div>
+
+
+
+                        <div class="text-right">
+
+
+                          <%
+                            regular_price = product.regular_price
+                            sale_price = product.sale_price
+                            quantity = item[:quantity]
+                          %>
+
+
+                          <% if sale_price.present? %>
+
+                            <p class="text-sm text-slate-400 line-through">
+                              £<%= number_with_precision(regular_price * quantity, precision:2) %>
+                            </p>
+
+
+                            <p class="text-xl font-black">
+
+                              £<%= number_with_precision(sale_price * quantity, precision:2) %>
+
+                            </p>
+
+
+                          <% else %>
+
+
+                            <p class="text-xl font-black">
+
+                              £<%= number_with_precision(regular_price * quantity, precision:2) %>
+
+                            </p>
+
+
+                          <% end %>
+
+
+
+                          <%= link_to "Remove",
+                                      remove_from_cart_path(product.id),
+                                      data: {
+                                        turbo_method: :delete,
+                                        turbo_confirm: "Remove this item?"
+                                      },
+                                      class:"mt-2 text-red-500 font-bold" %>
+
+
+                        </div>
+
+
+                      </div>
+
+
+                    </article>
+
+
+                  <% end %>
+
+
+                  <button
+                    class="mt-6 rounded-xl <%= website_colour_class("bg",500) %> px-5 py-3 font-bold text-white"
+                  >
+
+                    Update basket
+
+                  </button>
+
+
+                <% end %>
+
+
+              </div>
+
+
+            </div>
+
+
+            <%= link_to business_site_shop_path,
+                        class:"inline-flex items-center gap-2 rounded-2xl border px-6 py-4 font-bold" do %>
+
+              <i data-lucide="arrow-left" class="h-5 w-5"></i>
+
+              Continue shopping
+
+            <% end %>
+
+
+          </div>
+
+
+
+
+          <!-- Summary -->
+          <aside>
+
+            <div class="rounded-3xl border bg-white p-6 shadow-soft lg:sticky lg:top-28">
+
+
+              <h2 class="text-2xl font-black">
+                Order summary
+              </h2>
+
+
+              <div class="mt-6 flex justify-between border-b pb-4">
+
+              <span class="text-sm font-semibold text-slate-500">
+                Subtotal
+              </span>
+
+                <span class="font-bold">
+                  £<%= number_with_precision(@subtotal, precision:2) %>
+                </span>
+
+              </div>
+
+
+              <div class="mt-4 flex justify-between border-b pb-4">
+
+              <span class="text-sm font-semibold text-slate-500">
+                Delivery
+              </span>
+
+                <span class="font-bold">
+                £0.00
+              </span>
+
+              </div>
+
+
+              <div class="mt-5 flex justify-between">
+
+              <span class="text-lg font-black">
+                Total
+              </span>
+
+                <span class="text-3xl font-black">
+                  £<%= number_with_precision(@subtotal, precision:2) %>
+                </span>
+
+              </div>
+
+
+              <%= link_to "Proceed to checkout",
+                          business_site_checkout_path,
+                          class:"mt-8 block w-full rounded-2xl #{website_colour_class("bg",500)} px-5 py-4 text-center font-black text-white" %>
+
+
+            </div>
+
+          </aside>
+
+
+        </div>
+
+
+      <% else %>
+
+
+        <!-- Empty Cart -->
+
+
+        <div class="mx-auto max-w-2xl rounded-3xl border <%= website_colour_class("border",200) %> bg-white p-10 text-center shadow-card">
+
+
+          <div class="mx-auto flex h-20 w-20 items-center justify-center rounded-full <%= website_colour_class("bg",50) %> <%= website_colour_class("text",600) %>">
+
+            <i data-lucide="shopping-cart" class="h-10 w-10"></i>
+
+          </div>
+
+
+          <h2 class="mt-6 text-3xl font-black <%= website_colour_class("text",950) %>">
+            Your basket is empty
+          </h2>
+
+
+          <p class="mt-3 leading-7 <%= website_colour_class("text",600) %>">
+            You haven't added any products yet. Browse our shop and add something to your basket.
+          </p>
+
+
+          <%= link_to "Continue shopping",
+                      business_site_shop_path,
+                      class:"mt-8 inline-flex rounded-2xl #{website_colour_class("bg",500)} px-6 py-4 font-bold text-white" %>
+
+
+        </div>
+
+
+      <% end %>
+
+
+    </div>
+
+
+  </section>
+
+
+</main>
+
+
+<%= render 'business_sites/footer' %>

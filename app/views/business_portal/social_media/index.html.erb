@@ -23,7 +23,7 @@
 
 
   <!-- Statistics -->
-  <section class="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+  <section class="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-2">
 
     <!-- Total Posts -->
     <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
@@ -35,7 +35,7 @@
           </p>
 
           <p class="mt-2 text-3xl font-bold tracking-tight text-slate-900">
-            24
+            <%= @social_posts.count %>
           </p>
         </div>
 
@@ -51,58 +51,6 @@
     </article>
 
 
-    <!-- Drafts -->
-    <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-      <div class="flex items-start justify-between">
-
-        <div>
-          <p class="text-sm font-medium text-slate-500">
-            Drafts
-          </p>
-
-          <p class="mt-2 text-3xl font-bold tracking-tight text-slate-900">
-            3
-          </p>
-        </div>
-
-        <div class="rounded-xl bg-amber-50 p-3 text-amber-600">
-          <i data-lucide="file-pen-line" class="h-5 w-5"></i>
-        </div>
-
-      </div>
-
-      <p class="mt-4 text-sm text-slate-500">
-        Posts you're still working on
-      </p>
-    </article>
-
-
-    <!-- Completed -->
-    <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-      <div class="flex items-start justify-between">
-
-        <div>
-          <p class="text-sm font-medium text-slate-500">
-            Completed
-          </p>
-
-          <p class="mt-2 text-3xl font-bold tracking-tight text-slate-900">
-            21
-          </p>
-        </div>
-
-        <div class="rounded-xl bg-emerald-50 p-3 text-emerald-600">
-          <i data-lucide="circle-check" class="h-5 w-5"></i>
-        </div>
-
-      </div>
-
-      <p class="mt-4 text-sm text-slate-500">
-        Posts ready to use
-      </p>
-    </article>
-
-
     <!-- This Month -->
     <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
       <div class="flex items-start justify-between">
@@ -113,7 +61,7 @@
           </p>
 
           <p class="mt-2 text-3xl font-bold tracking-tight text-slate-900">
-            8
+            <%= @posts_this_month %>
           </p>
         </div>
 
@@ -124,7 +72,7 @@
       </div>
 
       <p class="mt-4 text-sm text-slate-500">
-        Created during September
+        Created during <%= Time.current.strftime("%B") %>
       </p>
     </article>
 

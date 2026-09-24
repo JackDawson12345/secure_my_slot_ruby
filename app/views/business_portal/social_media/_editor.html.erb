@@ -470,7 +470,10 @@
                                              rating,
                                              value.to_i == rating,
                                              id: "social_post_content_#{key}_#{rating}",
-                                             class: "peer sr-only" %>
+                                             class: "peer sr-only",
+                                             data: {
+                                               action: "change->social-post-editor#updateRating"
+                                             } %>
 
 
                         <div class="flex items-center justify-center gap-1 rounded-xl border border-slate-200 bg-white px-2 py-3 text-slate-400 transition hover:border-amber-300 hover:bg-amber-50 peer-checked:border-amber-300 peer-checked:bg-amber-50 peer-checked:text-amber-500">

@@ -1,0 +1,256 @@
+<%= render 'business_sites/navbar' %>
+
+
+<main id="top">
+  <%= form_with url: create_order_path,
+                method: :post,
+                data: { turbo: false } do %>
+    <!-- Checkout Header -->
+    <section class="<%= website_colour_class("bg", 50) %> py-20 sm:py-24">
+      <div class="mx-auto max-w-7xl px-5 lg:px-8">
+        <div class="max-w-3xl">
+          <p class="text-sm font-bold uppercase tracking-[0.2em] <%= website_colour_class("text", 600) %>">
+            Checkout
+          </p>
+          <h1 class="mt-3 text-4xl font-black tracking-tight <%= website_colour_class("text", 950) %> sm:text-6xl">
+            Complete your order
+          </h1>
+          <p class="mt-5 text-lg leading-8 <%= website_colour_class("text", 600) %>">
+            Enter your details below and review your order before making payment.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Checkout Content -->
+    <section class="py-16 sm:py-20">
+      <div class="mx-auto grid max-w-7xl gap-8 px-5 lg:grid-cols-[1fr_380px] lg:px-8">
+        <!-- Customer Details -->
+        <div class="space-y-8">
+          <section class="rounded-3xl border <%= website_colour_class("border", 200) %> bg-white p-6 shadow-card sm:p-8">
+            <div>
+              <p class="text-sm font-bold uppercase tracking-[0.2em] <%= website_colour_class("text", 600) %>">
+                Your details
+              </p>
+              <h2 class="mt-2 text-2xl font-black <%= website_colour_class("text", 950) %>">
+                Contact information
+              </h2>
+            </div>
+            <div class="mt-7 grid gap-5 sm:grid-cols-2">
+              <input
+                name="first_name"
+                type="text"
+                placeholder="First name *"
+                required
+                class="rounded-2xl border <%= website_colour_class("border", 300) %> px-4 py-3"
+              >
+              <input
+                name="last_name"
+                type="text"
+                placeholder="Last name *"
+                required
+                class="rounded-2xl border <%= website_colour_class("border", 300) %> px-4 py-3"
+              >
+              <input
+                name="email"
+                type="email"
+                placeholder="Email address *"
+                required
+                class="rounded-2xl border <%= website_colour_class("border", 300) %> px-4 py-3"
+              >
+              <input
+                name="phone_number"
+                type="tel"
+                placeholder="Phone number *"
+                required
+                class="rounded-2xl border <%= website_colour_class("border", 300) %> px-4 py-3"
+              >
+            </div>
+          </section>
+          <!-- Billing Details -->
+          <section class="rounded-3xl border <%= website_colour_class("border", 200) %> bg-white p-6 shadow-card sm:p-8">
+            <div>
+              <p class="text-sm font-bold uppercase tracking-[0.2em] <%= website_colour_class("text", 600) %>">
+                Billing Details
+              </p>
+              <h2 class="mt-2 text-2xl font-black <%= website_colour_class("text", 950) %>">
+                Billing address
+              </h2>
+            </div>
+            <div class="mt-7 space-y-5">
+              <input
+                name="address_line_1"
+                type="text"
+                placeholder="Address line 1 *"
+                required
+                class="w-full rounded-2xl border <%= website_colour_class("border", 300) %> px-4 py-3"
+              >
+              <input
+                name="address_line_2"
+                type="text"
+                placeholder="Address line 2"
+                class="w-full rounded-2xl border <%= website_colour_class("border", 300) %> px-4 py-3"
+
+              >
+              <div class="grid gap-5 sm:grid-cols-2">
+                <input
+                  name="town"
+                  type="text"
+                  placeholder="Town / City *"
+                  required
+                  class="rounded-2xl border <%= website_colour_class("border", 300) %> px-4 py-3"
+                >
+                <input
+                  name="postcode"
+                  type="text"
+                  placeholder="Postcode *"
+                  required
+                  class="rounded-2xl border <%= website_colour_class("border", 300) %> px-4 py-3"
+                >
+              </div>
+            </div>
+          </section>
+
+          <!-- Payment -->
+          <section class="rounded-3xl border <%= website_colour_class("border", 200) %> bg-white p-6 shadow-card sm:p-8">
+            <div>
+              <p class="text-sm font-bold uppercase tracking-[0.2em] <%= website_colour_class("text", 600) %>">
+                Payment
+              </p>
+              <h2 class="mt-2 text-2xl font-black <%= website_colour_class("text", 950) %>">
+                Payment details
+              </h2>
+            </div>
+            <div class="mt-7 space-y-4">
+              <!-- Cash on Collection -->
+              <label class="flex cursor-pointer items-start gap-4 rounded-2xl border <%= website_colour_class("border", 300) %> bg-white p-5 transition hover:bg-slate-50">
+                <input
+                  type="radio"
+                  name="payment_method"
+                  value="cash"
+                  checked
+                  class="mt-1 h-5 w-5"
+                >
+                <div>
+                  <div class="flex items-center gap-2">
+                    <i data-lucide="banknote" class="h-5 w-5 <%= website_colour_class("text", 600) %>"></i>
+                    <p class="font-black <%= website_colour_class("text", 900) %>">
+                      Cash on collection
+                    </p>
+                  </div>
+                  <p class="mt-1 text-sm <%= website_colour_class("text", 500) %>">
+                    Pay when you collect your order from our business.
+                  </p>
+                </div>
+              </label>
+              <% if @business.stripe_ready? %>
+                <!-- Stripe -->
+                <label class="flex cursor-pointer items-start gap-4 rounded-2xl border <%= website_colour_class("border", 300) %> bg-white p-5 transition hover:bg-slate-50">
+                  <input
+                    type="radio"
+                    name="payment_method"
+                    value="stripe"
+                    class="mt-1 h-5 w-5"
+                  >
+                  <div>
+                    <div class="flex items-center gap-2">
+                      <i data-lucide="credit-card" class="h-5 w-5 <%= website_colour_class("text", 600) %>"></i>
+                      <p class="font-black <%= website_colour_class("text", 900) %>">
+                        Pay securely online
+                      </p>
+                    </div>
+                    <p class="mt-1 text-sm <%= website_colour_class("text", 500) %>">
+                      Pay securely using your debit or credit card through Stripe.
+                    </p>
+                  </div>
+                </label>
+              <% end %>
+            </div>
+          </section>
+        </div>
+
+        <!-- Order Summary -->
+        <aside>
+          <div class="rounded-3xl border <%= website_colour_class("border", 200) %> bg-white p-6 shadow-soft lg:sticky lg:top-28">
+            <h2 class="text-2xl font-black <%= website_colour_class("text", 950) %>">
+              Your order
+            </h2>
+            <div class="mt-6 space-y-5">
+              <% @cart_items.each do |item| %>
+                <% product = item[:product] %>
+                <div class="flex items-center gap-4">
+                  <div class="flex h-16 w-16 items-center justify-center overflow-hidden rounded-xl <%= website_colour_class("bg", 50) %>">
+                    <% if product.featured_image.attached? %>
+                      <%= image_tag product.featured_image,
+                                    class:"h-full w-full object-cover" %>
+                    <% else %>
+                      <i data-lucide="package" class="h-6 w-6 <%= website_colour_class("text", 600) %>"></i>
+                    <% end %>
+                  </div>
+                  <div class="flex-1">
+                    <p class="font-bold <%= website_colour_class("text", 900) %>">
+                      <%= product.name %>
+                    </p>
+                    <p class="text-sm <%= website_colour_class("text", 500) %>">
+                      Qty <%= item[:quantity] %>
+                    </p>
+                  </div>
+                  <div class="text-right">
+                    <% if product.sale_price.present? %>
+                      <p class="text-sm text-slate-400 line-through">
+                        £<%= number_with_precision(product.regular_price * item[:quantity], precision:2) %>
+                      </p>
+                      <p class="font-black">
+                        £<%= number_with_precision(product.sale_price * item[:quantity], precision:2) %>
+                      </p>
+                    <% else %>
+                      <p class="font-black">
+                        £<%= number_with_precision(product.regular_price * item[:quantity], precision:2) %>
+                      </p>
+                    <% end %>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+            <div class="mt-7 space-y-4 border-t border-slate-100 pt-5">
+              <div class="flex justify-between">
+                <span class="text-sm font-semibold text-slate-500">
+                  Subtotal
+                </span>
+                <span class="font-bold">
+                  £<%= number_with_precision(@subtotal, precision:2) %>
+                </span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-sm font-semibold text-slate-500">
+                  Delivery
+                </span>
+                <span class="font-bold">
+                  £0.00
+                </span>
+              </div>
+              <div class="flex justify-between pt-3">
+                <span class="text-lg font-black">
+                  Total
+                </span>
+                <span class="text-3xl font-black <%= website_colour_class("text", 950) %>">
+                  £<%= number_with_precision(@subtotal, precision:2) %>
+                </span>
+              </div>
+            </div>
+            <button type="submit"
+                    class="mt-8 w-full rounded-2xl <%= website_colour_class("bg", 500) %> px-5 py-4 font-black text-white transition hover:<%= website_colour_class("bg", 600) %>">
+              Place order
+            </button>
+            <div class="mt-5 flex items-center justify-center gap-2 text-xs font-semibold text-slate-500">
+              <i data-lucide="lock" class="h-4 w-4"></i>
+              Secure checkout
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+  <% end %>
+</main>
+
+<%= render 'business_sites/footer' %>

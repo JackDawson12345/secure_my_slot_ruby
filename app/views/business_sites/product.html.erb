@@ -1,0 +1,343 @@
+<%= render 'business_sites/navbar' %>
+
+
+<main id="top">
+
+
+  <!-- Product Header -->
+  <section class="<%= website_colour_class("bg", 50) %> py-10">
+
+
+    <div class="mx-auto max-w-7xl px-5 lg:px-8">
+
+
+      <div class="text-sm font-semibold <%= website_colour_class("text", 600) %>">
+
+        Shop / <%= @product.name %>
+
+      </div>
+
+
+    </div>
+
+
+  </section>
+
+
+
+
+
+  <!-- Product Detail -->
+  <section class="py-16 sm:py-20">
+    <div class="mx-auto grid max-w-7xl gap-10 px-5 lg:grid-cols-2 lg:px-8">
+
+      <!-- Product Images -->
+      <div>
+        <div class="overflow-hidden rounded-[2rem] border <%= website_colour_class("border", 200) %> bg-white shadow-card">
+          <% if @product.featured_image.attached? %>
+            <%= image_tag @product.featured_image,
+                          class:"flex aspect-square items-center justify-center"%>
+          <% else %>
+            <div class="flex aspect-square items-center justify-center <%= website_colour_class("bg", 50) %> <%= website_colour_class("text", 600) %>">
+              <i data-lucide="package" class="h-24 w-24"></i>
+            </div>
+          <% end %>
+        </div>
+
+        <!-- Thumbnail Images -->
+        <div class="mt-5 grid grid-cols-4 gap-4">
+          <% @product.product_images.order(position: :asc).each do |gallery| %>
+            <% next unless gallery.image.attached? %>
+            <%= image_tag gallery.image,
+                          class:"aspect-square rounded-2xl border bg-white" %>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Product Information -->
+      <div class="lg:pt-5">
+        <span class="inline-flex rounded-full <%= website_colour_class("bg", 100) %> px-3 py-1 text-xs font-bold <%= website_colour_class("text", 700) %>">
+          In stock
+        </span>
+
+        <h1 class="mt-5 text-4xl font-black tracking-tight <%= website_colour_class("text", 950) %> sm:text-5xl">
+          <%= @product.name %>
+        </h1>
+
+        <div class="mt-5 flex items-center gap-4">
+          <p class="text-3xl font-black <%= website_colour_class("text", 950) %>">
+            <% if @product.sale_price.present? %>
+              <%= number_to_currency(@product.sale_price, unit: "£") %>
+            <% else %>
+              <%= number_to_currency(@product.regular_price, unit: "£") %>
+            <% end %>
+          </p>
+          <% if @product.sale_price.present? %>
+            <p class="text-lg font-bold text-slate-400 line-through">
+              <%= number_to_currency(@product.regular_price, unit: "£") %>
+            </p>
+          <% end %>
+        </div>
+
+        <p class="mt-6 text-lg leading-8 <%= website_colour_class("text", 600) %>">
+          <%= @product.short_description %>
+        </p>
+
+        <%= form_with url: add_to_cart_path,
+                      method: :post,
+                      local: true do %>
+        <!-- Product Options -->
+          <div class="mt-8 space-y-5">
+            <div data-controller="quantity">
+
+              <label class="mb-2 block text-sm font-bold <%= website_colour_class("text", 900) %>">
+                Quantity
+              </label>
+
+
+              <div class="flex w-fit items-center overflow-hidden rounded-2xl border <%= website_colour_class("border", 300) %>">
+
+
+                <button type="button"
+                        data-action="click->quantity#decrease"
+                        class="px-4 py-3 font-bold hover:bg-slate-50">
+                  -
+                </button>
+
+
+                <input type="number"
+                       value="1"
+                       min="1"
+                       name="quantity"
+                       data-quantity-target="input"
+                       data-action="input->quantity#update"
+                       class="w-16 border-0 text-center font-bold focus:ring-0 bg-transparent">
+
+
+                <button type="button"
+                        data-action="click->quantity#increase"
+                        class="px-4 py-3 font-bold hover:bg-slate-50">
+                  +
+                </button>
+
+
+              </div>
+
+            </div>
+          </div>
+
+        <!-- Add To Cart -->
+          <div class="mt-8 flex flex-col gap-4 sm:flex-row">
+              <input type="hidden"
+                     name="product_id"
+                     value="<%= @product.id %>">
+              <button
+                class="flex flex-1 items-center justify-center gap-2 rounded-2xl <%= website_colour_class("bg", 500) %> px-6 py-4 font-black text-white transition hover:<%= website_colour_class("bg", 600) %>"
+              >
+                <i data-lucide="shopping-cart" class="h-5 w-5"></i>
+                Add to basket
+              </button>
+          </div>
+        <% end %>
+
+        <!-- Product Info -->
+        <div class="mt-10 space-y-4 border-t border-slate-100 pt-8">
+
+
+          <div class="flex justify-between">
+
+
+            <span class="font-semibold text-slate-500">
+
+              SKU
+
+            </span>
+
+
+            <span class="font-bold">
+
+              PRODUCT-001
+
+            </span>
+
+
+          </div>
+
+
+
+          <div class="flex justify-between">
+
+
+            <span class="font-semibold text-slate-500">
+
+              Category
+
+            </span>
+
+
+            <span class="font-bold">
+
+              Products
+
+            </span>
+
+
+          </div>
+
+
+
+          <div class="flex justify-between">
+
+
+            <span class="font-semibold text-slate-500">
+
+              Delivery
+
+            </span>
+
+
+            <span class="font-bold">
+
+              Available
+
+            </span>
+
+
+          </div>
+
+
+        </div>
+
+
+
+      </div>
+
+
+
+    </div>
+
+
+  </section>
+
+
+
+
+
+
+
+
+  <!-- Description Tab -->
+  <section class="<%= website_colour_class("bg", 50) %> py-16 sm:py-20">
+    <div class="mx-auto max-w-7xl px-5 lg:px-8">
+      <div class="rounded-3xl border <%= website_colour_class("border", 200) %> bg-white p-6 shadow-card sm:p-8">
+        <div class="flex flex-wrap gap-8 border-b border-slate-100 pb-5">
+          <button class="font-black <%= website_colour_class("text", 600) %>">
+            Description
+          </button>
+        </div>
+        <div class="mt-8">
+          <h2 class="text-2xl font-black <%= website_colour_class("text", 950) %>">
+            Product Description
+          </h2>
+          <p class="mt-4 leading-8 <%= website_colour_class("text", 600) %>">
+            <%= @product.description %>
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+
+
+
+
+
+
+  <!-- Related Products -->
+  <section class="py-16 sm:py-20">
+
+
+    <div class="mx-auto max-w-7xl px-5 lg:px-8">
+
+
+      <div class="mb-10">
+
+
+        <p class="text-sm font-bold uppercase tracking-[0.2em] <%= website_colour_class("text", 600) %>">
+
+          You may also like
+
+        </p>
+
+
+        <h2 class="mt-3 text-3xl font-black <%= website_colour_class("text", 950) %>">
+
+          Related products
+
+        </h2>
+
+
+      </div>
+
+
+
+
+
+      <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+
+
+
+        <% 4.times do %>
+
+
+          <article class="rounded-3xl border <%= website_colour_class("border", 200) %> bg-white p-5 shadow-card">
+
+
+            <div class="flex aspect-square items-center justify-center rounded-2xl <%= website_colour_class("bg", 50) %> <%= website_colour_class("text", 600) %>">
+
+
+              <i data-lucide="package" class="h-12 w-12"></i>
+
+
+            </div>
+
+
+
+            <h3 class="mt-5 font-black <%= website_colour_class("text", 950) %>">
+
+              Related Product
+
+            </h3>
+
+
+            <p class="mt-2 text-xl font-black">
+
+              £29.99
+
+            </p>
+
+
+          </article>
+
+
+        <% end %>
+
+
+
+      </div>
+
+
+
+    </div>
+
+
+  </section>
+
+
+
+</main>
+
+
+<%= render 'business_sites/footer' %>

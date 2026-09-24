@@ -370,6 +370,62 @@
 
         </div>
 
+        <!-- Products -->
+        <div data-controller="dropdown">
+
+          <button type="button"
+                  data-action="click->dropdown#toggle"
+                  class="
+            flex w-full items-center justify-between gap-3 rounded-xl px-4 py-3 text-sm transition
+            <%= ["products"].include?(controller_name) ?
+                                           "bg-indigo-600 font-semibold text-white shadow-lg shadow-indigo-950/30" :
+                                           "font-medium text-slate-300 hover:bg-white/10 hover:text-white" %>
+          ">
+
+            <div class="flex items-center gap-3">
+              <i data-lucide="shopping-cart" class="h-5 w-5"></i>
+              <span>Products</span>
+            </div>
+
+            <i data-dropdown-target="icon"
+               data-lucide="chevron-down"
+               class="h-4 w-4 transition-transform">
+            </i>
+
+          </button>
+
+
+          <div data-dropdown-target="menu"
+               class="
+         mt-2 space-y-1 pl-4
+         <%= ["products"].include?(controller_name) ? "" : "hidden" %>
+       ">
+
+
+            <%= link_to business_products_path,
+                        class: [
+                          "block rounded-lg px-4 py-2 text-sm transition",
+                          controller_name == "products" && action_name == "index" ?
+                            "bg-white/10 font-semibold text-white" :
+                            "text-slate-400 hover:bg-white/10 hover:text-white"
+                        ] do %>
+              All Products
+            <% end %>
+
+            <%= link_to new_business_product_path,
+                        class: [
+                          "block rounded-lg px-4 py-2 text-sm transition",
+                          controller_name == "products" && action_name == "new" ?
+                            "bg-white/10 font-semibold text-white" :
+                            "text-slate-400 hover:bg-white/10 hover:text-white"
+                        ] do %>
+              New product
+            <% end %>
+
+          </div>
+
+        </div>
+
         <!-- Reports -->
         <div data-controller="dropdown">
 

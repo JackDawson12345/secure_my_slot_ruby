@@ -1,0 +1,316 @@
+<main class="p-4 sm:p-6 lg:p-8">
+
+
+  <!-- Page heading -->
+  <section class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+
+    <div>
+      <h2 class="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+        Orders
+      </h2>
+
+      <p class="mt-1 text-sm text-slate-500">
+        Manage customer orders, payments and order history.
+      </p>
+    </div>
+
+  </section>
+
+
+  <%= render 'business_portal/shared/flash_messages' %>
+
+
+  <!-- Statistics -->
+  <section class="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+
+
+    <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div class="flex items-start justify-between">
+
+        <div>
+          <p class="text-sm font-medium text-slate-500">
+            Total Orders
+          </p>
+
+          <p class="mt-2 text-3xl font-bold tracking-tight text-slate-900">
+            <%= @orders.count %>
+          </p>
+        </div>
+
+
+        <div class="rounded-xl bg-indigo-50 p-3 text-indigo-600">
+          <i data-lucide="shopping-bag" class="h-5 w-5"></i>
+        </div>
+
+      </div>
+    </article>
+
+
+
+    <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div class="flex items-start justify-between">
+
+        <div>
+          <p class="text-sm font-medium text-slate-500">
+            Paid Orders
+          </p>
+
+          <p class="mt-2 text-3xl font-bold tracking-tight text-slate-900">
+            <%= @orders.where(payment_status: "paid").count %>
+          </p>
+        </div>
+
+
+        <div class="rounded-xl bg-emerald-50 p-3 text-emerald-600">
+          <i data-lucide="circle-check" class="h-5 w-5"></i>
+        </div>
+
+      </div>
+    </article>
+
+
+
+    <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div class="flex items-start justify-between">
+
+        <div>
+          <p class="text-sm font-medium text-slate-500">
+            Pending
+          </p>
+
+          <p class="mt-2 text-3xl font-bold tracking-tight text-slate-900">
+            <%= @orders.where(status: "pending").count %>
+          </p>
+        </div>
+
+
+        <div class="rounded-xl bg-amber-50 p-3 text-amber-600">
+          <i data-lucide="clock" class="h-5 w-5"></i>
+        </div>
+
+      </div>
+    </article>
+
+
+
+    <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div class="flex items-start justify-between">
+
+        <div>
+          <p class="text-sm font-medium text-slate-500">
+            Revenue
+          </p>
+
+          <p class="mt-2 text-3xl font-bold tracking-tight text-slate-900">
+            <%= number_to_currency(@orders.sum(:amount), unit: "£") %>
+          </p>
+        </div>
+
+
+        <div class="rounded-xl bg-blue-50 p-3 text-blue-600">
+          <i data-lucide="banknote" class="h-5 w-5"></i>
+        </div>
+
+      </div>
+    </article>
+
+
+  </section>
+
+
+
+  <!-- Orders table -->
+  <section class="mt-8 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+
+
+    <div class="hidden overflow-x-auto lg:block">
+
+      <table class="min-w-full">
+
+
+        <thead class="bg-slate-50">
+
+        <tr>
+
+          <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+            Customer
+          </th>
+
+
+          <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+            Order ID
+          </th>
+
+
+          <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+            Date
+          </th>
+
+
+          <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+            Payment
+          </th>
+
+
+          <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+            Amount
+          </th>
+
+
+          <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+            Status
+          </th>
+
+
+          <th class="px-6 py-4"></th>
+
+        </tr>
+
+        </thead>
+
+
+
+        <tbody class="divide-y divide-slate-100">
+
+
+        <% @orders.each do |order| %>
+
+
+          <%
+            first_name = order.user&.first_name.presence || order.user&.email.to_s.split("@").first.to_s.titleize
+            last_name = order.user&.last_name
+
+            full_name = [first_name,last_name].compact.join(" ")
+
+            initials = [first_name,last_name]
+              .compact
+              .filter_map { |name| name.first }
+              .join
+              .upcase
+
+
+            status_classes =
+              case order.status
+              when "completed"
+                "bg-emerald-50 text-emerald-700"
+              when "pending"
+                "bg-amber-50 text-amber-700"
+              when "cancelled"
+                "bg-rose-50 text-rose-700"
+              else
+                "bg-slate-100 text-slate-700"
+              end
+          %>
+
+
+          <tr class="transition hover:bg-slate-50">
+
+
+            <td class="px-6 py-4">
+
+              <div class="flex items-center gap-3">
+
+                <div class="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-100 text-sm font-semibold text-indigo-700">
+                  <%= initials.presence || "CU" %>
+                </div>
+
+
+                <div>
+
+                  <p class="text-sm font-semibold text-slate-900">
+                    <%= full_name %>
+                  </p>
+
+                  <p class="text-xs text-slate-500">
+                    <%= order.user&.email %>
+                  </p>
+
+                </div>
+
+              </div>
+
+            </td>
+
+
+
+            <td class="px-6 py-4 text-sm font-medium text-slate-900">
+              #<%= order.id %>
+            </td>
+
+
+
+            <td class="px-6 py-4">
+
+              <p class="text-sm font-medium text-slate-900">
+                <%= order.created_at.strftime("%-d %B %Y") %>
+              </p>
+
+              <p class="text-xs text-slate-500">
+                <%= order.created_at.strftime("%H:%M") %>
+              </p>
+
+            </td>
+
+
+
+            <td class="px-6 py-4">
+
+              <p class="text-sm font-medium text-slate-900 capitalize">
+                <%= order.payment_method %>
+              </p>
+
+              <p class="text-xs text-slate-500 capitalize">
+                <%= order.payment_status %>
+              </p>
+
+            </td>
+
+
+
+            <td class="px-6 py-4 text-sm font-semibold text-slate-900">
+              <%= number_to_currency(order.amount, unit: "£") %>
+            </td>
+
+
+
+            <td class="px-6 py-4">
+
+              <span class="rounded-full px-3 py-1 text-xs font-semibold capitalize <%= status_classes %>">
+                <%= order.status %>
+              </span>
+
+            </td>
+
+
+
+            <td class="px-6 py-4 text-right">
+
+              <%= link_to order_business_products_path(order),
+                          class:"rounded-lg p-2 text-slate-400 hover:bg-slate-100" do %>
+
+                <i data-lucide="ellipsis" class="h-5 w-5"></i>
+
+              <% end %>
+
+            </td>
+
+
+          </tr>
+
+
+        <% end %>
+
+
+        </tbody>
+
+
+      </table>
+
+
+    </div>
+
+
+  </section>
+
+
+</main>

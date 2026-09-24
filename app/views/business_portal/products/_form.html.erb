@@ -1,0 +1,490 @@
+<%= form_with model: [:business, product],
+              local: true,
+              multipart: true,
+              class: "space-y-6" do |form| %>
+
+
+  <div class="grid grid-cols-1 gap-6 xl:grid-cols-12">
+
+
+    <!-- Main content -->
+
+    <div class="xl:col-span-9 space-y-6">
+
+
+      <!-- Basic details -->
+      <section class="border border-slate-200 bg-white shadow-sm">
+        <div class="grid gap-5">
+          <div>
+            <%= form.text_field :name,
+                                placeholder:"Product name",
+                                class:"w-full px-3 py-2 text-sm text-xl focus:border-indigo-500 focus:ring-indigo-500" %>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <% if product.persisted? %>
+
+          <div>
+            <%= form.label :slug,
+                           "Product URL",
+                           class:"text-sm font-semibold text-slate-700" %>
+
+            <%= form.text_field :slug,
+                                class:"mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm" %>
+
+            <p class="mt-2 text-xs text-slate-500">
+              This controls the product URL.
+            </p>
+          </div>
+
+        <% end %>
+      </section>
+
+      <!-- Description -->
+      <section class="border border-slate-200 bg-white shadow-sm">
+        <h3 class="text-sm font-semibold text-slate-900 border-b border-slate-200 py-3 px-4">
+          Description
+        </h3>
+        <div class="py-3 px-4">
+          <%= form.rich_text_area :description,
+                                  class:"border border-slate-200 p-4 min-h-[300px]" %>
+        </div>
+      </section>
+
+      <!-- Short description -->
+
+
+      <section class="border border-slate-200 bg-white shadow-sm">
+        <h3 class="text-sm font-semibold text-slate-900 border-b border-slate-200 py-3 px-4">
+          Short description
+        </h3>
+        <div class="py-3 px-4">
+          <%= form.rich_text_area :short_description,
+                                  class:"border border-slate-200 p-4 min-h-[180px]" %>
+        </div>
+      </section>
+
+
+
+
+
+      <!-- Product data tabs -->
+      <section class="border border-slate-200 bg-white shadow-sm"
+               data-controller="product-tabs">
+        <!-- Tabs -->
+        <div class="flex border-b border-slate-200">
+          <button type="button"
+                  data-product-tabs-target="tab"
+                  data-tab="general"
+                  data-action="click->product-tabs#switch"
+                  class="px-6 py-4 text-sm font-semibold text-slate-500 border-b-2 border-transparent hover:text-slate-900">
+            General
+          </button>
+          <button type="button"
+                  data-product-tabs-target="tab"
+                  data-tab="inventory"
+                  data-action="click->product-tabs#switch"
+                  class="px-6 py-4 text-sm font-semibold text-slate-500 border-b-2 border-transparent hover:text-slate-900">
+            Inventory
+          </button>
+        </div>
+
+        <div class="p-6">
+          <!-- General tab -->
+          <div class="space-y-5"
+               data-product-tabs-target="panel"
+               data-panel="general">
+            <div class="grid gap-5 sm:grid-cols-2">
+              <div>
+                <%= form.label :regular_price,
+                               "Regular price",
+                               class:"text-sm font-semibold text-slate-700" %>
+                <%= form.number_field :regular_price,
+                                      step:"0.01",
+                                      placeholder:"0.00",
+                                      class:"mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm" %>
+              </div>
+              <div>
+                <%= form.label :sale_price,
+                               "Sale price",
+                               class:"text-sm font-semibold text-slate-700" %>
+                <%= form.number_field :sale_price,
+                                      step:"0.01",
+                                      placeholder:"0.00",
+                                      class:"mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm" %>
+              </div>
+            </div>
+          </div>
+
+          <!-- Inventory tab -->
+          <div class="hidden space-y-6"
+               data-product-tabs-target="panel"
+               data-panel="inventory">
+
+            <div class="rounded-2xl border border-slate-200 bg-slate-50 p-5"
+                 data-controller="stock">
+
+              <div class="flex items-center justify-between gap-4">
+
+                <div>
+                  <h4 class="text-sm font-semibold text-slate-900">
+                    Manage stock
+                  </h4>
+
+                  <p class="mt-1 text-sm text-slate-500">
+                    Track stock levels for this product.
+                  </p>
+                </div>
+
+
+                <label class="relative inline-flex cursor-pointer items-center">
+
+                  <%= form.check_box :manage_stock,
+                                     class:"peer sr-only",
+                                     data:{
+                                       stock_target:"checkbox",
+                                       action:"change->stock#toggle"
+                                     } %>
+
+                  <span class="
+          h-6 w-11 rounded-full
+          bg-slate-200
+          transition
+          peer-checked:bg-indigo-600
+          after:absolute
+          after:left-1
+          after:top-1
+          after:h-4
+          after:w-4
+          after:rounded-full
+          after:bg-white
+          after:transition
+          peer-checked:after:translate-x-5
+        "></span>
+
+                </label>
+
+              </div>
+
+
+              <div class="mt-5 hidden"
+                   data-stock-target="stock">
+
+                <%= form.label :stock_count,
+                               "Stock quantity",
+                               class:"text-sm font-semibold text-slate-700" %>
+
+
+                <%= form.number_field :stock_count,
+                                      placeholder:"0",
+                                      class:"mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm" %>
+
+              </div>
+
+
+            </div>
+
+
+            <div>
+              <%= form.label :sku,
+                             "SKU",
+                             class:"text-sm font-semibold text-slate-700" %>
+
+              <%= form.text_field :sku,
+                                  class:"mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm" %>
+            </div>
+
+
+          </div>
+
+
+        </div>
+
+
+      </section>
+
+
+    </div>
+
+
+    <!-- Sidebar -->
+
+    <aside class="xl:col-span-3 space-y-6">
+
+      <section class="border border-slate-200 bg-white shadow-sm" data-controller="publish-panel">
+        <div class="border-b border-slate-200 py-3 px-4">
+          <h3 class="font-semibold text-sm text-slate-900">
+            Publish
+          </h3>
+        </div>
+
+        <div class="py-3 px-4 space-y-5">
+          <!-- Actions -->
+          <div class="flex gap-3">
+            <%= form.submit "Save Draft",
+                            name:"draft",
+                            class:"flex-1 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50" %>
+            <button type="button"
+                    class="flex-1 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700">
+              Preview
+            </button>
+          </div>
+
+          <!-- Status -->
+          <div class="border-t border-slate-100 pt-4">
+            <div class="flex justify-between text-sm">
+              <span class="font-medium text-slate-600">
+                Status: <%= product.status&.humanize || "Draft" %>
+              </span>
+              <button type="button"
+                      data-action="click->publish-panel#toggle"
+                      data-section="status"
+                      class="text-indigo-600 font-semibold">
+                Edit
+              </button>
+            </div>
+
+            <div data-publish-panel-target="status"
+                 class="hidden mt-4">
+
+
+              <%= form.select :status,
+                              [
+                                ["Draft","draft"],
+                                ["Active","active"],
+                                ["Inactive","inactive"]
+                              ],
+                              {},
+                              class:"w-full rounded-xl border border-slate-200 px-4 py-3 text-sm" %>
+
+
+            </div>
+
+
+          </div>
+
+          <!-- Visibility -->
+          <div class="border-t border-slate-100 pt-4">
+            <div class="flex justify-between text-sm">
+              <span class="font-medium text-slate-600">
+                Visibility: <%= product.visibility&.humanize || "Public" %>
+              </span>
+              <button type="button"
+                      data-action="click->publish-panel#toggle"
+                      data-section="visibility"
+                      class="text-indigo-600 font-semibold">
+                Edit
+              </button>
+            </div>
+            <div data-publish-panel-target="visibility"
+                 class="hidden mt-4 space-y-3">
+              <label class="flex items-center gap-3">
+                <%= form.radio_button :visibility,
+                                      "public" %>
+                <span class="text-sm">
+                  Public
+                </span>
+              </label>
+              <label class="flex items-center gap-3">
+                <%= form.radio_button :visibility,
+                                      "private" %>
+                <span class="text-sm">
+                  Private
+                </span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Publish date -->
+          <div class="border-t border-slate-100 pt-4">
+            <div class="flex justify-between text-sm">
+              <span class="font-medium text-slate-600">
+                Publish: <% if product.publish_at.present? %>
+                  <%= product.publish_at.strftime("%d %B %Y %H:%M") %>
+                <% else %>
+                  Immediately
+                <% end %>
+              </span>
+              <button type="button"
+                      data-action="click->publish-panel#toggle"
+                      data-section="publish"
+                      class="text-indigo-600 font-semibold">
+                Edit
+              </button>
+            </div>
+
+            <div data-publish-panel-target="publish"
+                 class="hidden mt-4">
+              <%= form.datetime_field :publish_at,
+                                      class:"w-full rounded-xl border border-slate-200 px-4 py-3 text-sm" %>
+            </div>
+          </div>
+
+          <!-- Main publish button -->
+          <div class="border-t border-slate-100 pt-5">
+            <%= form.submit product.new_record? ? "Publish" : "Update product",
+                            class:"w-full rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white hover:bg-indigo-700" %>
+          </div>
+        </div>
+
+
+
+      </section>
+
+      <!-- Featured Image -->
+
+      <section class="border border-slate-200 bg-white shadow-sm">
+
+        <div class="border-b border-slate-200 py-3 px-4">
+          <h3 class="font-semibold text-sm text-slate-900">
+            Featured Image
+          </h3>
+        </div>
+        <div class="py-3 px-4" data-controller="product-image-preview">
+
+          <div class="aspect-square overflow-hidden border border-slate-200 bg-slate-50">
+
+            <% if product.featured_image.attached? %>
+
+              <%= image_tag product.featured_image,
+                            class:"w-full h-full object-cover",
+                            data:{
+                              product_image_preview_target:"preview"
+                            } %>
+
+            <% else %>
+
+              <%= image_tag "product-placeholder.svg",
+                            class:"w-full h-full object-cover",
+                            data:{
+                              product_image_preview_target:"preview"
+                            } %>
+
+            <% end %>
+
+          </div>
+
+
+          <div class="mt-2">
+
+            <%= form.file_field :featured_image,
+                                id:"featured_image",
+                                accept:"image/*",
+                                class:"hidden",
+                                data:{
+                                  action:"change->product-image-preview#preview"
+                                } %>
+
+
+            <label for="featured_image"
+                   class="inline-flex w-full cursor-pointer text-xs font-semibold text-indigo-600 hover:text-indigo-700">
+
+              Set Featured Image
+
+            </label>
+
+          </div>
+
+        </div>
+      </section>
+
+      <section class="border border-slate-200 bg-white shadow-sm">
+
+        <div class="border-b border-slate-200 py-3 px-4">
+          <h3 class="font-semibold text-sm text-slate-900">
+            Product Gallery
+          </h3>
+        </div>
+
+
+        <div class="p-4"
+             data-controller="product-gallery-preview">
+
+
+          <div class="grid grid-cols-3 gap-3"
+               data-product-gallery-preview-target="preview">
+
+
+            <% product.product_images.each do |gallery| %>
+
+              <% next unless gallery.image.attached? %>
+
+              <div class="relative cursor-move"
+                   data-id="<%= gallery.id %>">
+
+                <%= image_tag gallery.image,
+                              class:"rounded-lg border border-slate-200 aspect-square object-cover" %>
+
+                <button type="button"
+                        class="absolute top-1 right-1 rounded-full bg-white px-2 text-red-600"
+                        data-action="click->product-gallery-preview#remove">
+                  ×
+                </button>
+
+              </div>
+
+            <% end %>
+
+
+          </div>
+
+
+
+          <div class="mt-4">
+
+            <%= form.file_field :images,
+                                multiple:true,
+                                accept:"image/*",
+                                id:"product_gallery",
+                                class:"hidden",
+                                data:{
+                                  action:"change->product-gallery-preview#preview"
+                                } %>
+
+
+            <label for="product_gallery"
+                   class="inline-flex w-full cursor-pointer text-xs font-semibold text-indigo-600">
+
+              Add Gallery Images
+
+            </label>
+
+
+          </div>
+
+
+        </div>
+
+      </section>
+
+      <!-- Product Tabs -->
+      <section class="border border-slate-200 bg-white shadow-sm">
+        <div class="border-b border-slate-200 py-3 px-4">
+          <h3 class="font-semibold text-sm text-slate-900">
+            Product Tabs
+          </h3>
+        </div>
+        <div class="py-4 px-4 space-y-4">
+          <p class="text-xs text-slate-500">
+            Add additional tabs customers can view on the product page.
+          </p>
+          <%= form.text_field :tabs,
+                              value: product.tabs.join(", "),
+                              placeholder: "Specifications, Delivery, Reviews",
+                              class:"w-full rounded-xl border border-slate-200 px-4 py-3 text-sm" %>
+          <p class="text-xs text-slate-400">
+            Separate tabs with commas.
+          </p>
+        </div>
+      </section>
+
+
+
+    </aside>
+
+
+  </div>
+
+<% end %>

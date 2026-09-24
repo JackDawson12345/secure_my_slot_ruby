@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  business: one
+  user: one
+  amount: 9.99
+  expires_at: 2026-09-24 14:44:50
+  stripe_checkout_session_id: MyString
+
+two:
+  business: two
+  user: two
+  amount: 9.99
+  expires_at: 2026-09-24 14:44:50
+  stripe_checkout_session_id: MyString

@@ -1,0 +1,378 @@
+<main class="p-4 sm:p-6 lg:p-8">
+
+  <!-- Header -->
+  <section class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+
+    <div>
+
+      <div class="flex items-center gap-3">
+
+        <h2 class="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+          Order #<%= @order.id %>
+        </h2>
+
+
+        <%
+          status_classes =
+            case @order.status
+            when "completed"
+              "bg-emerald-50 text-emerald-700"
+            when "pending"
+              "bg-amber-50 text-amber-700"
+            when "cancelled"
+              "bg-rose-50 text-rose-700"
+            else
+              "bg-slate-100 text-slate-700"
+            end
+        %>
+
+
+        <span class="rounded-full px-3 py-1 text-xs font-semibold capitalize <%= status_classes %>">
+          <%= @order.status %>
+        </span>
+
+      </div>
+
+
+      <p class="mt-2 text-sm text-slate-500">
+        Placed <%= @order.created_at.strftime("%A %-d %B %Y at %H:%M") %>
+      </p>
+
+    </div>
+
+
+    <%= link_to account_orders_path,
+                class:"inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50" do %>
+
+      <i data-lucide="arrow-left" class="h-4 w-4"></i>
+
+      Back to orders
+
+    <% end %>
+
+
+  </section>
+
+
+
+  <div class="mt-8 grid gap-6 lg:grid-cols-3">
+
+
+    <!-- Main -->
+    <div class="space-y-6 lg:col-span-2">
+
+
+      <!-- Products -->
+      <section class="rounded-2xl border border-slate-200 bg-white shadow-sm">
+
+        <div class="border-b border-slate-200 px-6 py-5">
+
+          <h3 class="text-lg font-bold text-slate-900">
+            Order items
+          </h3>
+
+        </div>
+
+
+        <div class="divide-y divide-slate-100">
+
+
+          <% @order.order_items.each do |item| %>
+
+
+            <div class="flex items-center gap-5 px-6 py-5">
+
+
+              <div class="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-slate-50">
+
+
+                <% if item.product.featured_image.attached? %>
+
+                  <%= image_tag item.product.featured_image,
+                                class:"h-full w-full object-cover" %>
+
+                <% else %>
+
+                  <i data-lucide="package"
+                     class="h-8 w-8 text-slate-400"></i>
+
+                <% end %>
+
+
+              </div>
+
+
+
+              <div class="flex-1">
+
+
+                <p class="font-semibold text-slate-900">
+                  <%= item.product.name %>
+                </p>
+
+
+                <p class="mt-1 text-sm text-slate-500">
+                  Quantity: <%= item.quantity %>
+                </p>
+
+
+              </div>
+
+
+
+              <div class="text-right">
+
+                <p class="font-bold text-slate-900">
+                  <%= number_to_currency(item.price * item.quantity, unit: "£") %>
+                </p>
+
+
+                <p class="mt-1 text-xs text-slate-500">
+                  <%= number_to_currency(item.price, unit: "£") %> each
+                </p>
+
+              </div>
+
+
+            </div>
+
+
+          <% end %>
+
+
+        </div>
+
+
+      </section>
+
+
+
+      <!-- Billing Address -->
+      <section class="rounded-2xl border border-slate-200 bg-white shadow-sm">
+
+
+        <div class="border-b border-slate-200 px-6 py-5">
+
+          <h3 class="text-lg font-bold text-slate-900">
+            Billing Address
+          </h3>
+
+        </div>
+
+
+        <div class="grid gap-5 px-6 py-6 sm:grid-cols-2">
+
+
+          <div>
+
+            <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">
+              Address Line One
+            </p>
+
+            <p class="mt-1 text-sm font-semibold text-slate-900">
+              <%= @order.address_line_1 %>
+            </p>
+
+          </div>
+
+
+          <div>
+
+            <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">
+              Address Line Two
+            </p>
+
+            <p class="mt-1 text-sm font-semibold text-slate-900">
+              <%= @order.address_line_2.presence || "-" %>
+            </p>
+
+          </div>
+
+
+          <div>
+
+            <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">
+              Town / City
+            </p>
+
+            <p class="mt-1 text-sm font-semibold text-slate-900">
+              <%= @order.town %>
+            </p>
+
+          </div>
+
+
+          <div>
+
+            <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">
+              Postcode
+            </p>
+
+            <p class="mt-1 text-sm font-semibold text-slate-900">
+              <%= @order.postcode %>
+            </p>
+
+          </div>
+
+
+        </div>
+
+
+      </section>
+
+
+
+    </div>
+
+
+
+    <!-- Sidebar -->
+    <aside class="space-y-6">
+
+
+
+      <!-- Payment -->
+      <section class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+
+
+        <h3 class="text-lg font-bold text-slate-900">
+          Payment
+        </h3>
+
+
+        <div class="mt-5 space-y-4">
+
+
+          <div class="flex justify-between">
+
+            <span class="text-sm text-slate-500">
+              Method
+            </span>
+
+            <span class="text-sm font-semibold capitalize text-slate-900">
+              <%= @order.payment_method %>
+            </span>
+
+          </div>
+
+
+
+          <div class="flex justify-between">
+
+            <span class="text-sm text-slate-500">
+              Payment Status
+            </span>
+
+            <span class="text-sm font-semibold capitalize text-slate-900">
+              <%= @order.payment_status %>
+            </span>
+
+          </div>
+
+
+
+          <div class="border-t border-slate-100 pt-4 flex justify-between">
+
+            <span class="font-semibold text-slate-900">
+              Total
+            </span>
+
+            <span class="text-xl font-black text-slate-900">
+              <%= number_to_currency(@order.amount, unit:"£") %>
+            </span>
+
+          </div>
+
+
+        </div>
+
+
+      </section>
+
+
+
+      <!-- Business -->
+      <section class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+
+
+        <h3 class="text-lg font-bold text-slate-900">
+          Business
+        </h3>
+
+
+        <div class="mt-5">
+
+
+          <p class="font-semibold text-slate-900">
+            <%= @order.business.business_name %>
+          </p>
+
+
+          <% if @order.business.business_setting.present? %>
+
+            <p class="mt-2 text-sm text-slate-500">
+              <%= @order.business.business_setting.town_or_city %>
+            </p>
+
+          <% end %>
+
+
+        </div>
+
+
+      </section>
+
+
+
+      <!-- Order Information -->
+      <section class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+
+
+        <h3 class="text-lg font-bold text-slate-900">
+          Order Information
+        </h3>
+
+
+        <div class="mt-5 space-y-4">
+
+
+          <div>
+
+            <p class="text-xs uppercase tracking-wide text-slate-400">
+              Order ID
+            </p>
+
+            <p class="mt-1 text-sm font-semibold text-slate-900">
+              <%= @order.public_id || @order.id %>
+            </p>
+
+          </div>
+
+
+          <div>
+
+            <p class="text-xs uppercase tracking-wide text-slate-400">
+              Created
+            </p>
+
+            <p class="mt-1 text-sm font-semibold text-slate-900">
+              <%= @order.created_at.strftime("%d/%m/%Y") %>
+            </p>
+
+          </div>
+
+
+        </div>
+
+
+      </section>
+
+
+
+    </aside>
+
+
+  </div>
+
+
+</main>

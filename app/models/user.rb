@@ -16,6 +16,7 @@ class User < ApplicationRecord
   has_one :business, dependent: :destroy
   has_many :bookings, dependent: :destroy
   has_one :customer_setting, dependent: :destroy
+  has_many :orders, dependent: :destroy
 
   has_many :business_customers, dependent: :destroy
 
@@ -32,6 +33,10 @@ class User < ApplicationRecord
   validate :password_complexity, if: :password_required?
 
   before_create :record_terms_acceptance
+
+  def full_name
+    [first_name, last_name].compact_blank.join(" ")
+  end
 
   private
 

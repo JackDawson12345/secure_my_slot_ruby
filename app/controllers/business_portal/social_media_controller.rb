@@ -1,6 +1,10 @@
 class BusinessPortal::SocialMediaController < BusinessPortal::BaseController
   def index
     @social_posts = current_user.business.social_posts
+
+    @posts_this_month = @social_posts.where(
+      created_at: Time.current.beginning_of_month..Time.current.end_of_month
+    ).count
   end
 
   def new

@@ -1,6 +1,8 @@
 class BusinessSitesController < ApplicationController
 
   before_action :set_business
+  before_action :check_products, only: [:shop, :product, :cart, :checkout]
+  helper_method :cart_count
 
   layout "business_site"
 
@@ -222,13 +224,467 @@ class BusinessSitesController < ApplicationController
 
   end
 
+  def shop
+    @products = @business.products
+  end
+
+  def product
+    @product = @business.products.find_by(slug: params[:slug])
+  end
+
+  def cart
+
+    @cart_items = cart_products
+
+
+    @subtotal = @cart_items.sum do |item|
+
+      product = item[:product]
+
+
+      price =
+        if product.sale_price.present?
+          product.sale_price
+        else
+          product.regular_price
+        end
+
+
+      price * item[:quantity]
+
+    end
+
+  end
+
+  def checkout
+
+    @cart_items = cart_products
+
+
+    @subtotal = @cart_items.sum do |item|
+
+      price =
+        item[:product].sale_price.presence ||
+        item[:product].regular_price
+
+
+      price * item[:quantity]
+
+    end
+
+  end
+
+  def add_to_cart
+
+    product = @business.products.find(params[:product_id])
+
+
+    cart = current_cart
+
+
+    product_id = product.id.to_s
+
+    quantity = params[:quantity].to_i
+
+    quantity = 1 if quantity < 1
+
+
+    cart[product_id] =
+      cart.fetch(product_id, 0) + quantity
+
+
+    save_cart(cart)
+
+
+    redirect_to business_site_cart_path
+
+  end
+
+  def update_cart
+
+    cart = current_cart
+
+
+    params[:quantities].each do |product_id, quantity|
+
+      quantity = quantity.to_i
+
+
+      if quantity <= 0
+        cart.delete(product_id)
+      else
+        cart[product_id] = quantity
+      end
+
+    end
+
+
+    save_cart(cart)
+
+
+    redirect_to business_site_cart_path
+
+  end
+
+  def remove_from_cart
+
+    cart = current_cart
+
+
+    cart.delete(params[:id].to_s)
+
+
+    save_cart(cart)
+
+
+    redirect_to business_site_cart_path
+
+  end
+
+  def create_order
+
+    user = find_or_create_checkout_user
+
+
+    if params[:payment_method] == "stripe"
+
+      create_stripe_order_hold(
+        user: user
+      )
+
+    else
+
+      create_cash_order(
+        user: user
+      )
+
+    end
+
+  end
+
+  def payment_success
+
+    hold = OrderHold.find(params[:id])
+
+
+    if hold.order.present?
+      redirect_to order_confirmation_path(
+                    public_id: hold.order.public_id
+                  )
+      return
+    end
+
+
+    unless params[:session_id].present?
+
+      redirect_to business_site_cart_path,
+                  alert: "Payment session missing."
+
+      return
+
+    end
+
+
+    unless valid_order_payment_session?(hold)
+
+      redirect_to business_site_cart_path,
+                  alert: "Payment could not be verified."
+
+      return
+
+    end
+
+
+    stripe_session =
+      Stripe::Checkout::Session.retrieve(
+        params[:session_id],
+        {
+          stripe_account:
+            hold.business.stripe_account_id
+        }
+      )
+
+
+    unless stripe_session.payment_status == "paid"
+
+      redirect_to business_site_cart_path,
+                  alert: "Payment was not completed."
+
+      return
+
+    end
+
+
+
+    order = Order.create!(
+      business: hold.business,
+      user: hold.user,
+      status: "pending",
+      payment_method: "stripe",
+      payment_status: "paid",
+      stripe_checkout_session_id: stripe_session.id,
+      stripe_payment_intent_id: stripe_session.payment_intent,
+      amount: hold.amount,
+      address_line_1: hold.address_line_1,
+      address_line_2: hold.address_line_2,
+      town: hold.town,
+      postcode: hold.postcode
+    )
+
+
+    create_order_items_from_hold(
+      order,
+      hold
+    )
+
+
+    hold.update!(
+      order: order
+    )
+
+
+    clear_cart
+
+
+    redirect_to order_confirmation_path(
+                  public_id: order.public_id
+                )
+
+  end
+
+  def order_confirmation
+
+    @order =
+      @business.orders.find_by!(
+        public_id: params[:public_id]
+      )
+
+  end
+
   private
+
+  def find_or_create_checkout_user
+
+    email = params[:email].to_s.downcase.strip
+
+    user = User.find_or_initialize_by(
+      email: email
+    )
+
+
+    user.assign_attributes(
+      first_name: params[:first_name],
+      last_name: params[:last_name],
+      phone_number: params[:phone_number],
+      role: :customer
+    )
+
+
+    if user.new_record?
+
+      user.password =
+        generate_customer_password
+
+      user.terms_accepted = true
+
+    end
+
+
+    user.save!
+
+
+    user.create_customer_setting! unless user.customer_setting
+
+
+    user
+
+  end
+
+  def generate_customer_password
+    [
+      ("A".."Z").to_a.sample,
+      ("0".."9").to_a.sample,
+      ["!", "@", "#", "$", "%"].sample,
+      SecureRandom.hex(8)
+    ].join
+  end
+
+  def create_cash_order(user:)
+
+    order = Order.create!(
+      business: @business,
+      user: user,
+      status: "pending",
+      payment_method: "cash",
+      payment_status: "unpaid",
+      amount: checkout_total,
+      address_line_1: params[:address_line_1],
+      address_line_2: params[:address_line_2],
+      town: params[:town],
+      postcode: params[:postcode],
+    )
+
+
+    create_order_items(order)
+
+
+    clear_cart
+
+
+    redirect_to order_confirmation_path(
+                  public_id: order.public_id
+                )
+
+  end
+
+  def create_order_items(order)
+
+    cart_products.each do |item|
+
+      product = item[:product]
+
+
+      price =
+        product.sale_price.presence ||
+        product.regular_price
+
+
+      order.order_items.create!(
+        product: product,
+        quantity: item[:quantity],
+        price: price
+      )
+
+    end
+
+  end
+
+  def create_stripe_order_hold(user:)
+
+    hold = OrderHold.create!(
+      business: @business,
+      user: user,
+      amount: checkout_total,
+      expires_at: 30.minutes.from_now,
+      cart_data: current_cart.deep_dup,
+      address_line_1: params[:address_line_1],
+      address_line_2: params[:address_line_2],
+      town: params[:town],
+      postcode: params[:postcode]
+    )
+
+
+    session = Stripe::Checkout::Session.create(
+
+      {
+        mode: "payment",
+
+        customer_email: user.email,
+
+        line_items: stripe_line_items,
+
+        metadata: {
+          order_hold_id: hold.id
+        },
+
+        success_url:
+          "#{order_payment_success_url(hold, subdomain: @business.page_address)}?session_id={CHECKOUT_SESSION_ID}",
+
+        cancel_url:
+          business_site_cart_url
+
+      },
+
+      {
+        stripe_account:
+          @business.stripe_account_id
+      }
+
+    )
+
+
+    hold.update!(
+      stripe_checkout_session_id: session.id
+    )
+
+
+    redirect_to session.url,
+                allow_other_host: true
+
+  end
+
+  def stripe_line_items
+
+    cart_products.map do |item|
+
+      product = item[:product]
+
+      price =
+        product.sale_price.presence ||
+        product.regular_price
+
+
+      {
+        quantity: item[:quantity],
+
+        price_data: {
+
+          currency: "gbp",
+
+          unit_amount:
+            price_in_pence(price),
+
+          product_data: {
+            name: product.name,
+            images: stripe_product_images(product)
+          }
+
+        }
+
+      }
+
+    end
+
+  end
+
+  def stripe_product_images(product)
+
+    return [] unless product.featured_image.attached?
+
+    [
+      url_for(product.featured_image)
+    ]
+
+  end
+
+  def checkout_total
+
+    cart_products.sum do |item|
+
+      product = item[:product]
+
+      price =
+        product.sale_price.presence ||
+        product.regular_price
+
+
+      price * item[:quantity]
+
+    end
+
+  end
 
   def set_business
     @business = Business.find_by(page_address: request.subdomain)
 
     render file: Rails.root.join("public/404.html"),
            status: :not_found unless @business
+  end
+
+  def check_products
+    unless @business.products.exists?
+      redirect_to business_site_path
+    end
   end
 
   def consultation_form_params
@@ -297,6 +753,93 @@ class BusinessSitesController < ApplicationController
     end
 
     responses
+  end
+
+  def current_cart
+
+    session[:carts] ||= {}
+
+
+    session[:carts][@business.id.to_s] ||= {}
+
+  end
+
+  def save_cart(cart)
+
+    session[:carts] ||= {}
+
+
+    session[:carts][@business.id.to_s] = cart
+
+  end
+
+  def cart_products
+
+    products =
+      @business.products.where(
+        id: current_cart.keys
+      )
+
+
+    products.map do |product|
+
+      {
+        product: product,
+        quantity: current_cart[product.id.to_s]
+      }
+
+    end
+
+  end
+
+  def cart_count
+
+    current_cart.values.sum
+
+  end
+
+  def clear_cart
+
+    session[:carts][@business.id.to_s] = {}
+
+  end
+
+  def valid_order_payment_session?(hold)
+
+    return false if hold.stripe_checkout_session_id.blank?
+
+    ActiveSupport::SecurityUtils.secure_compare(
+      params[:session_id].to_s,
+      hold.stripe_checkout_session_id
+    )
+
+  end
+
+  def create_order_items_from_hold(order, hold)
+
+    hold.cart_data.each do |product_id, quantity|
+
+      product =
+        hold.business.products.find(product_id)
+
+
+      price =
+        product.sale_price.presence ||
+        product.regular_price
+
+
+      order.order_items.create!(
+        product: product,
+        quantity: quantity,
+        price: price
+      )
+
+    end
+
+  end
+
+  def price_in_pence(price)
+    (BigDecimal(price.to_s) * 100).round.to_i
   end
 
 end

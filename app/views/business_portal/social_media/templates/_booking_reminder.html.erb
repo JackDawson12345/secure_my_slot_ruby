@@ -9,9 +9,8 @@
   button_text = content["button_text"].presence || "BOOK ONLINE"
   website = content["website"].presence || "yourbusiness.co.uk"
 
-  primary_colour = settings["primary_colour"].presence || "#0891b2"
-  accent_colour = settings["accent_colour"].presence || "#67e8f9"
-  background_colour = settings["background_colour"].presence || "#ecfeff"
+  primary_colour = settings["primary_colour"].presence || "#03718c"
+  accent_colour = settings["accent_colour"].presence || "#b8f7ff"
 %>
 
 <!--
@@ -21,8 +20,9 @@
   Always rendered as a square.
 -->
 <div
+  data-social-post-style-background="accent_colour"
   class="relative aspect-square w-full overflow-hidden [container-type:inline-size]"
-  style="background-color: <%= background_colour %>;"
+  style="background-color: <%= accent_colour %>;"
 >
 
   <!-- ========================================= -->
@@ -31,12 +31,14 @@
 
   <!-- Large right panel -->
   <div
+    data-social-post-style-background="primary_colour"
     class="pointer-events-none absolute -right-[18%] top-0 h-full w-[58%] -skew-x-12 opacity-[0.07]"
     style="background-color: <%= primary_colour %>;"
   ></div>
 
   <!-- Top circle -->
   <div
+    data-social-post-style-background="primary_colour"
     class="pointer-events-none absolute -right-[8%] -top-[12%] h-[38%] w-[38%] rounded-full opacity-[0.08]"
     style="background-color: <%= primary_colour %>;"
   ></div>
@@ -52,6 +54,7 @@
 
     <% 12.times do %>
       <span
+        data-social-post-style-background="primary_colour"
         class="h-[0.75cqw] w-[0.75cqw] rounded-full"
         style="background-color: <%= primary_colour %>;"
       ></span>
@@ -77,6 +80,7 @@
       <div class="flex min-w-0 items-center gap-[3cqw]">
 
         <div
+          data-social-post-style-background="primary_colour"
           class="flex aspect-square w-[9.5cqw] shrink-0 items-center justify-center overflow-hidden rounded-[2cqw] text-white"
           style="background-color: <%= primary_colour %>;"
         >
@@ -84,12 +88,23 @@
           <% if post.respond_to?(:logo) && post.logo.attached? %>
 
             <%= image_tag post.logo,
+                          data: {
+                            social_post_logo: true
+                          },
                           class: "h-full w-full object-contain p-[14%]",
+                          crossorigin: "anonymous",
                           alt: business_name %>
 
           <% else %>
 
+            <img
+              data-social-post-logo
+              class="hidden h-full w-full object-contain p-[14%]"
+              alt="<%= business_name %>"
+            >
+
             <i
+              data-social-post-logo-placeholder
               data-lucide="calendar-clock"
               class="h-[4.5cqw] w-[4.5cqw]"
             ></i>
@@ -102,6 +117,7 @@
         <div class="min-w-0">
 
           <p
+            data-social-post-field="business_name"
             class="truncate font-bold uppercase leading-none tracking-[0.12em] text-slate-900"
             style="font-size: 3cqw;"
           >
@@ -122,10 +138,12 @@
 
       <!-- Badge -->
       <div
+        data-social-post-style-color="accent_colour"
+        data-social-post-style-background="primary_colour"
         class="shrink-0 rounded-full px-[2.8cqw] py-[1.4cqw] font-bold uppercase tracking-[0.14em]"
         style="
         background-color: <%= primary_colour %>12;
-          color: <%= primary_colour %>;
+          color: <%= accent_colour %>;
           font-size: 1.75cqw;
         "
       >
@@ -144,6 +162,7 @@
 
       <!-- Calendar Graphic -->
       <div
+        data-social-post-style-background="primary_colour"
         class="relative flex aspect-square w-[19%] items-center justify-center rounded-[3cqw] shadow-sm"
         style="background-color: <%= primary_colour %>;"
       >
@@ -156,9 +175,11 @@
 
         <!-- Notification -->
         <div
+          data-social-post-style-border="primary_colour"
+          data-social-post-style-background="accent_colour"
           class="absolute -right-[1.5cqw] -top-[1.5cqw] flex aspect-square w-[5.5cqw] items-center justify-center rounded-full border-[0.8cqw] font-black"
           style="
-          border-color: <%= background_colour %>;
+          border-color: <%= primary_colour %>;
             background-color: <%= accent_colour %>;
             color: #164e63;
             font-size: 2.2cqw;
@@ -172,6 +193,8 @@
 
       <!-- Small Heading -->
       <p
+        data-social-post-style-color="primary_colour"
+        data-social-post-field="small_heading"
         class="mt-[5%] font-extrabold uppercase tracking-[0.2em]"
         style="
         color: <%= primary_colour %>;
@@ -184,6 +207,7 @@
 
       <!-- Heading -->
       <h2
+        data-social-post-field="heading"
         class="mt-[2.5%] max-w-[80%] font-black leading-[0.98] tracking-[-0.05em] text-slate-900"
         style="font-size: 8.2cqw;"
       >
@@ -193,6 +217,7 @@
 
       <!-- Description -->
       <p
+        data-social-post-field="description"
         class="mt-[4%] max-w-[70%] font-medium leading-[1.55] text-slate-600"
         style="font-size: 2.9cqw;"
       >
@@ -211,6 +236,8 @@
 
       <!-- CTA -->
       <div
+        data-social-post-style-background="primary_colour"
+        data-social-post-field="button_text"
         class="inline-flex shrink-0 items-center gap-[1.5cqw] rounded-[1.8cqw] px-[4.5%] py-[2.8%] font-extrabold tracking-[0.04em] text-white shadow-sm"
         style="
         background-color: <%= primary_colour %>;
@@ -237,6 +264,7 @@
         </p>
 
         <p
+          data-social-post-field="website"
           class="mt-[0.5cqw] truncate font-bold text-slate-900"
           style="font-size: 2.2cqw;"
         >

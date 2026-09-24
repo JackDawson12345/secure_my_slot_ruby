@@ -1,0 +1,29 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  business: one
+  name: MyString
+  description: MyText
+  short_description: MyText
+  regular_price: 9.99
+  sale_price: 9.99
+  sku: MyString
+  status: MyString
+  slug: MyString
+  featured: false
+  manage_stock: false
+  stock_count: 1
+
+two:
+  business: two
+  name: MyString
+  description: MyText
+  short_description: MyText
+  regular_price: 9.99
+  sale_price: 9.99
+  sku: MyString
+  status: MyString
+  slug: MyString
+  featured: false
+  manage_stock: false
+  stock_count: 1

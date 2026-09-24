@@ -22,6 +22,19 @@ export default class extends Controller {
         elements.forEach((element) => {
             element.textContent = field.value
         })
+
+
+        if (key === "customer_name") {
+
+            const initial = this.previewTarget.querySelector(
+                "[data-social-post-customer-initial]"
+            )
+
+            if (initial) {
+                initial.textContent = field.value.charAt(0).toUpperCase()
+            }
+
+        }
     }
 
 
@@ -61,6 +74,25 @@ export default class extends Controller {
                 element.style.backgroundColor = input.value
             })
 
+        this.previewTarget
+            .querySelectorAll(`[data-social-post-style-background-opacity="${key}"]`)
+            .forEach((element) => {
+                element.style.backgroundColor = `${input.value}15`
+            })
+
+        this.previewTarget
+            .querySelectorAll(`[data-social-post-style-fill="${key}"]`)
+            .forEach((element) => {
+                element.setAttribute("fill", input.value)
+                element.style.fill = input.value
+            })
+
+        this.previewTarget
+            .querySelectorAll(`[data-social-post-style-border="${key}"]`)
+            .forEach((element) => {
+                element.style.borderColor = input.value
+            })
+
 
         this.previewTarget
             .querySelectorAll(`[data-social-post-style-color="${key}"]`)
@@ -83,6 +115,48 @@ export default class extends Controller {
             `
 
             })
+    }
+
+    updateRating(event) {
+
+        const rating = parseInt(event.currentTarget.value)
+
+        const primaryColourInput = this.element.querySelector(
+            '[data-social-post-style-key="primary_colour"]'
+        )
+
+        const primaryColour = primaryColourInput
+            ? primaryColourInput.value
+            : "#f59e0b"
+
+
+        this.previewTarget
+            .querySelectorAll("[data-social-post-star]")
+            .forEach((star) => {
+
+                const starNumber = parseInt(
+                    star.dataset.socialPostStar
+                )
+
+                const path = star.querySelector("path")
+
+                if (!path) return
+
+
+                if (starNumber <= rating) {
+                    path.setAttribute(
+                        "fill",
+                        primaryColour
+                    )
+                } else {
+                    path.setAttribute(
+                        "fill",
+                        "#e2e8f0"
+                    )
+                }
+
+            })
+
     }
 
     updateImage(event) {

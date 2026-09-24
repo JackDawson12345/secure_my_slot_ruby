@@ -1,0 +1,21 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  business: one
+  user: one
+  status: MyString
+  payment_method: MyString
+  payment_status: MyString
+  stripe_checkout_session_id: MyString
+  stripe_payment_intent_id: MyString
+  amount: 9.99
+
+two:
+  business: two
+  user: two
+  status: MyString
+  payment_method: MyString
+  payment_status: MyString
+  stripe_checkout_session_id: MyString
+  stripe_payment_intent_id: MyString
+  amount: 9.99

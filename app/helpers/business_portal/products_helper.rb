@@ -1,0 +1,2 @@
+module BusinessPortal::ProductsHelper
+end

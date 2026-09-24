@@ -1,0 +1,438 @@
+<main class="p-4 sm:p-6 lg:p-8">
+
+
+  <!-- Header -->
+
+  <section class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+
+    <div>
+
+      <h2 class="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+        <%= @product.name %>
+      </h2>
+
+      <p class="mt-1 text-sm text-slate-500">
+        View product details and settings.
+      </p>
+
+    </div>
+
+
+    <div class="flex gap-3">
+
+      <%= link_to "Back to products",
+                  business_products_path,
+                  class:"inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50" %>
+
+
+      <%= link_to "Edit product",
+                  edit_business_product_path(@product),
+                  class:"inline-flex items-center justify-center rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white hover:bg-indigo-700" %>
+
+    </div>
+
+
+  </section>
+
+
+
+  <section class="mt-8 grid grid-cols-1 gap-6 xl:grid-cols-12">
+
+
+    <!-- Main -->
+
+    <div class="xl:col-span-9 space-y-6">
+
+
+
+      <!-- Description -->
+
+      <section class="border border-slate-200 bg-white shadow-sm">
+
+        <div class="border-b border-slate-200 px-4 py-3">
+
+          <h3 class="text-sm font-semibold text-slate-900">
+            Description
+          </h3>
+
+        </div>
+
+
+        <div class="p-5 prose max-w-none">
+
+          <%= @product.description %>
+
+        </div>
+
+      </section>
+
+
+
+
+      <!-- Short description -->
+
+      <section class="border border-slate-200 bg-white shadow-sm">
+
+        <div class="border-b border-slate-200 px-4 py-3">
+
+          <h3 class="text-sm font-semibold text-slate-900">
+            Short description
+          </h3>
+
+        </div>
+
+
+        <div class="p-5 prose max-w-none">
+
+          <%= @product.short_description %>
+
+        </div>
+
+      </section>
+
+
+
+
+      <!-- Product information -->
+
+      <section class="border border-slate-200 bg-white shadow-sm">
+
+
+        <div class="border-b border-slate-200 px-4 py-3">
+
+          <h3 class="text-sm font-semibold text-slate-900">
+            Product Information
+          </h3>
+
+        </div>
+
+
+        <div class="p-6 grid gap-6 sm:grid-cols-2">
+
+
+          <div>
+
+            <p class="text-sm text-slate-500">
+              Regular price
+            </p>
+
+            <p class="mt-1 text-lg font-bold text-slate-900">
+              £<%= number_with_precision(@product.regular_price, precision:2) %>
+            </p>
+
+          </div>
+
+
+          <div>
+
+            <p class="text-sm text-slate-500">
+              Sale price
+            </p>
+
+            <p class="mt-1 text-lg font-bold text-slate-900">
+
+              <% if @product.sale_price.present? %>
+                £<%= number_with_precision(@product.sale_price, precision:2) %>
+              <% else %>
+                -
+              <% end %>
+
+            </p>
+
+          </div>
+
+
+          <div>
+
+            <p class="text-sm text-slate-500">
+              SKU
+            </p>
+
+            <p class="mt-1 font-semibold text-slate-900">
+              <%= @product.sku.presence || "-" %>
+            </p>
+
+          </div>
+
+
+          <div>
+
+            <p class="text-sm text-slate-500">
+              Created
+            </p>
+
+            <p class="mt-1 font-semibold text-slate-900">
+              <%= @product.created_at.strftime("%d %B %Y") %>
+            </p>
+
+          </div>
+
+
+        </div>
+
+
+      </section>
+
+
+
+      <!-- Product tabs -->
+
+      <section class="border border-slate-200 bg-white shadow-sm">
+
+
+        <div class="border-b border-slate-200 px-4 py-3">
+
+          <h3 class="text-sm font-semibold text-slate-900">
+            Customer Tabs
+          </h3>
+
+        </div>
+
+
+        <div class="p-5">
+
+
+          <% if @product.tabs.any? %>
+
+            <div class="flex flex-wrap gap-2">
+
+              <% @product.tabs.each do |tab| %>
+
+                <span class="rounded-full bg-slate-100 px-3 py-1 text-sm font-medium text-slate-700">
+                  <%= tab %>
+                </span>
+
+              <% end %>
+
+            </div>
+
+
+          <% else %>
+
+            <p class="text-sm text-slate-500">
+              No additional tabs added.
+            </p>
+
+          <% end %>
+
+
+        </div>
+
+
+      </section>
+
+
+    </div>
+
+
+
+
+
+    <!-- Sidebar -->
+
+    <aside class="xl:col-span-3 space-y-6">
+
+
+
+      <!-- Publish -->
+
+      <section class="border border-slate-200 bg-white shadow-sm">
+
+
+        <div class="border-b border-slate-200 px-4 py-3">
+
+          <h3 class="text-sm font-semibold text-slate-900">
+            Publish
+          </h3>
+
+        </div>
+
+
+        <div class="p-5 space-y-4">
+
+
+          <div class="flex justify-between text-sm">
+
+            <span class="text-slate-500">
+              Status
+            </span>
+
+            <span class="font-semibold text-slate-900">
+              <%= @product.status&.humanize || "Draft" %>
+            </span>
+
+          </div>
+
+
+          <div class="flex justify-between text-sm">
+
+            <span class="text-slate-500">
+              Visibility
+            </span>
+
+            <span class="font-semibold text-slate-900">
+              <%= @product.visibility&.humanize || "Public" %>
+            </span>
+
+          </div>
+
+
+          <div class="flex justify-between text-sm">
+
+            <span class="text-slate-500">
+              Published
+            </span>
+
+            <span class="font-semibold text-slate-900">
+              <%= @product.publish_at&.strftime("%d %b %Y") || "Immediately" %>
+            </span>
+
+          </div>
+
+
+        </div>
+
+
+      </section>
+
+
+
+
+      <!-- Featured Image -->
+
+      <section class="border border-slate-200 bg-white shadow-sm">
+
+
+        <div class="border-b border-slate-200 px-4 py-3">
+
+          <h3 class="text-sm font-semibold text-slate-900">
+            Featured Image
+          </h3>
+
+        </div>
+
+
+        <div class="p-4">
+
+
+          <% if @product.featured_image.attached? %>
+
+            <%= image_tag @product.featured_image,
+                          class:"w-full aspect-square rounded-xl object-cover" %>
+
+          <% else %>
+
+            <div class="aspect-square rounded-xl bg-slate-100 flex items-center justify-center text-sm text-slate-400">
+              No image
+            </div>
+
+          <% end %>
+
+
+        </div>
+
+
+      </section>
+
+
+
+
+
+      <!-- Gallery -->
+
+      <section class="border border-slate-200 bg-white shadow-sm">
+
+
+        <div class="border-b border-slate-200 px-4 py-3">
+
+          <h3 class="text-sm font-semibold text-slate-900">
+            Gallery
+          </h3>
+
+        </div>
+
+
+        <div class="p-4 grid grid-cols-3 gap-3">
+
+
+          <% @product.product_images.each do |gallery| %>
+
+            <% next unless gallery.image.attached? %>
+
+
+            <%= image_tag gallery.image,
+                          class:"aspect-square rounded-lg border border-slate-200 object-cover" %>
+
+
+          <% end %>
+
+
+        </div>
+
+
+      </section>
+
+
+
+
+      <!-- Inventory -->
+
+      <section class="border border-slate-200 bg-white shadow-sm">
+
+
+        <div class="border-b border-slate-200 px-4 py-3">
+
+          <h3 class="text-sm font-semibold text-slate-900">
+            Inventory
+          </h3>
+
+        </div>
+
+
+        <div class="p-5 space-y-4">
+
+
+          <div class="flex justify-between text-sm">
+
+            <span class="text-slate-500">
+              Manage stock
+            </span>
+
+            <span class="font-semibold">
+              <%= @product.manage_stock? ? "Yes" : "No" %>
+            </span>
+
+          </div>
+
+
+          <% if @product.manage_stock? %>
+
+            <div class="flex justify-between text-sm">
+
+              <span class="text-slate-500">
+                Quantity
+              </span>
+
+              <span class="font-semibold">
+                <%= @product.stock_count || 0 %>
+              </span>
+
+            </div>
+
+          <% end %>
+
+
+        </div>
+
+
+      </section>
+
+
+
+    </aside>
+
+
+  </section>
+
+
+</main>

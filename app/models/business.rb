@@ -7,6 +7,8 @@ class Business < ApplicationRecord
   has_many :calendar_blocked_times, dependent: :destroy
   has_one :consultation_form, dependent: :destroy
   has_many :email_templates, dependent: :destroy
+  has_many :products, dependent: :destroy
+  has_many :orders, dependent: :destroy
 
   has_many :customers,
            through: :business_customers,

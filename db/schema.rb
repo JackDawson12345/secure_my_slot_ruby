@@ -10,9 +10,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_09_21_150231) do
+ActiveRecord::Schema[8.0].define(version: 2026_09_24_144833) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "action_text_rich_texts", force: :cascade do |t|
+    t.string "name", null: false
+    t.text "body"
+    t.string "record_type", null: false
+    t.bigint "record_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["record_type", "record_id", "name"], name: "index_action_text_rich_texts_uniqueness", unique: true
+  end
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -343,6 +353,56 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_21_150231) do
     t.index ["jti"], name: "index_jwt_denylists_on_jti"
   end
 
+  create_table "order_holds", force: :cascade do |t|
+    t.bigint "business_id", null: false
+    t.bigint "user_id", null: false
+    t.decimal "amount"
+    t.datetime "expires_at"
+    t.string "stripe_checkout_session_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.jsonb "cart_data"
+    t.bigint "order_id"
+    t.string "address_line_1"
+    t.string "address_line_2"
+    t.string "town"
+    t.string "postcode"
+    t.index ["business_id"], name: "index_order_holds_on_business_id"
+    t.index ["order_id"], name: "index_order_holds_on_order_id"
+    t.index ["user_id"], name: "index_order_holds_on_user_id"
+  end
+
+  create_table "order_items", force: :cascade do |t|
+    t.bigint "order_id", null: false
+    t.bigint "product_id", null: false
+    t.integer "quantity"
+    t.decimal "price"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["order_id"], name: "index_order_items_on_order_id"
+    t.index ["product_id"], name: "index_order_items_on_product_id"
+  end
+
+  create_table "orders", force: :cascade do |t|
+    t.bigint "business_id", null: false
+    t.bigint "user_id", null: false
+    t.string "status"
+    t.string "payment_method"
+    t.string "payment_status"
+    t.string "stripe_checkout_session_id"
+    t.string "stripe_payment_intent_id"
+    t.decimal "amount"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "public_id"
+    t.string "address_line_1"
+    t.string "address_line_2"
+    t.string "town"
+    t.string "postcode"
+    t.index ["business_id"], name: "index_orders_on_business_id"
+    t.index ["user_id"], name: "index_orders_on_user_id"
+  end
+
   create_table "page_views", force: :cascade do |t|
     t.string "pageable_type", null: false
     t.bigint "pageable_id", null: false
@@ -355,6 +415,35 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_21_150231) do
     t.string "device_type"
     t.string "traffic_source"
     t.index ["pageable_type", "pageable_id"], name: "index_page_views_on_pageable"
+  end
+
+  create_table "product_images", force: :cascade do |t|
+    t.bigint "product_id", null: false
+    t.integer "position"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["product_id"], name: "index_product_images_on_product_id"
+  end
+
+  create_table "products", force: :cascade do |t|
+    t.bigint "business_id", null: false
+    t.string "name", null: false
+    t.decimal "regular_price", precision: 10, scale: 2
+    t.decimal "sale_price", precision: 10, scale: 2
+    t.string "sku"
+    t.string "status", default: "draft"
+    t.string "slug"
+    t.boolean "featured", default: false
+    t.boolean "manage_stock", default: false
+    t.integer "stock_count", default: 0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "visibility", default: "public"
+    t.datetime "publish_at"
+    t.text "product_tabs"
+    t.index ["business_id"], name: "index_products_on_business_id"
+    t.index ["sku"], name: "index_products_on_sku", unique: true
+    t.index ["slug"], name: "index_products_on_slug", unique: true
   end
 
   create_table "service_categories", force: :cascade do |t|
@@ -614,6 +703,15 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_21_150231) do
   add_foreign_key "consultation_forms", "businesses"
   add_foreign_key "customer_settings", "users"
   add_foreign_key "email_templates", "businesses"
+  add_foreign_key "order_holds", "businesses"
+  add_foreign_key "order_holds", "orders"
+  add_foreign_key "order_holds", "users"
+  add_foreign_key "order_items", "orders"
+  add_foreign_key "order_items", "products"
+  add_foreign_key "orders", "businesses"
+  add_foreign_key "orders", "users"
+  add_foreign_key "product_images", "products"
+  add_foreign_key "products", "businesses"
   add_foreign_key "service_categories", "businesses"
   add_foreign_key "service_coupons", "businesses"
   add_foreign_key "services", "businesses"

@@ -87,6 +87,48 @@
   <% end %>
 
 
+  <!-- Background Colour -->
+
+  <% if template.settings["allow_background_colour"] %>
+
+    <div>
+
+      <label class="block text-sm font-semibold text-slate-700">
+        Background Colour
+      </label>
+
+      <p class="mt-1 text-sm text-slate-500">
+        Used for the main background of the design.
+      </p>
+
+
+      <div class="mt-4 flex items-center gap-3">
+
+
+        <%= color_field_tag "social_post[settings][background_colour]",
+                            social_post.settings["background_colour"],
+                            data: {
+                              action: "input->social-post-editor#updateColour",
+                              social_post_style_key: "background_colour"
+                            },
+                            class: "h-12 w-16 cursor-pointer rounded-xl border border-slate-200 bg-white p-1" %>
+
+
+        <%= text_field_tag "background_colour_display",
+                           social_post.settings["background_colour"],
+                           data: {
+                             action: "input->social-post-editor#updateColourText",
+                             social_post_style_key: "background_colour"
+                           },
+                           class: "flex-1 rounded-xl border border-slate-200 px-4 py-3 text-sm font-medium text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" %>
+
+
+      </div>
+
+    </div>
+
+  <% end %>
+
 
   <!-- Design Restrictions -->
 

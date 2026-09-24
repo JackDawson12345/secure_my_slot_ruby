@@ -37,6 +37,46 @@ Rails.application.routes.draw do
     post "/check-service-coupon",
          to: "business_sites#check_service_coupon",
          as: :check_service_coupon
+
+    get "/shop",
+        to: "business_sites#shop",
+        as: :business_site_shop
+
+    get "/shop/:slug",
+        to: "business_sites#product",
+        as: :business_site_product
+
+    get "/cart",
+        to: "business_sites#cart",
+        as: :business_site_cart
+
+    post "/cart/add",
+         to: "business_sites#add_to_cart",
+         as: :add_to_cart
+
+    patch "/cart/update",
+          to: "business_sites#update_cart",
+          as: :update_cart
+
+    delete "/cart/remove/:id",
+           to: "business_sites#remove_from_cart",
+           as: :remove_from_cart
+
+    get "/checkout",
+        to: "business_sites#checkout",
+        as: :business_site_checkout
+
+    post "/order/create",
+         to: "business_sites#create_order",
+         as: :create_order
+
+    get "/orders/:public_id",
+        to: "business_sites#order_confirmation",
+        as: :order_confirmation
+
+    get "/order/payment/:id",
+        to: "business_sites#payment_success",
+        as: :order_payment_success
   end
 
 
@@ -325,6 +365,14 @@ Rails.application.routes.draw do
         to: "book_appointment#index",
         as: :book_appointment
 
+    get "orders",
+        to: "orders#index",
+        as: :orders
+
+    get "orders/:id",
+        to: "orders#show",
+        as: :order
+
   end
 
 
@@ -443,6 +491,25 @@ Rails.application.routes.draw do
     resources :services,
               path: "dashboard/services" do
       delete :remove_image, on: :member
+    end
+
+    resources :products,
+              path: "dashboard/products" do
+
+      get "orders",
+          on: :collection,
+          to: "products#orders",
+          as: :orders
+
+      get "orders/:id",
+          on: :collection,
+          to: "products#order",
+          as: :order
+
+      patch "orders/:id/update_status",
+            to: "products#update_status",
+            as: :update_status
+
     end
 
 

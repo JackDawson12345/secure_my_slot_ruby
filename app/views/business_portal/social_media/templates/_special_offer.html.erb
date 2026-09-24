@@ -21,6 +21,7 @@
   Always rendered as a square.
 -->
 <div
+  data-social-post-style-background="primary_colour"
   class="relative aspect-square w-full overflow-hidden [container-type:inline-size]"
   style="background-color: <%= primary_colour %>;"
 >
@@ -31,6 +32,7 @@
 
   <!-- Large accent glow -->
   <div
+    data-social-post-style-background="accent_colour"
     class="pointer-events-none absolute -right-[18%] -top-[18%] h-[58%] w-[58%] rounded-full opacity-20 blur-[5cqw]"
     style="background-color: <%= accent_colour %>;"
   ></div>
@@ -46,6 +48,7 @@
 
     <% 9.times do %>
       <span
+        data-social-post-style-background="accent_colour"
         class="h-[0.8cqw] w-[0.8cqw] rounded-full"
         style="background-color: <%= accent_colour %>;"
       ></span>
@@ -71,6 +74,7 @@
       <div class="flex min-w-0 items-center gap-[3cqw]">
 
         <div
+          data-social-post-style-background="accent_colour"
           class="flex aspect-square w-[9.5cqw] shrink-0 items-center justify-center overflow-hidden rounded-[2cqw]"
           style="background-color: <%= accent_colour %>;"
         >
@@ -78,12 +82,23 @@
           <% if post.respond_to?(:logo) && post.logo.attached? %>
 
             <%= image_tag post.logo,
+                          data: {
+                            social_post_logo: true
+                          },
                           class: "h-full w-full object-contain p-[14%]",
+                          crossorigin: "anonymous",
                           alt: business_name %>
 
           <% else %>
 
+            <img
+              data-social-post-logo
+              class="hidden h-full w-full object-contain p-[14%]"
+              alt="<%= business_name %>"
+            >
+
             <i
+              data-social-post-logo-placeholder
               data-lucide="percent"
               class="h-[4.5cqw] w-[4.5cqw] text-slate-900"
             ></i>
@@ -96,6 +111,7 @@
         <div class="min-w-0">
 
           <p
+            data-social-post-field="business_name"
             class="truncate font-bold uppercase leading-none tracking-[0.12em] text-white"
             style="font-size: 3cqw;"
           >
@@ -116,6 +132,7 @@
 
       <!-- Offer badge -->
       <div
+        data-social-post-style-color="accent_colour"
         class="shrink-0 rounded-full border border-white/10 bg-white/5 px-[2.7cqw] py-[1.4cqw] font-bold uppercase tracking-[0.12em]"
         style="
         color: <%= accent_colour %>;
@@ -137,6 +154,8 @@
 
       <!-- Small heading -->
       <p
+        data-social-post-field="small_heading"
+        data-social-post-style-color="accent_colour"
         class="font-bold uppercase tracking-[0.24em]"
         style="
         color: <%= accent_colour %>;
@@ -151,6 +170,7 @@
       <div class="mt-[2.5%] flex items-end gap-[3%]">
 
         <h2
+          data-social-post-field="offer"
           class="font-black leading-[0.85] tracking-[-0.06em] text-white"
           style="font-size: 13.5cqw;"
         >
@@ -162,6 +182,7 @@
 
       <!-- Accent line -->
       <div
+        data-social-post-style-background="accent_colour"
         class="mt-[4%] h-[0.7cqw] w-[14%] rounded-full"
         style="background-color: <%= accent_colour %>;"
       ></div>
@@ -169,6 +190,7 @@
 
       <!-- Heading -->
       <h3
+        data-social-post-field="heading"
         class="mt-[4%] max-w-[80%] font-extrabold leading-[1.05] tracking-[-0.035em] text-white"
         style="font-size: 6cqw;"
       >
@@ -178,6 +200,7 @@
 
       <!-- Description -->
       <p
+        data-social-post-field="description"
         class="mt-[3.5%] max-w-[72%] font-medium leading-[1.55] text-white/60"
         style="font-size: 2.8cqw;"
       >
@@ -196,6 +219,8 @@
 
       <!-- CTA -->
       <div
+        data-social-post-field="button_text"
+        data-social-post-style-background="accent_colour"
         class="inline-flex shrink-0 items-center gap-[1.5cqw] rounded-[1.8cqw] px-[4.5%] py-[2.8%] font-extrabold tracking-[0.03em] text-slate-900 shadow-sm"
         style="
         background-color: <%= accent_colour %>;
@@ -222,6 +247,7 @@
         </p>
 
         <p
+          data-social-post-field="website"
           class="truncate font-bold text-white"
           style="font-size: 2.3cqw;"
         >
