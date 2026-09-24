@@ -73,6 +73,19 @@
       >
         Book now
       </a>
+
+      <% if @business.products.exists? %>
+        <%= link_to '/cart' do %>
+          <div class="relative">
+            <i data-lucide="shopping-cart" class="h-7 w-7"></i>
+            <% cart = session[:carts][@business.id.to_s] %>
+            <div class="absolute text-white text-xs -top-2 -right-2 <%= website_colour_class("bg", 500) %> w-5 h-5 rounded-full flex justify-center items-center">
+              <%=  total_products = cart.values.sum %>
+            </div>
+          </div>
+        <% end %>
+      <% end %>
+
     </nav>
 
     <a
