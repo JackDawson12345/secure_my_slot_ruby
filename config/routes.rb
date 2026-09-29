@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  get "business_portal/index"
 
   get "business_sites/show"
 
@@ -9,6 +10,9 @@ Rails.application.routes.draw do
                sign_out: "logout",
                registration: "",
                sign_up: "sign-up"
+             },
+             controllers: {
+               passwords: "users/passwords"
              }
 
 
@@ -576,9 +580,38 @@ Rails.application.routes.draw do
            to: "calendar_connections#disconnect",
            as: :google_calendar_disconnect
 
+    scope "/dashboard/settings/email-templates", as: "email_templates" do
+      get "/custom-templates",
+          to: "custom_email_templates#index",
+          as: :custom_templates
+
+      get "/custom-templates/new",
+          to: "custom_email_templates#new",
+          as: :new_custom_template
+
+      post "/custom-templates",
+           to: "custom_email_templates#create",
+           as: :custom_templates_create
+
+      get "/custom-templates/:id/edit",
+          to: "custom_email_templates#edit",
+          as: :edit_custom_template
+
+      patch "/custom-templates/:id",
+            to: "custom_email_templates#update",
+            as: :custom_templates_update
+
+      patch "/send_email/:id",
+            to: "custom_email_templates#send_email",
+            as: :send_email
+    end
+
+
+
     get "dashboard/settings/email-templates",
         to: "settings#email_templates",
         as: :email_templates
+
 
     get "dashboard/settings/email-templates/:template_type",
         to: "settings#email_templates_edit",
@@ -735,6 +768,11 @@ Rails.application.routes.draw do
           as: :duplicate_social_media_post
 
 
+    resources :agents, path: "dashboard/agents" do
+      member do
+        post :resend_invitation
+      end
+    end
 
 
   end
@@ -777,6 +815,12 @@ Rails.application.routes.draw do
             as: :password
     end
 
+  end
+
+  namespace :business_agent, path: "business-agent" do
+    get "dashboard", to: "dashboard#index", as: :dashboard
+    get "bookings", to: "bookings#index", as: :bookings
+    get "settings", to: "settings#index", as: :settings
   end
 
 end

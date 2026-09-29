@@ -151,6 +151,7 @@ class BusinessPortal::BookingsController < BusinessPortal::BaseController
     @business = current_user.business
     @booking = @business.bookings.find(params[:id])
     @agreements = @business.agreements
+    @email_templates = @business.email_templates.where(custom: true)
   end
 
   def agreements_show

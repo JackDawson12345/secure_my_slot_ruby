@@ -1,6 +1,14 @@
 class BusinessPortal::ServiceCategoriesController < BusinessPortal::BaseController
 
   before_action :set_service_category, only: [:edit, :update, :destroy]
+  before_action :check_service_categories_access,
+                only: %i[
+                new
+                create
+                edit
+                update
+                destroy
+              ]
 
 
   def index
@@ -57,6 +65,13 @@ class BusinessPortal::ServiceCategoriesController < BusinessPortal::BaseControll
 
   def service_category_params
     params.require(:service_category).permit(:name)
+  end
+
+  def check_service_categories_access
+    return if current_user.business.feature_enabled?(:service_categories)
+
+    redirect_to business_service_categories_path,
+                alert: "Upgrade to Pro to use service categories."
   end
 
 end

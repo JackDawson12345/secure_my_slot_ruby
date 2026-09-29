@@ -1,9 +1,18 @@
 class User < ApplicationRecord
+  attr_accessor :invitation_creation
+
   enum :role, {
     admin: 0,
     business: 1,
-    customer: 2
+    customer: 2,
+    agent: 3
   }
+
+  has_many :business_agents, dependent: :destroy
+
+  has_many :agent_businesses,
+           through: :business_agents,
+           source: :business
 
   devise :database_authenticatable,
          :registerable,
@@ -28,9 +37,12 @@ class User < ApplicationRecord
               accept: true,
               message: "must be accepted"
             },
-            on: :create
+            on: :create,
+            unless: :invitation_creation
 
-  validate :password_complexity, if: :password_required?
+  validate :password_complexity,
+           if: :password_required?,
+           unless: :invitation_creation
 
   before_create :record_terms_acceptance
 

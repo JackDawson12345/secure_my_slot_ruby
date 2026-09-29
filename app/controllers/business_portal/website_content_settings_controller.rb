@@ -5,6 +5,12 @@ class BusinessPortal::WebsiteContentSettingsController <
 
 
   def update
+    unless current_user.business.feature_enabled?(:website_content)
+      redirect_to business_website_settings_path,
+                  alert: "Upgrade to Pro Plus to edit website content."
+      return
+    end
+
     settings = website_content_params
 
     if @business_website.update(settings)

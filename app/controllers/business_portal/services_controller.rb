@@ -40,27 +40,42 @@ class BusinessPortal::ServicesController < BusinessPortal::BaseController
       status: "active",
       minutes_duration: 30
     )
+
+    @service.service_times.build
   end
 
   def create
     @service = @business.services.new(service_params)
 
+    if service_times_enabled? && !custom_service_times?
+      @service.service_times.clear
+    end
+
     if @service.save
       redirect_to business_services_path,
                   notice: "Service was created successfully."
     else
+      @service.service_times.build if @service.service_times.empty?
       render :new, status: :unprocessable_entity
     end
   end
 
   def edit
+    @service.service_times.build if @service.service_times.empty?
   end
 
   def update
-    if @service.update(service_params)
+    @service.assign_attributes(service_params)
+
+    if service_times_enabled? && !custom_service_times?
+      @service.service_times.destroy_all
+    end
+
+    if @service.save
       redirect_to business_service_path(@service),
                   notice: "Service was updated successfully."
     else
+      @service.service_times.build if @service.service_times.empty?
       render :edit, status: :unprocessable_entity
     end
   end
@@ -93,7 +108,7 @@ class BusinessPortal::ServicesController < BusinessPortal::BaseController
   end
 
   def service_params
-    params.require(:service).permit(
+    permitted = params.require(:service).permit(
       :name,
       :description,
       :price,
@@ -103,7 +118,35 @@ class BusinessPortal::ServicesController < BusinessPortal::BaseController
       :deposit,
       :icon,
       :image,
-      :service_category_id
+      :service_category_id,
+      :custom_service_times,
+      service_times_attributes: [
+        :id,
+        :start_time,
+        :end_time,
+        :_destroy
+      ]
+    )
+
+    permitted.delete(:image) unless @business.feature_enabled?(:service_images)
+
+    permitted.delete(:service_category_id) unless @business.feature_enabled?(:service_categories)
+
+    unless @business.feature_enabled?(:service_times)
+      permitted.delete(:custom_service_times)
+      permitted.delete(:service_times_attributes)
+    end
+
+    permitted
+  end
+
+  def service_times_enabled?
+    @business.feature_enabled?(:service_times)
+  end
+
+  def custom_service_times?
+    ActiveModel::Type::Boolean.new.cast(
+      params.dig(:service, :custom_service_times)
     )
   end
 end

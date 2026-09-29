@@ -15,32 +15,43 @@ class BookingAvailability
 
     return [] unless opening_hour&.open?
 
-    current = time_on_date(opening_hour.opens_at)
-    finish = time_on_date(opening_hour.closes_at)
+    opening_start = time_on_date(opening_hour.opens_at)
+    opening_end = time_on_date(opening_hour.closes_at)
+
+    availability_ranges = service_availability_ranges(
+      opening_start,
+      opening_end
+    )
+
+    return [] if availability_ranges.empty?
 
     earliest_booking_time =
       Time.current + minimum_notice_minutes.minutes
 
-    if earliest_booking_time > current
-      current = round_to_interval(
-        earliest_booking_time,
-        booking_interval_minutes
-      )
-    end
-
     slots = []
 
-    while current + service_duration.minutes <= finish
-      slot_end = current + service_duration.minutes
+    availability_ranges.each do |range_start, range_end|
+      current = range_start
 
-      unless unavailable?(current, slot_end)
-        slots << current.strftime("%H:%M")
+      if earliest_booking_time > current
+        current = round_to_interval(
+          earliest_booking_time,
+          booking_interval_minutes
+        )
       end
 
-      current += booking_interval_minutes.minutes
+      while current + service_duration.minutes <= range_end
+        slot_end = current + service_duration.minutes
+
+        unless unavailable?(current, slot_end)
+          slots << current.strftime("%H:%M")
+        end
+
+        current += booking_interval_minutes.minutes
+      end
     end
 
-    slots
+    slots.uniq.sort
   end
 
   private
@@ -220,5 +231,25 @@ class BookingAvailability
   def day_end
     @day_end ||=
       @date.in_time_zone.end_of_day
+  end
+
+  def service_availability_ranges(opening_start, opening_end)
+    service_times = @service.service_times.to_a
+
+    if service_times.empty?
+      return [[opening_start, opening_end]]
+    end
+
+    service_times.filter_map do |service_time|
+      service_start = time_on_date(service_time.start_time)
+      service_end = time_on_date(service_time.end_time)
+
+      range_start = [service_start, opening_start].max
+      range_end = [service_end, opening_end].min
+
+      next if range_start >= range_end
+
+      [range_start, range_end]
+    end
   end
 end

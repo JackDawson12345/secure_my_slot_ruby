@@ -10,6 +10,9 @@ class Business < ApplicationRecord
   has_many :products, dependent: :destroy
   has_many :orders, dependent: :destroy
 
+  has_many :business_agents, dependent: :destroy
+  has_many :agents, through: :business_agents, source: :user
+
   has_many :customers,
            through: :business_customers,
            source: :user
@@ -37,6 +40,52 @@ class Business < ApplicationRecord
     pro: 1,
     pro_plus: 2
   }
+
+  def has_plan?(plan)
+    subscription_level_before_type_cast >= Business.subscription_levels[plan.to_s]
+  end
+
+  def basic?
+    has_plan?(:basic)
+  end
+
+  def pro?
+    has_plan?(:pro)
+  end
+
+
+  def pro_plus?
+    has_plan?(:pro_plus)
+  end
+
+  def feature_enabled?(feature)
+    case feature.to_sym
+
+    when :service_images,
+      :service_categories,
+      :website_colour,
+      :website_gallery,
+      :client_photos,
+      :reports,
+      :service_coupons,
+      :social_media,
+      :client_management,
+      :client_birthday_reminders,
+      :automated_reminders,
+      :custom_email_templates,
+      :service_times
+      pro?
+
+    when :website_content,
+      :consultation_forms,
+      :agreements,
+      :products
+      pro_plus?
+
+    else
+      false
+    end
+  end
 
   validates :business_name, presence: true
 

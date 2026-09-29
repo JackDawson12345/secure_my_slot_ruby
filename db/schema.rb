@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_09_24_144833) do
+ActiveRecord::Schema[8.0].define(version: 2026_09_29_084341) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -144,12 +144,25 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_24_144833) do
     t.decimal "no_show_fee"
     t.string "no_show_payment_intent_id"
     t.datetime "no_show_fee_charged_at"
+    t.bigint "agent_id"
+    t.index ["agent_id"], name: "index_bookings_on_agent_id"
     t.index ["business_id"], name: "index_bookings_on_business_id"
     t.index ["consultation_token"], name: "index_bookings_on_consultation_token", unique: true
     t.index ["service_id"], name: "index_bookings_on_service_id"
     t.index ["stripe_checkout_session_id"], name: "index_bookings_on_stripe_checkout_session_id", unique: true
     t.index ["stripe_payment_intent_id"], name: "index_bookings_on_stripe_payment_intent_id", unique: true
     t.index ["user_id"], name: "index_bookings_on_user_id"
+  end
+
+  create_table "business_agents", force: :cascade do |t|
+    t.bigint "business_id", null: false
+    t.bigint "user_id", null: false
+    t.string "status"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.datetime "invited_at"
+    t.index ["business_id"], name: "index_business_agents_on_business_id"
+    t.index ["user_id"], name: "index_business_agents_on_user_id"
   end
 
   create_table "business_blocked_times", force: :cascade do |t|
@@ -311,6 +324,19 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_24_144833) do
     t.index ["business_id"], name: "index_consultation_forms_on_business_id"
   end
 
+  create_table "custom_email_template_statuses", force: :cascade do |t|
+    t.bigint "business_id", null: false
+    t.bigint "booking_id", null: false
+    t.bigint "email_template_id", null: false
+    t.string "status"
+    t.string "token"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["booking_id"], name: "index_custom_email_template_statuses_on_booking_id"
+    t.index ["business_id"], name: "index_custom_email_template_statuses_on_business_id"
+    t.index ["email_template_id"], name: "index_custom_email_template_statuses_on_email_template_id"
+  end
+
   create_table "customer_settings", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.date "date_of_birth"
@@ -342,6 +368,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_24_144833) do
     t.text "body"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "custom", default: false
     t.index ["business_id"], name: "index_email_templates_on_business_id"
   end
 
@@ -466,6 +493,15 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_24_144833) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["business_id"], name: "index_service_coupons_on_business_id"
+  end
+
+  create_table "service_times", force: :cascade do |t|
+    t.bigint "service_id", null: false
+    t.time "start_time"
+    t.time "end_time"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["service_id"], name: "index_service_times_on_service_id"
   end
 
   create_table "services", force: :cascade do |t|
@@ -689,6 +725,9 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_24_144833) do
   add_foreign_key "bookings", "businesses"
   add_foreign_key "bookings", "services"
   add_foreign_key "bookings", "users"
+  add_foreign_key "bookings", "users", column: "agent_id"
+  add_foreign_key "business_agents", "businesses"
+  add_foreign_key "business_agents", "users"
   add_foreign_key "business_blocked_times", "businesses"
   add_foreign_key "business_booking_settings", "businesses"
   add_foreign_key "business_customers", "businesses"
@@ -701,6 +740,9 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_24_144833) do
   add_foreign_key "calendar_blocked_times", "businesses"
   add_foreign_key "calendar_blocked_times", "calendar_connections"
   add_foreign_key "consultation_forms", "businesses"
+  add_foreign_key "custom_email_template_statuses", "bookings"
+  add_foreign_key "custom_email_template_statuses", "businesses"
+  add_foreign_key "custom_email_template_statuses", "email_templates"
   add_foreign_key "customer_settings", "users"
   add_foreign_key "email_templates", "businesses"
   add_foreign_key "order_holds", "businesses"
@@ -714,6 +756,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_24_144833) do
   add_foreign_key "products", "businesses"
   add_foreign_key "service_categories", "businesses"
   add_foreign_key "service_coupons", "businesses"
+  add_foreign_key "service_times", "services"
   add_foreign_key "services", "businesses"
   add_foreign_key "services", "service_categories"
   add_foreign_key "social_posts", "businesses"

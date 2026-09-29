@@ -142,7 +142,12 @@ class Account::BookAppointmentController < Account::BaseController
   def sort_businesses(businesses)
     businesses.sort_by do |business|
       subscription_priority =
-        business.subscription_level == "ultimate" ? 0 : 1
+        case business.subscription_level.to_s
+        when "1", "2"
+          0
+        else
+          1
+        end
 
       secondary_sort =
         case params[:sort]

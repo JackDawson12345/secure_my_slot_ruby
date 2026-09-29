@@ -59,6 +59,8 @@ class ApplicationController < ActionController::Base
       business_dashboard_path
     when "customer"
       account_dashboard_path
+    when "agent"
+      business_agent_dashboard_path
     else
       root_path
     end

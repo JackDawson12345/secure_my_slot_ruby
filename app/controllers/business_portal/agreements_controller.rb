@@ -1,7 +1,14 @@
 class BusinessPortal::AgreementsController < BusinessPortal::BaseController
 
   before_action :set_agreement, only: [:edit, :update, :destroy]
-
+  before_action :check_agreements_access,
+                only: %i[
+                new
+                create
+                edit
+                update
+                destroy
+              ]
 
   def index
     @agreements = current_user.business.agreements.order(created_at: :desc)
@@ -74,6 +81,13 @@ class BusinessPortal::AgreementsController < BusinessPortal::BaseController
       :name,
       :content
     )
+  end
+
+  def check_agreements_access
+    return if current_user.business.feature_enabled?(:agreements)
+
+    redirect_to business_agreements_path,
+                alert: "Upgrade to Pro Plus to use agreements."
   end
 
 end

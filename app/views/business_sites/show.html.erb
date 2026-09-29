@@ -1735,14 +1735,16 @@ Every appointment is handled with care, clear communication and attention to det
               fetch(
                   `/booking_slots?business_id=<%= @business.id %>&service_id=${selectedServiceId}&date=${dateInput.value}`
               )
-                  .then((response) => {
+                  .then(async (response) => {
+                      const data = await response.json();
+
                       if (!response.ok) {
                           throw new Error(
-                              "Unable to load appointment times."
+                              data.error || "Unable to load appointment times."
                           );
                       }
 
-                      return response.json();
+                      return data;
                   })
                   .then((times) => {
                       timeOptions.innerHTML = "";
@@ -1819,21 +1821,21 @@ Every appointment is handled with care, clear communication and attention to det
                           }
                       );
                   })
-                  .catch(() => {
+                  .catch((error) => {
                       timeOptions.className =
                           "mt-4";
 
                       timeOptions.innerHTML = `
-              <div class="rounded-2xl border border-red-200 bg-red-50 px-5 py-6 text-center">
-                <p class="font-bold text-red-700">
-                  Appointment times could not be loaded
-                </p>
+                        <div class="rounded-2xl border border-red-200 bg-red-50 px-5 py-6 text-center">
+                          <p class="font-bold text-red-700">
+                            ${error.message}
+                          </p>
 
-                <p class="mt-1 text-sm text-red-600">
-                  Please try again.
-                </p>
-              </div>
-            `;
+                          <p class="mt-1 text-sm text-red-600">
+                            Please try again.
+                          </p>
+                        </div>
+                      `;
                   });
           }
 

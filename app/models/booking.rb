@@ -6,6 +6,10 @@ class Booking < ApplicationRecord
   belongs_to :user
   belongs_to :service
 
+  belongs_to :agent,
+             class_name: "User",
+             optional: true
+
   has_many_attached :images
 
   validate :maximum_images

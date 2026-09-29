@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  business: one
+  booking: one
+  email_template: one
+  status: MyString
+
+two:
+  business: two
+  booking: two
+  email_template: two
+  status: MyString

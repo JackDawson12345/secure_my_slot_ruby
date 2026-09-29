@@ -2,9 +2,18 @@ class BookingsController < ApplicationController
   layout "business_site"
 
   def slots
+
     business = Business.find(params[:business_id])
     service = business.services.find(params[:service_id])
     date = Date.parse(params[:date])
+
+    bookings_this_month = business.bookings.where(created_at: Time.current.all_month).count
+
+    if business.subscription_level == "basic" && bookings_this_month >= 20
+      return render json: {
+        error: "Booking limit reached for this business."
+      }, status: :forbidden
+    end
 
     slots = BookingAvailability.new(
       business,

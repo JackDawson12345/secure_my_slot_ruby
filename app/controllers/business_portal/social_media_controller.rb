@@ -1,4 +1,16 @@
 class BusinessPortal::SocialMediaController < BusinessPortal::BaseController
+
+  before_action :check_social_media_access,
+                only: %i[
+                  new
+                  create
+                  edit
+                  update
+                  generate_caption
+                  generate_hashtags
+                  duplicate
+                ]
+
   def index
     @social_posts = current_user.business.social_posts
 
@@ -149,5 +161,12 @@ class BusinessPortal::SocialMediaController < BusinessPortal::BaseController
     template.fields.each_with_object({}) do |(key, field), content|
       content[key] = field["default"]
     end
+  end
+
+  def check_social_media_access
+    return if current_user.business.feature_enabled?(:social_media)
+
+    redirect_to business_social_media_path,
+                alert: "Upgrade to Pro to use social media tools."
   end
 end

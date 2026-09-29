@@ -1,5 +1,16 @@
 class BusinessPortal::ProductsController < BusinessPortal::BaseController
 
+  before_action :check_products_access,
+                only: %i[
+                  new
+                  create
+                  edit
+                  update
+                  orders
+                  order
+                  update_status
+                ]
+
   def index
     @products = current_user.business.products.order(created_at: :desc)
 
@@ -141,6 +152,13 @@ class BusinessPortal::ProductsController < BusinessPortal::BaseController
       :manage_stock,
       :stock_count
     )
+  end
+
+  def check_products_access
+    return if current_user.business.feature_enabled?(:products)
+
+    redirect_to business_products_path,
+                alert: "Upgrade to Pro Plus to use products."
   end
 
 end

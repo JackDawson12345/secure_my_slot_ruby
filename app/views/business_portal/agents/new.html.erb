@@ -1,0 +1,25 @@
+<main class="p-4 sm:p-6 lg:p-8">
+
+  <section class="mb-6">
+
+    <%= link_to business_agents_path,
+                class: "mb-4 inline-flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-slate-900" do %>
+
+      <i data-lucide="arrow-left" class="h-4 w-4"></i>
+      Back to agents
+
+    <% end %>
+
+    <h1 class="text-2xl font-bold text-slate-900">
+      Add Agent
+    </h1>
+
+    <p class="mt-1 text-sm text-slate-500">
+      Add a team member who can be assigned to bookings.
+    </p>
+
+  </section>
+
+  <%= render "form", agent: @agent %>
+
+</main>

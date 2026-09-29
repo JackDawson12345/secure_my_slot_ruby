@@ -2,6 +2,14 @@ class BusinessPortal::ServiceCouponsController < BusinessPortal::BaseController
 
   before_action :set_service_coupon, only: [:show, :edit, :update, :destroy]
   before_action :set_services, only: [:new, :create, :edit, :update, :show]
+  before_action :check_service_coupon_access,
+                only: %i[
+                new
+                create
+                edit
+                update
+                destroy
+              ]
 
 
   def index
@@ -77,6 +85,13 @@ class BusinessPortal::ServiceCouponsController < BusinessPortal::BaseController
       :expires_at,
       services: []
     )
+  end
+
+  def check_service_coupon_access
+    return if current_user.business.feature_enabled?(:service_coupons)
+
+    redirect_to business_service_coupons_path,
+                alert: "Upgrade to Pro to use service coupons."
   end
 
 end

@@ -1,11 +1,11 @@
 class EmailTemplate < ApplicationRecord
   belongs_to :business
 
-  TEMPLATE_TYPES = %w[confirmation reminder].freeze
+
+  has_many_attached :attachments
 
   validates :template_type,
-            presence: true,
-            inclusion: { in: TEMPLATE_TYPES }
+            presence: true
 
   validates :template_type,
             uniqueness: { scope: :business_id }

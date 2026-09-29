@@ -25,6 +25,7 @@ import ProductTabsController from "controllers/product_tabs_controller"
 import StockController from "controllers/stock_controller"
 import QuantityController from "controllers/quantity_controller"
 import CartQuantityController from "controllers/cart_quantity_controller"
+import ServiceTimesController from "controllers/service_times_controller"
 
 application.register("opening-hours", OpeningHoursController)
 application.register("nested-form", NestedFormController)
@@ -51,3 +52,4 @@ application.register("product-tabs", ProductTabsController)
 application.register("stock", StockController)
 application.register("quantity", QuantityController)
 application.register("cart-quantity", CartQuantityController)
+application.register("service-times", ServiceTimesController)

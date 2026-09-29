@@ -1,0 +1,6 @@
+<%= @template.subject %>
+
+<%= @template.body.respond_to?(:to_plain_text) ? @template.body.to_plain_text : @template.body %>
+
+
+This email was sent regarding your booking.

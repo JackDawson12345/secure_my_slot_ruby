@@ -8,6 +8,14 @@ class Service < ApplicationRecord
 
   after_initialize :set_default_icon, if: :new_record?
 
+  attr_accessor :custom_service_times
+
+  has_many :service_times, dependent: :destroy
+
+  accepts_nested_attributes_for :service_times,
+                                allow_destroy: true,
+                                reject_if: :all_blank
+
   ICONS = {
     "calendar-check" => "Appointment",
     "calendar-days" => "Calendar",
@@ -108,6 +116,10 @@ class Service < ApplicationRecord
   validate :deposit_cannot_exceed_price
 
   before_validation :clear_deposit_when_disabled
+
+  def custom_service_times
+    @custom_service_times.nil? ? service_times.any? : @custom_service_times
+  end
 
   private
 

@@ -123,6 +123,13 @@ class BusinessPortal::SettingsController < BusinessPortal::BaseController
   end
 
   def update_consultation_form
+
+    unless @business.feature_enabled?(:consultation_forms)
+      redirect_to business_consultation_form_path,
+                  alert: "Upgrade to Pro to use consultation forms."
+      return
+    end
+
     @consultation_form =
       @business.consultation_form ||
       @business.build_consultation_form
@@ -141,6 +148,7 @@ class BusinessPortal::SettingsController < BusinessPortal::BaseController
       render :consultation_form,
              status: :unprocessable_entity
     end
+
   end
 
   def email_templates
@@ -170,7 +178,7 @@ class BusinessPortal::SettingsController < BusinessPortal::BaseController
   end
 
   def email_templates_edit
-    unless EmailTemplate::TEMPLATE_TYPES.include?(params[:template_type])
+    unless %w[confirmation reminder].include?(params[:template_type])
       redirect_to business_email_templates_path, alert: "Invalid email template"
       return
     end
@@ -184,6 +192,13 @@ class BusinessPortal::SettingsController < BusinessPortal::BaseController
   end
 
   def birthday_reminder
+
+    unless @business.feature_enabled?(:client_birthday_reminders)
+      redirect_to business_general_settings_path,
+                  alert: "Upgrade to Pro to use birthday reminders."
+      return
+    end
+
     @birthday_reminder_message =
       @business.birthday_reminder_message ||
       @business.create_birthday_reminder_message(
@@ -327,7 +342,7 @@ class BusinessPortal::SettingsController < BusinessPortal::BaseController
 
 
   def settings_params
-    params.require(:business_setting).permit(
+    permitted = params.require(:business_setting).permit(
       :business_name,
       :business_category,
       :phone_number,
@@ -354,6 +369,16 @@ class BusinessPortal::SettingsController < BusinessPortal::BaseController
       :daily_appointment_summary,
       :birthday_reminder
     )
+
+    unless @business.feature_enabled?(:automated_reminders)
+      permitted.delete(:daily_appointment_summary)
+    end
+
+    unless @business.feature_enabled?(:client_birthday_reminders)
+      permitted.delete(:birthday_reminder)
+    end
+
+    permitted
   end
 
 

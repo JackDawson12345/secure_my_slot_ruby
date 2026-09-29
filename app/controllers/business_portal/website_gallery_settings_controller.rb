@@ -3,6 +3,7 @@ class BusinessPortal::WebsiteGallerySettingsController <
 
 
   before_action :set_business_website
+  before_action :check_gallery_access
 
 
   def update
@@ -49,6 +50,12 @@ class BusinessPortal::WebsiteGallerySettingsController <
 
   private
 
+  def check_gallery_access
+    return if current_user.business.feature_enabled?(:website_gallery)
+
+    redirect_to business_website_settings_path,
+                alert: "Upgrade to Pro to use the website gallery."
+  end
 
   def set_business_website
     @business_website = current_user.business.business_website

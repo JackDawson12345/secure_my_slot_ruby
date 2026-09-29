@@ -6,6 +6,12 @@ class BusinessPortal::WebsiteColourSettingsController <
 
 
   def update
+    unless current_user.business.feature_enabled?(:website_colour)
+      redirect_to business_website_settings_path,
+                  alert: "Upgrade to Pro to customise your website colours."
+      return
+    end
+
     settings = website_colour_params
 
     if settings["colour"] == "custom"

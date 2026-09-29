@@ -1,0 +1,2 @@
+module BusinessAgent::SettingsHelper
+end
