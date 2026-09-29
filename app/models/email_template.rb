@@ -1,8 +1,10 @@
 class EmailTemplate < ApplicationRecord
   belongs_to :business
 
-
   has_many_attached :attachments
+
+  has_many :custom_email_template_statuses,
+           dependent: :destroy
 
   validates :template_type,
             presence: true

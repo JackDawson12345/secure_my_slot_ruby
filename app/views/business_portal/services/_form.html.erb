@@ -76,72 +76,91 @@
     </p>
   </div>
 
-  <div data-controller="image-preview">
+  <div class="relative">
 
-    <%= form.label :image,
-                   "Service image",
-                   class: "block text-sm font-semibold text-slate-700" %>
+    <div class="<%= 'pointer-events-none opacity-50 min-h-[170px]' unless business.feature_enabled?(:service_images) %>">
 
-    <p class="mt-1 text-xs text-slate-500">
-      Upload an image that represents this service.
-    </p>
+      <div data-controller="image-preview">
 
-    <div class="mt-4 flex items-start gap-5">
+        <%= form.label :image,
+                       "Service image",
+                       class: "block text-sm font-semibold text-slate-700" %>
 
-      <div class="relative">
+        <p class="mt-1 text-xs text-slate-500">
+          Upload an image that represents this service.
+        </p>
 
-        <% if service.image.attached? %>
-          <%= image_tag service.image.variant(resize_to_fill: [160, 160]),
-                        data: {
-                          image_preview_target: "image"
-                        },
-                        class: "h-40 w-40 rounded-2xl border border-slate-200 object-cover" %>
-        <% else %>
-          <div
-            data-image-preview-target="placeholder"
-            class="flex h-40 w-40 items-center justify-center rounded-2xl border border-dashed border-slate-300 bg-slate-50 text-sm text-slate-400"
-          >
-            No image
+        <div class="mt-4 flex items-start gap-5">
+
+          <div class="relative">
+
+            <% if service.image.attached? %>
+              <%= image_tag service.image.variant(resize_to_fill: [160, 160]),
+                            data: {
+                              image_preview_target: "image"
+                            },
+                            class: "h-40 w-40 rounded-2xl border border-slate-200 object-cover" %>
+            <% else %>
+              <div
+                data-image-preview-target="placeholder"
+                class="flex h-40 w-40 items-center justify-center rounded-2xl border border-dashed border-slate-300 bg-slate-50 text-sm text-slate-400"
+              >
+                No image
+              </div>
+
+              <img
+                data-image-preview-target="image"
+                class="hidden h-40 w-40 rounded-2xl border border-slate-200 object-cover"
+              >
+            <% end %>
+
           </div>
 
-          <img
-            data-image-preview-target="image"
-            class="hidden h-40 w-40 rounded-2xl border border-slate-200 object-cover"
-          >
-        <% end %>
 
-      </div>
+          <div class="flex flex-col gap-3">
 
-
-      <div class="flex flex-col gap-3">
-
-        <%= form.file_field :image,
-                            accept: "image/png,image/jpeg,image/webp",
-                            data: {
-                              image_preview_target: "input",
-                              action: "change->image-preview#show"
-                            },
-                            class: "block text-sm text-slate-600 file:mr-4 file:rounded-lg file:border-0 file:bg-indigo-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-indigo-700 hover:file:bg-indigo-100" %>
+            <%= form.file_field :image,
+                                accept: "image/png,image/jpeg,image/webp",
+                                data: {
+                                  image_preview_target: "input",
+                                  action: "change->image-preview#show"
+                                },
+                                class: "block text-sm text-slate-600 file:mr-4 file:rounded-lg file:border-0 file:bg-indigo-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-indigo-700 hover:file:bg-indigo-100" %>
 
 
-        <% if service.image.attached? %>
-          <%= link_to remove_image_business_service_path(service),
-                      data: {
-                        turbo_method: :delete
-                      },
-                      class: "inline-flex items-center gap-2 text-sm font-semibold text-red-600 hover:text-red-700" do %>
+            <% if service.image.attached? %>
+              <%= link_to remove_image_business_service_path(service),
+                          data: {
+                            turbo_method: :delete
+                          },
+                          class: "inline-flex items-center gap-2 text-sm font-semibold text-red-600 hover:text-red-700" do %>
 
-            <i data-lucide="trash-2" class="h-4 w-4"></i>
-            Remove image
+                <i data-lucide="trash-2" class="h-4 w-4"></i>
+                Remove image
 
-          <% end %>
-        <% end %>
+              <% end %>
+            <% end %>
+
+          </div>
+
+        </div>
 
       </div>
 
     </div>
 
+    <% unless business.feature_enabled?(:service_images) %>
+
+      <%= render 'business_portal/shared/upgrade_overlay',
+                 title: 'Add images to your services',
+                 message: 'Upgrade to Pro or Pro Plus to add images to your services and showcase what you offer.'
+      %>
+
+    <% end %>
+
   </div>
+
+
 
   <div>
     <%= form.label :name,
@@ -164,21 +183,52 @@
                        class: "mt-2 w-full resize-y rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" %>
   </div>
 
-  <div>
-    <%= form.label :service_category_id,
-                   "Service category",
-                   class: "block text-sm font-semibold text-slate-700" %>
+  <div class="relative">
 
-    <%= form.collection_select :service_category_id,
-                               current_user.business.service_categories,
-                               :id,
-                               :name,
-                               { include_blank: "Select a category" },
-                               class: "mt-2 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" %>
+    <div class="<%= 'pointer-events-none opacity-50 min-h-[170px]' unless business.feature_enabled?(:service_categories) %>">
 
-    <p class="mt-2 text-xs text-slate-500">
-      Choose the category this service belongs to.
-    </p>
+      <div class="rounded-xl border border-slate-200 bg-slate-50 p-5">
+
+        <div class="flex items-start gap-3">
+
+          <div class="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white text-slate-500 shadow-sm ring-1 ring-slate-200">
+            <i data-lucide="tags" class="h-4 w-4"></i>
+          </div>
+
+          <div class="flex-1">
+
+            <%= form.label :service_category_id,
+                           "Service category",
+                           class: "block text-sm font-semibold text-slate-700" %>
+
+            <p class="mt-1 text-xs text-slate-500">
+              Organise this service into a category to make your services easier to browse.
+            </p>
+
+            <%= form.collection_select :service_category_id,
+                                       business.service_categories,
+                                       :id,
+                                       :name,
+                                       { include_blank: "No category" },
+                                       class: "mt-4 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" %>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <% unless business.feature_enabled?(:service_categories) %>
+
+      <%= render 'business_portal/shared/upgrade_overlay',
+                 title: 'Upgrade to use service categories',
+                 message: 'Service categories are available on the Pro plan and above.'
+      %>
+
+    <% end %>
+
   </div>
 
   <div class="grid gap-5 sm:grid-cols-2">
@@ -263,6 +313,97 @@
     </div>
   </div>
   <% end %>
+
+  <div class="relative min-h-[180px]">
+
+    <div class="<%= 'pointer-events-none opacity-50' unless business.feature_enabled?(:service_times) %>">
+
+      <div class="rounded-xl border border-slate-200 bg-slate-50 p-5">
+        <div class="flex items-start gap-3">
+
+          <%= form.check_box :custom_service_times,
+                             {
+                               checked: service.service_times.any?,
+                               class: "mt-1 h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500",
+                               data: {
+                                 service_times_target: "checkbox",
+                                 action: "service-times#toggle"
+                               }
+                             },
+                             "1",
+                             "0" %>
+
+          <div class="flex-1">
+            <%= form.label :custom_service_times,
+                           "Set custom service times",
+                           class: "block cursor-pointer text-sm font-semibold text-slate-700" %>
+
+            <p class="mt-1 text-xs text-slate-500">
+              Restrict this service to specific times. If disabled, the service will
+              be available during your normal opening hours.
+            </p>
+          </div>
+
+        </div>
+
+        <div
+          class="mt-5 <%= 'hidden' unless service.service_times.any? %>"
+          data-service-times-target="container"
+        >
+
+          <%= form.fields_for :service_times do |time_form| %>
+
+            <div class="grid gap-5 sm:grid-cols-2">
+
+              <div>
+                <%= time_form.label :start_time,
+                                    "Available from",
+                                    class: "block text-sm font-semibold text-slate-700" %>
+
+                <%= time_form.time_field :start_time,
+                                         disabled: service.service_times.none?,
+                                         data: {
+                                           service_times_target: "input"
+                                         },
+                                         class: "mt-2 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 disabled:bg-slate-100" %>
+              </div>
+
+              <div>
+                <%= time_form.label :end_time,
+                                    "Available until",
+                                    class: "block text-sm font-semibold text-slate-700" %>
+
+                <%= time_form.time_field :end_time,
+                                         disabled: service.service_times.none?,
+                                         data: {
+                                           service_times_target: "input"
+                                         },
+                                         class: "mt-2 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 disabled:bg-slate-100" %>
+              </div>
+
+            </div>
+
+          <% end %>
+
+          <p class="mt-3 text-xs text-slate-500">
+            Customers will only be able to book this service between these times.
+          </p>
+
+        </div>
+      </div>
+
+    </div>
+
+    <% unless business.feature_enabled?(:service_times) %>
+
+      <%= render 'business_portal/shared/upgrade_overlay',
+          title: 'Upgrade to set custom service times',
+          message: 'Custom service times are available on the Pro plan and above.'
+      %>
+
+    <% end %>
+
+  </div>
 
   <div>
     <%= form.label :status,

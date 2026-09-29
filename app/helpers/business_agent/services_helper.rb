@@ -1,0 +1,2 @@
+module BusinessAgent::ServicesHelper
+end

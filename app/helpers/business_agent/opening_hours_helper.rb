@@ -1,0 +1,2 @@
+module BusinessAgent::OpeningHoursHelper
+end

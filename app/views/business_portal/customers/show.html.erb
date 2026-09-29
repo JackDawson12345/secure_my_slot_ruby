@@ -88,54 +88,64 @@
 
 
   <!-- Stats -->
-  <section class="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+  <div class="relative">
+    <div class="<%= 'pointer-events-none opacity-50 min-h-60 flex items-center' unless current_user.business.feature_enabled?(:client_management) %>">
+      <section class="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4 w-full">
+
+        <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+          <p class="text-sm font-medium text-slate-500">
+            Total Bookings
+          </p>
+
+          <p class="mt-2 text-3xl font-bold text-slate-900">
+            <%= bookings.count %>
+          </p>
+        </article>
 
 
-    <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-      <p class="text-sm font-medium text-slate-500">
-        Total Bookings
-      </p>
+        <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+          <p class="text-sm font-medium text-slate-500">
+            Total Spent
+          </p>
 
-      <p class="mt-2 text-3xl font-bold text-slate-900">
-        <%= bookings.count %>
-      </p>
-    </article>
-
-
-    <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-      <p class="text-sm font-medium text-slate-500">
-        Total Spent
-      </p>
-
-      <p class="mt-2 text-3xl font-bold text-slate-900">
-        £<%= total_paid.to_s %>
-      </p>
-    </article>
+          <p class="mt-2 text-3xl font-bold text-slate-900">
+            £<%= total_paid.to_s %>
+          </p>
+        </article>
 
 
-    <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-      <p class="text-sm font-medium text-slate-500">
-        Average Booking
-      </p>
+        <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+          <p class="text-sm font-medium text-slate-500">
+            Average Booking
+          </p>
 
-      <p class="mt-2 text-3xl font-bold text-slate-900">
-        £<%= (total_paid / bookings.count).round(2).to_s %>
-      </p>
-    </article>
-
-
-    <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-      <p class="text-sm font-medium text-slate-500">
-        Last Visit
-      </p>
-
-      <p class="mt-2 text-xl font-bold text-slate-900">
-        <%= last_booking ? last_booking.date.strftime("%d %b %Y") : "No visits yet" %>
-      </p>
-    </article>
+          <p class="mt-2 text-3xl font-bold text-slate-900">
+            £<%= (total_paid / bookings.count).round(2).to_s %>
+          </p>
+        </article>
 
 
-  </section>
+        <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+          <p class="text-sm font-medium text-slate-500">
+            Last Visit
+          </p>
+
+          <p class="mt-2 text-xl font-bold text-slate-900">
+            <%= last_booking ? last_booking.date.strftime("%d %b %Y") : "No visits yet" %>
+          </p>
+        </article>
+
+
+      </section>
+    </div>
+    <% unless current_user.business.feature_enabled?(:client_management) %>
+      <%= render 'business_portal/shared/upgrade_overlay',
+                 title: 'Unlock Customer Insights',
+                 message: 'Upgrade to Pro or Pro Plus to view customer statistics, track activity and better understand your customers.'
+      %>
+    <% end %>
+  </div>
+
 
 
 

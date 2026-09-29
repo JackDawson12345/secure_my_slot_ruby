@@ -1,162 +1,166 @@
 <!-- Social Media content -->
-<main class="p-4 sm:p-6 lg:p-8">
+<div class="relative">
 
-  <!-- Page heading -->
-  <section class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+  <div class="<%= 'pointer-events-none opacity-50' unless current_user.business.feature_enabled?(:social_media) %>">
 
-    <div>
-      <h2 class="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
-        Social Media
-      </h2>
+    <main class="p-4 sm:p-6 lg:p-8">
 
-      <p class="mt-1 text-sm text-slate-500">
-        Create and manage social media content for your business.
-      </p>
-    </div>
-
-    <%= link_to business_new_social_media_post_path, class: 'inline-flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:w-auto' do %>
-      <i data-lucide="plus" class="h-4 w-4"></i>
-      Create post
-    <% end %>
-
-  </section>
-
-
-  <!-- Statistics -->
-  <section class="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-2">
-
-    <!-- Total Posts -->
-    <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-      <div class="flex items-start justify-between">
+      <!-- Page heading -->
+      <section class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 
         <div>
-          <p class="text-sm font-medium text-slate-500">
-            Total Posts
-          </p>
-
-          <p class="mt-2 text-3xl font-bold tracking-tight text-slate-900">
-            <%= @social_posts.count %>
-          </p>
-        </div>
-
-        <div class="rounded-xl bg-indigo-50 p-3 text-indigo-600">
-          <i data-lucide="panels-top-left" class="h-5 w-5"></i>
-        </div>
-
-      </div>
-
-      <p class="mt-4 text-sm text-slate-500">
-        All social posts you've created
-      </p>
-    </article>
-
-
-    <!-- This Month -->
-    <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-      <div class="flex items-start justify-between">
-
-        <div>
-          <p class="text-sm font-medium text-slate-500">
-            This Month
-          </p>
-
-          <p class="mt-2 text-3xl font-bold tracking-tight text-slate-900">
-            <%= @posts_this_month %>
-          </p>
-        </div>
-
-        <div class="rounded-xl bg-blue-50 p-3 text-blue-600">
-          <i data-lucide="calendar-days" class="h-5 w-5"></i>
-        </div>
-
-      </div>
-
-      <p class="mt-4 text-sm text-slate-500">
-        Created during <%= Time.current.strftime("%B") %>
-      </p>
-    </article>
-
-  </section>
-
-
-  <!-- Posts panel -->
-  <section class="mt-8 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-
-    <!-- Toolbar -->
-    <div class="border-b border-slate-200 p-5 sm:p-6">
-
-      <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-
-        <div>
-          <h3 class="text-lg font-bold text-slate-900">
-            Your Posts
-          </h3>
+          <h2 class="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+            Social Media
+          </h2>
 
           <p class="mt-1 text-sm text-slate-500">
-            View, edit and manage your social media content.
+            Create and manage social media content for your business.
           </p>
         </div>
 
+        <%= link_to business_new_social_media_post_path, class: 'inline-flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:w-auto' do %>
+          <i data-lucide="plus" class="h-4 w-4"></i>
+          Create post
+        <% end %>
 
-        <div class="flex flex-col gap-3 sm:flex-row">
+      </section>
 
-          <!-- Search -->
-          <div class="relative min-w-0 sm:w-72">
 
-            <i
-              data-lucide="search"
-              class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
-            ></i>
+      <!-- Statistics -->
+      <section class="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-2">
 
-            <input
-              type="search"
-              placeholder="Search posts..."
-              class="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-10 pr-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
-            >
+        <!-- Total Posts -->
+        <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+          <div class="flex items-start justify-between">
+
+            <div>
+              <p class="text-sm font-medium text-slate-500">
+                Total Posts
+              </p>
+
+              <p class="mt-2 text-3xl font-bold tracking-tight text-slate-900">
+                <%= @social_posts.count %>
+              </p>
+            </div>
+
+            <div class="rounded-xl bg-indigo-50 p-3 text-indigo-600">
+              <i data-lucide="panels-top-left" class="h-5 w-5"></i>
+            </div>
 
           </div>
 
+          <p class="mt-4 text-sm text-slate-500">
+            All social posts you've created
+          </p>
+        </article>
 
-          <!-- Filter -->
-          <button
-            type="button"
-            class="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
-          >
-            <i data-lucide="list-filter" class="h-4 w-4 text-slate-400"></i>
-            Filter
-          </button>
+
+        <!-- This Month -->
+        <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+          <div class="flex items-start justify-between">
+
+            <div>
+              <p class="text-sm font-medium text-slate-500">
+                This Month
+              </p>
+
+              <p class="mt-2 text-3xl font-bold tracking-tight text-slate-900">
+                <%= @posts_this_month %>
+              </p>
+            </div>
+
+            <div class="rounded-xl bg-blue-50 p-3 text-blue-600">
+              <i data-lucide="calendar-days" class="h-5 w-5"></i>
+            </div>
+
+          </div>
+
+          <p class="mt-4 text-sm text-slate-500">
+            Created during <%= Time.current.strftime("%B") %>
+          </p>
+        </article>
+
+      </section>
+
+
+      <!-- Posts panel -->
+      <section class="mt-8 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+
+        <!-- Toolbar -->
+        <div class="border-b border-slate-200 p-5 sm:p-6">
+
+          <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+
+            <div>
+              <h3 class="text-lg font-bold text-slate-900">
+                Your Posts
+              </h3>
+
+              <p class="mt-1 text-sm text-slate-500">
+                View, edit and manage your social media content.
+              </p>
+            </div>
+
+
+            <div class="flex flex-col gap-3 sm:flex-row">
+
+              <!-- Search -->
+              <div class="relative min-w-0 sm:w-72">
+
+                <i
+                  data-lucide="search"
+                  class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
+                ></i>
+
+                <input
+                  type="search"
+                  placeholder="Search posts..."
+                  class="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-10 pr-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+                >
+
+              </div>
+
+
+              <!-- Filter -->
+              <button
+                type="button"
+                class="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+              >
+                <i data-lucide="list-filter" class="h-4 w-4 text-slate-400"></i>
+                Filter
+              </button>
+
+            </div>
+
+          </div>
 
         </div>
 
-      </div>
 
-    </div>
-
-
-    <!-- Post grid -->
-    <div class="grid gap-5 p-5 sm:grid-cols-2 sm:p-6 xl:grid-cols-3">
+        <!-- Post grid -->
+        <div class="grid gap-5 p-5 sm:grid-cols-2 sm:p-6 xl:grid-cols-3">
 
 
-      <% @social_posts.each do |post| %>
-        <article class="group overflow-hidden rounded-2xl border border-slate-200 bg-white transition hover:-translate-y-0.5 hover:border-indigo-200 hover:shadow-md">
+          <% @social_posts.each do |post| %>
+            <article class="group overflow-hidden rounded-2xl border border-slate-200 bg-white transition hover:-translate-y-0.5 hover:border-indigo-200 hover:shadow-md">
 
-          <!-- Post Preview -->
-          <div class="relative aspect-square bg-slate-100">
+              <!-- Post Preview -->
+              <div class="relative aspect-square bg-slate-100">
 
-            <%= render "business_portal/social_media/templates/#{post.social_post_template.template_key}",
-                       post: post %>
+                <%= render "business_portal/social_media/templates/#{post.social_post_template.template_key}",
+                           post: post %>
 
-          </div>
+              </div>
 
 
-          <!-- Details -->
-          <div class="p-5">
-            <h4 class="font-bold text-slate-900">
-              <%= post.social_post_template.name %>
-            </h4>
+              <!-- Details -->
+              <div class="p-5">
+                <h4 class="font-bold text-slate-900">
+                  <%= post.social_post_template.name %>
+                </h4>
 
-            <!-- Platform -->
-            <div class="mt-4 flex flex-wrap gap-2">
+                <!-- Platform -->
+                <div class="mt-4 flex flex-wrap gap-2">
 
               <span class="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14" id="Facebook-1--Streamline-Core" height="14" width="14">
@@ -170,7 +174,7 @@
                 Facebook
               </span>
 
-              <span class="inline-flex items-center gap-1.5 rounded-full bg-pink-50 px-3 py-1 text-xs font-semibold text-pink-700">
+                  <span class="inline-flex items-center gap-1.5 rounded-full bg-pink-50 px-3 py-1 text-xs font-semibold text-pink-700">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14" id="Instagram--Streamline-Core" height="14" width="14">
                   <desc>
                     Instagram Streamline Icon: https://streamlinehq.com
@@ -187,73 +191,82 @@
                 Instagram
               </span>
 
-            </div>
+                </div>
 
 
-            <!-- Meta -->
-            <div class="mt-5 grid grid-cols-2 gap-3">
+                <!-- Meta -->
+                <div class="mt-5 grid grid-cols-2 gap-3">
 
-              <div class="rounded-xl bg-slate-50 p-3">
-                <p class="text-xs font-medium text-slate-500">
-                  Created
-                </p>
+                  <div class="rounded-xl bg-slate-50 p-3">
+                    <p class="text-xs font-medium text-slate-500">
+                      Created
+                    </p>
 
-                <p class="mt-1 text-sm font-semibold text-slate-900">
-                  <%= post.created_at.strftime("%d %b %Y") %>
-                </p>
+                    <p class="mt-1 text-sm font-semibold text-slate-900">
+                      <%= post.created_at.strftime("%d %b %Y") %>
+                    </p>
+                  </div>
+
+                  <div class="rounded-xl bg-slate-50 p-3">
+                    <p class="text-xs font-medium text-slate-500">
+                      Format
+                    </p>
+
+                    <p class="mt-1 text-sm font-semibold text-slate-900">
+                      Square Post
+                    </p>
+                  </div>
+
+                </div>
+
+
+                <!-- Footer -->
+                <div class="mt-5 flex items-center justify-between border-t border-slate-100 pt-4">
+
+                  <%= link_to business_show_social_media_post_path(post), class: 'text-sm font-semibold text-slate-500 transition hover:text-slate-700' do %>
+                    View post
+                  <% end %>
+
+                  <%= link_to business_edit_social_media_post_path(post), class: 'inline-flex items-center gap-1 text-sm font-semibold text-indigo-600 transition hover:text-indigo-700' do %>
+                    Edit post
+                    <i data-lucide="arrow-right" class="h-4 w-4"></i>
+                  <% end %>
+
+                </div>
+
               </div>
 
-              <div class="rounded-xl bg-slate-50 p-3">
-                <p class="text-xs font-medium text-slate-500">
-                  Format
-                </p>
+            </article>
+          <% end %>
 
-                <p class="mt-1 text-sm font-semibold text-slate-900">
-                  Square Post
-                </p>
-              </div>
 
+          <!-- Create New Card -->
+
+          <%= link_to business_new_social_media_post_path, class: 'flex min-h-96 flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50 p-6 text-center transition hover:border-indigo-300 hover:bg-indigo-50' do %>
+            <div class="flex h-12 w-12 items-center justify-center rounded-full bg-white text-indigo-600 shadow-sm">
+              <i data-lucide="plus" class="h-6 w-6"></i>
             </div>
 
+            <p class="mt-4 font-bold text-slate-900">
+              Create a new post
+            </p>
 
-            <!-- Footer -->
-            <div class="mt-5 flex items-center justify-between border-t border-slate-100 pt-4">
+            <p class="mt-2 max-w-xs text-sm leading-6 text-slate-500">
+              Create content and graphics ready to use across your social media channels.
+            </p>
+          <% end %>
 
-              <%= link_to business_show_social_media_post_path(post), class: 'text-sm font-semibold text-slate-500 transition hover:text-slate-700' do %>
-                View post
-              <% end %>
-
-              <%= link_to business_edit_social_media_post_path(post), class: 'inline-flex items-center gap-1 text-sm font-semibold text-indigo-600 transition hover:text-indigo-700' do %>
-                Edit post
-                <i data-lucide="arrow-right" class="h-4 w-4"></i>
-              <% end %>
-
-            </div>
-
-          </div>
-
-        </article>
-      <% end %>
-
-
-      <!-- Create New Card -->
-
-      <%= link_to business_new_social_media_post_path, class: 'flex min-h-96 flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50 p-6 text-center transition hover:border-indigo-300 hover:bg-indigo-50' do %>
-        <div class="flex h-12 w-12 items-center justify-center rounded-full bg-white text-indigo-600 shadow-sm">
-          <i data-lucide="plus" class="h-6 w-6"></i>
         </div>
 
-        <p class="mt-4 font-bold text-slate-900">
-          Create a new post
-        </p>
+      </section>
 
-        <p class="mt-2 max-w-xs text-sm leading-6 text-slate-500">
-          Create content and graphics ready to use across your social media channels.
-        </p>
-      <% end %>
+    </main>
+  </div>
 
-    </div>
-
-  </section>
-
-</main>
+  <% unless current_user.business.feature_enabled?(:social_media) %>
+    <%= render 'business_portal/shared/upgrade_overlay',
+               title: 'Create Social Media Posts',
+               message: 'Upgrade to Pro or Pro Plus to create branded social media posts for your business.'
+    %>
+  <% end %>
+</div>

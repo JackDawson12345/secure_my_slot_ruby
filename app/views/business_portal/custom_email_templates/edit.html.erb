@@ -1,0 +1,177 @@
+<main class="p-4 sm:p-6 lg:p-8">
+
+  <!-- Page heading -->
+  <section
+    class="overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-600 to-indigo-700 px-6 py-8 text-white shadow-sm sm:px-8"
+  >
+    <div class="max-w-3xl">
+
+      <div class="flex items-center gap-3">
+
+        <div class="rounded-xl bg-white/10 p-3 backdrop-blur">
+          <i data-lucide="mail-edit" class="h-6 w-6"></i>
+        </div>
+
+        <h2 class="text-2xl font-bold tracking-tight sm:text-3xl">
+          Edit email template
+        </h2>
+
+      </div>
+
+      <p class="mt-3 text-sm leading-6 text-indigo-100 sm:text-base">
+        Update your custom email template, including its subject, content and attachments.
+      </p>
+
+    </div>
+  </section>
+
+
+  <!-- Flash messages -->
+  <%= render 'business_portal/shared/flash_messages' %>
+
+
+  <section class="mt-8 grid gap-6 lg:grid-cols-3">
+
+
+    <!-- Form -->
+    <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm lg:col-span-2">
+
+      <%= render "form", email_template: @email_template %>
+
+    </div>
+
+
+    <!-- Information -->
+    <div class="h-fit rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+
+      <div class="flex items-center gap-3">
+
+        <div class="rounded-xl bg-indigo-50 p-3 text-indigo-600">
+          <i data-lucide="info" class="h-5 w-5"></i>
+        </div>
+
+        <h3 class="text-lg font-bold text-slate-900">
+          Template details
+        </h3>
+
+      </div>
+
+
+      <p class="mt-3 text-sm leading-6 text-slate-500">
+        Make changes to this template whenever you need to update the email sent to your customers.
+      </p>
+
+
+      <div class="mt-5 space-y-3">
+
+        <!-- Template name -->
+        <div class="rounded-xl bg-slate-50 px-4 py-3">
+
+          <div class="flex items-start gap-3">
+
+            <i data-lucide="tag" class="mt-0.5 h-4 w-4 shrink-0 text-slate-400"></i>
+
+            <div>
+              <p class="text-sm font-semibold text-slate-700">
+                Template name
+              </p>
+
+              <p class="mt-1 text-xs leading-5 text-slate-500">
+                Used internally to identify this email template.
+              </p>
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- Subject -->
+        <div class="rounded-xl bg-slate-50 px-4 py-3">
+
+          <div class="flex items-start gap-3">
+
+            <i data-lucide="text" class="mt-0.5 h-4 w-4 shrink-0 text-slate-400"></i>
+
+            <div>
+              <p class="text-sm font-semibold text-slate-700">
+                Subject
+              </p>
+
+              <p class="mt-1 text-xs leading-5 text-slate-500">
+                The subject customers will see when they receive the email.
+              </p>
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- Email content -->
+        <div class="rounded-xl bg-slate-50 px-4 py-3">
+
+          <div class="flex items-start gap-3">
+
+            <i data-lucide="align-left" class="mt-0.5 h-4 w-4 shrink-0 text-slate-400"></i>
+
+            <div>
+              <p class="text-sm font-semibold text-slate-700">
+                Email content
+              </p>
+
+              <p class="mt-1 text-xs leading-5 text-slate-500">
+                Update the message that will be sent to your customers.
+              </p>
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- Attachments -->
+        <div class="rounded-xl bg-slate-50 px-4 py-3">
+
+          <div class="flex items-start gap-3">
+
+            <i data-lucide="paperclip" class="mt-0.5 h-4 w-4 shrink-0 text-slate-400"></i>
+
+            <div>
+              <p class="text-sm font-semibold text-slate-700">
+                Attachments
+              </p>
+
+              <p class="mt-1 text-xs leading-5 text-slate-500">
+                Add files that should be included whenever this template is sent.
+              </p>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- Last updated -->
+      <div class="mt-6 border-t border-slate-100 pt-5">
+
+        <div class="flex items-center gap-2 text-xs text-slate-400">
+
+          <i data-lucide="clock-3" class="h-4 w-4"></i>
+
+          <span>
+            Last updated <%= time_ago_in_words(@email_template.updated_at) %> ago
+          </span>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+  </section>
+
+</main>

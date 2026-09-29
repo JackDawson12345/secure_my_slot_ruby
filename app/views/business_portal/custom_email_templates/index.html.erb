@@ -1,0 +1,191 @@
+<!-- Agreements content -->
+<main class="relative p-4 sm:p-6 lg:p-8">
+
+  <div class="<%= 'pointer-events-none opacity-50 select-none' unless current_user.business.feature_enabled?(:custom_email_templates) %>">
+    <!-- Page heading -->
+    <section class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+
+      <div>
+        <h2 class="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+          Custom Email Templates
+        </h2>
+
+        <p class="mt-1 text-sm text-slate-500">
+          Create and manage custom email templates.
+        </p>
+      </div>
+
+
+      <%= link_to business_email_templates_new_custom_template_path,
+                  class: "inline-flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 sm:w-auto" do %>
+
+        <i data-lucide="file-plus" class="h-4 w-4"></i>
+        Create email template
+
+        <% end %>
+
+    </section>
+
+
+    <%= render 'business_portal/shared/flash_messages' %>
+
+
+    <!-- Templates -->
+    <section class="mt-8 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+
+
+      <div class="border-b border-slate-200 px-5 py-5 sm:px-6">
+
+        <div class="flex items-start gap-3">
+
+          <div class="rounded-xl bg-indigo-50 p-3 text-indigo-600">
+            <i data-lucide="file-signature" class="h-5 w-5"></i>
+          </div>
+
+
+          <div>
+            <h3 class="text-lg font-bold text-slate-900">
+              Custom Email Templates
+            </h3>
+
+            <p class="mt-1 text-sm text-slate-500">
+              Add custom email templates to send to customers.
+            </p>
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="divide-y divide-slate-100">
+
+
+        <% if @email_templates.any? %>
+
+          <% @email_templates.each do |template| %>
+
+
+            <div class="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">
+
+              <div class="min-w-0">
+
+                <p class="font-semibold text-slate-900">
+                  <%= template.template_type %>
+                </p>
+
+                <p class="mt-1 text-sm text-slate-500">
+                  Updated <%= time_ago_in_words(template.updated_at) %> ago
+                </p>
+
+
+                <% if template.attachments.attached? %>
+
+                  <div class="mt-3 flex flex-wrap gap-2">
+
+                    <% template.attachments.each do |attachment| %>
+
+                      <%= link_to rails_blob_path(attachment, disposition: "attachment"),
+                                  class: "inline-flex max-w-xs items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-medium text-slate-700 transition hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700" do %>
+
+                        <i data-lucide="paperclip" class="h-3.5 w-3.5 shrink-0"></i>
+
+                        <span class="truncate">
+                          <%= attachment.filename %>
+                        </span>
+
+                        <span class="shrink-0 text-slate-400">
+                          <%= number_to_human_size(attachment.byte_size) %>
+                        </span>
+
+                        <i data-lucide="download" class="h-3.5 w-3.5 shrink-0"></i>
+
+                      <% end %>
+
+                    <% end %>
+
+                  </div>
+
+                <% else %>
+
+                  <div class="mt-3 flex items-center gap-1.5 text-xs text-slate-400">
+                    <i data-lucide="paperclip" class="h-3.5 w-3.5"></i>
+                    No attachments
+                  </div>
+
+                <% end %>
+
+              </div>
+
+
+              <div class="flex shrink-0 gap-3">
+
+                <%= link_to business_email_templates_edit_custom_template_path(template),
+                            class: "inline-flex items-center gap-2 rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50" do %>
+
+                  <i data-lucide="pencil" class="h-4 w-4"></i>
+                  Edit
+
+                <% end %>
+
+
+                <%= button_to business_email_templates_custom_template_path(template),
+                              method: :delete,
+                              class: "inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold text-rose-600 transition hover:bg-rose-50",
+                              data: { turbo_confirm: "Delete this email template?" } do %>
+
+                  <i data-lucide="trash-2" class="h-4 w-4"></i>
+                  Delete
+
+                <% end %>
+
+              </div>
+
+            </div>
+
+            <% end %>
+
+
+          <% else %>
+
+
+          <div class="p-10 text-center">
+
+            <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100 text-slate-400">
+
+              <i data-lucide="file-text" class="h-7 w-7"></i>
+
+            </div>
+
+
+            <h4 class="mt-4 font-semibold text-slate-900">
+              No email templates yet
+            </h4>
+
+
+            <p class="mt-2 text-sm text-slate-500">
+              Create your first custom email template.
+            </p>
+
+          </div>
+
+
+          <% end %>
+
+
+      </div>
+
+
+    </section>
+
+  </div>
+
+  <% unless current_user.business.feature_enabled?(:custom_email_templates) %>
+
+    <%= render "business_portal/shared/upgrade_overlay",
+               title: "Upgrade to use Custom Email Templates",
+               message: "Create custom email templates with the Pro Plus plan." %>
+
+    <% end %>
+
+</main>

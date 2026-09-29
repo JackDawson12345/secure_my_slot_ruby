@@ -1,0 +1,1545 @@
+<%# app/views/business_agent/bookings/show.html.erb %>
+
+<%
+  starts_at = Time.zone.parse("#{@booking.date} #{@booking.time}")
+
+  ends_at =
+    if @booking.service&.minutes_duration.present?
+      starts_at + @booking.service.minutes_duration.minutes
+    else
+      starts_at
+    end
+
+  google_calendar_url = "https://calendar.google.com/calendar/render?" + {
+    action: "TEMPLATE",
+    text: @booking.service&.name || "Appointment",
+    dates: "#{starts_at.utc.strftime('%Y%m%dT%H%M%SZ')}/#{ends_at.utc.strftime('%Y%m%dT%H%M%SZ')}",
+    details: "Appointment with #{@booking.user.first_name} #{@booking.user.last_name}",
+    location: @booking.business.address
+  }.to_query
+
+  customer_name = [
+    @booking.user&.first_name,
+    @booking.user&.last_name
+  ].compact.join(" ")
+
+  customer_name =
+    @booking.user&.email.to_s.split("@").first.to_s.titleize if customer_name.blank?
+
+  initials = [
+    @booking.user&.first_name,
+    @booking.user&.last_name
+  ].compact.filter_map { |name| name.to_s.first }.join.upcase
+
+  initials =
+    customer_name
+      .split
+      .map { |name| name.first }
+      .first(2)
+      .join
+      .upcase if initials.blank?
+
+  status_classes =
+    case @booking.status
+    when "confirmed"
+      "bg-emerald-50 text-emerald-700"
+    when "pending"
+      "bg-amber-50 text-amber-700"
+    when "completed"
+      "bg-blue-50 text-blue-700"
+    when "cancelled", "canceled"
+      "bg-rose-50 text-rose-700"
+    when "no_show"
+      "bg-orange-50 text-orange-700"
+    else
+      "bg-slate-100 text-slate-700"
+    end
+
+  outstanding =
+    @booking.amount.to_d -
+    @booking.amount_paid.to_d
+
+  is_my_booking =
+    @booking.agent_id == @business_agent.id
+%>
+
+
+<main class="p-4 sm:p-6 lg:p-8">
+
+  <!-- Header -->
+  <section class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+
+    <div>
+
+      <!-- Breadcrumb -->
+      <div class="flex items-center gap-2 text-sm text-slate-500">
+
+        <%= link_to "Bookings",
+                    business_agent_bookings_path,
+                    class: "transition hover:text-slate-700" %>
+
+        <i
+          data-lucide="chevron-right"
+          class="h-4 w-4"
+        ></i>
+
+        <span class="text-slate-700">
+          Booking #<%= @booking.id %>
+        </span>
+
+      </div>
+
+
+      <div class="mt-2 flex flex-wrap items-center gap-3">
+
+        <h1 class="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+          <%= @booking.service&.name || "Booking" %>
+        </h1>
+
+
+        <span class="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold <%= status_classes %>">
+          <%= @booking.status.to_s.titleize %>
+        </span>
+
+
+        <% if is_my_booking %>
+
+          <span class="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-2.5 py-1 text-xs font-semibold text-indigo-700">
+
+            <i
+              data-lucide="user-check"
+              class="h-3.5 w-3.5"
+            ></i>
+
+            Your booking
+
+          </span>
+
+        <% end %>
+
+      </div>
+
+
+      <p class="mt-1 text-sm text-slate-500">
+
+        <%= @booking.date.strftime("%A, %-d %B %Y") %>
+
+        at
+
+        <%= @booking.time.strftime("%-I:%M %P") %>
+
+      </p>
+
+    </div>
+
+
+    <%= link_to business_agent_bookings_path,
+                class: "inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50" do %>
+
+      <i
+        data-lucide="arrow-left"
+        class="h-4 w-4"
+      ></i>
+
+      Back to bookings
+
+    <% end %>
+
+  </section>
+
+
+  <!-- Flash messages -->
+  <%= render "business_portal/shared/flash_messages" %>
+
+
+  <!-- Main grid -->
+  <div class="mt-8 grid gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
+
+    <!-- LEFT -->
+    <div class="min-w-0 space-y-6">
+
+
+      <!-- Appointment details -->
+      <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+
+        <div class="border-b border-slate-200 px-5 py-5 sm:px-6">
+
+          <div class="flex items-center gap-3">
+
+            <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
+
+              <i
+                data-lucide="calendar-days"
+                class="h-5 w-5"
+              ></i>
+
+            </div>
+
+            <div>
+
+              <h2 class="text-lg font-bold text-slate-900">
+                Appointment Details
+              </h2>
+
+              <p class="mt-0.5 text-sm text-slate-500">
+                Information about this appointment.
+              </p>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="grid gap-4 p-5 sm:grid-cols-2 sm:p-6">
+
+          <!-- Service -->
+          <div class="rounded-xl bg-slate-50 p-4">
+
+            <div class="flex items-center gap-2 text-slate-500">
+
+              <i
+                data-lucide="briefcase-business"
+                class="h-4 w-4"
+              ></i>
+
+              <p class="text-xs font-semibold uppercase tracking-wide">
+                Service
+              </p>
+
+            </div>
+
+            <p class="mt-2 font-semibold text-slate-900">
+              <%= @booking.service&.name || "Service unavailable" %>
+            </p>
+
+          </div>
+
+
+          <!-- Duration -->
+          <div class="rounded-xl bg-slate-50 p-4">
+
+            <div class="flex items-center gap-2 text-slate-500">
+
+              <i
+                data-lucide="clock-3"
+                class="h-4 w-4"
+              ></i>
+
+              <p class="text-xs font-semibold uppercase tracking-wide">
+                Duration
+              </p>
+
+            </div>
+
+            <p class="mt-2 font-semibold text-slate-900">
+
+              <% if @booking.service&.minutes_duration.present? %>
+                <%= @booking.service.minutes_duration %> minutes
+              <% else %>
+                Not specified
+              <% end %>
+
+            </p>
+
+          </div>
+
+
+          <!-- Date -->
+          <div class="rounded-xl bg-slate-50 p-4">
+
+            <div class="flex items-center gap-2 text-slate-500">
+
+              <i
+                data-lucide="calendar"
+                class="h-4 w-4"
+              ></i>
+
+              <p class="text-xs font-semibold uppercase tracking-wide">
+                Date
+              </p>
+
+            </div>
+
+            <p class="mt-2 font-semibold text-slate-900">
+              <%= @booking.date.strftime("%A, %-d %B %Y") %>
+            </p>
+
+          </div>
+
+
+          <!-- Time -->
+          <div class="rounded-xl bg-slate-50 p-4">
+
+            <div class="flex items-center gap-2 text-slate-500">
+
+              <i
+                data-lucide="clock"
+                class="h-4 w-4"
+              ></i>
+
+              <p class="text-xs font-semibold uppercase tracking-wide">
+                Time
+              </p>
+
+            </div>
+
+            <p class="mt-2 font-semibold text-slate-900">
+              <%= @booking.time.strftime("%-I:%M %P") %>
+            </p>
+
+          </div>
+
+
+          <!-- Price -->
+          <div class="rounded-xl bg-slate-50 p-4">
+
+            <div class="flex items-center gap-2 text-slate-500">
+
+              <i
+                data-lucide="banknote"
+                class="h-4 w-4"
+              ></i>
+
+              <p class="text-xs font-semibold uppercase tracking-wide">
+                Booking Price
+              </p>
+
+            </div>
+
+            <p class="mt-2 font-semibold text-slate-900">
+
+              <%= number_to_currency(
+                    @booking.amount || @booking.service&.price || 0,
+                    unit: "£"
+                  ) %>
+
+            </p>
+
+          </div>
+
+
+          <!-- Booking ID -->
+          <div class="rounded-xl bg-slate-50 p-4">
+
+            <div class="flex items-center gap-2 text-slate-500">
+
+              <i
+                data-lucide="hash"
+                class="h-4 w-4"
+              ></i>
+
+              <p class="text-xs font-semibold uppercase tracking-wide">
+                Booking ID
+              </p>
+
+            </div>
+
+            <p class="mt-2 font-semibold text-slate-900">
+              #<%= @booking.id %>
+            </p>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- Customer -->
+      <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+
+        <div class="border-b border-slate-200 px-5 py-5 sm:px-6">
+
+          <div class="flex items-center gap-3">
+
+            <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
+
+              <i
+                data-lucide="user"
+                class="h-5 w-5"
+              ></i>
+
+            </div>
+
+            <div>
+
+              <h2 class="text-lg font-bold text-slate-900">
+                Customer Details
+              </h2>
+
+              <p class="mt-0.5 text-sm text-slate-500">
+                Contact information for this customer.
+              </p>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="p-5 sm:p-6">
+
+          <div class="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+
+            <div class="flex min-w-0 items-center gap-4">
+
+              <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-lg font-bold text-indigo-700">
+                <%= initials.presence || "CU" %>
+              </div>
+
+
+              <div class="min-w-0">
+
+                <p class="truncate text-lg font-bold text-slate-900">
+                  <%= customer_name %>
+                </p>
+
+                <p class="mt-0.5 truncate text-sm text-slate-500">
+                  <%= @booking.user&.email %>
+                </p>
+
+                <% if @booking.user&.phone_number.present? %>
+
+                  <p class="mt-0.5 text-sm text-slate-500">
+                    <%= @booking.user.phone_number %>
+                  </p>
+
+                <% end %>
+
+              </div>
+
+            </div>
+
+
+            <div class="flex flex-wrap gap-2">
+
+              <% if @booking.user&.email.present? %>
+
+                <%= mail_to @booking.user.email,
+                            class: "inline-flex items-center gap-2 rounded-xl border border-slate-200 px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50" do %>
+
+                  <i
+                    data-lucide="mail"
+                    class="h-4 w-4"
+                  ></i>
+
+                  Email
+
+                <% end %>
+
+              <% end %>
+
+
+              <% if @booking.user&.phone_number.present? %>
+
+                <%= link_to "tel:#{@booking.user.phone_number}",
+                            class: "inline-flex items-center gap-2 rounded-xl border border-slate-200 px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50" do %>
+
+                  <i
+                    data-lucide="phone"
+                    class="h-4 w-4"
+                  ></i>
+
+                  Call
+
+                <% end %>
+
+              <% end %>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- Notes -->
+      <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+
+        <div class="border-b border-slate-200 px-5 py-5 sm:px-6">
+
+          <div class="flex items-center gap-3">
+
+            <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 text-amber-600">
+
+              <i
+                data-lucide="notebook-pen"
+                class="h-5 w-5"
+              ></i>
+
+            </div>
+
+            <div>
+
+              <h2 class="text-lg font-bold text-slate-900">
+                Booking Notes
+              </h2>
+
+              <p class="mt-0.5 text-sm text-slate-500">
+                Notes recorded against this booking.
+              </p>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="p-5 sm:p-6">
+
+          <% if @booking.notes.present? %>
+
+            <p class="whitespace-pre-line text-sm leading-6 text-slate-600">
+              <%= @booking.notes %>
+            </p>
+
+          <% else %>
+
+            <div class="flex items-center gap-3 rounded-xl bg-slate-50 p-4">
+
+              <i
+                data-lucide="notebook"
+                class="h-5 w-5 text-slate-400"
+              ></i>
+
+              <p class="text-sm text-slate-500">
+                No notes have been added to this booking.
+              </p>
+
+            </div>
+
+          <% end %>
+
+        </div>
+
+      </section>
+
+
+      <!-- Agreements -->
+      <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+
+        <div class="border-b border-slate-200 px-5 py-5 sm:px-6">
+
+          <div class="flex items-center gap-3">
+
+            <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-50 text-violet-600">
+
+              <i
+                data-lucide="file-signature"
+                class="h-5 w-5"
+              ></i>
+
+            </div>
+
+            <div>
+
+              <h2 class="text-lg font-bold text-slate-900">
+                Agreements
+              </h2>
+
+              <p class="mt-0.5 text-sm text-slate-500">
+                Agreements associated with this booking.
+              </p>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="p-5 sm:p-6">
+
+          <% if @agreements.present? %>
+
+            <div class="divide-y divide-slate-100">
+
+              <% @agreements.each do |agreement| %>
+
+                <%
+                  agreement_status =
+                    AgreementStatus.find_by(
+                      agreement: agreement,
+                      booking: @booking,
+                      business: @business
+                    )
+
+                  agreement_status_classes =
+                    case agreement_status&.status
+                    when "signed"
+                      "bg-emerald-50 text-emerald-700"
+                    when "pending"
+                      "bg-amber-50 text-amber-700"
+                    else
+                      "bg-slate-100 text-slate-600"
+                    end
+                %>
+
+
+                <div class="flex flex-col gap-4 py-4 first:pt-0 last:pb-0 sm:flex-row sm:items-center sm:justify-between">
+
+                  <div class="flex min-w-0 items-center gap-3">
+
+                    <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-500">
+
+                      <i
+                        data-lucide="file-text"
+                        class="h-5 w-5"
+                      ></i>
+
+                    </div>
+
+
+                    <div class="min-w-0">
+
+                      <p class="truncate font-semibold text-slate-900">
+                        <%= agreement.name %>
+                      </p>
+
+                      <% if agreement_status&.signed_at.present? %>
+
+                        <p class="mt-0.5 text-xs text-slate-500">
+                          Signed
+                          <%= agreement_status.signed_at.strftime("%-d %b %Y at %-I:%M %P") %>
+                        </p>
+
+                      <% elsif agreement_status.present? %>
+
+                        <p class="mt-0.5 text-xs text-slate-500">
+                          Agreement sent to customer
+                        </p>
+
+                      <% else %>
+
+                        <p class="mt-0.5 text-xs text-slate-500">
+                          Not yet sent
+                        </p>
+
+                      <% end %>
+
+                    </div>
+
+                  </div>
+
+
+                  <div class="flex flex-wrap items-center gap-2">
+
+                    <span class="rounded-full px-3 py-1 text-xs font-semibold <%= agreement_status_classes %>">
+
+                      <% if agreement_status.present? %>
+                        <%= agreement_status.status.titleize %>
+                      <% else %>
+                        Not sent
+                      <% end %>
+
+                    </span>
+
+
+                    <% if agreement_status&.status == "signed" %>
+
+                      <%= link_to business_agent_booking_agreement_show_path(
+                                    id: @booking.id,
+                                    token: agreement_status.token
+                                  ),
+                                  class: "inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50" do %>
+
+                        <i
+                          data-lucide="eye"
+                          class="h-4 w-4"
+                        ></i>
+
+                        View
+
+                      <% end %>
+
+
+                    <% elsif agreement_status.blank? %>
+
+                      <%= link_to business_agent_booking_send_agreement_path(
+                                    agreement,
+                                    business_id: @business.id,
+                                    booking_id: @booking.id
+                                  ),
+                                  data: {
+                                    turbo_method: :patch
+                                  },
+                                  class: "inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-3 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700" do %>
+
+                        <i
+                          data-lucide="send"
+                          class="h-4 w-4"
+                        ></i>
+
+                        Send
+
+                      <% end %>
+
+                    <% end %>
+
+                  </div>
+
+                </div>
+
+              <% end %>
+
+            </div>
+
+          <% else %>
+
+            <div class="flex flex-col items-center justify-center py-8 text-center">
+
+              <div class="flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-slate-400">
+
+                <i
+                  data-lucide="file-signature"
+                  class="h-5 w-5"
+                ></i>
+
+              </div>
+
+              <p class="mt-3 font-semibold text-slate-900">
+                No agreements
+              </p>
+
+              <p class="mt-1 text-sm text-slate-500">
+                There are no agreements available for this business.
+              </p>
+
+            </div>
+
+          <% end %>
+
+        </div>
+
+      </section>
+
+
+      <!-- Email templates -->
+      <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+
+        <div class="border-b border-slate-200 px-5 py-5 sm:px-6">
+
+          <div class="flex items-center gap-3">
+
+            <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
+
+              <i
+                data-lucide="mail"
+                class="h-5 w-5"
+              ></i>
+
+            </div>
+
+            <div>
+
+              <h2 class="text-lg font-bold text-slate-900">
+                Email Templates
+              </h2>
+
+              <p class="mt-0.5 text-sm text-slate-500">
+                Custom emails available to send for this booking.
+              </p>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="p-5 sm:p-6">
+
+          <% if @email_templates.present? %>
+
+            <div class="divide-y divide-slate-100">
+
+              <% @email_templates.each do |email_template| %>
+
+                <div class="flex flex-col gap-4 py-4 first:pt-0 last:pb-0 sm:flex-row sm:items-center sm:justify-between">
+
+                  <div class="flex min-w-0 items-center gap-3">
+
+                    <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-500">
+
+                      <i
+                        data-lucide="mail"
+                        class="h-5 w-5"
+                      ></i>
+
+                    </div>
+
+
+                    <div class="min-w-0">
+
+                      <p class="truncate font-semibold text-slate-900">
+
+                        <% if email_template.respond_to?(:name) %>
+                          <%= email_template.name %>
+                        <% elsif email_template.respond_to?(:subject) %>
+                          <%= email_template.subject %>
+                        <% else %>
+                          Email template
+                        <% end %>
+
+                      </p>
+
+                      <% if email_template.respond_to?(:subject) &&
+                            email_template.subject.present? %>
+
+                        <p class="mt-0.5 truncate text-xs text-slate-500">
+                          <%= email_template.subject %>
+                        </p>
+
+                      <% else %>
+
+                        <p class="mt-0.5 text-xs text-slate-500">
+                          Custom email template
+                        </p>
+
+                      <% end %>
+
+                    </div>
+
+                  </div>
+
+
+                  <%= link_to business_agent_booking_email_template_path(
+                                @booking,
+                                email_template
+                              ),
+                              data: {
+                                turbo_method: :patch
+                              },
+                              class: "inline-flex items-center justify-center gap-2 rounded-lg bg-indigo-600 px-3 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700" do %>
+
+                    <i
+                      data-lucide="send"
+                      class="h-4 w-4"
+                    ></i>
+
+                    Send Email
+
+                  <% end %>
+
+                </div>
+
+              <% end %>
+
+            </div>
+
+          <% else %>
+
+            <div class="flex flex-col items-center justify-center py-8 text-center">
+
+              <div class="flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-slate-400">
+
+                <i
+                  data-lucide="mail-x"
+                  class="h-5 w-5"
+                ></i>
+
+              </div>
+
+              <p class="mt-3 font-semibold text-slate-900">
+                No custom email templates
+              </p>
+
+              <p class="mt-1 text-sm text-slate-500">
+                There are currently no custom email templates available.
+              </p>
+
+            </div>
+
+          <% end %>
+
+        </div>
+
+      </section>
+
+
+      <!-- Consultation -->
+      <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+
+        <div class="border-b border-slate-200 px-5 py-5 sm:px-6">
+
+          <div class="flex items-center gap-3">
+
+            <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
+
+              <i
+                data-lucide="clipboard-list"
+                class="h-5 w-5"
+              ></i>
+
+            </div>
+
+            <div>
+
+              <h2 class="text-lg font-bold text-slate-900">
+                Consultation Form
+              </h2>
+
+              <p class="mt-0.5 text-sm text-slate-500">
+                Consultation responses submitted by the customer.
+              </p>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="p-5 sm:p-6">
+
+          <% consultation_responses = @booking.consultation_responses || [] %>
+
+
+          <% if consultation_responses.any? %>
+
+            <div class="divide-y divide-slate-100">
+
+              <% consultation_responses.each do |response| %>
+
+                <div class="grid gap-1 py-4 first:pt-0 last:pb-0 sm:grid-cols-[220px_1fr] sm:gap-6">
+
+                  <p class="text-sm font-medium text-slate-500">
+                    <%= response["label"] %>
+                  </p>
+
+                  <p class="whitespace-pre-wrap break-words text-sm font-semibold text-slate-900">
+                    <%= response["value"].presence || "Not provided" %>
+                  </p>
+
+                </div>
+
+              <% end %>
+
+            </div>
+
+          <% else %>
+
+            <div class="flex flex-col items-center justify-center py-8 text-center">
+
+              <div class="flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-slate-400">
+
+                <i
+                  data-lucide="clipboard-list"
+                  class="h-5 w-5"
+                ></i>
+
+              </div>
+
+              <p class="mt-3 font-semibold text-slate-900">
+                No consultation form submitted
+              </p>
+
+              <p class="mt-1 text-sm text-slate-500">
+                The customer hasn't submitted consultation information for this booking.
+              </p>
+
+            </div>
+
+          <% end %>
+
+        </div>
+
+      </section>
+
+
+      <!-- Images -->
+      <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+
+        <div class="border-b border-slate-200 px-5 py-5 sm:px-6">
+
+          <div class="flex items-center gap-3">
+
+            <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-pink-50 text-pink-600">
+
+              <i
+                data-lucide="images"
+                class="h-5 w-5"
+              ></i>
+
+            </div>
+
+            <div>
+
+              <h2 class="text-lg font-bold text-slate-900">
+                Uploaded Images
+              </h2>
+
+              <p class="mt-0.5 text-sm text-slate-500">
+                Images attached to this appointment.
+              </p>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="p-5 sm:p-6">
+
+          <% if @booking.images.attached? %>
+
+            <div data-controller="image-lightbox">
+
+              <div class="mb-4 flex items-center justify-between">
+
+                <p class="text-sm font-semibold text-slate-700">
+                  Customer images
+                </p>
+
+                <span class="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-500">
+                  <%= @booking.images.count %>
+                </span>
+
+              </div>
+
+
+              <div class="grid grid-cols-2 gap-4 sm:grid-cols-3">
+
+                <% @booking.images.each do |image| %>
+
+                  <div class="group relative aspect-square overflow-hidden rounded-xl border border-slate-200 bg-slate-100">
+
+                    <%= image_tag image,
+                                  class: "h-full w-full cursor-pointer object-cover transition duration-200 group-hover:scale-105",
+                                  data: {
+                                    action: "click->image-lightbox#open",
+                                    image_lightbox_url_value: url_for(image)
+                                  } %>
+
+
+                    <div class="absolute inset-x-2 bottom-2 flex gap-2 opacity-0 transition group-hover:opacity-100">
+
+                      <button
+                        type="button"
+                        class="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-white/95 px-2 py-2 text-xs font-semibold text-slate-700 shadow"
+                        data-action="click->image-lightbox#open"
+                        data-image-lightbox-url-value="<%= url_for(image) %>"
+                      >
+
+                        <i
+                          data-lucide="maximize-2"
+                          class="h-3.5 w-3.5"
+                        ></i>
+
+                        View
+
+                      </button>
+
+
+                      <%= link_to rails_blob_path(
+                                    image,
+                                    disposition: "attachment"
+                                  ),
+                                  class: "flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-white/95 px-2 py-2 text-xs font-semibold text-slate-700 shadow" do %>
+
+                        <i
+                          data-lucide="download"
+                          class="h-3.5 w-3.5"
+                        ></i>
+
+                        Download
+
+                      <% end %>
+
+                    </div>
+
+                  </div>
+
+                <% end %>
+
+              </div>
+
+
+              <!-- Lightbox -->
+              <div
+                data-image-lightbox-target="modal"
+                class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 p-5"
+              >
+
+                <button
+                  type="button"
+                  class="absolute right-5 top-5 rounded-full bg-white/10 p-3 text-white transition hover:bg-white/20"
+                  data-action="click->image-lightbox#close"
+                >
+
+                  <i
+                    data-lucide="x"
+                    class="h-6 w-6"
+                  ></i>
+
+                </button>
+
+
+                <img
+                  data-image-lightbox-target="image"
+                  class="max-h-full max-w-full rounded-xl object-contain"
+                >
+
+              </div>
+
+            </div>
+
+          <% else %>
+
+            <div class="flex flex-col items-center justify-center py-8 text-center">
+
+              <div class="flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-slate-400">
+
+                <i
+                  data-lucide="image-off"
+                  class="h-5 w-5"
+                ></i>
+
+              </div>
+
+              <p class="mt-3 font-semibold text-slate-900">
+                No images uploaded
+              </p>
+
+              <p class="mt-1 text-sm text-slate-500">
+                There are no images attached to this booking.
+              </p>
+
+            </div>
+
+          <% end %>
+
+        </div>
+
+      </section>
+
+    </div>
+
+
+    <!-- RIGHT SIDEBAR -->
+    <aside class="min-w-0">
+
+      <div class="space-y-6 xl:sticky xl:top-8">
+
+
+        <!-- Booking status -->
+        <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+
+          <div class="flex items-center justify-between gap-3">
+
+            <h2 class="text-lg font-bold text-slate-900">
+              Booking Status
+            </h2>
+
+
+            <span class="inline-flex rounded-full px-2.5 py-1 text-xs font-semibold <%= status_classes %>">
+              <%= @booking.status.to_s.titleize %>
+            </span>
+
+          </div>
+
+
+          <p class="mt-2 text-sm text-slate-500">
+            Update the current status of this booking.
+          </p>
+
+
+          <div class="mt-5 space-y-3">
+
+            <% if @booking.status == "pending" %>
+
+              <%= button_to business_agent_booking_status_path(@booking),
+                            method: :patch,
+                            params: {
+                              status: "confirmed"
+                            },
+                            class: "flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-emerald-700" do %>
+
+                <i
+                  data-lucide="check"
+                  class="h-4 w-4"
+                ></i>
+
+                Confirm Booking
+
+              <% end %>
+
+
+            <% elsif @booking.status == "confirmed" %>
+
+              <%= button_to business_agent_booking_status_path(@booking),
+                            method: :patch,
+                            params: {
+                              status: "completed"
+                            },
+                            class: "flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-indigo-700",
+                            form: {
+                              data: {
+                                turbo_confirm: "Are you sure you want to mark this booking as completed?"
+                              }
+                            } do %>
+
+                <i
+                  data-lucide="circle-check-big"
+                  class="h-4 w-4"
+                ></i>
+
+                Mark as Completed
+
+              <% end %>
+
+
+            <% elsif @booking.status == "completed" %>
+
+              <%= button_to business_agent_booking_status_path(@booking),
+                            method: :patch,
+                            params: {
+                              status: "confirmed"
+                            },
+                            class: "flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50",
+                            form: {
+                              data: {
+                                turbo_confirm: "Move this booking back to confirmed?"
+                              }
+                            } do %>
+
+                <i
+                  data-lucide="rotate-ccw"
+                  class="h-4 w-4"
+                ></i>
+
+                Move Back to Confirmed
+
+              <% end %>
+
+
+            <% else %>
+
+              <div class="rounded-xl bg-slate-50 p-4">
+
+                <p class="text-sm text-slate-500">
+                  There are no status actions available for this booking.
+                </p>
+
+              </div>
+
+            <% end %>
+
+          </div>
+
+
+          <div class="mt-6 space-y-3 border-t border-slate-100 pt-5">
+
+            <div class="flex items-center justify-between gap-4 text-sm">
+
+              <span class="text-slate-500">
+                Booking ID
+              </span>
+
+              <span class="font-semibold text-slate-900">
+                #<%= @booking.id %>
+              </span>
+
+            </div>
+
+
+            <div class="flex items-center justify-between gap-4 text-sm">
+
+              <span class="text-slate-500">
+                Created
+              </span>
+
+              <span class="text-right font-semibold text-slate-900">
+                <%= @booking.created_at.strftime("%-d %b %Y") %>
+              </span>
+
+            </div>
+
+
+            <div class="flex items-center justify-between gap-4 text-sm">
+
+              <span class="text-slate-500">
+                Assigned to
+              </span>
+
+              <span class="text-right font-semibold text-slate-900">
+
+                <% if is_my_booking %>
+
+                  You
+
+                <% elsif @booking.agent.present? %>
+
+                  <% if @booking.agent.respond_to?(:user) %>
+
+                    <%= [
+                          @booking.agent.user&.first_name,
+                          @booking.agent.user&.last_name
+                        ].compact.join(" ").presence || "Another agent" %>
+
+                  <% else %>
+
+                    Another agent
+
+                  <% end %>
+
+                <% else %>
+
+                  Unassigned
+
+                <% end %>
+
+              </span>
+
+            </div>
+
+          </div>
+
+        </section>
+
+
+        <!-- Payment -->
+        <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+
+          <div class="flex items-center gap-3">
+
+            <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
+
+              <i
+                data-lucide="wallet-cards"
+                class="h-5 w-5"
+              ></i>
+
+            </div>
+
+            <div>
+
+              <h2 class="font-bold text-slate-900">
+                Payment
+              </h2>
+
+              <p class="mt-0.5 text-xs text-slate-500">
+                Booking payment information.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <div class="mt-5 space-y-3">
+
+            <!-- Total -->
+            <div class="flex items-center justify-between gap-4">
+
+              <span class="text-sm text-slate-500">
+                Total
+              </span>
+
+              <span class="font-semibold text-slate-900">
+
+                <%= number_to_currency(
+                      @booking.amount || 0,
+                      unit: "£"
+                    ) %>
+
+              </span>
+
+            </div>
+
+
+            <!-- Paid -->
+            <div class="flex items-center justify-between gap-4">
+
+              <span class="text-sm text-slate-500">
+                Paid
+              </span>
+
+              <span class="font-semibold text-emerald-600">
+
+                <%= number_to_currency(
+                      @booking.amount_paid || 0,
+                      unit: "£"
+                    ) %>
+
+              </span>
+
+            </div>
+
+
+            <!-- Outstanding -->
+            <div class="flex items-center justify-between gap-4 border-t border-slate-100 pt-3">
+
+              <span class="text-sm font-semibold text-slate-700">
+                Outstanding
+              </span>
+
+              <span class="text-lg font-bold <%= outstanding.positive? ? 'text-amber-600' : 'text-emerald-600' %>">
+
+                <%= number_to_currency(
+                      outstanding,
+                      unit: "£"
+                    ) %>
+
+              </span>
+
+            </div>
+
+          </div>
+
+
+          <div class="mt-5">
+
+            <% if outstanding <= 0 %>
+
+              <div class="rounded-xl border border-emerald-200 bg-emerald-50 p-4">
+
+                <div class="flex items-start gap-3">
+
+                  <i
+                    data-lucide="circle-check"
+                    class="mt-0.5 h-5 w-5 shrink-0 text-emerald-600"
+                  ></i>
+
+                  <div>
+
+                    <p class="text-sm font-semibold text-emerald-900">
+                      Payment complete
+                    </p>
+
+                    <p class="mt-1 text-xs leading-5 text-emerald-700">
+                      This booking has been paid in full.
+                    </p>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+
+            <% elsif @booking.stripe_payment_link.present? %>
+
+              <div class="rounded-xl border border-blue-200 bg-blue-50 p-4">
+
+                <div class="flex items-start gap-3">
+
+                  <i
+                    data-lucide="link"
+                    class="mt-0.5 h-5 w-5 shrink-0 text-blue-600"
+                  ></i>
+
+                  <div>
+
+                    <p class="text-sm font-semibold text-blue-900">
+                      Payment link created
+                    </p>
+
+                    <p class="mt-1 text-xs leading-5 text-blue-700">
+                      A payment link is available for this booking.
+                    </p>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+
+            <% else %>
+
+              <div class="rounded-xl border border-amber-200 bg-amber-50 p-4">
+
+                <div class="flex items-start gap-3">
+
+                  <i
+                    data-lucide="wallet"
+                    class="mt-0.5 h-5 w-5 shrink-0 text-amber-600"
+                  ></i>
+
+                  <div>
+
+                    <p class="text-sm font-semibold text-amber-900">
+                      Payment outstanding
+                    </p>
+
+                    <p class="mt-1 text-xs leading-5 text-amber-700">
+                      This booking still has an outstanding balance.
+                    </p>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+            <% end %>
+
+          </div>
+
+          <!--
+            No "Charge No Show Fee" action is included here.
+
+            Agents can view payment information, but the no show
+            functionality remains restricted to the business portal.
+          -->
+
+        </section>
+
+
+        <!-- Calendar -->
+        <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+
+          <h2 class="font-bold text-slate-900">
+            Calendar
+          </h2>
+
+          <p class="mt-1 text-sm text-slate-500">
+            Add this appointment to your calendar.
+          </p>
+
+
+          <%= link_to google_calendar_url,
+                      target: "_blank",
+                      rel: "noopener",
+                      class: "mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-blue-700" do %>
+
+            <i
+              data-lucide="calendar-plus"
+              class="h-4 w-4"
+            ></i>
+
+            Add to Google Calendar
+
+          <% end %>
+
+        </section>
+
+
+        <!-- Back -->
+        <%= link_to business_agent_bookings_path,
+                    class: "flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50" do %>
+
+          <i
+            data-lucide="arrow-left"
+            class="h-4 w-4"
+          ></i>
+
+          Back to Bookings
+
+        <% end %>
+
+      </div>
+
+    </aside>
+
+  </div>
+
+</main>

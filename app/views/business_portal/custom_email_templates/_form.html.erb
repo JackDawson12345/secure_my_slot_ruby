@@ -1,0 +1,163 @@
+<%= form_with(
+      model: email_template,
+      url: email_template.persisted? ? business_email_templates_custom_templates_update_path(email_template) : business_email_templates_custom_templates_create_path,
+      method: email_template.persisted? ? :patch : :post,
+      class: "space-y-6"
+    ) do |form| %>
+  <% if email_template.errors.any? %>
+    <div class="rounded-xl border border-red-200 bg-red-50 p-4">
+      <ul class="list-disc pl-5 text-sm text-red-700">
+        <% email_template.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+  <div>
+    <%= form.label :template_type,
+                   "Template name",
+                   class: "block text-sm font-semibold text-slate-700" %>
+    <%= form.text_field :template_type,
+                        class: "mt-2 block w-full rounded-xl border-slate-200 px-4 py-3 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500",
+                        placeholder: "e.g. Booking follow up" %>
+  </div>
+  <div>
+    <%= form.label :subject,
+                   class: "block text-sm font-semibold text-slate-700" %>
+    <%= form.text_field :subject,
+                        class: "mt-2 block w-full rounded-xl border-slate-200 px-4 py-3 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500",
+                        placeholder: "Email subject" %>
+  </div>
+  <div>
+    <%= form.label :body,
+                   class: "block text-sm font-semibold text-slate-700" %>
+    <%= form.text_area :body,
+                       rows: 12,
+                       class: "mt-2 block w-full rounded-xl border-slate-200 px-4 py-3 text-sm leading-6 shadow-sm focus:border-indigo-500 focus:ring-indigo-500",
+                       placeholder: "Write your email content here..." %>
+  </div>
+
+  <!-- Attachments -->
+  <div>
+
+    <div class="flex items-center justify-between gap-4">
+
+      <div>
+        <%= form.label :attachments,
+                       "Attachments",
+                       class: "block text-sm font-semibold text-slate-700" %>
+
+        <p class="mt-1 text-sm text-slate-500">
+          Add files that will be included whenever this email template is sent.
+        </p>
+      </div>
+
+    </div>
+
+
+    <!-- Existing attachments -->
+    <% if email_template.persisted? && email_template.attachments.attached? %>
+
+      <div class="mt-4 space-y-2">
+
+        <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">
+          Current attachments
+        </p>
+
+        <% email_template.attachments.each do |attachment| %>
+
+          <div class="flex items-center justify-between gap-4 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
+
+            <div class="flex min-w-0 items-center gap-3">
+
+              <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white text-slate-500 shadow-sm">
+                <i data-lucide="paperclip" class="h-4 w-4"></i>
+              </div>
+
+
+              <div class="min-w-0">
+
+                <p class="truncate text-sm font-semibold text-slate-700">
+                  <%= attachment.filename %>
+                </p>
+
+                <p class="mt-0.5 text-xs text-slate-400">
+                  <%= number_to_human_size(attachment.byte_size) %>
+                </p>
+
+              </div>
+
+            </div>
+
+
+            <div class="flex shrink-0 items-center gap-2">
+
+              <%= link_to rails_blob_path(attachment, disposition: "attachment"),
+                          class: "inline-flex h-9 w-9 items-center justify-center rounded-lg text-slate-400 transition hover:bg-white hover:text-indigo-600",
+                          title: "Download attachment" do %>
+
+                <i data-lucide="download" class="h-4 w-4"></i>
+
+              <% end %>
+
+
+              <label
+                class="inline-flex cursor-pointer items-center gap-2 rounded-lg px-3 py-2 text-xs font-semibold text-rose-600 transition hover:bg-rose-50"
+              >
+
+                <%= check_box_tag "email_template[remove_attachment_ids][]",
+                                  attachment.id,
+                                  false,
+                                  class: "h-4 w-4 rounded border-slate-300 text-rose-600 focus:ring-rose-500" %>
+
+                Remove
+
+              </label>
+
+            </div>
+
+          </div>
+
+        <% end %>
+
+      </div>
+
+    <% end %>
+
+
+    <!-- Add new attachments -->
+    <div class="mt-4">
+
+      <% if email_template.persisted? && email_template.attachments.attached? %>
+
+        <p class="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400">
+          Add more attachments
+        </p>
+
+      <% end %>
+
+      <%= form.file_field :attachments,
+                          multiple: true,
+                          direct_upload: true,
+                          class: "block w-full cursor-pointer rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600 shadow-sm file:mr-4 file:cursor-pointer file:rounded-lg file:border-0 file:bg-indigo-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-indigo-700 hover:file:bg-indigo-100 focus:border-indigo-500 focus:ring-indigo-500" %>
+
+      <p class="mt-2 flex items-center gap-1.5 text-xs text-slate-400">
+        <i data-lucide="info" class="h-3.5 w-3.5"></i>
+        You can select multiple files to upload.
+      </p>
+
+    </div>
+
+  </div>
+
+  <div class="flex items-center gap-3 pt-2">
+    <%= form.submit(
+          email_template.persisted? ? "Save template" : "Create template",
+          class: "inline-flex cursor-pointer items-center gap-2 rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-indigo-700"
+        ) %>
+    <%= link_to business_email_templates_custom_templates_path,
+                class: "inline-flex items-center rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50" do %>
+      Cancel
+    <% end %>
+  </div>
+<% end %>

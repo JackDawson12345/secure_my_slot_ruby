@@ -1,148 +1,160 @@
 <!-- Agreements content -->
-<main class="p-4 sm:p-6 lg:p-8">
+<div class="relative">
 
-  <!-- Page heading -->
-  <section class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+  <div class="<%= 'pointer-events-none opacity-50' unless current_user.business.feature_enabled?(:agreements) %>">
+    <main class="p-4 sm:p-6 lg:p-8">
 
-    <div>
-      <h2 class="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
-        Agreements
-      </h2>
-
-      <p class="mt-1 text-sm text-slate-500">
-        Create and manage customer agreements used during bookings.
-      </p>
-    </div>
-
-
-    <%= link_to new_business_agreement_path,
-                class: "inline-flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 sm:w-auto" do %>
-
-      <i data-lucide="file-plus" class="h-4 w-4"></i>
-      Create agreement
-
-    <% end %>
-
-  </section>
-
-
-  <%= render 'business_portal/shared/flash_messages' %>
-
-
-  <!-- Agreements -->
-  <section class="mt-8 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-
-
-    <div class="border-b border-slate-200 px-5 py-5 sm:px-6">
-
-      <div class="flex items-start gap-3">
-
-        <div class="rounded-xl bg-indigo-50 p-3 text-indigo-600">
-          <i data-lucide="file-signature" class="h-5 w-5"></i>
-        </div>
-
+      <!-- Page heading -->
+      <section class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 
         <div>
-          <h3 class="text-lg font-bold text-slate-900">
-            Customer agreements
-          </h3>
+          <h2 class="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+            Agreements
+          </h2>
 
           <p class="mt-1 text-sm text-slate-500">
-            Add agreements that customers can review and sign.
+            Create and manage customer agreements used during bookings.
           </p>
         </div>
 
-      </div>
 
-    </div>
+        <%= link_to new_business_agreement_path,
+                    class: "inline-flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 sm:w-auto" do %>
 
-
-    <div class="divide-y divide-slate-100">
-
-
-      <% if @agreements.any? %>
-
-        <% @agreements.each do |agreement| %>
-
-
-          <div class="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">
-
-
-            <div>
-
-              <p class="font-semibold text-slate-900">
-                <%= agreement.name %>
-              </p>
-
-
-              <p class="mt-1 text-sm text-slate-500">
-                Updated <%= time_ago_in_words(agreement.updated_at) %> ago
-              </p>
-
-            </div>
-
-
-            <div class="flex gap-3">
-
-              <%= link_to edit_business_agreement_path(agreement),
-                          class: "inline-flex items-center gap-2 rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50" do %>
-
-                <i data-lucide="pencil" class="h-4 w-4"></i>
-                Edit
-
-              <% end %>
-
-
-              <%= button_to business_agreement_path(agreement),
-                            method: :delete,
-                            class: "inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold text-rose-600 transition hover:bg-rose-50",
-                            data: { turbo_confirm: "Delete this agreement?" } do %>
-
-                <i data-lucide="trash-2" class="h-4 w-4"></i>
-                Delete
-
-              <% end %>
-
-            </div>
-
-
-          </div>
-
+          <i data-lucide="file-plus" class="h-4 w-4"></i>
+          Create agreement
 
         <% end %>
 
+      </section>
 
-      <% else %>
+
+      <%= render 'business_portal/shared/flash_messages' %>
 
 
-        <div class="p-10 text-center">
+      <!-- Agreements -->
+      <section class="mt-8 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
 
-          <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100 text-slate-400">
 
-            <i data-lucide="file-text" class="h-7 w-7"></i>
+        <div class="border-b border-slate-200 px-5 py-5 sm:px-6">
+
+          <div class="flex items-start gap-3">
+
+            <div class="rounded-xl bg-indigo-50 p-3 text-indigo-600">
+              <i data-lucide="file-signature" class="h-5 w-5"></i>
+            </div>
+
+
+            <div>
+              <h3 class="text-lg font-bold text-slate-900">
+                Customer agreements
+              </h3>
+
+              <p class="mt-1 text-sm text-slate-500">
+                Add agreements that customers can review and sign.
+              </p>
+            </div>
 
           </div>
-
-
-          <h4 class="mt-4 font-semibold text-slate-900">
-            No agreements yet
-          </h4>
-
-
-          <p class="mt-2 text-sm text-slate-500">
-            Create your first customer agreement template.
-          </p>
 
         </div>
 
 
-      <% end %>
+        <div class="divide-y divide-slate-100">
 
 
-    </div>
+          <% if @agreements.any? %>
+
+            <% @agreements.each do |agreement| %>
 
 
-  </section>
+              <div class="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">
 
 
-</main>
+                <div>
+
+                  <p class="font-semibold text-slate-900">
+                    <%= agreement.name %>
+                  </p>
+
+
+                  <p class="mt-1 text-sm text-slate-500">
+                    Updated <%= time_ago_in_words(agreement.updated_at) %> ago
+                  </p>
+
+                </div>
+
+
+                <div class="flex gap-3">
+
+                  <%= link_to edit_business_agreement_path(agreement),
+                              class: "inline-flex items-center gap-2 rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50" do %>
+
+                    <i data-lucide="pencil" class="h-4 w-4"></i>
+                    Edit
+
+                  <% end %>
+
+
+                  <%= button_to business_agreement_path(agreement),
+                                method: :delete,
+                                class: "inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold text-rose-600 transition hover:bg-rose-50",
+                                data: { turbo_confirm: "Delete this agreement?" } do %>
+
+                    <i data-lucide="trash-2" class="h-4 w-4"></i>
+                    Delete
+
+                  <% end %>
+
+                </div>
+
+
+              </div>
+
+
+            <% end %>
+
+
+          <% else %>
+
+
+            <div class="p-10 text-center">
+
+              <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100 text-slate-400">
+
+                <i data-lucide="file-text" class="h-7 w-7"></i>
+
+              </div>
+
+
+              <h4 class="mt-4 font-semibold text-slate-900">
+                No agreements yet
+              </h4>
+
+
+              <p class="mt-2 text-sm text-slate-500">
+                Create your first customer agreement template.
+              </p>
+
+            </div>
+
+
+          <% end %>
+
+
+        </div>
+
+
+      </section>
+
+
+    </main>
+  </div>
+
+  <% unless current_user.business.feature_enabled?(:agreements) %>
+    <%= render 'business_portal/shared/upgrade_overlay',
+               title: 'Create Customer Agreements',
+               message: 'Upgrade to Pro Plus to create and send custom agreements for your customers to review and sign.'
+    %>
+  <% end %>
+</div>

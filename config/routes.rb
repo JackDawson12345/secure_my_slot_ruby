@@ -604,6 +604,10 @@ Rails.application.routes.draw do
       patch "/send_email/:id",
             to: "custom_email_templates#send_email",
             as: :send_email
+
+      delete "/custom-templates/:id",
+             to: "custom_email_templates#destroy",
+             as: :custom_template
     end
 
 
@@ -819,8 +823,31 @@ Rails.application.routes.draw do
 
   namespace :business_agent, path: "business-agent" do
     get "dashboard", to: "dashboard#index", as: :dashboard
-    get "bookings", to: "bookings#index", as: :bookings
-    get "settings", to: "settings#index", as: :settings
+
+    resources :bookings, only: %i[index show] do
+      patch :status,
+            to: "bookings#update_status",
+            as: :status
+
+      get "agreements/:token",
+          to: "bookings#agreement_show",
+          as: :agreement_show
+
+      patch "agreements/:agreement_id/send",
+            to: "bookings#send_agreement",
+            as: :send_agreement
+
+      patch "email-templates/:email_template_id",
+          to: "bookings#email_template",
+          as: :email_template
+    end
+
+    get "dashboard/settings", to: "settings#index", as: :settings
+
+    get "dashboard/opening-hours", to: "opening_hours#index", as: :opening_hours
+
+    get "dashboard/services", to: "services#index", as: :services
+    get "dashboard/services/:id", to: "services#show", as: :show_service
   end
 
 end

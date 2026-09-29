@@ -1,4 +1,6 @@
-<main class="p-4 sm:p-6 lg:p-8">
+<div class="relative">
+  <div class="<%= 'pointer-events-none opacity-50' unless current_user.business.feature_enabled?(:products) %>">
+    <main class="p-4 sm:p-6 lg:p-8">
 
   <!-- Page heading -->
   <section class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -395,3 +397,11 @@
 
 
 </main>
+  </div>
+  <% unless current_user.business.feature_enabled?(:products) %>
+    <%= render 'business_portal/shared/upgrade_overlay',
+               title: 'Sell Products Through Your Website',
+               message: 'Upgrade to Pro Plus to add products to your online shop and sell directly through your website.'
+    %>
+  <% end %>
+</div>

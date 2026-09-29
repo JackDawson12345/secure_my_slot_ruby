@@ -182,5 +182,75 @@
 
   </section>
 
+  <!-- Custom email templates -->
+  <div
+    class="mt-6 group flex flex-col rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+  >
+
+    <div class="flex items-start justify-between">
+
+      <div class="rounded-2xl bg-purple-50 p-4 text-purple-600 transition group-hover:bg-purple-100">
+        <i data-lucide="layout-template" class="h-7 w-7"></i>
+      </div>
+
+      <% if current_user.business.email_templates.exists?(template_type: "custom") %>
+
+      <span class="rounded-full bg-green-50 px-3 py-1 text-xs font-semibold text-green-700">
+        Configured
+      </span>
+
+      <% else %>
+
+      <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
+        Default
+      </span>
+
+      <% end %>
+
+    </div>
+
+
+    <div class="mt-6">
+
+      <h3 class="text-xl font-bold text-slate-900">
+        Custom email templates
+      </h3>
+
+
+      <p class="mt-2 text-sm leading-6 text-slate-500">
+        Create and manage your own email templates for different customer communications.
+      </p>
+
+
+      <div class="mt-4 rounded-xl bg-slate-50 p-4">
+
+        <p class="text-sm font-medium text-slate-700">
+          Includes
+        </p>
+
+        <p class="mt-1 text-sm text-slate-500">
+          Create personalised emails for follow ups, promotions, customer updates and other messages.
+        </p>
+
+      </div>
+
+    </div>
+
+
+    <div class="mt-auto pt-6">
+
+      <%= link_to business_email_templates_custom_templates_path,
+                  class: "inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-indigo-700" do %>
+
+        Manage templates
+
+        <i data-lucide="arrow-right" class="h-4 w-4"></i>
+
+      <% end %>
+
+    </div>
+
+  </div>
+
 
 </main>
