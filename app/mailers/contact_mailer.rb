@@ -16,7 +16,7 @@ class ContactMailer < ApplicationMailer
         "support@uniteldirect.co.uk"
       ],
       reply_to: @email,
-      subject: "SecureMySlot Contact: #{@subject}"
+      subject: "BookPilot Contact: #{@subject}"
     )
   end
 end

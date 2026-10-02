@@ -438,12 +438,12 @@ module Api
         #
         # WebBrowser.openAuthSessionAsync is listening for:
         #
-        # securemyslot://stripe-connect-return
+        # bookpilot://stripe-connect-return
         # ============================================================
 
         def mobile_return_url(status:)
           [
-            "securemyslot://stripe-connect-return",
+            "bookpilot://stripe-connect-return",
             "?status=#{status}",
             "&business_id=#{@business&.id}"
           ].join

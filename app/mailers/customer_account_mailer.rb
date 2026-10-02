@@ -12,7 +12,7 @@ class CustomerAccountMailer < ApplicationMailer
 
     mail(
       to: @user.email,
-      subject: "Set up your SecureMySlot account"
+      subject: "Set up your BookPilot account"
     )
   end
 end

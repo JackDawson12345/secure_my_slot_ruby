@@ -11,7 +11,7 @@ class AdminMailer < ApplicationMailer
         "support@book-pilot.co.uk",
         "support@uniteldirect.co.uk"
       ],
-      subject: "SecureMySlot Error: #{exception.class}"
+      subject: "BookPilot Error: #{exception.class}"
     )
 
   end

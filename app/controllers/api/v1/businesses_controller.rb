@@ -1090,13 +1090,13 @@ module Api
         # ----------------------------------------------------------
 
         success_url =
-          "securemyslot://payment-return" \
+          "bookpilot://payment-return" \
             "?booking_hold_id=#{booking_hold.id}" \
             "&status=success" \
             "&session_id={CHECKOUT_SESSION_ID}"
 
         cancel_url =
-          "securemyslot://payment-return" \
+          "bookpilot://payment-return" \
             "?booking_hold_id=#{booking_hold.id}" \
             "&status=cancelled"
 

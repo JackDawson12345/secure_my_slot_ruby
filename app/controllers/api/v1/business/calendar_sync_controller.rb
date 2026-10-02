@@ -74,13 +74,13 @@ module Api
           GoogleCalendarService.new(connection).sync_details
           GoogleCalendarService.new(connection).sync_events
 
-          redirect_to "securemyslot://calendar-connected?success=true", allow_other_host: true
+          redirect_to "book-pilot://calendar-connected?success=true", allow_other_host: true
         rescue => e
           Rails.logger.error(
             "Google Calendar connection failed: #{e.class}: #{e.message}"
           )
 
-          redirect_to "securemyslot://calendar-connected?success=false", allow_other_host: true
+          redirect_to "book-pilot://calendar-connected?success=false", allow_other_host: true
         end
 
 

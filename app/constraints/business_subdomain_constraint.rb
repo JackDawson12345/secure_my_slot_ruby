@@ -2,8 +2,6 @@ class BusinessSubdomainConstraint
   EXCLUDED_SUBDOMAINS = %w[
     riverboat-canyon-expensive
     secure-my-slot-5b52497b10fa
-    securemyslot
-    securemyslot.co.uk
     book-pilot
     book-pilot.co.uk
     www
