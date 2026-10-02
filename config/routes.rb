@@ -776,6 +776,10 @@ Rails.application.routes.draw do
       member do
         post :resend_invitation
       end
+
+      collection do
+        patch :update_settings
+      end
     end
 
 
@@ -824,30 +828,43 @@ Rails.application.routes.draw do
   namespace :business_agent, path: "business-agent" do
     get "dashboard", to: "dashboard#index", as: :dashboard
 
-    resources :bookings, only: %i[index show] do
-      patch :status,
-            to: "bookings#update_status",
-            as: :status
+    scope "dashboard" do
 
-      get "agreements/:token",
+      resources :bookings, only: %i[index show] do
+        patch :status,
+              to: "bookings#update_status",
+              as: :status
+
+        patch "email-templates/:email_template_id",
+              to: "bookings#email_template",
+              as: :email_template
+      end
+
+      patch "bookings/:id/agreements/:agreement_id/send",
+            to: "bookings#send_agreement",
+            as: :bookings_send_agreement
+
+      get "bookings/:id/agreements/:token",
           to: "bookings#agreement_show",
           as: :agreement_show
 
-      patch "agreements/:agreement_id/send",
-            to: "bookings#send_agreement",
-            as: :send_agreement
+      get "/bookings/:id/agreements/:token/pdf",
+          to: "bookings#agreements_pdf",
+          as: :agreement_pdf
 
-      patch "email-templates/:email_template_id",
-          to: "bookings#email_template",
-          as: :email_template
+
+
+      resource :settings,
+               only: [:show, :update],
+               controller: "settings"
+
+      get "opening-hours",
+          to: "opening_hours#index",
+          as: :opening_hours
+
+      resources :services,
+                only: %i[index show]
     end
-
-    get "dashboard/settings", to: "settings#index", as: :settings
-
-    get "dashboard/opening-hours", to: "opening_hours#index", as: :opening_hours
-
-    get "dashboard/services", to: "services#index", as: :services
-    get "dashboard/services/:id", to: "services#show", as: :show_service
   end
 
 end

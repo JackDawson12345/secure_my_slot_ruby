@@ -17,6 +17,9 @@ class Business < ApplicationRecord
            through: :business_customers,
            source: :user
 
+  has_one :business_agent_setting,
+          dependent: :destroy
+
   has_many :social_posts, dependent: :destroy
 
   has_one :birthday_reminder_message,
@@ -79,7 +82,8 @@ class Business < ApplicationRecord
     when :website_content,
       :consultation_forms,
       :agreements,
-      :products
+      :products,
+      :agents
       pro_plus?
 
     else
@@ -180,6 +184,10 @@ class Business < ApplicationRecord
       stripe_details_submitted? &&
       stripe_charges_enabled? &&
       stripe_payouts_enabled?
+  end
+
+  def agent_settings
+    business_agent_setting || create_business_agent_setting!
   end
 
   private

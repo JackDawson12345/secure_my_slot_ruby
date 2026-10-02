@@ -7,6 +7,18 @@ class BookingsController < ApplicationController
     service = business.services.find(params[:service_id])
     date = Date.parse(params[:date])
 
+    agent_selection = params[:agent_selection]
+
+    agent =
+      if agent_selection.blank? || agent_selection == "null"
+        nil
+      elsif agent_selection == "any"
+        "any"
+      else
+        business.business_agents.find(agent_selection)
+      end
+
+
     bookings_this_month = business.bookings.where(created_at: Time.current.all_month).count
 
     if business.subscription_level == "basic" && bookings_this_month >= 20
@@ -18,7 +30,8 @@ class BookingsController < ApplicationController
     slots = BookingAvailability.new(
       business,
       service,
-      date
+      date,
+      agent
     ).call
 
     render json: slots
@@ -38,6 +51,31 @@ class BookingsController < ApplicationController
 
     service = Service.find(booking_params[:service_id])
     business = service.business
+
+    agent_selection = booking_params[:agent_selection]
+
+    if agent_selection == "any"
+
+      available_agents = available_agents_for(
+        business: business,
+        service: service,
+        date: booking_params[:date],
+        time: booking_params[:time]
+      )
+
+      agent = available_agents.sample
+    else
+      agent = business.business_agents.find(agent_selection)
+    end
+
+    if agent.nil?
+      redirect_back(
+        fallback_location: root_path,
+        alert: "That time is no longer available. Please choose another time."
+      )
+      return
+    end
+
     user, new_customer_account = find_or_create_user
 
     coupon = business.service_coupons.find do |service_coupon|
@@ -59,7 +97,8 @@ class BookingsController < ApplicationController
         user: user,
         new_customer_account: new_customer_account,
         coupon: coupon,
-        coupon_works: coupon_works
+        coupon_works: coupon_works,
+        agent_id: agent.user_id
       )
     else
       create_booking_without_payment(
@@ -68,7 +107,8 @@ class BookingsController < ApplicationController
         user: user,
         new_customer_account: new_customer_account,
         coupon: coupon,
-        coupon_works: coupon_works
+        coupon_works: coupon_works,
+        agent_id: agent.user_id
       )
 
     end
@@ -174,7 +214,8 @@ class BookingsController < ApplicationController
     user:,
     new_customer_account:,
     coupon:,
-    coupon_works:
+    coupon_works:,
+    agent_id:
   )
 
     if coupon_works == true
@@ -215,7 +256,8 @@ class BookingsController < ApplicationController
       notes: booking_params[:notes],
       expires_at: 30.minutes.from_now,
       amount: amount,
-      coupon: coupon_code
+      coupon: coupon_code,
+      agent_id: agent_id
     )
 
     redirect_to_stripe_checkout(
@@ -236,7 +278,8 @@ class BookingsController < ApplicationController
     user:,
     new_customer_account:,
     coupon:,
-    coupon_works:
+    coupon_works:,
+    agent_id:
   )
     if coupon_works == true
 
@@ -277,7 +320,8 @@ class BookingsController < ApplicationController
       payment_status: "not_required",
       amount: amount,
       amount_paid: 0,
-      coupon: coupon_code
+      coupon: coupon_code,
+      agent_id: agent_id
     )
 
     booking.status =
@@ -519,7 +563,8 @@ class BookingsController < ApplicationController
           checkout_session.amount_total
         ),
         amount: booking_hold.amount,
-        coupon: booking_hold.coupon
+        coupon: booking_hold.coupon,
+        agent_id: booking_hold.agent_id
       )
 
       booking_hold.update!(
@@ -631,7 +676,8 @@ class BookingsController < ApplicationController
       :notes,
       :terms_accepted,
       :service_coupon,
-      :applied_coupon
+      :applied_coupon,
+      :agent_selection
     )
   end
 
@@ -663,5 +709,81 @@ class BookingsController < ApplicationController
     )
 
     business_customer
+  end
+
+  def available_agents_for(business:, service:, date:, time:)
+
+    date = Date.parse(date.to_s)
+
+    slot_start = Time.zone.parse(
+      "#{date} #{time}"
+    )
+
+    slot_end =
+      slot_start + service.minutes_duration.minutes
+
+    buffer_minutes =
+      business.booking_setting.buffer_minutes.to_i
+
+    business.business_agents
+            .where(status: "active")
+            .select do |agent|
+
+      booking_conflict =
+        business.bookings
+                .where(
+                  agent_id: agent.user_id,
+                  date: date
+                )
+                .where.not(status: ["cancelled", "no_show"])
+                .includes(:service)
+                .any? do |booking|
+
+          booking_start = Time.zone.local(
+            date.year,
+            date.month,
+            date.day,
+            booking.time.hour,
+            booking.time.min
+          )
+
+          booking_end =
+            booking_start +
+            booking.service.minutes_duration.minutes +
+            buffer_minutes.minutes
+
+          slot_start < booking_end &&
+            slot_end > booking_start
+        end
+
+      hold_conflict =
+        business.booking_holds
+                .active
+                .where(
+                  agent_id: agent.user_id,
+                  date: date
+                )
+                .includes(:service)
+                .any? do |hold|
+
+          hold_start = Time.zone.local(
+            date.year,
+            date.month,
+            date.day,
+            hold.time.hour,
+            hold.time.min
+          )
+
+          hold_end =
+            hold_start +
+            hold.service.minutes_duration.minutes +
+            buffer_minutes.minutes
+
+          slot_start < hold_end &&
+            slot_end > hold_start
+        end
+
+      !booking_conflict && !hold_conflict
+    end
   end
 end

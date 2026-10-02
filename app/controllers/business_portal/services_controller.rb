@@ -1,6 +1,7 @@
 class BusinessPortal::ServicesController < BusinessPortal::BaseController
   before_action :set_business
   before_action :set_service, only: %i[show edit update destroy remove_image]
+  before_action :set_agents, only: [:new, :edit]
 
   def index
     services_scope = @business.services
@@ -120,6 +121,7 @@ class BusinessPortal::ServicesController < BusinessPortal::BaseController
       :image,
       :service_category_id,
       :custom_service_times,
+      business_agent_ids: [],
       service_times_attributes: [
         :id,
         :start_time,
@@ -148,5 +150,9 @@ class BusinessPortal::ServicesController < BusinessPortal::BaseController
     ActiveModel::Type::Boolean.new.cast(
       params.dig(:service, :custom_service_times)
     )
+  end
+
+  def set_agents
+    @agents = @business.business_agents.where(status: "active")
   end
 end

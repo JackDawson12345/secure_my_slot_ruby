@@ -549,6 +549,43 @@
 
             </div>
 
+            <% if @business.agents.any? %>
+              <!-- Agent -->
+              <div class="rounded-3xl border <%= website_colour_class("border", 200) %> bg-white p-6 shadow-card sm:p-8">
+
+                <h3 class="text-xl font-black <%= website_colour_class("text", 950) %>">
+                  Select a agent
+                </h3>
+
+
+                <div class="mt-7 space-y-8">
+
+                  <div>
+
+                    <div class="grid gap-4 sm:grid-cols-2">
+
+                      <% if @business.agent_settings.agent_selection? %>
+
+                        <%= render "business_sites/any_agent_option" %>
+
+                      <% end %>
+
+                      <% @business.business_agents.where(status: 'active').each do |agent| %>
+
+                        <%= render "business_sites/agent_option", agent: agent %>
+
+                      <% end %>
+
+                    </div>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+            <% end %>
+
             <!-- Date -->
             <div class="rounded-3xl border <%= website_colour_class("border", 200) %> bg-white p-6 shadow-card sm:p-8">
 
@@ -597,7 +634,7 @@
                   </p>
 
                   <p class="mt-2 max-w-sm text-sm leading-6 <%= website_colour_class("text", 500) %>">
-                    Available appointment times will appear here once you select your preferred service and booking date.
+                    Available appointment times will appear here once you select your preferred service, agent and booking date.
                   </p>
 
                 </div>
@@ -1333,6 +1370,10 @@ Every appointment is handled with care, clear communication and attention to det
               document.querySelectorAll(
                   ".service-radio"
               );
+          const agentInputs =
+              document.querySelectorAll(
+                  ".agent-radio"
+              );
 
           const serviceLinks =
               document.querySelectorAll(
@@ -1350,10 +1391,14 @@ Every appointment is handled with care, clear communication and attention to det
           const couponButton =
               document.getElementById("coupon-button");
 
+          const hasAgents =
+              <%= @business.agents.any?.to_json %>;
+
           const stripeReady =
               <%= @business.stripe_ready?.to_json %>;
 
           let selectedServiceId = null;
+          let selectedAgent = null;
           let appliedCouponPrice = null;
           let appliedCouponCode = null;
 
@@ -1627,6 +1672,20 @@ Every appointment is handled with care, clear communication and attention to det
               );
           });
 
+          agentInputs.forEach((input) => {
+              input.addEventListener(
+                  "change",
+                  () => {
+                      selectedAgent = input.value;
+
+                      summaryTime.textContent =
+                          "Not selected";
+
+                      loadTimes();
+                  }
+              );
+          });
+
           serviceLinks.forEach((link) => {
               link.addEventListener("click", (event) => {
                   event.preventDefault();
@@ -1713,7 +1772,8 @@ Every appointment is handled with care, clear communication and attention to det
           function loadTimes() {
               if (
                   !selectedServiceId ||
-                  !dateInput.value
+                  !dateInput.value ||
+                  (hasAgents && !selectedAgent)
               ) {
                   return;
               }
@@ -1733,7 +1793,7 @@ Every appointment is handled with care, clear communication and attention to det
         `;
 
               fetch(
-                  `/booking_slots?business_id=<%= @business.id %>&service_id=${selectedServiceId}&date=${dateInput.value}`
+                  `/booking_slots?business_id=<%= @business.id %>&service_id=${selectedServiceId}&date=${dateInput.value}&agent_selection=${encodeURIComponent(selectedAgent)}`
               )
                   .then(async (response) => {
                       const data = await response.json();

@@ -1,0 +1,82 @@
+<style>
+
+    body {
+        font-family: Arial, sans-serif;
+        color: #334155;
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+
+    .agreement-content {
+        white-space: pre-line;
+    }
+
+
+    .signature-image {
+        width: 250px;
+        margin: 20px 0;
+    }
+
+</style>
+
+<h1>
+  <%= @agreement.name %>
+</h1>
+
+
+<p>
+  Signed agreement for
+  <%= @booking.user.first_name %>
+  <%= @booking.user.last_name %>
+</p>
+
+
+<hr>
+
+
+<div class="agreement-content">
+
+  <%= render_signed_agreement_content(
+        @agreement.content,
+        @agreement_status
+      )
+  %>
+
+</div>
+
+
+<hr>
+
+
+<h3>
+  Signing Details
+</h3>
+
+
+<p>
+  Status:
+  <%= @agreement_status.status.titleize %>
+</p>
+
+
+<p>
+  Signed:
+  <%= @agreement_status.signed_at.strftime("%d %B %Y %H:%M") %>
+</p>
+
+
+<p>
+  IP Address:
+  <%= @agreement_status.ip_address %>
+</p>
+
+<p>
+  User Agent:
+  <%= @agreement_status.user_agent %>
+</p>
+
+<p>
+  Device:
+  <%= @agreement_status.device %>
+</p>

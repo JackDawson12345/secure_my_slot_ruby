@@ -8,6 +8,16 @@ class User < ApplicationRecord
     agent: 3
   }
 
+  has_many :agent_bookings,
+           class_name: "Booking",
+           foreign_key: :agent_id,
+           dependent: :nullify
+
+  has_many :agent_booking_holds,
+           class_name: "BookingHold",
+           foreign_key: :agent_id,
+           dependent: :nullify
+
   has_many :business_agents, dependent: :destroy
 
   has_many :agent_businesses,

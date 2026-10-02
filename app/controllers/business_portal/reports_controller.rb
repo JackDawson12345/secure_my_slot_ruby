@@ -218,6 +218,19 @@ class BusinessPortal::ReportsController < BusinessPortal::BaseController
   end
 
   def staff
+    @business = current_user.business
+    @staff = @business.agents
+    @bookings = @business.bookings
+
+    @average_bookings_per_agent =
+      @staff.any? ? (@bookings.count.to_f / @staff.count).round(1) : 0
+
+    @staff_booking_counts = @staff.map do |agent|
+      {
+        name: agent.first_name + ' ' + agent.last_name,
+        bookings: @bookings.where(agent_id: agent.id).count
+      }
+    end
 
   end
 

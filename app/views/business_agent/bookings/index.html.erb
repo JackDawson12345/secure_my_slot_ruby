@@ -20,62 +20,65 @@
   <%= render "business_portal/shared/flash_messages" %>
 
 
-  <!-- Booking ownership -->
-  <section class="mt-8">
-    <div class="inline-flex w-full gap-1 rounded-xl bg-slate-100 p-1 sm:w-auto">
+  <% if @can_view_all_bookings %>
 
-      <!-- My bookings -->
-      <%= link_to business_agent_bookings_path(
-                    request.query_parameters
-                           .except("page", "view")
-                           .merge(view: "mine")
-                  ),
-                  class: "flex flex-1 items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition sm:flex-none #{
-                    @booking_view == "mine" ?
-                      'bg-white text-slate-900 shadow-sm' :
-                      'text-slate-500 hover:bg-white hover:text-slate-900'
-                  }" do %>
+    <!-- Booking ownership -->
+    <section class="mt-8">
+      <div class="inline-flex w-full gap-1 rounded-xl bg-slate-100 p-1 sm:w-auto">
 
-        <i data-lucide="user" class="h-4 w-4"></i>
+        <!-- My bookings -->
+        <%= link_to business_agent_bookings_path(
+                      request.query_parameters
+                             .except("page", "view")
+                             .merge(view: "mine")
+                    ),
+                    class: "flex flex-1 items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition sm:flex-none #{
+                      @booking_view == "mine" ?
+                        'bg-white text-slate-900 shadow-sm' :
+                        'text-slate-500 hover:bg-white hover:text-slate-900'
+                    }" do %>
 
-        <span>
+          <i data-lucide="user" class="h-4 w-4"></i>
+
+          <span>
           My bookings
         </span>
 
-        <span class="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-semibold text-slate-600">
-          <%= @my_bookings_count %>
-        </span>
+          <span class="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-semibold text-slate-600">
+            <%= @my_bookings_count %>
+          </span>
 
-      <% end %>
+        <% end %>
 
 
-      <!-- All bookings -->
-      <%= link_to business_agent_bookings_path(
-                    request.query_parameters
-                           .except("page", "view")
-                           .merge(view: "all")
-                  ),
-                  class: "flex flex-1 items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition sm:flex-none #{
-                    @booking_view == "all" ?
-                      'bg-white text-slate-900 shadow-sm' :
-                      'text-slate-500 hover:bg-white hover:text-slate-900'
-                  }" do %>
+        <!-- All bookings -->
+        <%= link_to business_agent_bookings_path(
+                      request.query_parameters
+                             .except("page", "view")
+                             .merge(view: "all")
+                    ),
+                    class: "flex flex-1 items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition sm:flex-none #{
+                      @booking_view == "all" ?
+                        'bg-white text-slate-900 shadow-sm' :
+                        'text-slate-500 hover:bg-white hover:text-slate-900'
+                    }" do %>
 
-        <i data-lucide="users" class="h-4 w-4"></i>
+          <i data-lucide="users" class="h-4 w-4"></i>
 
-        <span>
+          <span>
           All bookings
         </span>
 
-        <span class="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-semibold text-slate-600">
-          <%= @all_bookings_count %>
-        </span>
+          <span class="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-semibold text-slate-600">
+            <%= @all_bookings_count %>
+          </span>
 
-      <% end %>
+        <% end %>
 
-    </div>
-  </section>
+      </div>
+    </section>
 
+  <% end %>
 
   <!-- Booking statistics -->
   <section class="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">

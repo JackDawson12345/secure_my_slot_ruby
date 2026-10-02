@@ -562,123 +562,67 @@
 
               <% @agreements.each do |agreement| %>
 
-                <%
-                  agreement_status =
-                    AgreementStatus.find_by(
-                      agreement: agreement,
-                      booking: @booking,
-                      business: @business
-                    )
-
-                  agreement_status_classes =
-                    case agreement_status&.status
-                    when "signed"
-                      "bg-emerald-50 text-emerald-700"
-                    when "pending"
-                      "bg-amber-50 text-amber-700"
-                    else
-                      "bg-slate-100 text-slate-600"
-                    end
-                %>
-
+                <% status = AgreementStatus.find_by(
+                  agreement: agreement,
+                  booking: @booking,
+                  business: @business
+                ) %>
 
                 <div class="flex flex-col gap-4 py-4 first:pt-0 last:pb-0 sm:flex-row sm:items-center sm:justify-between">
 
-                  <div class="flex min-w-0 items-center gap-3">
+                  <div>
+                    <p class="font-semibold text-slate-900">
+                      <%= agreement.name %>
+                    </p>
 
-                    <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-500">
-
-                      <i
-                        data-lucide="file-text"
-                        class="h-5 w-5"
-                      ></i>
-
-                    </div>
-
-
-                    <div class="min-w-0">
-
-                      <p class="truncate font-semibold text-slate-900">
-                        <%= agreement.name %>
-                      </p>
-
-                      <% if agreement_status&.signed_at.present? %>
-
-                        <p class="mt-0.5 text-xs text-slate-500">
-                          Signed
-                          <%= agreement_status.signed_at.strftime("%-d %b %Y at %-I:%M %P") %>
-                        </p>
-
-                      <% elsif agreement_status.present? %>
-
-                        <p class="mt-0.5 text-xs text-slate-500">
-                          Agreement sent to customer
-                        </p>
-
-                      <% else %>
-
-                        <p class="mt-0.5 text-xs text-slate-500">
-                          Not yet sent
-                        </p>
-
-                      <% end %>
-
-                    </div>
-
+                    <p class="mt-1 text-sm text-slate-500">
+                      Customer agreement
+                    </p>
                   </div>
 
 
-                  <div class="flex flex-wrap items-center gap-2">
+                  <div class="flex items-center gap-3">
 
-                    <span class="rounded-full px-3 py-1 text-xs font-semibold <%= agreement_status_classes %>">
+                    <% if status.present? %>
 
-                      <% if agreement_status.present? %>
-                        <%= agreement_status.status.titleize %>
-                      <% else %>
-                        Not sent
+                      <% status_classes =
+                           case status.status
+                           when "signed"
+                             "bg-emerald-50 text-emerald-700"
+                           when "pending"
+                             "bg-amber-50 text-amber-700"
+                           else
+                             "bg-slate-100 text-slate-600"
+                           end
+                      %>
+
+                      <span class="rounded-full px-3 py-1 text-xs font-semibold <%= status_classes %>">
+                        <%= status.status.titleize %>
+                      </span>
+
+
+                      <% if status.status == "signed" %>
+
+                        <%= link_to "Show Agreement",
+                                    business_agent_agreement_show_path(
+                                      id: @booking.id,
+                                      token: status.token
+                                    ),
+                                    class: "rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50" %>
+
                       <% end %>
 
-                    </span>
 
+                    <% else %>
 
-                    <% if agreement_status&.status == "signed" %>
-
-                      <%= link_to business_agent_booking_agreement_show_path(
+                      <%= link_to "Send Agreement",
+                                  business_agent_bookings_send_agreement_path(
                                     id: @booking.id,
-                                    token: agreement_status.token
+                                    agreement_id: agreement.id,
+                                    business_id: @business.id
                                   ),
-                                  class: "inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50" do %>
-
-                        <i
-                          data-lucide="eye"
-                          class="h-4 w-4"
-                        ></i>
-
-                        View
-
-                      <% end %>
-
-
-                    <% elsif agreement_status.blank? %>
-
-                      <%= link_to business_agent_booking_send_agreement_path(
-                                    agreement,
-                                    business_id: @business.id,
-                                    booking_id: @booking.id
-                                  ),
-                                  data: {
-                                    turbo_method: :patch
-                                  },
-                                  class: "inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-3 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700" do %>
-
-                        <i
-                          data-lucide="send"
-                          class="h-4 w-4"
-                        ></i>
-
-                        Send
-
-                      <% end %>
+                                  data: { turbo_method: :patch },
+                                  class: "rounded-lg bg-indigo-600 px-3 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700" %>
 
                     <% end %>
 
@@ -695,25 +639,22 @@
             <div class="flex flex-col items-center justify-center py-8 text-center">
 
               <div class="flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-slate-400">
-
-                <i
-                  data-lucide="file-signature"
-                  class="h-5 w-5"
-                ></i>
-
+                <i data-lucide="file-signature" class="h-5 w-5"></i>
               </div>
 
               <p class="mt-3 font-semibold text-slate-900">
-                No agreements
+                No agreements found
               </p>
 
               <p class="mt-1 text-sm text-slate-500">
-                There are no agreements available for this business.
+                There are currently no agreements available for this booking.
               </p>
 
             </div>
 
           <% end %>
+
+
 
         </div>
 
@@ -761,71 +702,73 @@
 
               <% @email_templates.each do |email_template| %>
 
+                <% status = CustomEmailTemplateStatus.find_by(
+                  email_template: email_template,
+                  booking: @booking,
+                  business: @business
+                ) %>
+
                 <div class="flex flex-col gap-4 py-4 first:pt-0 last:pb-0 sm:flex-row sm:items-center sm:justify-between">
 
-                  <div class="flex min-w-0 items-center gap-3">
+                  <div>
+                    <p class="font-semibold text-slate-900">
+                      <%= email_template.template_type %>
+                    </p>
 
-                    <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-500">
-
-                      <i
-                        data-lucide="mail"
-                        class="h-5 w-5"
-                      ></i>
-
-                    </div>
-
-
-                    <div class="min-w-0">
-
-                      <p class="truncate font-semibold text-slate-900">
-
-                        <% if email_template.respond_to?(:name) %>
-                          <%= email_template.name %>
-                        <% elsif email_template.respond_to?(:subject) %>
-                          <%= email_template.subject %>
-                        <% else %>
-                          Email template
-                        <% end %>
-
-                      </p>
-
-                      <% if email_template.respond_to?(:subject) &&
-                            email_template.subject.present? %>
-
-                        <p class="mt-0.5 truncate text-xs text-slate-500">
-                          <%= email_template.subject %>
-                        </p>
-
-                      <% else %>
-
-                        <p class="mt-0.5 text-xs text-slate-500">
-                          Custom email template
-                        </p>
-
-                      <% end %>
-
-                    </div>
-
+                    <p class="mt-1 text-sm text-slate-500">
+                      Subject: <%= email_template.subject %>
+                    </p>
                   </div>
 
 
-                  <%= link_to business_agent_booking_email_template_path(
-                                @booking,
-                                email_template
-                              ),
-                              data: {
-                                turbo_method: :patch
-                              },
-                              class: "inline-flex items-center justify-center gap-2 rounded-lg bg-indigo-600 px-3 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700" do %>
+                  <div class="flex items-center gap-3">
 
-                    <i
-                      data-lucide="send"
-                      class="h-4 w-4"
-                    ></i>
+                    <% if status.present? %>
 
-                    Send Email
+                      <% status_classes =
+                           case status.status
+                           when "signed"
+                             "bg-emerald-50 text-emerald-700"
+                           when "pending"
+                             "bg-amber-50 text-amber-700"
+                           else
+                             "bg-slate-100 text-slate-600"
+                           end
+                      %>
 
-                  <% end %>
+                      <span class="rounded-full px-3 py-1 text-xs font-semibold <%= status_classes %>">
+                        <%= status.status.titleize %>
+                      </span>
+
+                      <% if status.status == "sent" %>
+
+                        <%= link_to "Resend Email",
+                                    business_agent_booking_email_template_path(
+                                      email_template,
+                                      business_id: @business.id,
+                                      booking_id: @booking.id,
+                                      send_count: 'resend'
+                                    ),
+                                    data: { turbo_method: :patch },
+                                    class: "rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50" %>
+
+                      <% end %>
+
+
+                    <% else %>
+
+                      <%= link_to "Send Email",
+                                  business_agent_booking_email_template_path(
+                                    email_template,
+                                    business_id: @business.id,
+                                    booking_id: @booking.id
+                                  ),
+                                  data: { turbo_method: :patch },
+                                  class: "rounded-lg bg-indigo-600 px-3 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700" %>
+
+                    <% end %>
+
+                  </div>
 
                 </div>
 
@@ -838,20 +781,15 @@
             <div class="flex flex-col items-center justify-center py-8 text-center">
 
               <div class="flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-slate-400">
-
-                <i
-                  data-lucide="mail-x"
-                  class="h-5 w-5"
-                ></i>
-
+                <i data-lucide="file-signature" class="h-5 w-5"></i>
               </div>
 
               <p class="mt-3 font-semibold text-slate-900">
-                No custom email templates
+                No Email Templates found
               </p>
 
               <p class="mt-1 text-sm text-slate-500">
-                There are currently no custom email templates available.
+                There are currently no Email Templates available for this booking.
               </p>
 
             </div>

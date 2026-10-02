@@ -1,5 +1,6 @@
 class BusinessAgent::BookingsController < BusinessAgent::BaseController
 
+
   def index
     bookings = @business.bookings
                         .includes(:user, :service, :agent)
@@ -8,17 +9,28 @@ class BusinessAgent::BookingsController < BusinessAgent::BaseController
     current_time = Time.current
 
     # ----------------------------------------
-    # Booking ownership
+    # Booking ownership / visibility
     # ----------------------------------------
 
-    @booking_view = params[:view].presence || "mine"
+    @can_view_all_bookings =
+      @business_agent_settings.booking_visibility == "all_bookings"
 
-    bookings_scope =
-      if @booking_view == "all"
-        bookings
-      else
-        bookings.where(agent_id: @business_agent.id)
-      end
+    if @can_view_all_bookings
+      @booking_view =
+        %w[mine all].include?(params[:view]) ? params[:view] : "mine"
+
+      bookings_scope =
+        if @booking_view == "all"
+          bookings
+        else
+          bookings.where(agent_id: @business_agent.user.id)
+        end
+    else
+      @booking_view = "mine"
+
+      bookings_scope =
+        bookings.where(agent_id: @business_agent.user.id)
+    end
 
     # ----------------------------------------
     # Statistics
@@ -58,11 +70,11 @@ class BusinessAgent::BookingsController < BusinessAgent::BaseController
     # Counts for My / All tabs
     # ----------------------------------------
 
-    @my_bookings_count = bookings
-                           .where(agent_id: @business_agent.id)
-                           .count
+    @my_bookings_count =
+      bookings.where(agent_id: @business_agent.user.id).count
 
-    @all_bookings_count = bookings.count
+    @all_bookings_count =
+      @can_view_all_bookings ? bookings.count : @my_bookings_count
 
     # ----------------------------------------
     # Services
@@ -178,9 +190,9 @@ class BusinessAgent::BookingsController < BusinessAgent::BaseController
   end
 
   def show
-    @booking = @business.bookings
-                        .includes(:user, :service, :agent)
-                        .find(params[:id])
+    @booking = accessible_bookings
+                 .includes(:user, :service, :agent)
+                 .find(params[:id])
 
     @agreements = @business.agreements
 
@@ -189,7 +201,7 @@ class BusinessAgent::BookingsController < BusinessAgent::BaseController
   end
 
   def update_status
-    @booking = @business.bookings.find(params[:booking_id])
+    @booking = accessible_bookings.find(params[:booking_id])
 
     new_status = params[:status]
 
@@ -241,12 +253,49 @@ class BusinessAgent::BookingsController < BusinessAgent::BaseController
   end
 
   def agreement_show
+    @agreement_status = AgreementStatus.find_by(token: params[:token])
 
+    return redirect_to root_path unless @agreement_status
+
+    @agreement = @agreement_status.agreement
+    @booking = @agreement_status.booking
   end
 
 
   def send_agreement
+    business = Business.find(params['business_id'])
+    booking = accessible_bookings.find(params[:id])
+    agreement = Agreement.find(params['agreement_id'])
+    token = SecureRandom.uuid
 
+
+    AgreementStatus.create(business: business, booking: booking, agreement: agreement, status: 'pending', token: token)
+    AgreementMailer.sign_agreement(agreement, booking, business).deliver_now
+
+    redirect_to business_agent_booking_path(params['id']), notice: "Agreement sent successfully."
+  end
+
+  def agreements_pdf
+    @agreement_status = AgreementStatus.find_by(token: params[:token])
+
+    return redirect_to root_path unless @agreement_status
+
+    @agreement = @agreement_status.agreement
+    @booking = @agreement_status.booking
+
+
+    respond_to do |format|
+
+      format.pdf do
+
+        render pdf: "#{@agreement.name}",
+               template: "business_agent/bookings/agreement_pdf",
+               layout: "pdf",
+               disposition: "attachment"
+
+      end
+
+    end
   end
 
 
@@ -270,6 +319,16 @@ class BusinessAgent::BookingsController < BusinessAgent::BaseController
 
 
     redirect_to business_agent_booking_path(params['booking_id']), notice: "Email sent successfully."
+  end
+
+  def accessible_bookings
+    scope = @business.bookings
+
+    if @business_agent_settings.booking_visibility == "all_bookings"
+      scope
+    else
+      scope.where(agent_id: @business_agent.user.id)
+    end
   end
 
 end

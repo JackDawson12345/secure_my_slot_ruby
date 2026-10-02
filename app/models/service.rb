@@ -16,6 +16,9 @@ class Service < ApplicationRecord
                                 allow_destroy: true,
                                 reject_if: :all_blank
 
+  has_many :service_agents, dependent: :destroy
+  has_many :business_agents, through: :service_agents
+
   ICONS = {
     "calendar-check" => "Appointment",
     "calendar-days" => "Calendar",

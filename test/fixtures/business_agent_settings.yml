@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  business: one
+  agent_selection: 1
+  booking_visibility: 1
+  allow_reassignment: false
+
+two:
+  business: two
+  agent_selection: 1
+  booking_visibility: 1
+  allow_reassignment: false

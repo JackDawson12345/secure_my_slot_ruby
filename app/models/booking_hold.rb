@@ -6,6 +6,10 @@ class BookingHold < ApplicationRecord
   belongs_to :booking,
              optional: true
 
+  belongs_to :agent,
+             class_name: "User",
+             optional: true
+
   validates :date, presence: true
   validates :time, presence: true
   validates :expires_at, presence: true

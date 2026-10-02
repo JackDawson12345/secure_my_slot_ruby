@@ -3,6 +3,7 @@ class BusinessAgent::BaseController < ApplicationController
   before_action :get_user_role
   before_action :get_business
   before_action :set_business_agent
+  before_action :get_business_agent_settings
   layout "business_agent"
 
 
@@ -24,6 +25,10 @@ class BusinessAgent::BaseController < ApplicationController
 
   def set_business_agent
     @business_agent = BusinessAgent.find_by!(user_id: current_user.id)
+  end
+
+  def get_business_agent_settings
+    @business_agent_settings = @business.agent_settings
   end
 
 end

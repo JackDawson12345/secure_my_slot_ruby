@@ -405,6 +405,48 @@
 
   </div>
 
+
+  <div>
+    <%= form.label :business_agent_ids,
+                   "Assigned agents",
+                   class: "block text-sm font-semibold text-slate-700" %>
+
+    <p class="mt-1 text-xs text-slate-500">
+      Select which agents can provide this service.
+    </p>
+
+    <div class="mt-4 grid gap-3 sm:grid-cols-2">
+
+      <% @agents.each do |agent| %>
+
+        <label class="flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-4 cursor-pointer hover:border-indigo-300">
+
+          <%= check_box_tag "service[business_agent_ids][]",
+                            agent.id,
+                            service.business_agents.include?(agent),
+                            id: "agent_#{agent.id}",
+                            class: "h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" %>
+
+          <div>
+            <p class="text-sm font-semibold text-slate-900">
+              <%= agent.user.full_name %>
+            </p>
+
+            <p class="text-xs text-slate-500">
+              <%= agent.user.email %>
+            </p>
+          </div>
+
+        </label>
+
+      <% end %>
+
+    </div>
+
+  </div>
+
+
+
   <div>
     <%= form.label :status,
                    class: "block text-sm font-semibold text-slate-700" %>

@@ -1,11 +1,13 @@
 class BookingAvailability
-  def initialize(business, service, date)
+  def initialize(business, service, date, agent)
     @business = business
     @service = service
     @date = date.to_date
+    @agent = agent
   end
 
   def call
+
     return [] unless valid_booking_date?
     return [] unless settings
 
@@ -115,9 +117,18 @@ class BookingAvailability
   end
 
   def unavailable?(start_time, end_time)
-    booked?(start_time, end_time) ||
-      held?(start_time, end_time) ||
-      blocked?(start_time, end_time)
+    return true if blocked?(start_time, end_time)
+
+    if any_agent?
+      active_agents.none? do |agent|
+        agent_available?(agent, start_time, end_time)
+      end
+    elsif selected_agent?
+      !agent_available?(@agent, start_time, end_time)
+    else
+      booked?(start_time, end_time) ||
+        held?(start_time, end_time)
+    end
   end
 
   def booked?(start_time, end_time)
@@ -250,6 +261,70 @@ class BookingAvailability
       next if range_start >= range_end
 
       [range_start, range_end]
+    end
+  end
+
+  def any_agent?
+    @agent == "any"
+  end
+
+  def selected_agent?
+    @agent.is_a?(BusinessAgent)
+  end
+
+  def active_agents
+    @active_agents ||=
+      @business.business_agents
+               .where(status: "active")
+               .to_a
+  end
+
+  def agent_available?(agent, start_time, end_time)
+    !booked_for_agent?(agent, start_time, end_time) &&
+      !held_for_agent?(agent, start_time, end_time)
+  end
+
+  def booked_for_agent?(agent, start_time, end_time)
+    bookings_for_date.any? do |booking|
+      next false unless booking.agent_id == agent.user_id
+
+      booking_start = time_on_date(booking.time)
+
+      booking_end =
+        booking_start +
+        booking.service.minutes_duration.minutes
+
+      booking_end_with_buffer =
+        booking_end + buffer_minutes.minutes
+
+      overlaps?(
+        start_time,
+        end_time,
+        booking_start,
+        booking_end_with_buffer
+      )
+    end
+  end
+
+  def held_for_agent?(agent, start_time, end_time)
+    booking_holds_for_date.any? do |booking_hold|
+      next false unless booking_hold.agent_id == agent.user_id
+
+      hold_start = time_on_date(booking_hold.time)
+
+      hold_end =
+        hold_start +
+        booking_hold.service.minutes_duration.minutes
+
+      hold_end_with_buffer =
+        hold_end + buffer_minutes.minutes
+
+      overlaps?(
+        start_time,
+        end_time,
+        hold_start,
+        hold_end_with_buffer
+      )
     end
   end
 end

@@ -1,10 +1,18 @@
 class BusinessAgent::DashboardController < BusinessAgent::BaseController
   def index
-    @business_agent = BusinessAgent.find_by!(user_id: current_user.id)
-    @business = @business_agent.business
+    # ----------------------------------------
+    # Booking visibility
+    # ----------------------------------------
 
     bookings = @business.bookings
-                        .where(agent_id: @business_agent.id)
+
+    unless @business_agent_settings.booking_visibility == "all_bookings"
+      bookings = bookings.where(agent_id: @business_agent.user.id)
+    end
+
+    # ----------------------------------------
+    # Dashboard stats
+    # ----------------------------------------
 
     today = Date.current
 
@@ -16,18 +24,26 @@ class BusinessAgent::DashboardController < BusinessAgent::BaseController
     @today_bookings_count = @today_bookings.count
 
     @this_week_bookings_count = bookings
-                                  .where(date: today.beginning_of_week..today.end_of_week)
-                                  .where.not(status: %w[cancelled canceled])
+                                  .where(
+                                    date: today.beginning_of_week..today.end_of_week
+                                  )
+                                  .where.not(
+      status: %w[cancelled canceled]
+    )
                                   .count
 
     @completed_bookings_count = bookings
                                   .where(status: "completed")
-                                  .where(date: today.beginning_of_month..today.end_of_month)
+                                  .where(
+                                    date: today.beginning_of_month..today.end_of_month
+                                  )
                                   .count
 
     @upcoming_bookings_count = bookings
                                  .where(date: today..)
-                                 .where.not(status: %w[cancelled canceled completed])
+                                 .where.not(
+      status: %w[cancelled canceled completed]
+    )
                                  .count
 
     @next_booking = @today_bookings

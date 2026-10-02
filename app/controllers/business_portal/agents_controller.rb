@@ -1,12 +1,22 @@
 class BusinessPortal::AgentsController < BusinessPortal::BaseController
   before_action :set_business
   before_action :set_business_agent, only: %i[edit update destroy resend_invitation]
+  before_action :check_agents_access,
+                only: %i[
+                new
+                create
+                edit
+                update
+                destroy
+              ]
 
   def index
     @business_agents = @business
                          .business_agents
                          .includes(:user)
                          .order(created_at: :desc)
+
+    @agent_setting = @business.agent_settings
   end
 
   def new
@@ -28,13 +38,34 @@ class BusinessPortal::AgentsController < BusinessPortal::BaseController
   end
 
   def update
+
     @agent = @business_agent.user
 
     if @agent.update(agent_params.except(:email))
+
+      @business_agent.update(description: params[:user][:description])
       redirect_to business_agents_path,
                   notice: "Agent updated successfully."
+
+
     else
       render :edit, status: :unprocessable_entity
+    end
+  end
+
+  def update_settings
+    @agent_setting = @business.agent_settings
+
+    if @agent_setting.update(agent_setting_params)
+      redirect_to business_agents_path,
+                  notice: "Agent settings updated successfully."
+    else
+      @business_agents = @business
+                           .business_agents
+                           .includes(:user)
+                           .order(created_at: :desc)
+
+      render :index, status: :unprocessable_entity
     end
   end
 
@@ -143,5 +174,20 @@ class BusinessPortal::AgentsController < BusinessPortal::BaseController
     AgentMailer
       .invitation(agent, @business, raw_token)
       .deliver_later
+  end
+
+  def agent_setting_params
+    params.require(:business_agent_setting).permit(
+      :agent_selection,
+      :booking_visibility,
+      :allow_reassignment
+    )
+  end
+
+  def check_agents_access
+    return if current_user.business.feature_enabled?(:agents)
+
+    redirect_to business_agents_path,
+                alert: "Upgrade to Pro to add agents."
   end
 end
