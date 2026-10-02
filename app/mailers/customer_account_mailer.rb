@@ -6,7 +6,7 @@ class CustomerAccountMailer < ApplicationMailer
 
     @reset_password_url = edit_user_password_url(
       reset_password_token: @token,
-      host: "www.securemyslot.co.uk",
+      host: "www.book-pilot.co.uk",
       protocol: "https"
     )
 

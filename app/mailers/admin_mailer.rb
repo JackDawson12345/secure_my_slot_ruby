@@ -8,7 +8,7 @@ class AdminMailer < ApplicationMailer
 
     mail(
       to: [
-        "support@securemyslot.co.uk",
+        "support@book-pilot.co.uk",
         "support@uniteldirect.co.uk"
       ],
       subject: "SecureMySlot Error: #{exception.class}"

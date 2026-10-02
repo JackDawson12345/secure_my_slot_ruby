@@ -18,7 +18,7 @@ Rails.application.routes.draw do
 
   # Business subdomains
   # Example:
-  # thisisatest..securemyslot.co.uk
+  # thisisatest..book-pilot.co.uk
   constraints BusinessSubdomainConstraint do
     root to: "business_sites#show", as: "business_site"
 

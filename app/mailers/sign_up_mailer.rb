@@ -5,7 +5,7 @@ class SignUpMailer < ApplicationMailer
 
     mail(
       to: [
-        "support@securemyslot.co.uk",
+        "support@book-pilot.co.uk",
         "support@uniteldirect.co.uk"
       ],
       subject: "A new business registration"

@@ -46,7 +46,7 @@ class OpenAiCaptionGenerator
 
   def booking_link
 
-    "https://#{@social_post.business.page_address}.securemyslot.co.uk"
+    "https://#{@social_post.business.page_address}.book-pilot.co.uk"
 
   end
 

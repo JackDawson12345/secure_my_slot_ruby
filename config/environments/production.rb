@@ -65,7 +65,7 @@ Rails.application.configure do
   config.action_mailer.perform_deliveries = true
 
   config.action_mailer.default_url_options = {
-    host: "www.securemyslot.co.uk",
+    host: "www.book-pilot.co.uk",
     protocol: "https"
   }
 

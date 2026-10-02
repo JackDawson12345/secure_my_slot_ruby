@@ -12,7 +12,7 @@ class ContactMailer < ApplicationMailer
 
     mail(
       to: [
-        "support@securemyslot.co.uk",
+        "support@book-pilot.co.uk",
         "support@uniteldirect.co.uk"
       ],
       reply_to: @email,
