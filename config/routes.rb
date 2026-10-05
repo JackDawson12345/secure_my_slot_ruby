@@ -261,7 +261,7 @@ Rails.application.routes.draw do
 
 
       get "me",
-          to: "users#show",
+          to: "users#me",
           defaults: { format: :json }
 
     end
