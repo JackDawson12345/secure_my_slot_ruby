@@ -138,12 +138,18 @@ Rails.application.routes.draw do
 
         get "/:id/services",
             to: "services#get_services"
-        get "/:id/service/:service_id",
+        get ":id/services/options",
+            to: "services#options"
+        get ":id/services/:service_id",
             to: "services#get_service"
-        patch "/:id/service/:service_id",
-              to: "services#update_service"
-        post "/:id/services",
+        post ":id/services",
              to: "services#create_service"
+        patch ":id/services/:service_id",
+              to: "services#update_service"
+        delete ":id/services/:service_id/image",
+               to: "services#remove_image"
+        delete ":id/services/:service_id",
+               to: "services#delete_service"
 
         get "/:id/get-opening-hours",
             to: "opening_hours#get_opening_hours"
@@ -195,8 +201,16 @@ Rails.application.routes.draw do
 
         get ":id/website-settings",
             to: "website_settings#show"
-        patch ":id/website-settings",
-              to: "website_settings#update"
+        patch ":id/website-settings/content",
+              to: "website_settings#update_content"
+        patch ":id/website-settings/colour",
+              to: "website_settings#update_colour"
+        post ":id/website-settings/generate-colours",
+             to: "website_settings#generate_colours"
+        post ":id/website-settings/gallery",
+             to: "website_settings#update_gallery"
+        delete ":id/website-settings/gallery/:image_id",
+               to: "website_settings#destroy_gallery_image"
 
       end
 

@@ -179,64 +179,144 @@ module Api
 
         def get_customer
           business = ::Business.find_by(id: params[:id])
-          user = ::User.find(params[:customer_id])
 
-          bookings = ::Booking.where(user: user, business: business)
-
-          unless user.role == 'customer'
+          unless business
             return render json: {
-              error: "User is not a Customer."
+              error: "Business not found."
             }, status: :not_found
           end
+
+          user = ::User.find_by(id: params[:customer_id])
+
+          unless user
+            return render json: {
+              error: "Customer not found."
+            }, status: :not_found
+          end
+
+          unless user.role == "customer"
+            return render json: {
+              error: "User is not a customer."
+            }, status: :not_found
+          end
+
+          bookings = ::Booking
+                       .where(
+                         user: user,
+                         business: business
+                       )
+                       .includes(:service)
+                       .order(
+                         date: :desc,
+                         time: :desc
+                       )
+
+          # Make sure this customer actually belongs
+          # to this business through a booking.
+          unless bookings.exists?
+            return render json: {
+              error: "Customer not found for this business."
+            }, status: :not_found
+          end
+
+          customer_setting =
+            user.customer_setting
 
           render json: {
             user: {
               id: user.id,
               email: user.email,
+
               created_at: user.created_at,
               updated_at: user.updated_at,
+
               role: user.role,
+
               first_name: user.first_name,
               last_name: user.last_name,
+
               phone_number: user.phone_number,
+
               terms_accepted: user.terms_accepted,
               terms_accepted_at: user.terms_accepted_at,
+
               marketing_consent: user.marketing_consent,
-              settings: {
-                date_of_birth: user.customer_setting.date_of_birth,
-                preferred_name: user.customer_setting.preferred_name,
-                phone_number: user.customer_setting.phone_number,
-                preferred_contact_method: user.customer_setting.preferred_contact_method,
-                address_line_1: user.customer_setting. address_line_1,
-                address_line_2: user.customer_setting.address_line_2,
-                town_or_city: user.customer_setting.town_or_city,
-                postcode: user.customer_setting.postcode,
-                country: user.customer_setting.country,
-              }
+
+              settings: customer_setting ? {
+                date_of_birth:
+                  customer_setting.date_of_birth,
+
+                preferred_name:
+                  customer_setting.preferred_name,
+
+                phone_number:
+                  customer_setting.phone_number,
+
+                preferred_contact_method:
+                  customer_setting.preferred_contact_method,
+
+                address_line_1:
+                  customer_setting.address_line_1,
+
+                address_line_2:
+                  customer_setting.address_line_2,
+
+                town_or_city:
+                  customer_setting.town_or_city,
+
+                postcode:
+                  customer_setting.postcode,
+
+                country:
+                  customer_setting.country
+              } : nil
             },
+
             bookings: {
               total_bookings: bookings.count,
+
               bookings: bookings.map do |booking|
                 {
+                  # Important for Expo navigation
+                  id: booking.id,
+
                   date: booking.date,
                   time: booking.time,
+
                   status: booking.status,
-                  payment_status: booking.payment_status,
-                  amount_paid: booking.amount_paid,
-                  service:{
-                    name: booking.service.name,
-                    description: booking.service.description,
-                    price: booking.service.price,
-                    minutes_duration: booking.service.minutes_duration,
-                    status: booking.service.status,
-                    deposit_enabled: booking.service.deposit_enabled,
-                    deposit: booking.service.deposit,
+
+                  payment_status:
+                    booking.payment_status,
+
+                  amount_paid:
+                    booking.amount_paid,
+
+                  service: {
+                    name:
+                      booking.service.name,
+
+                    description:
+                      booking.service.description,
+
+                    price:
+                      booking.service.price,
+
+                    minutes_duration:
+                      booking.service.minutes_duration,
+
+                    status:
+                      booking.service.status,
+
+                    deposit_enabled:
+                      booking.service.deposit_enabled,
+
+                    deposit:
+                      booking.service.deposit
                   }
                 }
               end
             }
           }, status: :ok
-
         end
 
         private

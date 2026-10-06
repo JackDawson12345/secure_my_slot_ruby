@@ -82,12 +82,22 @@ module Api
             }, status: :not_found
           end
 
+          if booking.service.service_category.present?
+            category = booking.service.service_category.name
+          else
+            category = 'Unassigned'
+          end
+
+          email_templates = business.email_templates.where(custom: true)
+          agreements = business.agreements
+          uploaded_images = booking.images
+
           render json: {
             booking: {
               id: booking.id,
               business_id: booking.business_id,
               user_id: booking.user_id,
-              user_name: booking.user.first_name + ' ' + booking.user.last_name,
+              user_name: "#{booking.user.first_name} #{booking.user.last_name}",
               date: booking.date,
               time: booking.time,
               status: booking.status,
@@ -97,12 +107,84 @@ module Api
               notes: booking.notes,
               reminder_email_sent_at: booking.reminder_email_sent_at,
               reminder_sms_sent_at: booking.reminder_sms_sent_at,
-              total_price: booking.service.price,
+              total_price: booking.amount,
               amount_paid: booking.amount_paid,
               created_at: booking.created_at,
               updated_at: booking.updated_at,
+
               users_email: booking.user.email,
-              users_phone: booking.user.phone_number
+              users_phone: booking.user.phone_number,
+
+              service: {
+                name: booking.service.name,
+                description: booking.service.description,
+                price: booking.service.price,
+                minutes_duration: booking.service.minutes_duration,
+                status: booking.service.status,
+                deposit_enabled: booking.service.deposit,
+                category: category
+              },
+
+              agent: booking.agent ? {
+                id: booking.agent.id,
+                name: "#{booking.agent.first_name} #{booking.agent.last_name}",
+                email: booking.agent.email,
+                phone_number: booking.agent.phone_number
+              } : nil,
+
+              email_templates: email_templates.map do |template|
+                email_status = CustomEmailTemplateStatus.find_by(
+                  booking: booking,
+                  email_template: template
+                )
+
+                if email_status&.status == "sent"
+                  status = "Sent"
+                else
+                  status = "Not Sent"
+                end
+                {
+                  id: template.id,
+                  template_type: template.template_type,
+                  subject: template.subject,
+                  body: template.body,
+                  custom: template.custom,
+                  created_at: template.created_at,
+                  updated_at: template.updated_at,
+                  status: status
+                }
+              end,
+
+              agreements: agreements.map do |agreement|
+                agreement_status = AgreementStatus.find_by(
+                  booking: booking,
+                  agreement: agreement
+                )
+
+                {
+                  id: agreement.id,
+                  name: agreement.name,
+                  content: agreement.content,
+                  created_at: agreement.created_at,
+                  updated_at: agreement.updated_at,
+                  status: agreement_status&.status || "Not Sent"
+                }
+              end,
+
+              consultation_form: {
+                responses: booking.consultation_responses,
+                token: booking.consultation_token
+              },
+
+              uploaded_images: uploaded_images.map do |image|
+                {
+                  id: image.id,
+                  filename: image.filename.to_s,
+                  content_type: image.content_type,
+                  byte_size: image.byte_size,
+                  url: url_for(image)
+                }
+              end
             }
           }, status: :ok
         end

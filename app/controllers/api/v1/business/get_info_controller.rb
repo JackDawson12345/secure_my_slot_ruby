@@ -55,6 +55,7 @@ module Api
         end
 
         def get_business
+
           business = ::Business.find_by(id: params[:id])
 
           unless business
@@ -131,7 +132,6 @@ module Api
 
         def get_dashboard_details
           @business = ::Business.find(params[:id])
-
           @bookings = ::Booking
                         .where(business: @business)
                         .where.not(user_id: nil)
