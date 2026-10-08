@@ -320,6 +320,23 @@ Rails.application.routes.draw do
         get "/:id/get-dashboard-details",
             to: "get_info#get_dashboard_details"
 
+
+
+        get ":id/bookings",
+            to: "bookings#index"
+
+        get ":id/booking/:booking_id",
+            to: "bookings#show"
+
+        patch ":id/booking/:booking_id/update-status",
+              to: "bookings#update_status"
+
+        post ":id/booking/:booking_id/send-agreement/:agreement_id",
+             to: "bookings#send_agreement"
+
+        post ":id/booking/:booking_id/send-email/:email_id",
+             to: "bookings#send_email"
+
       end
 
       get '/:id/get-businesses',
