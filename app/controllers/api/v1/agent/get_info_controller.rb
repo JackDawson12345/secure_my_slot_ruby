@@ -1,10 +1,8 @@
-
 module Api
   module V1
     module Agent
       class GetInfoController < Api::V1::BaseController
 
-        skip_before_action :verify_authenticity_token
         before_action :authenticate_api_key!
 
         # ================================================
