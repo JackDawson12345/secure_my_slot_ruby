@@ -313,6 +313,15 @@ Rails.application.routes.draw do
               to: "settings#update_password"
       end
 
+      namespace :agent do
+        get "dashboard",
+            to: "dashboard#show"
+
+        get "/:id/get-dashboard-details",
+            to: "get_info#get_dashboard_details"
+
+      end
+
       get '/:id/get-businesses',
           to: "businesses#get_businesses"
       get '/:id/get-business/:business_id',

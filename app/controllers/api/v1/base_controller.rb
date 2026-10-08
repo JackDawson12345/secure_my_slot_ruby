@@ -21,6 +21,14 @@ module Api
           error: "Customer account required."
         }, status: :forbidden
       end
+
+      def require_agent!
+        return if current_user.agent?
+
+        render json: {
+          error: "Agent account required."
+        }, status: :forbidden
+      end
     end
   end
 end
