@@ -185,7 +185,7 @@ module Api
               id: business.id,
               business_name: business.business_name,
               phone_number: business.phone_number,
-              email: business.email
+              email: business.business_setting.business_email
             },
 
             settings: {
