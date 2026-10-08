@@ -163,11 +163,24 @@ class Account::BookingsController < Account::BaseController
 
     date = Date.parse(params[:date])
 
-    slots = BookingAvailability.new(
-      booking.business,
-      booking.service,
-      date
-    ).call
+    business_agent =
+      if booking.agent_id.present?
+        booking
+          .business
+          .business_agents
+          .find_by(
+            user_id:
+              booking.agent_id
+          )
+      end
+
+    slots =
+      BookingAvailability.new(
+        booking.business,
+        booking.service,
+        date,
+        business_agent
+      ).call
 
     render json: {
       slots: slots

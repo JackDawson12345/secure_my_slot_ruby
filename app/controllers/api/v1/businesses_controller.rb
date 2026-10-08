@@ -8,70 +8,181 @@ module Api
       # ============================================================
 
       def get_businesses
-        customer = ::User.find(params[:id])
+        customer =
+          ::User.find(params[:id])
 
-        businesses = ::Business.all
+        # ==========================================================
+        # FILTER VALUES
+        # ==========================================================
 
-        if params[:category].present?
+        search =
+          params[:search]
+            .to_s
+            .strip
+            .downcase
+
+        categories =
+          Array(params[:category])
+            .reject(&:blank?)
+
+        sort =
+          params[:sort]
+            .presence ||
+          "best_match"
+
+        page =
+          params[:page]
+            .to_i
+
+        businesses_per_page =
+          params[:businesses_per_page]
+            .to_i
+
+        page =
+          1 if page <= 0
+
+        businesses_per_page =
+          10 if businesses_per_page <= 0
+
+        # ==========================================================
+        # DISTANCE
+        # ==========================================================
+        #
+        # Web slider:
+        #
+        # 0 = 5 miles
+        # 1 = 10 miles
+        # 2 = 25 miles
+        # 3 = 50 miles
+        # 4 = 100 miles
+        # 5 = Unlimited
+        #
+        # If Expo later sends an actual mileage number rather than
+        # the slider index, values above 5 are treated as miles.
+        # ==========================================================
+
+        distance_limit =
+          distance_limit_from_param(
+            params[:distance]
+          )
+
+        needs_distance =
+          params[:distance_to_customer] == "true" ||
+          distance_limit.present? ||
+          sort == "distance"
+
+        # ==========================================================
+        # START WITH ALL BUSINESSES
+        # ==========================================================
+
+        businesses =
+          ::Business
+            .includes(
+              :business_setting,
+              :services
+            )
+            .order(
+              created_at: :desc
+            )
+            .to_a
+
+        # ==========================================================
+        # SEARCH
+        # ==========================================================
+
+        if search.present?
           businesses =
-            businesses
-              .joins(:business_setting)
-              .where(
-                business_settings: {
-                  business_category: params[:category]
-                }
-              )
+            businesses.select do |business|
+              settings =
+                business.business_setting
+
+              next false unless settings
+
+              business_name =
+                settings.business_name
+                        .to_s
+                        .downcase
+
+              category =
+                settings.business_category
+                        .to_s
+                        .downcase
+
+              address =
+                [
+                  settings.address_line_1,
+                  settings.address_line_2,
+                  settings.town_or_city,
+                  settings.postcode,
+                  settings.country
+                ]
+                  .compact
+                  .join(" ")
+                  .downcase
+
+              service_names =
+                business
+                  .services
+                  .map(&:name)
+                  .compact
+                  .join(" ")
+                  .downcase
+
+              business_name.include?(search) ||
+                category.include?(search) ||
+                address.include?(search) ||
+                service_names.include?(search)
+            end
         end
 
-        businesses_per_page = params[:businesses_per_page].to_i
-        page = params[:page].to_i
+        # ==========================================================
+        # MULTIPLE CATEGORY FILTER
+        # ==========================================================
 
-        businesses_per_page = 10 if businesses_per_page.zero?
-        page = 1 if page.zero?
+        if categories.any?
+          businesses =
+            businesses.select do |business|
+              category =
+                business
+                  .business_setting
+                  &.business_category
+                  .to_s
 
-        total_businesses = businesses.count
-
-        total_pages =
-          (
-            total_businesses.to_f /
-              businesses_per_page
-          ).ceil
-
-        paginated_businesses =
-          businesses
-            .order(created_at: :desc)
-            .limit(businesses_per_page)
-            .offset(
-              (page - 1) * businesses_per_page
-            )
-
-        render json: {
-          total_businesses: total_businesses,
-          businesses_per_page: businesses_per_page,
-          current_page: page,
-          total_pages: total_pages,
-          category_filter: params[:category],
-
-          businesses: paginated_businesses.map do |business|
-            services =
-              ::Service.where(
-                business_id: business.id
+              categories.include?(
+                category
               )
+            end
+        end
 
+        # ==========================================================
+        # BUILD FULL BUSINESS DATA
+        #
+        # We do this BEFORE pagination because distance,
+        # availability and soonest sorting all need to work across
+        # the complete filtered result set.
+        # ==========================================================
+
+        business_results =
+          businesses.filter_map do |business|
             business_settings =
-              ::BusinessSetting.find_by(
-                business_id: business.id
-              )
+              business.business_setting
 
-            next_slot =
-              BusinessNextAvailableSlot
-                .new(business)
-                .call
+            next unless business_settings
+
+            services =
+              business.services
 
             opening_hours =
-              ::BusinessOpeningHour.where(
-                business_id: business.id
-              )
+              ::BusinessOpeningHour
+                .where(
+                  business_id:
+                    business.id
+                )
+                .to_a
+
+            # --------------------------------------------------------
+            # Ensure coordinates exist
+            # --------------------------------------------------------
 
             if business_settings.latitude.nil? ||
                business_settings.longitude.nil?
@@ -83,25 +194,116 @@ module Api
 
               if coordinates
                 business_settings.update(
-                  latitude: coordinates[:latitude],
-                  longitude: coordinates[:longitude]
+                  latitude:
+                    coordinates[:latitude],
+
+                  longitude:
+                    coordinates[:longitude]
                 )
               end
             end
 
-            business_data = {
+            # --------------------------------------------------------
+            # Next available slot
+            # --------------------------------------------------------
+
+            next_slot =
+              BusinessNextAvailableSlot
+                .new(business)
+                .call
+
+            # --------------------------------------------------------
+            # Distance
+            # --------------------------------------------------------
+
+            distance =
+              if needs_distance
+                begin
+                  business.distance_to_customer(
+                    customer
+                  )
+                rescue StandardError => e
+                  Rails.logger.warn(
+                    "Unable to calculate distance for " \
+                      "business #{business.id}: " \
+                      "#{e.class} - #{e.message}"
+                  )
+
+                  nil
+                end
+              end
+
+            # --------------------------------------------------------
+            # Open today
+            # --------------------------------------------------------
+
+            open_today =
+              business_open_today?(
+                opening_hours
+              )
+
+            # --------------------------------------------------------
+            # Subscription
+            # --------------------------------------------------------
+
+            subscription_level =
+              business.subscription_level
+
+            premium =
+              %w[
+          pro
+          pro_plus
+        ].include?(
+                subscription_level.to_s
+              )
+
+            # --------------------------------------------------------
+            # Logo
+            # --------------------------------------------------------
+
+            logo_url =
+              business_logo_url(
+                business_settings
+              )
+
+            # --------------------------------------------------------
+            # Response
+            # --------------------------------------------------------
+
+            {
               details: {
-                id: business.id,
+                id:
+                  business.id,
+
                 business_name:
                   business_settings.business_name,
+
                 business_category:
                   business_settings.business_category,
+
                 phone_number:
                   business_settings.phone_number,
+
                 business_email:
                   business_settings.business_email,
+
                 business_description:
                   business_settings.business_description,
+
+                page_address:
+                  business.page_address,
+
+                subscription_level:
+                  subscription_level,
+
+                premium:
+                  premium,
+
+                open_today:
+                  open_today,
+
+                logo_url:
+                  logo_url,
 
                 address: {
                   address_line_1:
@@ -164,35 +366,65 @@ module Api
                   business_settings.updated_at
               },
 
-              services: services.map do |service|
-                {
-                  id: service.id,
-                  name: service.name,
-                  description: service.description,
-                  price: service.price,
-                  minutes_duration:
-                    service.minutes_duration,
-                  status: service.status,
-                  deposit_enabled:
-                    service.deposit_enabled,
-                  deposit: service.deposit,
-                  icon: service.icon,
-                  created_at: service.created_at,
-                  updated_at: service.updated_at
-                }
-              end,
+              services:
+                services.map do |service|
+                  {
+                    id:
+                      service.id,
+
+                    name:
+                      service.name,
+
+                    description:
+                      service.description,
+
+                    price:
+                      service.price,
+
+                    minutes_duration:
+                      service.minutes_duration,
+
+                    status:
+                      service.status,
+
+                    deposit_enabled:
+                      service.deposit_enabled,
+
+                    deposit:
+                      service.deposit,
+
+                    icon:
+                      service.icon,
+
+                    created_at:
+                      service.created_at,
+
+                    updated_at:
+                      service.updated_at
+                  }
+                end,
 
               opening_hours:
                 opening_hours.map do |opening_hour|
                   {
-                    id: opening_hour.id,
+                    id:
+                      opening_hour.id,
+
                     day_of_week:
                       opening_hour.day_of_week,
-                    open: opening_hour.open,
-                    opens_at: opening_hour.opens_at,
-                    closes_at: opening_hour.closes_at,
+
+                    open:
+                      opening_hour.open,
+
+                    opens_at:
+                      opening_hour.opens_at,
+
+                    closes_at:
+                      opening_hour.closes_at,
+
                     created_at:
                       opening_hour.created_at,
+
                     updated_at:
                       opening_hour.updated_at
                   }
@@ -200,8 +432,11 @@ module Api
 
               next_slot:
                 next_slot ? {
-                  date: next_slot[:date],
-                  time: next_slot[:time],
+                  date:
+                    next_slot[:date],
+
+                  time:
+                    next_slot[:time],
 
                   service: {
                     id:
@@ -211,7 +446,8 @@ module Api
                       next_slot[:service].name,
 
                     description:
-                      next_slot[:service].description,
+                      next_slot[:service]
+                        .description,
 
                     price:
                       next_slot[:service].price,
@@ -221,36 +457,239 @@ module Api
                         .minutes_duration,
 
                     status:
-                      next_slot[:service].status,
+                      next_slot[:service]
+                        .status,
 
                     deposit_enabled:
                       next_slot[:service]
                         .deposit_enabled,
 
                     deposit:
-                      next_slot[:service].deposit,
+                      next_slot[:service]
+                        .deposit,
 
                     icon:
                       next_slot[:service].icon,
 
                     created_at:
-                      next_slot[:service].created_at,
+                      next_slot[:service]
+                        .created_at,
 
                     updated_at:
-                      next_slot[:service].updated_at
+                      next_slot[:service]
+                        .updated_at
                   }
-                } : nil
+                } : nil,
+
+              distance_to_customer:
+                distance
             }
-
-            if params[:distance_to_customer] == "true"
-              business_data[:distance_to_customer] =
-                business.distance_to_customer(
-                  customer
-                )
-            end
-
-            business_data
           end
+
+        # ==========================================================
+        # DISTANCE FILTER
+        # ==========================================================
+
+        if distance_limit.present?
+          business_results =
+            business_results.select do |business|
+              distance =
+                business[
+                  :distance_to_customer
+                ]
+
+              distance.present? &&
+                distance.to_f <=
+                  distance_limit
+            end
+        end
+
+        # ==========================================================
+        # AVAILABLE TODAY
+        # ==========================================================
+
+        if ActiveModel::Type::Boolean.new.cast(
+          params[:available_today]
+        )
+
+          business_results =
+            business_results.select do |business|
+              slot =
+                business[:next_slot]
+
+              next false unless slot
+
+              slot_date =
+                slot[:date].to_date
+
+              slot_date ==
+                Date.current
+            end
+        end
+
+        # ==========================================================
+        # AVAILABLE THIS WEEK
+        # ==========================================================
+
+        if ActiveModel::Type::Boolean.new.cast(
+          params[:available_this_week]
+        )
+
+          business_results =
+            business_results.select do |business|
+              slot =
+                business[:next_slot]
+
+              next false unless slot
+
+              slot_date =
+                slot[:date].to_date
+
+              slot_date >=
+                Date.current &&
+                slot_date <=
+                  Date.current.end_of_week
+            end
+        end
+
+        # ==========================================================
+        # SORTING
+        # ==========================================================
+
+        case sort
+        when "distance"
+          business_results.sort_by! do |business|
+            distance =
+              business[
+                :distance_to_customer
+              ]
+
+            distance.present? ?
+              distance.to_f :
+              Float::INFINITY
+          end
+
+        when "soonest"
+          business_results.sort_by! do |business|
+            slot =
+              business[:next_slot]
+
+            next Float::INFINITY unless slot
+
+            next_slot_sort_value(
+              slot
+            )
+          end
+
+        else
+          # --------------------------------------------------------
+          # BEST MATCH
+          #
+          # Premium businesses first.
+          # Then businesses with availability.
+          # Then newest businesses.
+          # --------------------------------------------------------
+
+          business_results.sort_by! do |business|
+            [
+              business.dig(
+                :details,
+                :premium
+              ) ? 0 : 1,
+
+              business[:next_slot]
+                .present? ? 0 : 1,
+
+              -business
+                 .dig(
+                   :details,
+                   :created_at
+                 )
+                 .to_time
+                 .to_i
+            ]
+          end
+        end
+
+        # ==========================================================
+        # PAGINATION
+        # ==========================================================
+
+        total_businesses =
+          business_results.length
+
+        total_pages =
+          (
+            total_businesses.to_f /
+              businesses_per_page
+          ).ceil
+
+        total_pages =
+          1 if total_pages.zero?
+
+        page =
+          total_pages if page >
+                         total_pages
+
+        offset =
+          (page - 1) *
+          businesses_per_page
+
+        paginated_businesses =
+          business_results.slice(
+            offset,
+            businesses_per_page
+          ) || []
+
+        # ==========================================================
+        # RESPONSE
+        # ==========================================================
+
+        render json: {
+          total_businesses:
+            total_businesses,
+
+          businesses_per_page:
+            businesses_per_page,
+
+          current_page:
+            page,
+
+          total_pages:
+            total_pages,
+
+          filters: {
+            search:
+              params[:search],
+
+            category:
+              categories,
+
+            distance:
+              params[:distance],
+
+            available_today:
+              ActiveModel::Type::Boolean
+                .new
+                .cast(
+                  params[:available_today]
+                ),
+
+            available_this_week:
+              ActiveModel::Type::Boolean
+                .new
+                .cast(
+                  params[
+                    :available_this_week
+                  ]
+                ),
+
+            sort:
+              sort
+          },
+
+          businesses:
+            paginated_businesses
         }, status: :ok
       end
 
@@ -307,9 +746,26 @@ module Api
           end
         end
 
+        agents_enabled =
+          business.feature_enabled?(:agents)
+
+        agent_settings =
+          business.agent_settings
+
+        active_agents =
+          if agents_enabled
+            business
+              .business_agents
+              .where(status: "active")
+              .includes(:user)
+          else
+            []
+          end
+
         business_data = {
           details: {
-            id: business.id,
+            id:
+              business.id,
 
             business_name:
               business_settings.business_name,
@@ -325,6 +781,38 @@ module Api
 
             business_description:
               business_settings.business_description,
+
+            # ========================================================
+            # BUSINESS / SUBSCRIPTION
+            # ========================================================
+
+            page_address:
+              business.page_address,
+
+            subscription_level:
+              business.subscription_level,
+
+            premium:
+              %w[
+      pro
+      pro_plus
+    ].include?(
+                business.subscription_level.to_s
+              ),
+
+            open_today:
+              business_open_today?(
+                opening_hours
+              ),
+
+            logo_url:
+              business_logo_url(
+                business_settings
+              ),
+
+            # ========================================================
+            # ADDRESS
+            # ========================================================
 
             address: {
               address_line_1:
@@ -342,6 +830,10 @@ module Api
               country:
                 business_settings.country
             },
+
+            # ========================================================
+            # BOOKING SETTINGS
+            # ========================================================
 
             booking_page_live:
               business_settings.booking_page_live,
@@ -373,6 +865,10 @@ module Api
             daily_appointment_summary:
               business_settings
                 .daily_appointment_summary,
+
+            # ========================================================
+            # LOCATION
+            # ========================================================
 
             latitude:
               business_settings.latitude,
@@ -472,7 +968,40 @@ module Api
                 updated_at:
                   next_slot[:service].updated_at
               }
-            } : nil
+            } : nil,
+          agents: {
+            enabled:
+              agents_enabled,
+
+            allow_any_agent:
+              agents_enabled &&
+                agent_settings&.agent_selection?,
+
+            agents:
+              active_agents.map do |agent|
+                {
+                  id:
+                    agent.id,
+
+                  user_id:
+                    agent.user_id,
+
+                  name:
+                    [
+                      agent.user.first_name,
+                      agent.user.last_name
+                    ]
+                      .compact
+                      .join(" "),
+
+                  first_name:
+                    agent.user.first_name,
+
+                  last_name:
+                    agent.user.last_name
+                }
+              end
+          }
         }
 
         if params[:distance_to_customer] == "true"
@@ -521,6 +1050,100 @@ module Api
             customer_booking_params[:service_id]
           )
 
+        agent =
+          nil
+
+        if business.feature_enabled?(:agents)
+          agent_selection =
+            customer_booking_params[
+              :agent_selection
+            ]
+
+          # --------------------------------------------------------
+          # No agent supplied
+          # --------------------------------------------------------
+
+          if agent_selection.blank?
+            return render json: {
+              success: false,
+              error:
+                "Please select an agent."
+            }, status: :unprocessable_entity
+          end
+
+          # --------------------------------------------------------
+          # Any agent
+          # --------------------------------------------------------
+
+          if agent_selection == "any"
+            unless business
+                     .agent_settings
+                     &.agent_selection?
+
+              return render json: {
+                success: false,
+                error:
+                  "Any agent selection is not available for this business."
+              }, status: :unprocessable_entity
+            end
+
+            available_agents =
+              available_agents_for(
+                business:
+                  business,
+
+                service:
+                  service,
+
+                date:
+                  customer_booking_params[
+                    :date
+                  ],
+
+                time:
+                  customer_booking_params[
+                    :time
+                  ]
+              )
+
+            agent =
+              available_agents.sample
+
+            unless agent
+              return render json: {
+                success: false,
+                error:
+                  "That time is no longer available. Please choose another time."
+              }, status: :unprocessable_entity
+            end
+
+            # --------------------------------------------------------
+            # SPECIFIC AGENT
+            # --------------------------------------------------------
+
+          else
+            agent =
+              business
+                .business_agents
+                .where(
+                  status:
+                    "active"
+                )
+                .find_by(
+                  id:
+                    agent_selection
+                )
+
+            unless agent
+              return render json: {
+                success: false,
+                error:
+                  "The selected agent could not be found."
+              }, status: :not_found
+            end
+          end
+        end
+
         # ==========================================================
         # PAYMENT REQUIRED
         #
@@ -539,6 +1162,9 @@ module Api
               user: customer,
               business: business,
               service: service,
+
+              agent_id:
+                agent&.user_id,
 
               date:
                 customer_booking_params[:date],
@@ -578,6 +1204,9 @@ module Api
               service_id:
                 booking_hold.service_id,
 
+              agent_id:
+                booking_hold.agent_id,
+
               date:
                 booking_hold.date,
 
@@ -609,6 +1238,9 @@ module Api
             user: customer,
             business: business,
             service: service,
+
+            agent_id:
+              agent&.user_id,
 
             date:
               customer_booking_params[:date],
@@ -1025,6 +1657,133 @@ module Api
 
 
       # ============================================================
+      # AVAILABLE AGENTS FOR SLOT
+      # ============================================================
+
+      def available_agents_for(
+        business:,
+        service:,
+        date:,
+        time:
+      )
+        date =
+          Date.parse(
+            date.to_s
+          )
+
+        slot_start =
+          Time.zone.parse(
+            "#{date} #{time}"
+          )
+
+        slot_end =
+          slot_start +
+          service.minutes_duration.minutes
+
+        buffer_minutes =
+          business
+            .booking_setting
+            .buffer_minutes
+            .to_i
+
+        business
+          .business_agents
+          .where(
+            status:
+              "active"
+          )
+          .select do |agent|
+
+          booking_conflict =
+            business
+              .bookings
+              .where(
+                agent_id:
+                  agent.user_id,
+
+                date:
+                  date
+              )
+              .where.not(
+              status: [
+                "cancelled",
+                "no_show"
+              ]
+            )
+              .includes(
+                :service
+              )
+              .any? do |booking|
+
+              booking_start =
+                Time.zone.local(
+                  date.year,
+                  date.month,
+                  date.day,
+                  booking.time.hour,
+                  booking.time.min
+                )
+
+              booking_end =
+                booking_start +
+                booking
+                  .service
+                  .minutes_duration
+                  .minutes +
+                buffer_minutes.minutes
+
+              slot_start <
+                booking_end &&
+                slot_end >
+                  booking_start
+            end
+
+          hold_conflict =
+            business
+              .booking_holds
+              .active
+              .where(
+                agent_id:
+                  agent.user_id,
+
+                date:
+                  date
+              )
+              .includes(
+                :service
+              )
+              .any? do |hold|
+
+              hold_start =
+                Time.zone.local(
+                  date.year,
+                  date.month,
+                  date.day,
+                  hold.time.hour,
+                  hold.time.min
+                )
+
+              hold_end =
+                hold_start +
+                hold
+                  .service
+                  .minutes_duration
+                  .minutes +
+                buffer_minutes.minutes
+
+              slot_start <
+                hold_end &&
+                slot_end >
+                  hold_start
+            end
+
+          !booking_conflict &&
+            !hold_conflict
+        end
+      end
+
+
+      # ============================================================
       # CUSTOMER BOOKING PARAMS
       # ============================================================
 
@@ -1033,6 +1792,7 @@ module Api
           .require(:booking)
           .permit(
             :service_id,
+            :agent_selection,
             :date,
             :time,
             :notes
@@ -1269,6 +2029,9 @@ module Api
               service:
                 booking_hold.service,
 
+              agent_id:
+                booking_hold.agent_id,
+
               date:
                 booking_hold.date,
 
@@ -1437,6 +2200,19 @@ module Api
           service_id:
             booking.service_id,
 
+          agent_id:
+            booking.agent_id,
+
+          agent_name:
+            if booking.agent
+              [
+                booking.agent.first_name,
+                booking.agent.last_name
+              ]
+                .compact
+                .join(" ")
+            end,
+
           date:
             booking.date,
 
@@ -1506,6 +2282,138 @@ module Api
           amount_in_pence.to_s
         ) / 100
       end
+
+      # ============================================================
+      # DISTANCE FILTER
+      # ============================================================
+
+      def distance_limit_from_param(
+        value
+      )
+        return nil if value.blank?
+
+        numeric =
+          value.to_f
+
+        slider_values = {
+          0 => 5,
+          1 => 10,
+          2 => 25,
+          3 => 50,
+          4 => 100,
+          5 => nil
+        }
+
+        integer_value =
+          value.to_i
+
+        # Web distance slider index
+        if value.to_s ==
+           integer_value.to_s &&
+           slider_values.key?(
+             integer_value
+           )
+
+          return slider_values[
+            integer_value
+          ]
+        end
+
+        # Allows Expo to send an actual
+        # maximum mileage if we want.
+        return nil if numeric <= 0
+
+        numeric
+      end
+
+
+      # ============================================================
+      # OPEN TODAY
+      # ============================================================
+
+      def business_open_today?(
+        opening_hours
+      )
+        today =
+          Date.current
+              .strftime("%A")
+              .downcase
+
+        opening_hour =
+          opening_hours.find do |hours|
+            hours
+              .day_of_week
+              .to_s
+              .downcase ==
+              today
+          end
+
+        opening_hour.present? &&
+          opening_hour.open?
+      end
+
+
+      # ============================================================
+      # BUSINESS LOGO
+      # ============================================================
+
+      def business_logo_url(
+        business_settings
+      )
+        return nil unless
+          business_settings
+            .logo
+            .attached?
+
+        rails_blob_url(
+          business_settings.logo,
+          host:
+            request.host_with_port,
+          protocol:
+            request.protocol
+        )
+      rescue StandardError => e
+        Rails.logger.warn(
+          "Unable to generate business logo URL: " \
+            "#{e.class} - #{e.message}"
+        )
+
+        nil
+      end
+
+
+      # ============================================================
+      # NEXT SLOT SORT VALUE
+      # ============================================================
+
+      def next_slot_sort_value(
+        slot
+      )
+        date =
+          slot[:date].to_date
+
+        time =
+          slot[:time]
+
+        time_string =
+          if time.respond_to?(
+            :strftime
+          )
+            time.strftime(
+              "%H:%M:%S"
+            )
+          else
+            time.to_s
+          end
+
+        Time.zone.parse(
+          "#{date} #{time_string}"
+        ).to_i
+      rescue StandardError
+        Float::INFINITY
+      end
+
+
     end
   end
 end

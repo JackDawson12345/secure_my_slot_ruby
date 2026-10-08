@@ -4,7 +4,7 @@ module Api
       class CalendarSyncController < ApplicationController
 
         skip_before_action :verify_authenticity_token
-        before_action :authenticate_api_key!
+        before_action :authenticate_user!, except: [:callback]
 
         def show
           connection = current_user.business.calendar_connection
@@ -74,13 +74,13 @@ module Api
           GoogleCalendarService.new(connection).sync_details
           GoogleCalendarService.new(connection).sync_events
 
-          redirect_to "book-pilot://calendar-connected?success=true", allow_other_host: true
+          redirect_to "bookpilot://calendar-connected?success=true", allow_other_host: true
         rescue => e
           Rails.logger.error(
             "Google Calendar connection failed: #{e.class}: #{e.message}"
           )
 
-          redirect_to "book-pilot://calendar-connected?success=false", allow_other_host: true
+          redirect_to "bookpilot://calendar-connected?success=false", allow_other_host: true
         end
 
 
@@ -133,16 +133,19 @@ module Api
         private
 
         def google_oauth_url(state)
+          redirect_uri = api_v1_business_calendar_sync_callback_url
+
+          Rails.logger.info "GOOGLE OAUTH REDIRECT URI: #{redirect_uri}"
+
           params = {
             client_id: google_client_id,
-            redirect_uri: api_v1_business_calendar_sync_callback_url,
+            redirect_uri: redirect_uri,
             response_type: "code",
             scope: "https://www.googleapis.com/auth/calendar.readonly",
             access_type: "offline",
             prompt: "consent",
             state: state
           }
-
 
           "https://accounts.google.com/o/oauth2/v2/auth?#{params.to_query}"
         end
@@ -210,23 +213,6 @@ module Api
             Rails.application.credentials.dig(:google, :client_secret)
         end
 
-
-        def authenticate_api_key!
-          provided_api_key = request.headers["X-API-Key"]
-          expected_api_key = ENV["SECURE_MY_SLOT_API_KEY"].presence ||
-                             Rails.application.credentials.secure_my_slot_api_key
-
-          unless provided_api_key.present? &&
-                 expected_api_key.present? &&
-                 ActiveSupport::SecurityUtils.secure_compare(
-                   provided_api_key,
-                   expected_api_key
-                 )
-            render json: {
-              error: "Invalid or missing API key"
-            }, status: :unauthorized
-          end
-        end
       end
     end
   end

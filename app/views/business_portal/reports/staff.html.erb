@@ -212,7 +212,7 @@
               </th>
 
               <th class="px-6 py-4 font-medium">
-                Hours
+                Minutes Worked
               </th>
 
             </tr>
@@ -265,7 +265,11 @@
 
 
                 <td class="px-6 py-4 text-slate-600">
-                  <% byebug %>
+                  <% total_minutes = @business.bookings
+                                              .where(agent_id: agent.id)
+                                              .joins(:service)
+                                              .sum("services.minutes_duration") %>
+                  <%= total_minutes %> Minutes
                 </td>
 
 

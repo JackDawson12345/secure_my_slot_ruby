@@ -48,6 +48,10 @@ module Api
               phone_number: business.phone_number,
               address: business.address,
               subscribed: business.subscribed,
+
+              # Subscription
+              subscription_level: business.subscription_level,
+
               created_at: business.created_at,
               updated_at: business.updated_at
             }

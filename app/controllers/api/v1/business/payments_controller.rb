@@ -102,6 +102,49 @@ module Api
 
 
         # ============================================================
+        # DELETE /api/v1/business/:id/payments/disconnect
+        #
+        # Deletes the connected Stripe Express account and removes
+        # the Stripe connection from the business.
+        # ============================================================
+
+        def disconnect
+          unless @business.stripe_connected?
+            return render json: {
+              error: "Stripe is not connected."
+            }, status: :unprocessable_entity
+          end
+
+          Stripe::Account.delete(
+            @business.stripe_account_id
+          )
+
+          @business.update!(
+            stripe_account_id: nil,
+            stripe_details_submitted: false,
+            stripe_charges_enabled: false,
+            stripe_payouts_enabled: false
+          )
+
+          render json: {
+            message: "Stripe has been disconnected successfully.",
+            stripe_account_id: nil,
+            stripe_connected: false,
+            stripe_details_submitted: false,
+            stripe_charges_enabled: false,
+            stripe_payouts_enabled: false,
+            stripe_ready: false
+          }, status: :ok
+
+        rescue Stripe::StripeError => e
+          render_stripe_error(
+            "Stripe could not be disconnected.",
+            e
+          )
+        end
+
+
+        # ============================================================
         # POST /api/v1/business/:id/payments/refresh
         #
         # Called by Expo when a business already has a Stripe
@@ -151,6 +194,17 @@ module Api
 
         def stripe_return
           refresh_stripe_status
+
+          Rails.logger.info "========================================"
+          Rails.logger.info "STRIPE RETURN STATUS"
+          Rails.logger.info "Business ID: #{@business.id}"
+          Rails.logger.info "Stripe account: #{@business.stripe_account_id}"
+          Rails.logger.info "Connected: #{@business.stripe_connected?}"
+          Rails.logger.info "Details submitted: #{@business.stripe_details_submitted?}"
+          Rails.logger.info "Charges enabled: #{@business.stripe_charges_enabled?}"
+          Rails.logger.info "Payouts enabled: #{@business.stripe_payouts_enabled?}"
+          Rails.logger.info "Stripe ready: #{@business.stripe_ready?}"
+          Rails.logger.info "========================================"
 
           if @business.stripe_ready?
             redirect_to(

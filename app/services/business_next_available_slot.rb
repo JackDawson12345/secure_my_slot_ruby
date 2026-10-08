@@ -12,7 +12,8 @@ class BusinessNextAvailableSlot
       result = NextAvailableSlot.new(
         @business,
         service,
-        start_date: @start_time.to_date
+        agent: nil,
+        start_date: @start_time.to_date,
       ).call
 
       result&.merge(service: service)

@@ -136,6 +136,11 @@ Rails.application.routes.draw do
         post ":id/create-booking",
              to: "bookings#create"
 
+        post ":id/booking/:booking_id/send_agreement/:agreement_id",
+             to: "bookings#send_agreement"
+        post ":id/booking/:booking_id/send_email/:email_id",
+             to: "bookings#send_email"
+
         get "/:id/services",
             to: "services#get_services"
         get ":id/services/options",
@@ -189,7 +194,9 @@ Rails.application.routes.draw do
         post "/:id/payments/refresh",
              to: "payments#refresh",
              as: :payments_refresh
-
+        delete "/:id/payments/disconnect",
+               to: "payments#disconnect",
+               as: :payments_disconnect
         get "/:id/payments/stripe-return",
             to: "payments#stripe_return",
             as: :payments_stripe_return
@@ -212,6 +219,52 @@ Rails.application.routes.draw do
         delete ":id/website-settings/gallery/:image_id",
                to: "website_settings#destroy_gallery_image"
 
+
+        get ":id/get_reports",
+            to: "reports#get_reports"
+
+
+
+        get "/:id/agents",
+            to: "agents#get_agents"
+        get "/:id/agent/:agent_id",
+            to: "agents#get_agent"
+        post "/:id/agents",
+             to: "agents#create_agent"
+        patch "/:id/agent/:agent_id",
+              to: "agents#update_agent"
+        delete "/:id/agent/:agent_id",
+               to: "agents#delete_agent"
+        post "/:id/agent/:agent_id/resend-invitation",
+             to: "agents#resend_invitation"
+        get "/:id/agent-settings",
+            to: "agents#get_settings"
+        patch "/:id/agent-settings",
+              to: "agents#update_settings"
+
+        get "/:id/agreements",
+            to: "agreements#get_agreements"
+        get "/:id/agreement/:agreement_id",
+            to: "agreements#get_agreement"
+        post "/:id/agreements",
+             to: "agreements#create_agreement"
+        patch "/:id/agreement/:agreement_id",
+              to: "agreements#update_agreement"
+        delete "/:id/agreement/:agreement_id",
+               to: "agreements#delete_agreement"
+
+
+        get "/:id/email-templates",
+            to: "email_templates#get_email_templates"
+        get "/:id/email-template/:email_template_id",
+            to: "email_templates#get_email_template"
+        post "/:id/email-templates",
+             to: "email_templates#create_email_template"
+        patch "/:id/email-template/:email_template_id",
+              to: "email_templates#update_email_template"
+        delete "/:id/email-template/:email_template_id",
+               to: "email_templates#delete_email_template"
+
       end
 
       namespace :customer do
@@ -227,11 +280,28 @@ Rails.application.routes.draw do
         get "/:id/bookings",
             to: "bookings#get_bookings"
 
+        # Rescheduling
+        get ":id/bookings/:booking_id/reschedule-slots",
+            to: "bookings#reschedule_slots"
+
         patch ":id/bookings/:booking_id/reschedule",
               to: "bookings#reschedule"
 
+        # Cancellation
         patch ":id/bookings/:booking_id/cancel",
               to: "bookings#cancel"
+
+        # Consultation form PDF
+        get ":id/bookings/:booking_id/consultation-pdf",
+            to: "bookings#consultation_pdf",
+            defaults: { format: :pdf }
+
+        # Booking images
+        post ":id/bookings/:booking_id/images",
+             to: "bookings#upload_images"
+
+        delete ":id/bookings/:booking_id/images/:image_id",
+               to: "bookings#remove_image"
 
         get "/:id/settings",
             to: "settings#show"

@@ -1,18 +1,33 @@
 class NextAvailableSlot
   MAX_DAYS_TO_SEARCH = 90
 
-  def initialize(business, service, start_date: Date.current)
+  def initialize(
+    business,
+    service,
+    agent: nil,
+    start_date: Date.current
+  )
     @business = business
     @service = service
-    @start_date = start_date
+    @agent = agent
+    @start_date = start_date.to_date
   end
 
   def call
-    (0...MAX_DAYS_TO_SEARCH).each do |offset|
-      date = @start_date + offset.days
-      slots = BookingAvailability.new(@business, @service, date).call
+    (@start_date..(@start_date + MAX_DAYS_TO_SEARCH.days)).each do |date|
+      slots = BookingAvailability.new(
+        @business,
+        @service,
+        date,
+        @agent
+      ).call
 
-      return { date: date, time: slots.first } if slots.any?
+      next if slots.empty?
+
+      return {
+        date: date,
+        time: slots.first
+      }
     end
 
     nil
