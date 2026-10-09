@@ -1,6 +1,8 @@
 class ErrorNotifier
-
   def self.notify(exception, request, user = nil)
+
+    # Ignore missing template errors
+    return if exception.is_a?(ActionView::MissingTemplate)
 
     AdminMailer.system_error(
       {
@@ -19,5 +21,4 @@ class ErrorNotifier
     ).deliver_later
 
   end
-
 end
