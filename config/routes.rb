@@ -348,6 +348,19 @@ Rails.application.routes.draw do
             to: "opening_hours#index"
 
 
+        # ================================================
+        # AGENT SETTINGS
+        # ================================================
+
+        get "/:id/settings",
+            to: "settings#show"
+
+        patch "/:id/settings",
+              to: "settings#update"
+
+        patch "/:id/settings/password",
+              to: "settings#update_password"
+
       end
 
       get '/:id/get-businesses',
