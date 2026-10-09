@@ -6,15 +6,21 @@ module Api
 
         before_action :authenticate_api_key!
         before_action :authenticate_agent!
-        before_action :set_business
+        before_action :set_business_agent!
         before_action :set_service, only: [:show]
 
         # ================================================
         # GET /api/v1/agent/:id/services
         # ================================================
 
+        # =================================================
+        # GET AGENT SERVICES
+        # =================================================
+
         def index
-          services_scope = @business.services
+          services_scope = @business_agent.services
+                                          .where(business_id: @business.id)
+                                          .distinct
 
           statistics = {
             total_services: services_scope.count,
@@ -26,11 +32,18 @@ module Api
           }
 
           services = services_scope
-                       .includes(:service_category, image_attachment: :blob)
+                       .includes(
+                         :service_category,
+                         image_attachment: :blob
+                       )
                        .order(:name)
 
           if params[:q].present?
-            search = "%#{ActiveRecord::Base.sanitize_sql_like(params[:q].strip)}%"
+            search = "%#{
+              ActiveRecord::Base.sanitize_sql_like(
+                params[:q].strip
+              )
+            }%"
 
             services = services.where(
               "services.name ILIKE :search OR services.description ILIKE :search",
@@ -40,14 +53,20 @@ module Api
 
           render json: {
             success: true,
-            message: "Services loaded successfully.",
+            message: "Agent services loaded successfully.",
+
             business: {
               id: @business.id,
               business_name: @business.business_name
             },
+
             statistics: statistics,
+
             search: params[:q].to_s,
-            services: services.map { |service| service_json(service) }
+
+            services: services.map do |service|
+              service_json(service)
+            end
           }, status: :ok
         end
 
@@ -114,27 +133,46 @@ module Api
         # FIND AGENT BUSINESS
         # ================================================
 
-        def set_business
-          assignment = BusinessAgent
-                         .includes(:business)
-                         .find_by(
-                           agent_id: current_user.id,
-                           status: "active"
-                         )
+        # =================================================
+        # FIND AGENT'S BUSINESS
+        # =================================================
 
-          unless assignment
+        def set_business_agent!
+          return if performed?
+
+          memberships = ::BusinessAgent.where(
+            user_id: current_user.id,
+            status: "active"
+          )
+
+          if params[:business_id].present?
+            memberships = memberships.where(
+              business_id: params[:business_id]
+            )
+          elsif memberships.count > 1
             return render json: {
               success: false,
-              error: "No active business assignment found"
-            }, status: :forbidden
+              error: "Please specify a business_id."
+            }, status: :unprocessable_entity
           end
 
-          @business = assignment.business
+          @business_agent = memberships.first
+
+          unless @business_agent
+            return render json: {
+              success: false,
+              error: "Active business agent relationship not found."
+            }, status: :not_found
+          end
+
+          @business = ::Business.find_by(
+            id: @business_agent.business_id
+          )
 
           unless @business
-            render json: {
+            return render json: {
               success: false,
-              error: "Business not found"
+              error: "Business not found."
             }, status: :not_found
           end
         end
@@ -143,15 +181,25 @@ module Api
         # FIND SERVICE
         # ================================================
 
+        # =================================================
+        # FIND ASSIGNED SERVICE
+        # =================================================
+
         def set_service
-          @service = @business.services
-                              .includes(:service_category, image_attachment: :blob)
-                              .find_by(id: params[:service_id])
+          return if performed?
+
+          @service = @business_agent.services
+                                    .where(business_id: @business.id)
+                                    .includes(
+                                      :service_category,
+                                      image_attachment: :blob
+                                    )
+                                    .find_by(id: params[:service_id])
 
           unless @service
-            render json: {
+            return render json: {
               success: false,
-              error: "Service not found"
+              error: "Service not found or not assigned to you."
             }, status: :not_found
           end
         end
