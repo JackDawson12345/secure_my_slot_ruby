@@ -337,6 +337,12 @@ Rails.application.routes.draw do
         post ":id/booking/:booking_id/send-email/:email_id",
              to: "bookings#send_email"
 
+        get ":id/services",
+            to: "services#index"
+
+        get ":id/service/:service_id",
+            to: "services#show"
+
       end
 
       get '/:id/get-businesses',
