@@ -343,6 +343,11 @@ Rails.application.routes.draw do
         get ":id/service/:service_id",
             to: "services#show"
 
+
+        get "/:id/opening-hours",
+            to: "opening_hours#index"
+
+
       end
 
       get '/:id/get-businesses',
