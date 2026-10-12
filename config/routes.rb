@@ -96,6 +96,9 @@ Rails.application.routes.draw do
         delete :destroy, on: :collection
       end
 
+      post "push_notifications/test",
+           to: "push_notifications#test"
+
       post "forgot_password", to: "passwords#create"
       patch "reset_password", to: "passwords#update"
 
