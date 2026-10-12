@@ -92,6 +92,10 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
 
+      resources :push_tokens, only: [:create] do
+        delete :destroy, on: :collection
+      end
+
       post "forgot_password", to: "passwords#create"
       patch "reset_password", to: "passwords#update"
 

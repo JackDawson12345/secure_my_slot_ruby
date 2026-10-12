@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_10_02_101711) do
+ActiveRecord::Schema[8.0].define(version: 2026_10_12_101506) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -487,6 +487,16 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_02_101711) do
     t.index ["slug"], name: "index_products_on_slug", unique: true
   end
 
+  create_table "push_tokens", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "token", null: false
+    t.string "platform", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["token"], name: "index_push_tokens_on_token", unique: true
+    t.index ["user_id"], name: "index_push_tokens_on_user_id"
+  end
+
   create_table "service_agents", force: :cascade do |t|
     t.bigint "service_id", null: false
     t.bigint "business_agent_id", null: false
@@ -779,6 +789,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_02_101711) do
   add_foreign_key "orders", "users"
   add_foreign_key "product_images", "products"
   add_foreign_key "products", "businesses"
+  add_foreign_key "push_tokens", "users"
   add_foreign_key "service_agents", "business_agents"
   add_foreign_key "service_agents", "services"
   add_foreign_key "service_categories", "businesses"

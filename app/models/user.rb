@@ -39,6 +39,8 @@ class User < ApplicationRecord
 
   has_many :business_customers, dependent: :destroy
 
+  has_many :push_tokens, dependent: :destroy
+
   has_many :businesses,
            through: :business_customers
 
