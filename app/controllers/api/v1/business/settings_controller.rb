@@ -2,7 +2,27 @@ module Api
   module V1
     module Business
       class SettingsController < ApplicationController
+
+        BUSINESS_CATEGORIES = [
+          { label: "Barber", value: "barber" },
+          { label: "Hairdresser", value: "hairdresser" },
+          { label: "Beauty and Nails", value: "beauty_and_nails" },
+          { label: "Personal Trainer", value: "personal_trainer" },
+          { label: "Coach", value: "coach" },
+          { label: "Tutor", value: "tutor" },
+          { label: "Consultant", value: "consultant" },
+          { label: "Therapist", value: "therapist" },
+          { label: "Massage Professional", value: "massage_professional" },
+          { label: "Photographer", value: "photographer" },
+          { label: "Cleaner", value: "cleaner" },
+          { label: "Tradesperson", value: "tradesperson" },
+          { label: "Mobile Service", value: "mobile_service" },
+          { label: "Repair Service", value: "repair_service" },
+          { label: "Other", value: "other" }
+        ].freeze
+
         skip_before_action :verify_authenticity_token
+        before_action :authenticate_api_key!
 
         # =========================================================
         # GET /api/v1/business/:id/settings
@@ -37,6 +57,8 @@ module Api
 
             user: user_json(user),
 
+            categories: BUSINESS_CATEGORIES,
+
             features: {
               automated_reminders:
                 business.feature_enabled?(:automated_reminders),
@@ -44,6 +66,65 @@ module Api
               client_birthday_reminders:
                 business.feature_enabled?(:client_birthday_reminders)
             }
+          }, status: :ok
+        end
+
+        # =========================================================
+        # DELETE BUSINESS LOGO
+        # =========================================================
+
+        def destroy_logo
+          business = ::Business.find_by(id: params[:id])
+
+          return render(
+            json: { error: "Business not found" },
+            status: :not_found
+          ) unless business
+
+          settings = business.business_setting
+
+          unless settings&.logo&.attached?
+            return render json: {
+              error: "No business logo was found"
+            }, status: :not_found
+          end
+
+          settings.logo.purge
+
+          render json: {
+            message: "Business logo removed successfully",
+            logo_url: nil,
+            logo_attached: false
+          }, status: :ok
+        end
+
+
+        # =========================================================
+        # DELETE WEBSITE FAVICON
+        # =========================================================
+
+        def destroy_favicon
+          business = ::Business.find_by(id: params[:id])
+
+          return render(
+            json: { error: "Business not found" },
+            status: :not_found
+          ) unless business
+
+          settings = business.business_setting
+
+          unless settings&.favicon&.attached?
+            return render json: {
+              error: "No favicon was found"
+            }, status: :not_found
+          end
+
+          settings.favicon.purge
+
+          render json: {
+            message: "Website favicon removed successfully",
+            favicon_url: nil,
+            favicon_attached: false
           }, status: :ok
         end
 
@@ -124,6 +205,8 @@ module Api
             ),
 
             user: user_json(user),
+
+            categories: BUSINESS_CATEGORIES,
 
             features: {
               automated_reminders:
@@ -381,6 +464,17 @@ module Api
           permitted =
             settings_params.to_h.symbolize_keys
 
+          if permitted.key?(:business_category)
+            valid_categories = BUSINESS_CATEGORIES.pluck(:value)
+
+            unless valid_categories.include?(
+              permitted[:business_category]
+            )
+              raise ActionController::BadRequest,
+                    "Invalid business category"
+            end
+          end
+
           unless business.feature_enabled?(
             :automated_reminders
           )
@@ -423,6 +517,23 @@ module Api
             :new_password,
             :new_password_confirmation
           )
+        end
+
+        def authenticate_api_key!
+          provided_api_key = request.headers["X-API-Key"]
+          expected_api_key = ENV["SECURE_MY_SLOT_API_KEY"].presence ||
+                             Rails.application.credentials.secure_my_slot_api_key
+
+          unless provided_api_key.present? &&
+                 expected_api_key.present? &&
+                 ActiveSupport::SecurityUtils.secure_compare(
+                   provided_api_key,
+                   expected_api_key
+                 )
+            render json: {
+              error: "Invalid or missing API key"
+            }, status: :unauthorized
+          end
         end
       end
     end

@@ -191,6 +191,12 @@ Rails.application.routes.draw do
         patch ":id/settings/password",
               to: "settings#update_password"
 
+        delete ":id/settings/logo",
+               to: "settings#destroy_logo"
+
+        delete ":id/settings/favicon",
+               to: "settings#destroy_favicon"
+
         get "/:id/payments",
             to: "payments#index",
             as: :payments
