@@ -3,6 +3,11 @@ class BookingNotificationService
   def self.created(booking)
     new(booking).created
   end
+  def self.status_changed(booking, previous_status:)
+    new(booking).status_changed(
+      previous_status: previous_status
+    )
+  end
 
   def initialize(booking)
     @booking = booking
@@ -15,6 +20,60 @@ class BookingNotificationService
     notify_business
     notify_agent
     notify_customer
+  end
+
+  def status_changed(previous_status:)
+    return if previous_status.to_s == @booking.status.to_s
+
+    # Respect the customer's notification preferences
+    return unless @customer.customer_setting&.booking_changes?
+
+    title, body =
+      case @booking.status
+      when "confirmed"
+        [
+          "Booking Confirmed",
+          "Your #{service_name} appointment with " \
+            "#{@business.business_name} on #{booking_date_time} " \
+            "has been confirmed."
+        ]
+
+      when "completed"
+        [
+          "Appointment Completed",
+          "Your #{service_name} appointment with " \
+            "#{@business.business_name} has been marked as completed."
+        ]
+
+      when "cancelled"
+        [
+          "Booking Cancelled",
+          "Your #{service_name} appointment with " \
+            "#{@business.business_name} on #{booking_date_time} " \
+            "has been cancelled."
+        ]
+
+      when "pending"
+        [
+          "Booking Pending",
+          "Your #{service_name} appointment with " \
+            "#{@business.business_name} is now pending confirmation."
+        ]
+
+      else
+        [
+          "Booking Updated",
+          "The status of your #{service_name} appointment " \
+            "with #{@business.business_name} has changed."
+        ]
+      end
+
+    queue_notification(
+      user: @customer,
+      title: title,
+      body: body,
+      type: "booking_status_changed"
+    )
   end
 
   private

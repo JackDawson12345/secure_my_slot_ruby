@@ -191,6 +191,7 @@ class BusinessPortal::BookingsController < BusinessPortal::BaseController
 
   end
 
+
   def update_status
     @business = current_user.business
     @booking = @business.bookings.find(params[:id])
@@ -203,13 +204,19 @@ class BusinessPortal::BookingsController < BusinessPortal::BaseController
       "completed" => ["confirmed"]
     }
 
-    unless allowed_transitions.fetch(@booking.status, []).include?(new_status)
+    previous_status = @booking.status
+
+    unless allowed_transitions.fetch(
+      previous_status, []
+    ).include?(new_status)
+
       redirect_to business_booking_path(@booking),
                   alert: "That booking status change is not allowed."
       return
     end
 
     if @booking.update(status: new_status)
+
       message =
         case new_status
         when "confirmed"
@@ -220,20 +227,54 @@ class BusinessPortal::BookingsController < BusinessPortal::BaseController
           "Booking status updated."
         end
 
-      if @booking.user.customer_setting.booking_changes
+      # -----------------------------------------
+      # Existing customer SMS and email
+      # -----------------------------------------
+
+      if @booking.user.customer_setting&.booking_changes?
         BookingMailer
           .with(booking: @booking)
           .status_changed
           .deliver_now
-        SendBookingStatusChangeSmsJob.perform_later(@booking.id)
+
+        SendBookingStatusChangeSmsJob.perform_later(
+          @booking.id
+        )
       end
 
-      redirect_to business_booking_path(@booking), notice: message
+      # -----------------------------------------
+      # Expo push notification
+      # -----------------------------------------
+
+      begin
+        BookingNotificationService.status_changed(
+          @booking,
+          previous_status: previous_status
+        )
+
+        Rails.logger.info(
+          "PUSH: Status change notification queued " \
+            "for booking #{@booking.id} " \
+            "(#{previous_status} -> #{new_status})"
+        )
+
+      rescue StandardError => e
+        Rails.logger.error(
+          "PUSH: Failed to queue status notification " \
+            "for booking #{@booking.id}: " \
+            "#{e.class} - #{e.message}"
+        )
+      end
+
+      redirect_to business_booking_path(@booking),
+                  notice: message
+
     else
       redirect_to business_booking_path(@booking),
                   alert: "Could not update the booking status."
     end
   end
+
 
   def create
     @business = current_user.business
