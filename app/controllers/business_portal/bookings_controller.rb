@@ -353,6 +353,30 @@ class BusinessPortal::BookingsController < BusinessPortal::BaseController
         .deliver_later
     end
 
+    # -----------------------------------------
+    # Expo push notifications
+    # -----------------------------------------
+
+    begin
+      BookingNotificationService.created(
+        @booking
+      )
+
+      Rails.logger.info(
+        "PUSH: Notifications queued for website manual booking #{@booking.id}"
+      )
+
+    rescue StandardError => e
+      Rails.logger.error(
+        "PUSH: Failed to queue notifications for booking #{@booking.id}: " \
+          "#{e.class} - #{e.message}"
+      )
+    end
+
+    # -----------------------------------------
+    # Response
+    # -----------------------------------------
+
     redirect_to business_bookings_path,
                 notice: "Booking added successfully."
 
