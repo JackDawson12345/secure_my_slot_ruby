@@ -42,7 +42,28 @@ class CustomerPaidBookingCompletion
           "from paid hold #{@booking_hold.id}"
       )
 
+      # =====================================================
+      # EXISTING SMS AND EMAIL NOTIFICATIONS
+      # =====================================================
+
       send_booking_confirmations(booking)
+
+      # =====================================================
+      # EXPO PUSH NOTIFICATIONS
+      # =====================================================
+
+      safely_enqueue(
+        "Expo push notifications",
+        booking.id
+      ) do
+        BookingNotificationService.created(
+          booking
+        )
+
+        Rails.logger.info(
+          "PUSH: Notifications queued for paid booking #{booking.id}"
+        )
+      end
     end
 
     booking

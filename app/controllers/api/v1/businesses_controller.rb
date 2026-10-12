@@ -1282,6 +1282,22 @@ module Api
           booking
         )
 
+        # Expo push notifications
+        begin
+          BookingNotificationService.created(
+            booking
+          )
+
+          Rails.logger.info(
+            "PUSH: Booking notifications queued for booking #{booking.id}"
+          )
+        rescue StandardError => e
+          Rails.logger.error(
+            "PUSH: Failed to queue notifications for booking #{booking.id}: " \
+              "#{e.class} - #{e.message}"
+          )
+        end
+
         render json: {
           success: true,
           requires_payment: false,

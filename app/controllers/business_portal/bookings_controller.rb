@@ -145,6 +145,9 @@ class BusinessPortal::BookingsController < BusinessPortal::BaseController
 
   def add_booking
     @business = current_user.business
+    @booking = @business.bookings.new
+
+    load_booking_agents
   end
 
   def show
@@ -234,61 +237,136 @@ class BusinessPortal::BookingsController < BusinessPortal::BaseController
 
   def create
     @business = current_user.business
+    @booking = @business.bookings.new
+    load_booking_agents
 
-    begin
-      Booking.transaction do
-        params = permitted_booking_params
+    booking_attrs = permitted_booking_params
 
-        @user = find_or_build_user(params)
+    service = @business.services.find(
+      booking_attrs[:service_id]
+    )
 
-        new_user = @user.new_record?
+    date = Date.iso8601(booking_attrs[:date])
+    time = booking_attrs[:time].to_s
 
-        @user.save!
+    agent_selection = booking_attrs[:agent_selection].to_s
 
-        if new_user
-          @user.create_customer_setting!(
-            phone_number: params[:phone_number],
-            preferred_name: [
-              params[:first_name],
-              params[:last_name]
-            ].compact.join(" "),
-            booking_confirmations: true,
-            appointment_reminders: true,
-            booking_changes: true,
-            offers_and_service_updates: false,
-            reminder_timing: "60",
-            reminder_method: "sms"
-          )
+    if @agents.any? && agent_selection.blank?
+      raise ArgumentError, "Please select an agent."
+    end
 
-          CustomerAccountMailer
-            .welcome_with_password_setup(@user)
-            .deliver_later
+    agent =
+      if agent_selection == "any"
+        nil
+      elsif agent_selection.present?
+        @agents.find do |business_agent|
+          business_agent.id.to_s == agent_selection
         end
-
-        @booking = @business.bookings.new(
-          user: @user,
-          service_id: params[:service_id],
-          date: params[:date],
-          time: params[:time],
-          notes: params[:notes],
-          status: "confirmed"
-        )
-
-        @booking.save!
       end
 
-      redirect_to business_bookings_path,
-                  notice: "Booking added successfully."
-
-    rescue ActiveRecord::RecordInvalid => e
-      Rails.logger.error e.record.errors.full_messages
-
-      flash.now[:alert] =
-        "Could not create booking. Please check the details below."
-
-      render :add_booking,
-             status: :unprocessable_entity
+    if agent_selection.present? &&
+       agent_selection != "any" &&
+       agent.nil?
+      raise ArgumentError, "The selected agent is unavailable."
     end
+
+    availability_agent =
+      if agent_selection == "any"
+        "any"
+      else
+        agent
+      end
+
+    available_times = BookingAvailability.new(
+      @business,
+      service,
+      date,
+      availability_agent
+    ).call
+
+    unless available_times.map(&:to_s).include?(time)
+      raise ArgumentError,
+            "That appointment time is no longer available."
+    end
+
+    if agent_selection == "any"
+      available_agents = available_agents_for(
+        business: @business,
+        service: service,
+        date: date,
+        time: time
+      )
+
+      agent = available_agents.sample
+
+      unless agent
+        raise ArgumentError,
+              "No agents are available at that time."
+      end
+    end
+
+    new_customer = false
+
+    Booking.transaction do
+      @user = find_or_build_user(booking_attrs)
+      new_customer = @user.new_record?
+
+      @user.save!
+
+      if @user.customer_setting.nil?
+        @user.create_customer_setting!(
+          phone_number: booking_attrs[:phone_number],
+          preferred_name: [
+            booking_attrs[:first_name],
+            booking_attrs[:last_name]
+          ].compact.join(" "),
+          booking_confirmations: true,
+          appointment_reminders: true,
+          booking_changes: true,
+          offers_and_service_updates: false,
+          reminder_timing: "60",
+          reminder_method: "sms"
+        )
+      end
+
+      @booking = @business.bookings.new(
+        user: @user,
+        service: service,
+        agent_id: agent&.user_id,
+        date: date,
+        time: time,
+        notes: booking_attrs[:notes],
+        amount: service.price,
+        amount_paid: 0,
+        payment_status: "not_required",
+        status: @business.business_setting
+                         .automatically_confirm_bookings? ?
+                  "confirmed" : "pending"
+      )
+
+      @booking.save!
+    end
+
+    if new_customer
+      CustomerAccountMailer
+        .welcome_with_password_setup(@user)
+        .deliver_later
+    end
+
+    redirect_to business_bookings_path,
+                notice: "Booking added successfully."
+
+  rescue ActiveRecord::RecordNotFound
+    redirect_to business_add_booking_path,
+                alert: "The selected service or agent was not found."
+
+  rescue Date::Error, ArgumentError => e
+    flash.now[:alert] = e.message
+    render :add_booking, status: :unprocessable_entity
+
+  rescue ActiveRecord::RecordInvalid => e
+    flash.now[:alert] = e.record.errors.full_messages.join(", ")
+    render :add_booking, status: :unprocessable_entity
   end
 
   def calendar
@@ -655,7 +733,83 @@ class BusinessPortal::BookingsController < BusinessPortal::BaseController
       :last_name,
       :email,
       :phone_number,
-      :notes
+      :notes,
+      :agent_selection
     )
+  end
+
+  def load_booking_agents
+    @agents = @business.business_agents
+                       .where(status: "active")
+                       .includes(:user)
+                       .to_a
+
+    @allow_any_agent =
+      @business.agent_settings&.agent_selection? || false
+  end
+
+  def available_agents_for(business:, service:, date:, time:)
+    slot_start = Time.zone.parse("#{date} #{time}")
+
+    slot_end =
+      slot_start + service.minutes_duration.minutes
+
+    buffer_minutes =
+      business.booking_setting.buffer_minutes.to_i
+
+    business.business_agents
+            .where(status: "active")
+            .select do |agent|
+
+      booking_conflict =
+        business.bookings
+                .where(agent_id: agent.user_id, date: date)
+                .where.not(status: ["cancelled", "no_show"])
+                .includes(:service)
+                .any? do |booking|
+
+          booking_start = Time.zone.local(
+            date.year,
+            date.month,
+            date.day,
+            booking.time.hour,
+            booking.time.min
+          )
+
+          booking_end =
+            booking_start +
+            booking.service.minutes_duration.minutes +
+            buffer_minutes.minutes
+
+          slot_start < booking_end &&
+            slot_end > booking_start
+        end
+
+      hold_conflict =
+        business.booking_holds
+                .active
+                .where(agent_id: agent.user_id, date: date)
+                .includes(:service)
+                .any? do |hold|
+
+          hold_start = Time.zone.local(
+            date.year,
+            date.month,
+            date.day,
+            hold.time.hour,
+            hold.time.min
+          )
+
+          hold_end =
+            hold_start +
+            hold.service.minutes_duration.minutes +
+            buffer_minutes.minutes
+
+          slot_start < hold_end &&
+            slot_end > hold_start
+        end
+
+      !booking_conflict && !hold_conflict
+    end
   end
 end

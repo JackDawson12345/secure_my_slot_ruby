@@ -510,6 +510,26 @@ module Api
             end
 
             # -----------------------------------------
+            # Expo push notifications
+            # -----------------------------------------
+
+            begin
+              BookingNotificationService.created(
+                booking
+              )
+
+              Rails.logger.info(
+                "PUSH: Notifications queued for manually created booking #{booking.id}"
+              )
+
+            rescue StandardError => e
+              Rails.logger.error(
+                "PUSH: Failed to queue notifications for booking #{booking.id}: " \
+                  "#{e.class} - #{e.message}"
+              )
+            end
+
+            # -----------------------------------------
             # Response
             # -----------------------------------------
 

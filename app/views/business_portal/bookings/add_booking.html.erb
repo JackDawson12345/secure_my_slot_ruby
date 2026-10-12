@@ -82,6 +82,85 @@
         </div>
       </section>
 
+      <% if @agents.any? %>
+        <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+
+          <div class="border-b border-slate-200 px-5 py-5 sm:px-6">
+            <h2 class="text-lg font-bold">Select an agent</h2>
+            <p class="mt-1 text-sm text-slate-500">
+              Choose who will carry out this appointment.
+            </p>
+          </div>
+
+          <div class="grid gap-3 p-5 sm:grid-cols-2 sm:px-6">
+
+            <% if @allow_any_agent %>
+              <div>
+                <input
+                  type="radio"
+                  name="booking[agent_selection]"
+                  id="agent-any"
+                  value="any"
+                  class="agent-radio peer sr-only"
+                  required
+                >
+
+                <label
+                  for="agent-any"
+                  class="flex cursor-pointer items-center gap-3 rounded-xl border border-slate-200 p-4 transition hover:border-indigo-200 hover:bg-indigo-50 peer-checked:border-indigo-500 peer-checked:bg-indigo-50 peer-checked:ring-1 peer-checked:ring-indigo-500"
+                >
+                  <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
+                    <i data-lucide="users" class="h-5 w-5"></i>
+                  </div>
+
+                  <div>
+              <span class="block font-semibold text-slate-900">
+                Any available agent
+              </span>
+                    <span class="text-sm text-slate-500">
+                Automatically assign an agent
+              </span>
+                  </div>
+                </label>
+              </div>
+            <% end %>
+
+            <% @agents.each do |agent| %>
+              <div>
+                <input
+                  type="radio"
+                  name="booking[agent_selection]"
+                  id="agent-<%= agent.id %>"
+                  value="<%= agent.id %>"
+                  class="agent-radio peer sr-only"
+                  required
+                >
+
+                <label
+                  for="agent-<%= agent.id %>"
+                  class="flex cursor-pointer items-center gap-3 rounded-xl border border-slate-200 p-4 transition hover:border-indigo-200 hover:bg-indigo-50 peer-checked:border-indigo-500 peer-checked:bg-indigo-50 peer-checked:ring-1 peer-checked:ring-indigo-500"
+                >
+                  <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-slate-100 text-slate-600">
+                    <i data-lucide="user-round" class="h-5 w-5"></i>
+                  </div>
+
+                  <div>
+              <span class="block font-semibold text-slate-900">
+                <%= [agent.user.first_name, agent.user.last_name].compact.join(" ") %>
+              </span>
+
+                    <span class="text-sm text-slate-500">
+                Available team member
+              </span>
+                  </div>
+                </label>
+              </div>
+            <% end %>
+
+          </div>
+        </section>
+      <% end %>
+
       <!-- Date & time -->
       <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
         <div class="border-b border-slate-200 px-5 py-5 sm:px-6">
@@ -158,6 +237,21 @@
             <span id="summary-service" class="text-right text-sm font-semibold text-slate-900">Not selected</span>
           </div>
 
+          <% if @agents.any? %>
+            <div class="flex items-start justify-between gap-4 border-b border-slate-100 pb-4">
+              <span class="text-sm font-medium text-slate-500">
+                Agent
+              </span>
+
+              <span
+                id="summary-agent"
+                class="text-right text-sm font-semibold text-slate-900"
+              >
+                Not selected
+              </span>
+            </div>
+          <% end %>
+
           <div class="flex justify-between text-sm">
             <span class="font-medium text-slate-500">Date</span>
             <span id="summary-date" class="font-semibold text-slate-900">Not selected</span>
@@ -196,81 +290,201 @@
 </main>
 
 <script>
+
     document.addEventListener("turbo:load", () => {
+        const form = document.getElementById("booking-form");
+        if (!form) return;
+
         const dateInput = document.getElementById("booking-date");
         const timeOptions = document.getElementById("time-options");
 
+        const serviceInputs = document.querySelectorAll(".service-radio");
+        const agentInputs = document.querySelectorAll(".agent-radio");
+
         const summaryService = document.getElementById("summary-service");
+        const summaryAgent = document.getElementById("summary-agent");
         const summaryDate = document.getElementById("summary-date");
         const summaryTime = document.getElementById("summary-time");
         const summaryDuration = document.getElementById("summary-duration");
         const summaryPrice = document.getElementById("summary-price");
 
+        const businessId = "<%= @business.id %>";
+
         let selectedServiceId = null;
-        const serviceInputs = document.querySelectorAll(".service-radio");
+        let selectedAgent = null;
+        let requestController = null;
+
+        const hasAgents = agentInputs.length > 0;
+
+        function clearTimes(message = "Choose a service, agent and date") {
+            if (requestController) {
+                requestController.abort();
+                requestController = null;
+            }
+
+            summaryTime.textContent = "Not selected";
+
+            timeOptions.className = "mt-3";
+
+            timeOptions.innerHTML = `
+      <div class="rounded-xl border border-dashed border-slate-200 bg-slate-50 px-6 py-8 text-center">
+        <p class="text-sm font-semibold text-slate-700">
+          ${message}
+        </p>
+      </div>
+    `;
+        }
 
         serviceInputs.forEach((input) => {
             input.addEventListener("change", () => {
                 selectedServiceId = input.value;
 
-                const label = document.querySelector(`label[for="${input.id}"]`);
-                summaryService.textContent = label.querySelector("span").innerText.trim();
-                summaryDuration.textContent = `${input.dataset.duration} minutes`;
-                summaryPrice.textContent = `£${input.dataset.price}`;
+                const label = document.querySelector(
+                    `label[for="${input.id}"]`
+                );
+
+                summaryService.textContent =
+                    label.querySelector("span").textContent.trim();
+
+                summaryDuration.textContent =
+                    `${input.dataset.duration} minutes`;
+
+                summaryPrice.textContent =
+                    new Intl.NumberFormat("en-GB", {
+                        style: "currency",
+                        currency: "GBP"
+                    }).format(Number(input.dataset.price));
+
+                loadTimes();
+            });
+        });
+
+        agentInputs.forEach((input) => {
+            input.addEventListener("change", () => {
+                selectedAgent = input.value;
+
+                const label = document.querySelector(
+                    `label[for="${input.id}"]`
+                );
+
+                summaryAgent.textContent =
+                    label.querySelector("span").textContent.trim();
 
                 loadTimes();
             });
         });
 
         dateInput.addEventListener("change", () => {
-            const selectedDate = new Date(`${dateInput.value}T12:00:00`);
-            summaryDate.textContent = selectedDate.toLocaleDateString("en-GB", {
-                weekday: "short", day: "numeric", month: "long", year: "numeric"
-            });
+            if (dateInput.value) {
+                const date = new Date(`${dateInput.value}T12:00:00`);
+
+                summaryDate.textContent =
+                    date.toLocaleDateString("en-GB", {
+                        weekday: "short",
+                        day: "numeric",
+                        month: "long",
+                        year: "numeric"
+                    });
+            } else {
+                summaryDate.textContent = "Not selected";
+            }
 
             loadTimes();
         });
 
-        function loadTimes() {
-            if (!selectedServiceId || !dateInput.value) return;
+        async function loadTimes() {
+            if (
+                !selectedServiceId ||
+                !dateInput.value ||
+                (hasAgents && !selectedAgent)
+            ) {
+                clearTimes("Choose a service, agent and date");
+                return;
+            }
 
-            fetch(`/booking_slots?business_id=<%= @business.id %>&service_id=${selectedServiceId}&date=${dateInput.value}`)
-                .then((response) => response.json())
-                .then((times) => {
-                    timeOptions.innerHTML = "";
-                    timeOptions.className = "mt-3 grid grid-cols-3 gap-2 sm:grid-cols-4";
+            clearTimes("Loading available times...");
 
-                    if (times.length === 0) {
-                        timeOptions.innerHTML = `
-              <p class="col-span-full rounded-xl bg-rose-50 px-4 py-3 text-center text-sm font-medium text-rose-600">
-                No available appointments
-              </p>
-            `;
-                        return;
-                    }
+            const controller = new AbortController();
+            requestController = controller;
 
-                    times.forEach((time) => {
-                        const wrapper = document.createElement("div");
+            const params = new URLSearchParams({
+                business_id: businessId,
+                service_id: selectedServiceId,
+                date: dateInput.value
+            });
 
-                        wrapper.innerHTML = `
-              <input class="time-radio peer sr-only" type="radio" name="booking[time]" id="time-${time}" value="${time}" required>
-              <label
-                for="time-${time}"
-                class="block cursor-pointer rounded-xl border border-slate-200 px-3 py-2.5 text-center text-sm font-semibold text-slate-700 transition hover:border-indigo-300 peer-checked:border-indigo-500 peer-checked:bg-indigo-50 peer-checked:text-indigo-700"
-              >
-                ${time}
-              </label>
-            `;
+            if (selectedAgent) {
+                params.set("agent_selection", selectedAgent);
+            }
 
-                        timeOptions.appendChild(wrapper);
+            try {
+                const response = await fetch(
+                    `/booking_slots?${params.toString()}`,
+                    { signal: controller.signal }
+                );
 
-                        wrapper.querySelector("input").addEventListener("change", () => {
-                            summaryTime.textContent = time;
-                        });
+                const times = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(
+                        times.error || "Unable to load appointment times."
+                    );
+                }
+
+                if (requestController !== controller) return;
+
+                timeOptions.innerHTML = "";
+
+                if (!Array.isArray(times) || times.length === 0) {
+                    clearTimes("No available appointments for this selection.");
+                    return;
+                }
+
+                timeOptions.className =
+                    "mt-3 grid grid-cols-3 gap-2 sm:grid-cols-4";
+
+                times.forEach((time, index) => {
+                    const wrapper = document.createElement("div");
+
+                    const input = document.createElement("input");
+                    input.type = "radio";
+                    input.name = "booking[time]";
+                    input.id = `booking-time-${index}`;
+                    input.value = time;
+                    input.required = true;
+                    input.className = "time-radio peer sr-only";
+
+                    const label = document.createElement("label");
+                    label.htmlFor = input.id;
+                    label.textContent = time;
+
+                    label.className =
+                        "block cursor-pointer rounded-xl border border-slate-200 " +
+                        "px-3 py-2.5 text-center text-sm font-semibold " +
+                        "text-slate-700 transition hover:border-indigo-300 " +
+                        "peer-checked:border-indigo-500 " +
+                        "peer-checked:bg-indigo-50 " +
+                        "peer-checked:text-indigo-700";
+
+                    input.addEventListener("change", () => {
+                        summaryTime.textContent = time;
                     });
+
+                    wrapper.appendChild(input);
+                    wrapper.appendChild(label);
+                    timeOptions.appendChild(wrapper);
                 });
+
+            } catch (error) {
+                if (error.name === "AbortError") return;
+
+                clearTimes(error.message || "Unable to load times.");
+            }
         }
 
-        if (window.lucide) lucide.createIcons();
+        if (window.lucide) {
+            lucide.createIcons();
+        }
     });
+
 </script>
