@@ -360,6 +360,9 @@ class BookingsController < ApplicationController
         .deliver_later
     end
 
+    # Send push notifications
+    BookingNotificationService.created(booking)
+
     redirect_to(
       booking_confirmation_url(
         booking,
@@ -607,6 +610,9 @@ class BookingsController < ApplicationController
           .business_booking_notification
           .deliver_later
       end
+
+      # Send push notifications
+      BookingNotificationService.created(booking)
     end
 
     booking
