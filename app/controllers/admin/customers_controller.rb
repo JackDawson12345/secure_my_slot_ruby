@@ -146,6 +146,8 @@ class Admin::CustomersController < Admin::BaseController
                          .order(date: :desc, time: :desc)
 
     @services = @business.services.order(:name)
+    @serviceCategories = @business.service_categories
+    @serviceCoupons = @business.service_coupons
     @opening_hours = @business.opening_hours
 
     @booking_customers = User
@@ -185,7 +187,8 @@ class Admin::CustomersController < Admin::BaseController
   def business_params
     params.require(:business).permit(
       :business_name,
-      :page_address
+      :page_address,
+      :sales_agent_id
     )
   end
 

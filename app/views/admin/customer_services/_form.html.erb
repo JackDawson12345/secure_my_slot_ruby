@@ -4,7 +4,10 @@
              admin_customer_service_path(@customer, @service) :
              admin_customer_services_path(@customer),
       method: @service.persisted? ? :patch : :post,
-      class: "space-y-6"
+      class: "space-y-6",
+      data: {
+        controller: "deposit service-times"
+      }
     ) do |form| %>
 
   <% if @service.errors.any? %>
@@ -82,7 +85,67 @@
     </p>
   </div>
 
-  <div>
+
+  <% if @business.feature_enabled?(:service_images) %>
+    <div data-controller="image-preview">
+      <%= form.label :image,
+                     "Service image",
+                     class: "block text-sm font-semibold text-slate-700" %>
+
+      <p class="mt-1 text-xs text-slate-500">
+        Upload an image that represents this service.
+      </p>
+
+      <div class="mt-4 flex flex-wrap items-start gap-5">
+        <% if @service.image.attached? %>
+          <%= image_tag(
+                @service.image.variant(resize_to_fill: [160, 160]),
+                data: { image_preview_target: "image" },
+                class: "h-40 w-40 rounded-2xl border border-slate-200 object-cover"
+              ) %>
+        <% else %>
+          <div
+            data-image-preview-target="placeholder"
+            class="flex h-40 w-40 items-center justify-center rounded-2xl border border-dashed border-slate-300 bg-slate-50 text-sm text-slate-400"
+          >
+            No image
+          </div>
+
+          <img
+            data-image-preview-target="image"
+            class="hidden h-40 w-40 rounded-2xl border border-slate-200 object-cover"
+          >
+        <% end %>
+
+        <div class="flex flex-col gap-3">
+          <%= form.file_field(
+                :image,
+                accept: "image/png,image/jpeg,image/webp",
+                data: {
+                  image_preview_target: "input",
+                  action: "change->image-preview#show"
+                },
+                class: "block text-sm text-slate-600 file:mr-4 file:rounded-lg file:border-0 file:bg-indigo-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-indigo-700 hover:file:bg-indigo-100"
+              ) %>
+
+          <% if @service.persisted? && @service.image.attached? %>
+            <%= button_to(
+                  "Remove image",
+                  remove_image_admin_customer_service_path(@customer, @service),
+                  method: :delete,
+                  form: {
+                    data: { turbo_confirm: "Remove this service image?" }
+                  },
+                  class: "text-left text-sm font-semibold text-red-600 hover:text-red-700"
+                ) %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+
+  <div class="mt-6">
     <%= form.label(
           :name,
           "Service name",
@@ -98,7 +161,7 @@
         ) %>
   </div>
 
-  <div>
+  <div class="mt-6">
     <%= form.label(
           :description,
           class: "block text-sm font-semibold text-slate-700"
@@ -111,6 +174,39 @@
           class: "mt-2 w-full resize-y rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
         ) %>
   </div>
+
+
+  <% if @business.feature_enabled?(:service_categories) %>
+    <div class="rounded-xl border border-slate-200 bg-slate-50 p-5 mt-6 mb-6">
+      <div class="flex items-start gap-3">
+        <div class="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white text-slate-500 shadow-sm ring-1 ring-slate-200">
+          <i data-lucide="tags" class="h-4 w-4"></i>
+        </div>
+
+        <div class="min-w-0 flex-1">
+          <%= form.label(
+                :service_category_id,
+                "Service category",
+                class: "block text-sm font-semibold text-slate-700"
+              ) %>
+
+          <p class="mt-1 text-xs text-slate-500">
+            Organise this service into a category.
+          </p>
+
+          <%= form.collection_select(
+                :service_category_id,
+                @business.service_categories.order(:name),
+                :id,
+                :name,
+                { include_blank: "No category" },
+                class: "mt-4 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+              ) %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
 
   <div class="grid gap-5 sm:grid-cols-2">
     <div>
@@ -152,63 +248,193 @@
     </div>
   </div>
 
-  <div
-    class="rounded-xl border border-slate-200 bg-slate-50 p-5"
-    data-controller="deposit"
-  >
-    <div class="flex items-start gap-3">
-      <%= form.check_box(
-            :deposit_enabled,
-            class: "mt-1 h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500",
-            data: {
-              deposit_target: "checkbox",
-              action: "deposit#toggle"
-            }
-          ) %>
-
-      <div class="flex-1">
-        <%= form.label(
+  <% if @business.stripe_ready? %>
+    <div
+      class="rounded-xl border border-slate-200 bg-slate-50 p-5"
+      data-controller="deposit"
+    >
+      <div class="flex items-start gap-3">
+        <%= form.check_box(
               :deposit_enabled,
-              "Require a deposit",
-              class: "block cursor-pointer text-sm font-semibold text-slate-700"
+              class: "mt-1 h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500",
+              data: {
+                deposit_target: "checkbox",
+                action: "deposit#toggle"
+              }
             ) %>
 
-        <p class="mt-1 text-xs text-slate-500">
-          Customers will need to pay a deposit when booking this service.
+        <div class="flex-1">
+          <%= form.label(
+                :deposit_enabled,
+                "Require a deposit",
+                class: "block cursor-pointer text-sm font-semibold text-slate-700"
+              ) %>
+
+          <p class="mt-1 text-xs text-slate-500">
+            Customers will need to pay a deposit when booking this service.
+          </p>
+        </div>
+      </div>
+
+      <div
+        class="mt-5 <%= 'hidden' unless @service.deposit_enabled? %>"
+        data-deposit-target="container"
+      >
+        <%= form.label(
+              :deposit,
+              "Deposit amount (£)",
+              class: "block text-sm font-semibold text-slate-700"
+            ) %>
+
+        <%= form.number_field(
+              :deposit,
+              min: 0.01,
+              step: 0.01,
+              max: @service.price,
+              placeholder: "0.00",
+              disabled: !@service.deposit_enabled?,
+              data: {
+                deposit_target: "input"
+              },
+              class: "mt-2 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 disabled:cursor-not-allowed disabled:bg-slate-100"
+            ) %>
+
+        <p class="mt-2 text-xs text-slate-500">
+          The deposit cannot be greater than the full service price.
         </p>
       </div>
     </div>
+  <% end %>
 
-    <div
-      class="mt-5 <%= 'hidden' unless @service.deposit_enabled? %>"
-      data-deposit-target="container"
-    >
-      <%= form.label(
-            :deposit,
-            "Deposit amount (£)",
-            class: "block text-sm font-semibold text-slate-700"
-          ) %>
 
-      <%= form.number_field(
-            :deposit,
-            min: 0.01,
-            step: 0.01,
-            max: @service.price,
-            placeholder: "0.00",
-            disabled: !@service.deposit_enabled?,
-            data: {
-              deposit_target: "input"
-            },
-            class: "mt-2 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 disabled:cursor-not-allowed disabled:bg-slate-100"
-          ) %>
+  <% if @business.feature_enabled?(:service_times) %>
+    <% has_custom_times = @service.service_times.any?(&:persisted?) ||
+                          @service.service_times.any? { |time| time.start_time.present? || time.end_time.present? } %>
 
-      <p class="mt-2 text-xs text-slate-500">
-        The deposit cannot be greater than the full service price.
-      </p>
+    <div class="rounded-xl border border-slate-200 bg-slate-50 p-5 mt-6 mb-6">
+      <div class="flex items-start gap-3">
+        <%= form.check_box(
+              :custom_service_times,
+              {
+                checked: has_custom_times,
+                class: "mt-1 h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500",
+                data: {
+                  service_times_target: "checkbox",
+                  action: "service-times#toggle"
+                }
+              },
+              "1",
+              "0"
+            ) %>
+
+        <div class="flex-1">
+          <%= form.label(
+                :custom_service_times,
+                "Set custom service times",
+                class: "block cursor-pointer text-sm font-semibold text-slate-700"
+              ) %>
+
+          <p class="mt-1 text-xs text-slate-500">
+            Restrict this service to specific opening times.
+            When disabled, the service will use the business's
+            normal opening hours.
+          </p>
+        </div>
+      </div>
+
+      <div
+        class="mt-5 <%= 'hidden' unless has_custom_times %>"
+        data-service-times-target="container"
+      >
+        <%= form.fields_for :service_times do |time_form| %>
+          <div class="mb-4 grid gap-5 sm:grid-cols-2">
+            <div>
+              <%= time_form.label(
+                    :start_time,
+                    "Available from",
+                    class: "block text-sm font-semibold text-slate-700"
+                  ) %>
+
+              <%= time_form.time_field(
+                    :start_time,
+                    disabled: !has_custom_times,
+                    data: { service_times_target: "input" },
+                    class: "mt-2 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+                  ) %>
+            </div>
+
+            <div>
+              <%= time_form.label(
+                    :end_time,
+                    "Available until",
+                    class: "block text-sm font-semibold text-slate-700"
+                  ) %>
+
+              <%= time_form.time_field(
+                    :end_time,
+                    disabled: !has_custom_times,
+                    data: { service_times_target: "input" },
+                    class: "mt-2 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+                  ) %>
+            </div>
+          </div>
+        <% end %>
+
+        <p class="mt-2 text-xs text-slate-500">
+          Customers can only book this service between the selected times.
+        </p>
+      </div>
     </div>
-  </div>
+  <% end %>
+
 
   <div>
+    <%= form.label(
+          :business_agent_ids,
+          "Assigned agents",
+          class: "block text-sm font-semibold text-slate-700"
+        ) %>
+
+    <p class="mt-1 text-xs text-slate-500">
+      Select which staff members can provide this service.
+    </p>
+
+    <%= hidden_field_tag "service[business_agent_ids][]", "" %>
+
+    <% if @agents.any? %>
+      <div class="mt-4 grid gap-3 sm:grid-cols-2">
+        <% @agents.each do |agent| %>
+          <label class="flex cursor-pointer items-center gap-3 rounded-xl border border-slate-200 bg-white p-4 transition hover:border-indigo-300">
+            <%= check_box_tag(
+                  "service[business_agent_ids][]",
+                  agent.id,
+                  @service.business_agents.include?(agent),
+                  id: "agent_#{agent.id}",
+                  class: "h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                ) %>
+
+            <div>
+              <p class="text-sm font-semibold text-slate-900">
+                <%= agent.user.full_name %>
+              </p>
+
+              <p class="text-xs text-slate-500">
+                <%= agent.user.email %>
+              </p>
+            </div>
+          </label>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-5 text-sm text-slate-500">
+        This business has no active agents to assign.
+      </div>
+    <% end %>
+  </div>
+
+
+
+  <div class="mt-6">
     <%= form.label(
           :status,
           class: "block text-sm font-semibold text-slate-700"

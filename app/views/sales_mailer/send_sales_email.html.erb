@@ -1,0 +1,143 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Business Upgrade Request</title>
+</head>
+
+<body style="margin:0;padding:0;background-color:#f1f5f9;font-family:Arial,Helvetica,sans-serif;color:#334155;">
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="padding:40px 15px;background-color:#f1f5f9;">
+  <tr>
+    <td align="center">
+
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;background-color:#ffffff;border-radius:16px;overflow:hidden;">
+
+        <!-- Header -->
+        <tr>
+          <td style="background-color:#4f46e5;padding:32px;text-align:center;">
+            <h1 style="margin:0;font-size:26px;font-weight:700;color:#ffffff;">
+              Book Pilot
+            </h1>
+
+            <p style="margin:10px 0 0;font-size:14px;color:#e0e7ff;">
+              Business Upgrade Request
+            </p>
+          </td>
+        </tr>
+
+        <!-- Content -->
+        <tr>
+          <td style="padding:35px 32px;">
+
+            <h2 style="margin:0 0 16px;font-size:21px;color:#0f172a;">
+              New Upgrade Enquiry
+            </h2>
+
+            <p style="font-size:15px;line-height:1.7;margin:0 0 20px;">
+              A business using Book Pilot has requested to speak with a marketing specialist about upgrading their subscription.
+            </p>
+
+            <p style="font-size:15px;line-height:1.7;margin:0 0 25px;">
+              Please review the details below and contact the business to discuss the available upgrade options.
+            </p>
+
+            <!-- Business Details -->
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;">
+              <tr>
+                <td style="padding:24px;">
+
+                  <h3 style="margin:0 0 18px;font-size:16px;color:#0f172a;">
+                    Business Details
+                  </h3>
+
+                  <p style="margin:0 0 12px;font-size:14px;line-height:1.6;">
+                    <strong>Business Name:</strong><br>
+                    <%= @business.business_name %>
+                  </p>
+
+                  <% if @business.respond_to?(:business_email) && @business.business_email.present? %>
+                    <p style="margin:0 0 12px;font-size:14px;line-height:1.6;">
+                      <strong>Email Address:</strong><br>
+                      <%= mail_to @business.business_email %>
+                    </p>
+                  <% end %>
+
+                  <% if @business.respond_to?(:phone_number) && @business.phone_number.present? %>
+                    <p style="margin:0 0 12px;font-size:14px;line-height:1.6;">
+                      <strong>Phone Number:</strong><br>
+                      <%= @business.phone_number %>
+                    </p>
+                  <% end %>
+
+                  <p style="margin:0;font-size:14px;line-height:1.6;">
+                    <strong>Business ID:</strong><br>
+                    #<%= @business.id %>
+                  </p>
+
+                </td>
+              </tr>
+            </table>
+
+            <!-- Sales Agent -->
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:20px;background-color:#eef2ff;border:1px solid #c7d2fe;border-radius:12px;">
+              <tr>
+                <td style="padding:24px;">
+
+                  <h3 style="margin:0 0 15px;font-size:16px;color:#312e81;">
+                    Assigned Sales Agent
+                  </h3>
+
+                  <p style="margin:0 0 10px;font-size:14px;">
+                    <strong>Name:</strong> <%= @sales_agent_name %>
+                  </p>
+
+                  <p style="margin:0;font-size:14px;">
+                    <strong>Email:</strong>
+                    <%= mail_to @sales_agent_email %>
+                  </p>
+
+                </td>
+              </tr>
+            </table>
+
+            <!-- Action -->
+            <p style="margin:25px 0 0;font-size:14px;line-height:1.7;">
+              <strong>Next Steps:</strong><br>
+              Please contact the business to discuss their requirements and help them choose the most suitable Book Pilot subscription.
+            </p>
+
+          </td>
+        </tr>
+
+        <!-- Footer -->
+        <tr>
+          <td style="padding:24px 32px;background-color:#f8fafc;text-align:center;border-top:1px solid #e2e8f0;">
+
+            <p style="margin:0 0 8px;font-size:13px;font-weight:600;color:#475569;">
+              Book Pilot
+            </p>
+
+            <p style="margin:0;font-size:12px;line-height:1.6;color:#94a3b8;">
+              This is an automated notification generated when a business requests a subscription upgrade.
+            </p>
+
+            <p style="margin:12px 0 0;font-size:12px;color:#94a3b8;">
+              <a href="https://www.book-pilot.co.uk" style="color:#4f46e5;text-decoration:none;">
+                www.book-pilot.co.uk
+              </a>
+            </p>
+
+          </td>
+        </tr>
+
+      </table>
+
+    </td>
+  </tr>
+</table>
+
+</body>
+</html>

@@ -82,7 +82,8 @@ class Admin::CustomerSettingsController < Admin::BaseController
 
   def business_params
     params.fetch(:business, {}).permit(
-      :subscribed
+      :subscribed,
+      :sales_agent_id
     )
   end
 end

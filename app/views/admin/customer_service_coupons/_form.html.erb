@@ -1,0 +1,265 @@
+
+<%= form_with(
+      model: coupon,
+      url: coupon.persisted? ?
+             admin_customer_service_coupon_path(@customer, coupon) :
+             admin_customer_service_coupons_path(@customer),
+      class: "space-y-6"
+    ) do |f| %>
+
+  <% if coupon.errors.any? %>
+    <div class="rounded-xl border border-red-200 bg-red-50 p-4">
+      <div class="flex items-center gap-2 text-sm font-semibold text-red-700">
+        <i data-lucide="circle-alert" class="h-5 w-5"></i>
+        Please correct the following errors:
+      </div>
+
+      <ul class="mt-2 list-disc space-y-1 pl-6 text-sm text-red-600">
+        <% coupon.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="grid gap-6 lg:grid-cols-3">
+
+    <!-- Main Details -->
+    <div class="space-y-6 lg:col-span-2">
+
+      <section class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+
+        <div class="mb-6 flex items-center gap-3">
+          <div class="rounded-xl bg-indigo-50 p-2.5 text-indigo-600">
+            <i data-lucide="ticket-percent" class="h-5 w-5"></i>
+          </div>
+
+          <div>
+            <h2 class="text-lg font-bold text-slate-900">
+              Coupon Details
+            </h2>
+            <p class="text-sm text-slate-500">
+              Set up the coupon name, code and discount.
+            </p>
+          </div>
+        </div>
+
+        <div class="space-y-5">
+
+          <div>
+            <%= f.label :name, "Coupon Name",
+                        class: "mb-2 block text-sm font-semibold text-slate-700" %>
+
+            <%= f.text_field :name,
+                             required: true,
+                             placeholder: "e.g. Summer Special",
+                             class: "w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" %>
+          </div>
+
+          <div>
+            <%= f.label :code, "Coupon Code",
+                        class: "mb-2 block text-sm font-semibold text-slate-700" %>
+
+            <%= f.text_field :code,
+                             required: true,
+                             placeholder: "e.g. SUMMER20",
+                             class: "w-full rounded-xl border border-slate-200 px-4 py-3 font-mono text-sm uppercase text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" %>
+
+            <p class="mt-2 text-xs text-slate-500">
+              Customers will enter this code when making a booking.
+            </p>
+          </div>
+
+          <div class="grid gap-5 sm:grid-cols-2">
+
+            <div>
+              <%= f.label :coupon_type, "Discount Type",
+                          class: "mb-2 block text-sm font-semibold text-slate-700" %>
+
+              <%= f.select :coupon_type,
+                           [
+                             ["Percentage (%)", "percentage"],
+                             ["Fixed Amount (£)", "fixed"]
+                           ],
+                           {},
+                           class: "w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" %>
+            </div>
+
+            <div>
+              <%= f.label :discount, "Discount Amount",
+                          class: "mb-2 block text-sm font-semibold text-slate-700" %>
+
+              <%= f.number_field :discount,
+                                 step: "0.01",
+                                 min: 0,
+                                 required: true,
+                                 placeholder: "e.g. 20",
+                                 class: "w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" %>
+
+              <p class="mt-2 text-xs text-slate-500">
+                Enter 20 for 20% or £20, depending on the discount type.
+              </p>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- Applicable Services -->
+      <section class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+
+        <div class="mb-5 flex items-center gap-3">
+          <div class="rounded-xl bg-indigo-50 p-2.5 text-indigo-600">
+            <i data-lucide="list-checks" class="h-5 w-5"></i>
+          </div>
+
+          <div>
+            <h2 class="text-lg font-bold text-slate-900">
+              Applicable Services
+            </h2>
+            <p class="text-sm text-slate-500">
+              Choose which services customers can use this coupon for.
+            </p>
+          </div>
+        </div>
+
+        <%= hidden_field_tag "service_coupon[services][]", "" %>
+
+        <div class="grid gap-3 sm:grid-cols-2">
+
+          <% selected_ids = Array(coupon.services).map(&:to_s) %>
+
+          <% @services.each do |service| %>
+            <label class="flex cursor-pointer items-start gap-3 rounded-xl border border-slate-200 p-4 transition hover:border-indigo-300 hover:bg-indigo-50/30">
+
+              <%= check_box_tag(
+                    "service_coupon[services][]",
+                    service.id,
+                    selected_ids.include?(service.id.to_s),
+                    id: "service_#{service.id}",
+                    class: "mt-1 h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                  ) %>
+
+              <div class="min-w-0 flex-1">
+                <p class="text-sm font-semibold text-slate-900">
+                  <%= service.name %>
+                </p>
+
+                <p class="mt-1 text-xs text-slate-500">
+                  <%= number_to_currency(service.price, unit: "£") %>
+                  <% if service.minutes_duration.present? %>
+                    · <%= service.minutes_duration %> minutes
+                  <% end %>
+                </p>
+              </div>
+
+            </label>
+          <% end %>
+
+        </div>
+
+        <% if @services.empty? %>
+          <div class="rounded-xl bg-slate-50 p-5 text-center">
+            <p class="text-sm text-slate-500">
+              No services have been added to this business yet.
+            </p>
+          </div>
+        <% end %>
+      </section>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="space-y-6">
+
+      <!-- Status -->
+      <section class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div class="mb-5 flex items-center gap-3">
+          <div class="rounded-xl bg-indigo-50 p-2.5 text-indigo-600">
+            <i data-lucide="settings-2" class="h-5 w-5"></i>
+          </div>
+
+          <h2 class="text-lg font-bold text-slate-900">
+            Coupon Settings
+          </h2>
+        </div>
+
+        <label class="flex cursor-pointer items-center justify-between gap-4">
+          <div>
+            <p class="text-sm font-semibold text-slate-900">
+              Active Coupon
+            </p>
+            <p class="mt-1 text-xs leading-5 text-slate-500">
+              Allow customers to use this coupon when booking.
+            </p>
+          </div>
+
+          <%= f.check_box :active,
+                          class: "h-5 w-5 shrink-0 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" %>
+        </label>
+      </section>
+
+      <!-- Expiry -->
+      <section class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+
+        <div class="mb-5 flex items-center gap-3">
+          <div class="rounded-xl bg-indigo-50 p-2.5 text-indigo-600">
+            <i data-lucide="calendar-clock" class="h-5 w-5"></i>
+          </div>
+
+          <h2 class="text-lg font-bold text-slate-900">
+            Expiry Date
+          </h2>
+        </div>
+
+        <%= f.label :expires_at, "Coupon Expires",
+                    class: "mb-2 block text-sm font-semibold text-slate-700" %>
+
+        <%= f.datetime_local_field :expires_at,
+                                   class: "w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" %>
+
+        <p class="mt-3 text-xs leading-5 text-slate-500">
+          Leave this blank if the coupon should not have an expiry date.
+        </p>
+
+      </section>
+
+      <!-- Help -->
+      <div class="rounded-2xl border border-indigo-100 bg-indigo-50 p-5">
+        <div class="flex items-start gap-3">
+          <i data-lucide="info" class="mt-0.5 h-5 w-5 shrink-0 text-indigo-600"></i>
+
+          <div>
+            <p class="text-sm font-bold text-indigo-900">
+              How Coupons Work
+            </p>
+
+            <p class="mt-2 text-xs leading-6 text-indigo-700">
+              Customers can enter the coupon code during booking to receive the discount on eligible services.
+            </p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Actions -->
+  <div class="flex flex-wrap items-center justify-end gap-3 border-t border-slate-200 pt-6">
+
+    <%= link_to(
+          "Cancel",
+          admin_customer_path(@customer, tab: "service_coupons"),
+          class: "inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+        ) %>
+
+    <%= f.button type: "submit",
+                 class: "inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-indigo-700" do %>
+
+      <i data-lucide="save" class="h-4 w-4"></i>
+
+      <%= coupon.persisted? ? "Save Changes" : "Create Coupon" %>
+    <% end %>
+
+  </div>
+
+<% end %>

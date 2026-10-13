@@ -1,0 +1,54 @@
+
+BOOK PILOT
+Business Upgrade Request
+
+========================================
+
+NEW UPGRADE ENQUIRY
+
+A business using Book Pilot has requested to speak with a marketing specialist about upgrading their subscription.
+
+Please review the details below and contact the business to discuss the available upgrade options.
+
+========================================
+
+BUSINESS DETAILS
+
+Business Name:
+<%= @business.business_name %>
+
+<% if @business.respond_to?(:business_email) && @business.business_email.present? %>
+  Email Address:
+  <%= @business.business_email %>
+
+<% end %>
+<% if @business.respond_to?(:phone_number) && @business.phone_number.present? %>
+  Phone Number:
+  <%= @business.phone_number %>
+
+<% end %>
+Business ID:
+#<%= @business.id %>
+
+========================================
+
+ASSIGNED SALES AGENT
+
+Name:
+<%= @sales_agent_name %>
+
+Email:
+<%= @sales_agent_email %>
+
+========================================
+
+NEXT STEPS
+
+Please contact the business to discuss their requirements and help them choose the most suitable Book Pilot subscription.
+
+========================================
+
+Book Pilot
+https://www.book-pilot.co.uk
+
+This is an automated notification generated when a business requests a subscription upgrade.

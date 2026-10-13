@@ -1,4 +1,38 @@
 class Business < ApplicationRecord
+
+  SALES_AGENTS = {
+    1 => {
+      name: "Simon Evans",
+      email: "simon@uniteldirect.co.uk"
+    },
+    2 => {
+      name: "Michelle Cuthbertson",
+      email: "michelle@uniteldirect.co.uk"
+    },
+    3 => {
+      name: "Satvir Kaur",
+      email: "satvir.kaur@uniteldirect.co.uk"
+    },
+    4 => {
+      name: "Megan Bullock",
+      email: "megan@uniteldirect.co.uk"
+    },
+    5 => {
+      name: "Andy Scott",
+      email: "andy.scott@uniteldirect.co.uk"
+    },
+    6 => {
+      name: "Claire Donnelly",
+      email: "claire@uniteldirect.co.uk"
+    }
+  }.freeze
+
+  validates :sales_agent_id,
+            inclusion: {
+              in: SALES_AGENTS.keys
+            },
+            allow_nil: true
+
   belongs_to :user
   has_one :business_website, dependent: :destroy
   has_many :business_blocked_times,
@@ -188,6 +222,24 @@ class Business < ApplicationRecord
 
   def agent_settings
     business_agent_setting || create_business_agent_setting!
+  end
+
+  def sales_agent
+    SALES_AGENTS[sales_agent_id]
+  end
+
+  def sales_agent_name
+    sales_agent&.dig(:name)
+  end
+
+  def sales_agent_email
+    sales_agent&.dig(:email)
+  end
+
+  def self.sales_agent_options
+    SALES_AGENTS.map do |id, agent|
+      [agent[:name], id]
+    end
   end
 
   private

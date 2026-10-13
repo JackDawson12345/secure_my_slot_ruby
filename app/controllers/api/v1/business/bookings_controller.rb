@@ -204,7 +204,9 @@ module Api
             }, status: :not_found
           end
 
-          booking = business.bookings.find_by(id: params[:booking_id])
+          booking = business.bookings.find_by(
+            id: params[:booking_id]
+          )
 
           unless booking
             return render json: {
@@ -212,8 +214,11 @@ module Api
             }, status: :not_found
           end
 
-          user = booking.user
-          status = params[:status]
+          status = params[:status].to_s
+
+          # -----------------------------------------
+          # Validate status
+          # -----------------------------------------
 
           unless %w[confirmed cancelled completed].include?(status)
             return render json: {
@@ -221,7 +226,80 @@ module Api
             }, status: :unprocessable_entity
           end
 
+          # -----------------------------------------
+          # Capture previous status
+          # -----------------------------------------
+
+          previous_status = booking.status
+
+          # Avoid sending notifications if unchanged
+          if previous_status == status
+            return render json: {
+              message: "Booking status is already #{status}.",
+              booking: {
+                id: booking.id,
+                status: booking.status
+              }
+            }, status: :ok
+          end
+
+          # -----------------------------------------
+          # Update booking status
+          # -----------------------------------------
+
           if booking.update(status: status)
+
+            # -----------------------------------------
+            # Existing SMS and email notifications
+            # -----------------------------------------
+
+            if booking.user.customer_setting&.booking_changes?
+
+              begin
+                SendBookingStatusChangeSmsJob.perform_later(
+                  booking.id
+                )
+
+                BookingMailer
+                  .with(booking: booking)
+                  .status_changed
+                  .deliver_later
+
+              rescue StandardError => e
+                Rails.logger.error(
+                  "Booking status SMS/email failed for booking #{booking.id}: " \
+                    "#{e.class} - #{e.message}"
+                )
+              end
+
+            end
+
+            # -----------------------------------------
+            # Expo push notification
+            # -----------------------------------------
+
+            begin
+              BookingNotificationService.status_changed(
+                booking,
+                previous_status: previous_status
+              )
+
+              Rails.logger.info(
+                "PUSH: Status notification queued for booking #{booking.id} " \
+                  "(#{previous_status} -> #{status})"
+              )
+
+            rescue StandardError => e
+              Rails.logger.error(
+                "PUSH: Failed to queue status notification for booking #{booking.id}: " \
+                  "#{e.class} - #{e.message}"
+              )
+            end
+
+            # -----------------------------------------
+            # Response
+            # -----------------------------------------
+
             render json: {
               message: "Booking status updated successfully.",
               booking: {
@@ -238,17 +316,12 @@ module Api
               }
             }, status: :ok
 
-            if user.customer_setting&.booking_changes == true
-              SendBookingStatusChangeSmsJob.perform_later(booking.id)
-              BookingMailer
-                .with(booking: booking)
-                .status_changed
-                .deliver_now
-            end
           else
+
             render json: {
               error: booking.errors.full_messages
             }, status: :unprocessable_entity
+
           end
         end
 

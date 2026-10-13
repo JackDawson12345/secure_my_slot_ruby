@@ -534,6 +534,10 @@ Rails.application.routes.draw do
         module: "business_portal",
         as: "business" do
 
+    post "request-upgrade",
+         to: "upgrades#create",
+         as: :request_upgrade
+
 
     get "sign-up",
         to: "sign_up#index",
@@ -945,6 +949,18 @@ Rails.application.routes.draw do
       resources :customers, only: %i[index show new create] do
         resources :services,
                   controller: "customer_services",
+                  except: %i[index show] do
+          member do
+            delete :remove_image
+          end
+        end
+
+        resources :service_coupons,
+                  controller: "customer_service_coupons",
+                  except: %i[index show]
+
+        resources :service_categories,
+                  controller: "customer_service_categories",
                   except: %i[index show]
 
         resource :opening_hours,
