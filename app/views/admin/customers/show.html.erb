@@ -1386,6 +1386,7 @@
       <section class="mt-8 space-y-6">
         <!-- Subscription -->
         <article class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+
           <div class="flex flex-col gap-4 border-b border-slate-200 px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6">
             <div>
               <h2 class="text-lg font-bold text-slate-900">
@@ -1393,7 +1394,7 @@
               </h2>
 
               <p class="mt-1 text-sm text-slate-500">
-                The current subscription access for this business.
+                The current subscription access and plan for this business.
               </p>
             </div>
 
@@ -1406,42 +1407,94 @@
             <% end %>
           </div>
 
-          <div class="flex flex-col gap-4 px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6">
-            <div class="flex items-start gap-3">
-              <div class="<%= @business.subscribed? ? "bg-emerald-50 text-emerald-600" : "bg-slate-100 text-slate-500" %> flex h-11 w-11 shrink-0 items-center justify-center rounded-xl">
-                <i
-                  data-lucide="<%= @business.subscribed? ? "badge-check" : "badge-x" %>"
-                  class="h-5 w-5"
-                ></i>
+          <div class="divide-y divide-slate-100">
+
+            <!-- Subscription status -->
+            <div class="flex flex-col gap-4 px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+
+              <div class="flex items-start gap-3">
+                <div class="<%= @business.subscribed? ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-500' %> flex h-11 w-11 shrink-0 items-center justify-center rounded-xl">
+
+                  <i
+                    data-lucide="<%= @business.subscribed? ? 'badge-check' : 'badge-x' %>"
+                    class="h-5 w-5"
+                  ></i>
+                </div>
+
+                <div>
+                  <p class="font-semibold text-slate-900">
+                    Active subscription
+                  </p>
+
+                  <p class="mt-1 text-sm text-slate-500">
+                    <% if @business.subscribed? %>
+                      This business currently has access to subscribed features.
+                    <% else %>
+                      This business does not currently have subscription access.
+                    <% end %>
+                  </p>
+                </div>
               </div>
 
-              <div>
-                <p class="font-semibold text-slate-900">
-                  Active subscription
-                </p>
+              <% if @business.subscribed? %>
+        <span class="inline-flex w-fit items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-700">
+          <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
+          Enabled
+        </span>
+              <% else %>
+        <span class="inline-flex w-fit items-center gap-1.5 rounded-full bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-600">
+          <span class="h-1.5 w-1.5 rounded-full bg-slate-400"></span>
+          Disabled
+        </span>
+              <% end %>
 
-                <p class="mt-1 text-sm text-slate-500">
-                  <% if @business.subscribed? %>
-                    This business currently has access to subscribed features.
-                  <% else %>
-                    This business does not currently have subscription access.
-                  <% end %>
-                </p>
-              </div>
             </div>
 
-            <% if @business.subscribed? %>
-          <span class="inline-flex w-fit items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-700">
-            <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
-            Enabled
-          </span>
-            <% else %>
-          <span class="inline-flex w-fit items-center gap-1.5 rounded-full bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-600">
-            <span class="h-1.5 w-1.5 rounded-full bg-slate-400"></span>
-            Disabled
-          </span>
-            <% end %>
+            <!-- Subscription plan -->
+            <div class="flex flex-col gap-4 px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+
+              <div class="flex items-start gap-3">
+
+                <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
+                  <i data-lucide="crown" class="h-5 w-5"></i>
+                </div>
+
+                <div>
+                  <p class="font-semibold text-slate-900">
+                    Subscription plan
+                  </p>
+
+                  <p class="mt-1 text-sm text-slate-500">
+                    The subscription level currently assigned to this business.
+                  </p>
+                </div>
+
+              </div>
+
+              <% plan = @business.subscription_level %>
+
+              <% plan_styles = {
+                "basic" => "bg-slate-100 text-slate-700",
+                "pro" => "bg-indigo-50 text-indigo-700",
+                "pro_plus" => "bg-violet-50 text-violet-700"
+              } %>
+
+              <span class="inline-flex w-fit items-center gap-2 rounded-full px-3 py-1.5 text-xs font-semibold <%= plan_styles.fetch(plan, 'bg-slate-100 text-slate-600') %>">
+
+                <i data-lucide="layers" class="h-3.5 w-3.5"></i>
+
+                <%= {
+                      "basic" => "Basic",
+                      "pro" => "Pro",
+                      "pro_plus" => "Pro Plus"
+                    }.fetch(plan, "Not configured") %>
+
+              </span>
+
+            </div>
+
           </div>
+
         </article>
 
         <div class="grid gap-6 xl:grid-cols-2">

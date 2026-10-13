@@ -147,36 +147,72 @@
         </h2>
 
         <p class="mt-1 text-sm text-slate-500">
-          Control whether this business has access to subscribed features.
+          Manage the business subscription status and plan.
         </p>
       </div>
 
-      <label class="flex items-start justify-between gap-5 p-5 sm:px-6">
-    <span>
-      <span class="block text-sm font-semibold text-slate-900">
-        Active subscription
-      </span>
+      <div class="divide-y divide-slate-100">
 
-      <span class="mt-1 block text-sm text-slate-500">
-        Enable or disable subscription access for this business.
-      </span>
-    </span>
-
-        <span>
-          <%= hidden_field_tag(
-                "business[subscribed]",
-                "0"
-              ) %>
-
-          <%= check_box_tag(
-                "business[subscribed]",
-                "1",
-                @business.subscribed?,
-                id: "business_subscribed",
-                class: "mt-1 h-5 w-5 shrink-0 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
-              ) %>
+        <!-- Active subscription -->
+        <label class="flex items-start justify-between gap-5 p-5 sm:px-6">
+      <span>
+        <span class="block text-sm font-semibold text-slate-900">
+          Active subscription
         </span>
-      </label>
+
+        <span class="mt-1 block text-sm text-slate-500">
+          Enable or disable subscription access for this business.
+        </span>
+      </span>
+
+          <span>
+            <%= hidden_field_tag(
+                  "business[subscribed]",
+                  "0"
+                ) %>
+
+            <%= check_box_tag(
+                  "business[subscribed]",
+                  "1",
+                  @business.subscribed?,
+                  id: "business_subscribed",
+                  class: "mt-1 h-5 w-5 shrink-0 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                ) %>
+          </span>
+        </label>
+
+        <!-- Subscription level -->
+        <div class="p-5 sm:px-6">
+          <%= label_tag(
+                "business_subscription_level",
+                "Subscription plan",
+                class: "block text-sm font-semibold text-slate-900"
+              ) %>
+
+          <p class="mt-1 text-sm text-slate-500">
+            Select which subscription plan this business has access to.
+          </p>
+
+          <%= select_tag(
+                "business[subscription_level]",
+                options_for_select(
+                  [
+                    ["Basic", "basic"],
+                    ["Pro", "pro"],
+                    ["Pro Plus", "pro_plus"]
+                  ],
+                  @business.subscription_level
+                ),
+                id: "business_subscription_level",
+                class: "mt-3 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+              ) %>
+
+          <p class="mt-2 text-xs text-slate-500">
+            Changing the plan will update the features available to this business.
+          </p>
+        </div>
+
+      </div>
     </section>
 
     <!-- Booking settings -->
