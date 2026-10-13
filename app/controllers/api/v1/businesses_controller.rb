@@ -1053,7 +1053,8 @@ module Api
         agent =
           nil
 
-        if business.feature_enabled?(:agents)
+        if business.feature_enabled?(:agents) &&
+           business.business_agents.where(status: "active").exists?
           agent_selection =
             customer_booking_params[
               :agent_selection
