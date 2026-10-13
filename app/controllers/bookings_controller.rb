@@ -71,7 +71,7 @@ class BookingsController < ApplicationController
       else
         business.business_agents
                 .where(status: "active")
-                .find(agent_selection)
+                .find_by(id: agent_selection)
       end
 
     # Only require an agent if one was requested
@@ -87,13 +87,7 @@ class BookingsController < ApplicationController
       return
     end
 
-    if agent.nil?
-      redirect_back(
-        fallback_location: root_path,
-        alert: "That time is no longer available. Please choose another time."
-      )
-      return
-    end
+
 
     user, new_customer_account = find_or_create_user
 
