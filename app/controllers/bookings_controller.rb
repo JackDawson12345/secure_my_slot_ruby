@@ -52,20 +52,39 @@ class BookingsController < ApplicationController
     service = Service.find(booking_params[:service_id])
     business = service.business
 
-    agent_selection = booking_params[:agent_selection]
+    agent_selection = booking_params[:agent_selection].presence
 
-    if agent_selection == "any"
+    agent =
+      case agent_selection
+      when nil, "null"
+        # No agent selected, allow booking without an agent
+        nil
 
-      available_agents = available_agents_for(
-        business: business,
-        service: service,
-        date: booking_params[:date],
-        time: booking_params[:time]
+      when "any"
+        available_agents_for(
+          business: business,
+          service: service,
+          date: booking_params[:date],
+          time: booking_params[:time]
+        ).sample
+
+      else
+        business.business_agents
+                .where(status: "active")
+                .find(agent_selection)
+      end
+
+    # Only require an agent if one was requested
+    if agent_selection.present? &&
+       agent_selection != "null" &&
+       agent.nil?
+
+      redirect_back(
+        fallback_location: root_path,
+        alert: "That time is no longer available. Please choose another time."
       )
 
-      agent = available_agents.sample
-    else
-      agent = business.business_agents.find(agent_selection)
+      return
     end
 
     if agent.nil?
@@ -98,7 +117,7 @@ class BookingsController < ApplicationController
         new_customer_account: new_customer_account,
         coupon: coupon,
         coupon_works: coupon_works,
-        agent_id: agent.user_id
+        agent_id: agent&.user_id
       )
     else
       create_booking_without_payment(
@@ -108,7 +127,7 @@ class BookingsController < ApplicationController
         new_customer_account: new_customer_account,
         coupon: coupon,
         coupon_works: coupon_works,
-        agent_id: agent.user_id
+        agent_id: agent&.user_id
       )
 
     end
