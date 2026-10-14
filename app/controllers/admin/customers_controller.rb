@@ -95,7 +95,9 @@ class Admin::CustomersController < Admin::BaseController
     )
 
     @business_setting = @business.build_business_setting(
-      business_setting_params
+      business_setting_params.merge(
+        business_name: @business.business_name
+      )
     )
 
     @business_website = @business.build_business_website(
