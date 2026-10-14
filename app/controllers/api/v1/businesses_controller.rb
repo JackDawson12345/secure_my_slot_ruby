@@ -77,6 +77,12 @@ module Api
 
         businesses =
           ::Business
+            .joins(:business_setting)
+            .where(
+              business_settings: {
+                booking_page_live: true
+              }
+            )
             .includes(
               :business_setting,
               :services
