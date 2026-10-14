@@ -3,11 +3,18 @@ class Account::BookAppointmentController < Account::BaseController
   PER_PAGE = 10
 
   def index
-    businesses = Business.includes(
-      :business_setting,
-      :opening_hours,
-      :services
-    )
+    businesses = Business
+     .joins(:business_setting)
+     .includes(
+       :business_setting,
+       :opening_hours,
+       :services
+     )
+     .where(
+       business_settings: {
+         booking_page_live: true
+       }
+     )
 
     businesses = filter_by_search(businesses)
     businesses = filter_by_location(businesses)
