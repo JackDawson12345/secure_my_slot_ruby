@@ -87,6 +87,76 @@ class BusinessPortal::ReportsController < BusinessPortal::BaseController
   end
 
   def revenue
+    @bookings = current_user.business.bookings
+
+    @revenue_bookings = @bookings.where.not(
+      status: ['cancelled', 'no_show']
+    )
+
+    @total_amounts = @revenue_bookings.sum(:amount)
+    @average_booking_cost = @revenue_bookings.count.positive? ? @total_amounts / @revenue_bookings.count : 0
+
+    @total_paid = @revenue_bookings.where(payment_status: 'paid')
+    @completed_bookings = @revenue_bookings.where(status: ['confirmed', 'completed'])
+    @pending_bookings = @revenue_bookings.where(status: 'pending')
+
+    # Last 7 months including the current month
+    start_date = Date.current.beginning_of_month - 6.months
+    end_date = Date.current.end_of_month
+
+    # Get total booking amounts grouped by month
+    monthly_totals = @revenue_bookings
+                       .where(date: start_date..end_date)
+                       .group("DATE_TRUNC('month', date)")
+                       .sum(:amount)
+                       .transform_keys(&:to_date)
+
+    # Prepare data for Chart.js
+    @revenue_labels = []
+    @revenue_data = []
+
+    (0..6).each do |i|
+      month = start_date.advance(months: i)
+
+      @revenue_labels << month.strftime("%b")
+      @revenue_data << monthly_totals.fetch(month, 0).to_f
+    end
+
+
+
+    # Revenue grouped by service
+    @services = current_user.business.services
+
+    # Booking count per service
+    @service_booking_counts = @revenue_bookings
+                                .group(:service_id)
+                                .count
+
+    # Total revenue per service
+    @service_revenue_totals = @revenue_bookings
+                                .group(:service_id)
+                                .sum(:amount)
+
+    # Build service revenue data
+    @service_revenue = @services.map do |service|
+      {
+        service: service,
+        booking_count: @service_booking_counts.fetch(service.id, 0),
+        revenue: @service_revenue_totals.fetch(service.id, 0)
+      }
+    end.sort_by { |item| -item[:revenue] }
+
+    # Calculate progress bar percentages
+    max_revenue = @service_revenue.map { |item| item[:revenue] }.max || 0
+
+    @service_revenue.each do |item|
+      item[:percentage] =
+        if max_revenue.positive?
+          ((item[:revenue].to_f / max_revenue) * 100).round
+        else
+          0
+        end
+    end
 
   end
 
