@@ -1,7 +1,7 @@
 class BusinessPortal::ServicesController < BusinessPortal::BaseController
   before_action :set_business
   before_action :set_service, only: %i[show edit update destroy remove_image]
-  before_action :set_agents, only: [:new, :edit]
+  before_action :set_agents, only: [:new, :create, :edit, :update]
 
   def index
     services_scope = @business.services
@@ -42,7 +42,9 @@ class BusinessPortal::ServicesController < BusinessPortal::BaseController
       minutes_duration: 30
     )
 
-    @service.service_times.build
+    if service_times_enabled?
+      @service.service_times.build
+    end
   end
 
   def create
@@ -56,13 +58,13 @@ class BusinessPortal::ServicesController < BusinessPortal::BaseController
       redirect_to business_services_path,
                   notice: "Service was created successfully."
     else
-      @service.service_times.build if @service.service_times.empty?
+      prepare_service_times
       render :new, status: :unprocessable_entity
     end
   end
 
   def edit
-    @service.service_times.build if @service.service_times.empty?
+    prepare_service_times
   end
 
   def update
@@ -76,7 +78,7 @@ class BusinessPortal::ServicesController < BusinessPortal::BaseController
       redirect_to business_service_path(@service),
                   notice: "Service was updated successfully."
     else
-      @service.service_times.build if @service.service_times.empty?
+      prepare_service_times
       render :edit, status: :unprocessable_entity
     end
   end
@@ -154,5 +156,13 @@ class BusinessPortal::ServicesController < BusinessPortal::BaseController
 
   def set_agents
     @agents = @business.business_agents.where(status: "active")
+  end
+
+  def prepare_service_times
+    return unless service_times_enabled?
+
+    if @service.service_times.empty?
+      @service.service_times.build
+    end
   end
 end

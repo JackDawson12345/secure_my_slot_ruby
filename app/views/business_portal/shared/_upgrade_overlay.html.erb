@@ -13,15 +13,13 @@
       <%= message %>
     </p>
 
-    <%= button_to "Speak to our marketing specialist",
-                  business_request_upgrade_path,
-                  method: :post,
-                  class: "mt-4 inline-flex rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700",
-                  form: {
-                    data: {
-                      turbo_confirm: "Would you like our marketing specialist to contact you about upgrading?"
-                    }
-                  } %>
+    <button type="submit"
+            form="business-upgrade-request-form"
+            class="mt-4 inline-flex items-center justify-center rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700">
+
+      Speak to our marketing specialist
+
+    </button>
 
   </div>
 

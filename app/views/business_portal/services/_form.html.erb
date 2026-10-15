@@ -2,7 +2,11 @@
               url: service.persisted? ? business_service_path(service) : business_services_path,
               class: "space-y-6",
               data: {
-                controller: "deposit image-preview"
+                controller: [
+                  ("deposit" if business.stripe_ready?),
+                  ("service-times" if business.feature_enabled?(:service_times)),
+                  "image-preview"
+                ].compact.join(" ")
               } do |form| %>
 
   <% if service.errors.any? %>
@@ -323,7 +327,8 @@
 
           <%= form.check_box :custom_service_times,
                              {
-                               checked: service.service_times.any?,
+                               checked: business.feature_enabled?(:service_times) &&
+                                 service.custom_service_times?,
                                class: "mt-1 h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500",
                                data: {
                                  service_times_target: "checkbox",
@@ -406,42 +411,57 @@
   </div>
 
 
-  <div>
-    <%= form.label :business_agent_ids,
-                   "Assigned agents",
-                   class: "block text-sm font-semibold text-slate-700" %>
+  <div class="relative">
 
-    <p class="mt-1 text-xs text-slate-500">
-      Select which agents can provide this service.
-    </p>
+    <div class="<%= 'pointer-events-none opacity-50 min-h-[170px]' unless business.feature_enabled?(:agents) %>">
+      <div>
+        <%= form.label :business_agent_ids,
+                       "Assigned agents",
+                       class: "block text-sm font-semibold text-slate-700" %>
 
-    <div class="mt-4 grid gap-3 sm:grid-cols-2">
+        <p class="mt-1 text-xs text-slate-500">
+          Select which agents can provide this service.
+        </p>
 
-      <% @agents.each do |agent| %>
+        <div class="mt-4 grid gap-3 sm:grid-cols-2">
 
-        <label class="flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-4 cursor-pointer hover:border-indigo-300">
+          <% @agents.each do |agent| %>
 
-          <%= check_box_tag "service[business_agent_ids][]",
-                            agent.id,
-                            service.business_agents.include?(agent),
-                            id: "agent_#{agent.id}",
-                            class: "h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" %>
+            <label class="flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-4 cursor-pointer hover:border-indigo-300">
 
-          <div>
-            <p class="text-sm font-semibold text-slate-900">
-              <%= agent.user.full_name %>
-            </p>
+              <%= check_box_tag "service[business_agent_ids][]",
+                                agent.id,
+                                service.business_agents.include?(agent),
+                                id: "agent_#{agent.id}",
+                                class: "h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" %>
 
-            <p class="text-xs text-slate-500">
-              <%= agent.user.email %>
-            </p>
-          </div>
+              <div>
+                <p class="text-sm font-semibold text-slate-900">
+                  <%= agent.user.full_name %>
+                </p>
 
-        </label>
+                <p class="text-xs text-slate-500">
+                  <%= agent.user.email %>
+                </p>
+              </div>
 
-      <% end %>
+            </label>
 
+          <% end %>
+
+        </div>
+
+      </div>
     </div>
+
+    <% unless business.feature_enabled?(:agents) %>
+
+      <%= render 'business_portal/shared/upgrade_overlay',
+                 title: 'Upgrade to assign Agents',
+                 message: 'Agents are available on the Pro plan and above.'
+      %>
+
+    <% end %>
 
   </div>
 
