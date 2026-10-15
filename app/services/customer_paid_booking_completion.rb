@@ -148,7 +148,7 @@ class CustomerPaidBookingCompletion
                     @session.amount_total.to_s
                   ) / 100
 
-    total_amount = @booking_hold.service.price.to_d
+    total_amount = @booking_hold.amount.to_d
 
     Booking.create!(
       user: @booking_hold.user,

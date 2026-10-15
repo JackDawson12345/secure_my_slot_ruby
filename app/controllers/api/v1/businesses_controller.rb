@@ -1183,7 +1183,9 @@ module Api
                 customer_booking_params[:notes],
 
               expires_at:
-                30.minutes.from_now
+                30.minutes.from_now,
+
+              amount: service.price
             )
 
           checkout_session =
@@ -1257,6 +1259,9 @@ module Api
 
             notes:
               customer_booking_params[:notes],
+
+            amount:
+              service.price.to_d,
 
             payment_status:
               "not_required",
